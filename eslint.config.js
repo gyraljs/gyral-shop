@@ -26,7 +26,9 @@ const layer = (name, forbidden, why) => ({
           NO_EFFECT,
           NO_DIRECT_LIT_INTERNALS,
           ...forbidden.map((f) => ({
-            group: [`**/${f}/**`, `**/${f}`],
+            // Relative paths only, so npm packages that happen to share a layer name
+            // (e.g. `@libsql/client`) are not caught.
+            group: [`../${f}/*`, `../../${f}/*`, `../../../${f}/*`],
             message: `src/${name} must not import src/${f}: ${why} (ARCHITECTURE.md).`,
           })),
         ],
