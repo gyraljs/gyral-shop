@@ -7,7 +7,7 @@ import { loadConfig } from '../config/env.js';
 import { openDb } from '../db/client.js';
 
 // One connection for the dev server's lifetime; run `pnpm db:reset` first.
-const db = openDb(loadConfig().DATABASE_URL);
+const db = await openDb(loadConfig().DATABASE_URL);
 
 const port = Number(process.env['PORT'] ?? 5200);
 const hmrPort = Number(process.env['HMR_PORT'] ?? 24690);

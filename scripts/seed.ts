@@ -12,7 +12,7 @@ const ADMIN_PASSWORD = process.env['SEED_ADMIN_PASSWORD'] ?? 'gyral-admin-2026';
 const CUSTOMER_PASSWORD = 'gyral-customer-2026';
 
 const { DATABASE_URL } = loadConfig();
-const db = openDb(DATABASE_URL);
+const db = await openDb(DATABASE_URL);
 await migrateDb(db);
 const [existing] = await db.select({ n: count() }).from(products);
 if ((existing?.n ?? 0) > 0) {

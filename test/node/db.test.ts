@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { eq } from 'drizzle-orm';
-import { createTestDb } from '../../src/db/client.js';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createTestDb, migrateDb, openDb } from '../../src/db/client.js';
 import { findDepartment, listDepartments, productCards } from '../../src/db/repos/catalog.js';
 import {
   brands,
@@ -79,6 +82,24 @@ describe('database', () => {
     });
     const [row] = await db.select().from(variants).where(eq(variants.sku, 'B-1'));
     expect(row?.stock).toBe(9);
+  });
+
+  it('enforces foreign keys on a fresh file connection, inside and outside transactions', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'shop-fk-'));
+    const url = `file:${join(dir, 'shop.db')}`;
+    try {
+      await migrateDb(await openDb(url));
+      const db = await openDb(url); // a new connection, never migrated in this process
+      const orphan = { productId: 999, sku: 'X', options: {}, stock: 1 };
+      await expect(db.insert(variants).values(orphan)).rejects.toThrow();
+      await expect(
+        db.transaction(async (tx) => {
+          await tx.insert(variants).values(orphan);
+        }),
+      ).rejects.toThrow();
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it('enforces foreign keys', async () => {
