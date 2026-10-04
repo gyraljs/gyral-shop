@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import type { Db } from '../db/client.js';
 import { departmentLinks, homeData } from '../services/catalog.js';
+import { createMailer } from '../services/mail.js';
 import { homePage } from '../ui/pages/home.js';
 import { notFoundPage, serverErrorPage } from '../ui/pages/errors.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
@@ -8,11 +9,14 @@ import { SECURITY_TITLES, securityErrorPage } from '../ui/pages/security-errors.
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
 import { placeholderSvg } from './placeholder-image.js';
+import { devMailRoutes } from './routes/dev-mail.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
   readonly clientEntry: string;
   readonly db: Db;
+  /** `production` disables development tools such as /dev/mail. Default `development`. */
+  readonly mode?: 'development' | 'test' | 'production';
   /** Security settings other than the database (dev CSP, clock, proxy trust). */
   readonly security?: Omit<SecurityOptions, 'db' | 'render'>;
 }
@@ -21,7 +25,12 @@ const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><re
 
 type PageOptions = Omit<ShellOptions, 'clientEntry' | 'departments'>;
 
-export function createApp({ clientEntry, db, security }: AppOptions): Hono<AppEnv> {
+export function createApp({
+  clientEntry,
+  db,
+  mode = 'development',
+  security,
+}: AppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   // Departments appear in every page's header; they change rarely, so load once per app.
   let departments: Promise<readonly DepartmentLink[]> | undefined;
@@ -63,6 +72,8 @@ export function createApp({ clientEntry, db, security }: AppOptions): Hono<AppEn
       main: homePage({ departments: departmentList, ...data }),
     });
   });
+
+  if (mode !== 'production') app.route('/dev/mail', devMailRoutes(createMailer(db), page));
 
   app.notFound(async (c) =>
     page({
