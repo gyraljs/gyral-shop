@@ -3,6 +3,7 @@ import { html } from '@gyral/core';
 import { notFoundPage, serverErrorPage } from '../ui/pages/errors.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
+import { placeholderSvg } from './placeholder-image.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
@@ -34,6 +35,17 @@ export function createApp(options: AppOptions): Hono {
     '/favicon.svg',
     () => new Response(FAVICON, { headers: { 'content-type': 'image/svg+xml' } }),
   );
+
+  app.get('/img/p/:slug/:file', (c) => {
+    const view = /^(\d{1,2})\.svg$/.exec(c.req.param('file'))?.[1];
+    if (view === undefined) return c.notFound();
+    return new Response(placeholderSvg(c.req.param('slug'), Number(view)), {
+      headers: {
+        'content-type': 'image/svg+xml',
+        'cache-control': 'public, max-age=31536000, immutable',
+      },
+    });
+  });
 
   app.get('/', () =>
     page({
