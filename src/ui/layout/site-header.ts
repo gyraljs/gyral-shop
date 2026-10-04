@@ -1,4 +1,4 @@
-import { css, define, html, repeat, type Stateless } from '@gyral/core';
+import { css, define, html, nothing, repeat, type Stateless } from '@gyral/core';
 
 export interface DepartmentLink {
   readonly slug: string;
@@ -11,6 +11,8 @@ export interface HeaderProps {
   readonly departments?: readonly DepartmentLink[];
   /** The current search query, echoed in the search box. */
   readonly query?: string;
+  /** Slug of the department being browsed, marked as the current link. */
+  readonly current?: string;
 }
 
 /**
@@ -22,6 +24,7 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
   props: {
     departments: { attribute: false },
     query: { type: String },
+    current: { type: String },
   },
   intent: {},
   update: {},
@@ -53,7 +56,12 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
           ${repeat(
             props.departments ?? [],
             (d) => d.slug,
-            (d) => html`<li><a href="/d/${d.slug}">${d.name}</a></li>`,
+            (d) =>
+              html`<li>
+                <a href="/d/${d.slug}" aria-current=${d.slug === props.current ? 'true' : nothing}
+                  >${d.name}</a
+                >
+              </li>`,
           )}
         </ul>
       </nav>
@@ -140,8 +148,13 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
       text-decoration: none;
       font-weight: 500;
     }
-    .departments a:hover {
+    .departments a:hover,
+    .departments a[aria-current] {
       text-decoration: underline;
+    }
+    .departments a[aria-current] {
+      font-weight: 700;
+      text-underline-offset: 0.3em;
     }
     :focus-visible {
       outline: 2px solid var(--brand-ink);

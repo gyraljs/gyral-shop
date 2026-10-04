@@ -44,6 +44,9 @@ export const baseCss = `
     min-block-size: 100dvb;
     display: grid;
     grid-template-rows: auto 1fr auto;
+    /* One column no wider than the viewport: an auto column would grow to the widest
+       unwrapped content (the department nav) and overflow phones. */
+    grid-template-columns: minmax(0, 1fr);
   }
   a { color: inherit; }
   .skip-link {

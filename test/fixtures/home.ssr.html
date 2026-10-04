@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gyral Goods</title>
     <meta name="description" content="Electronics, home, clothing, toys, groceries and more, in one store.">
-    <!--lit-part E1kqU7mutB0=--><!--lit-part qgDkOrQnnc0=--><style>
+    <!--lit-part kw2vULl7gTE=--><!--lit-part cRpCEc46RN0=--><style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -48,6 +48,9 @@
     min-block-size: 100dvb;
     display: grid;
     grid-template-rows: auto 1fr auto;
+    /* One column no wider than the viewport: an auto column would grow to the widest
+       unwrapped content (the department nav) and overflow phones. */
+    grid-template-columns: minmax(0, 1fr);
   }
   a { color: inherit; }
   .skip-link {
@@ -139,16 +142,79 @@
   .count { color: var(--ink-muted); }
   .stock.out { color: var(--sale); font-weight: 600; font-size: 0.9rem; }
 }
+
+@layer components {
+  .breadcrumbs ol {
+    list-style: none; padding: 0; margin-block: 0 var(--space-3);
+    display: flex; flex-wrap: wrap; gap: var(--space-1); font-size: 0.9rem;
+  }
+  .breadcrumbs li:not(:last-child)::after {
+    content: "›"; margin-inline-start: var(--space-1); color: var(--ink-muted);
+  }
+  .breadcrumbs [aria-current="page"] { color: var(--ink-muted); }
+  .page-intro h1 { margin-block: 0 var(--space-2); }
+  .page-intro p { max-inline-size: 65ch; color: var(--ink-muted); margin-block: 0; }
+  .category-grid {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  }
+  .category-grid a {
+    display: grid; gap: var(--space-1); padding: var(--space-3);
+    background: var(--surface-raised); border: 1px solid var(--line);
+    border-radius: var(--radius); text-decoration: none;
+  }
+  .category-grid a:hover { border-color: var(--brand); }
+  .category-grid .name { font-weight: 600; }
+  .category-grid .count { color: var(--ink-muted); font-size: 0.9rem; }
+  .listing {
+    display: grid; gap: var(--space-5); align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (width >= 48rem) {
+    .listing { grid-template-columns: 14rem minmax(0, 1fr); }
+  }
+  .listing-nav h2 { font-size: 1.1rem; margin-block: 0 var(--space-2); }
+  .listing-nav ul { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-1); }
+  .listing-nav a { text-decoration: none; }
+  .listing-nav a:hover { text-decoration: underline; }
+  .listing-nav [aria-current="page"] { font-weight: 700; text-decoration: underline; }
+  .listing-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); }
+  .listing-header h1 { margin-block: 0; }
+  .result-count { color: var(--ink-muted); margin-block: 0; }
+  .listing-results .card-grid { margin-block-start: var(--space-4); }
+  .empty { padding: var(--space-4); background: var(--surface-sunken); border-radius: var(--radius); }
+  .pager ul {
+    list-style: none; padding: 0; margin-block: var(--space-5) 0;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-1);
+  }
+  .pager a, .pager .gap {
+    display: inline-grid; place-items: center;
+    min-inline-size: 2.75rem; min-block-size: 2.75rem; padding-inline: var(--space-2);
+    border-radius: var(--radius);
+  }
+  .pager a { border: 1px solid var(--line); text-decoration: none; }
+  .pager a:hover { border-color: var(--brand); }
+  .pager a[aria-current="page"] {
+    background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
+  }
+}
 </style><!--/lit-part-->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!--lit-part--><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part--><?><!--/lit-part-->
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part +xJwzz5RbqQ=-->
+    <!--lit-part MKg+G2FQvRw=-->
         <a class="skip-link" href="#main">Skip to content</a>
-        <!--lit-node 1--><shop-header   query data-gyral-seed="{&quot;state&quot;:{},&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;home-kitchen&quot;,&quot;name&quot;:&quot;Home &amp; Kitchen&quot;},{&quot;slug&quot;:&quot;clothing&quot;,&quot;name&quot;:&quot;Clothing&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;beauty&quot;,&quot;name&quot;:&quot;Beauty&quot;},{&quot;slug&quot;:&quot;sports-outdoors&quot;,&quot;name&quot;:&quot;Sports &amp; Outdoors&quot;},{&quot;slug&quot;:&quot;books&quot;,&quot;name&quot;:&quot;Books&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+        <!--lit-node 1--><shop-header
+          
+          
+          
+         query current data-gyral-seed="{&quot;state&quot;:{},&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;home-kitchen&quot;,&quot;name&quot;:&quot;Home &amp; Kitchen&quot;},{&quot;slug&quot;:&quot;clothing&quot;,&quot;name&quot;:&quot;Clothing&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;beauty&quot;,&quot;name&quot;:&quot;Beauty&quot;},{&quot;slug&quot;:&quot;sports-outdoors&quot;,&quot;name&quot;:&quot;Sports &amp; Outdoors&quot;},{&quot;slug&quot;:&quot;books&quot;,&quot;name&quot;:&quot;Books&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
     :host {
       display: block;
       background: var(--brand);
@@ -229,8 +295,13 @@
       text-decoration: none;
       font-weight: 500;
     }
-    .departments a:hover {
+    .departments a:hover,
+    .departments a[aria-current] {
       text-decoration: underline;
+    }
+    .departments a[aria-current] {
+      font-weight: 700;
+      text-underline-offset: 0.3em;
     }
     :focus-visible {
       outline: 2px solid var(--brand-ink);
@@ -269,7 +340,39 @@
       </div>
       <nav class="departments" aria-label="Departments">
         <ul>
-          <!--lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/electronics"><!--lit-part-->Electronics<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/home-kitchen"><!--lit-part-->Home &amp; Kitchen<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/clothing"><!--lit-part-->Clothing<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/toys-games"><!--lit-part-->Toys &amp; Games<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/grocery"><!--lit-part-->Grocery<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/beauty"><!--lit-part-->Beauty<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/sports-outdoors"><!--lit-part-->Sports &amp; Outdoors<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/books"><!--lit-part-->Books<!--/lit-part--></a></li><!--/lit-part--><!--/lit-part-->
+          <!--lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/electronics" 
+                  ><!--lit-part-->Electronics<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/home-kitchen" 
+                  ><!--lit-part-->Home &amp; Kitchen<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/clothing" 
+                  ><!--lit-part-->Clothing<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/toys-games" 
+                  ><!--lit-part-->Toys &amp; Games<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/grocery" 
+                  ><!--lit-part-->Grocery<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/beauty" 
+                  ><!--lit-part-->Beauty<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/sports-outdoors" 
+                  ><!--lit-part-->Sports &amp; Outdoors<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/books" 
+                  ><!--lit-part-->Books<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--/lit-part-->
         </ul>
       </nav>
     </header>

@@ -8,6 +8,7 @@ import '../ui/layout/site-header.js'; // registers <shop-header> for server rend
 import { CSRF_META } from '../ui/forms/csrf.js';
 import { baseCss } from '../ui/styles/base.js';
 import { catalogCss } from '../ui/styles/catalog.js';
+import { listingCss } from '../ui/styles/listing.js';
 
 export const SITE_NAME = 'Gyral Goods';
 
@@ -25,7 +26,16 @@ export interface ShellOptions {
   readonly noindex?: boolean;
   /** Pages with forms or fetches pass the session's CSRF token (security/csrfTokenFor). */
   readonly csrfToken?: string;
+  /** Absolute canonical URL (SEO spec). */
+  readonly canonical?: string;
+  /** Structured data objects, each written as an `application/ld+json` script. */
+  readonly jsonLd?: readonly object[];
+  /** Slug of the department this page belongs to, marked current in the header nav. */
+  readonly currentDepartment?: string;
 }
+
+/** JSON for a <script> body: `<` is escaped so content can never close the element. */
+const scriptJson = (value: object): string => JSON.stringify(value).replace(/</g, '\\u003c');
 
 const footer = html`
   <footer class="site-footer">
@@ -47,14 +57,23 @@ const footer = html`
 `;
 
 export function shell(options: ShellOptions): Response {
-  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}</style>`)}
+  const structured = (options.jsonLd ?? [])
+    .map((data) => `<script type="application/ld+json">${scriptJson(data)}</script>`)
+    .join('');
+  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}${listingCss}</style>`)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    ${
+      options.canonical === undefined
+        ? nothing
+        : html`<link rel="canonical" href=${options.canonical} />`
+    }
     ${options.noindex === true ? html`<meta name="robots" content="noindex" />` : nothing}
     ${
       options.csrfToken === undefined
         ? nothing
         : html`<meta name=${CSRF_META} content=${options.csrfToken} />`
-    }`;
+    }
+    ${structured === '' ? nothing : unsafeHTML(structured)}`;
   return renderPage(
     {
       title: options.title === SITE_NAME ? SITE_NAME : `${options.title} — ${SITE_NAME}`,
@@ -62,7 +81,11 @@ export function shell(options: ShellOptions): Response {
       head,
       body: html`
         <a class="skip-link" href="#main">Skip to content</a>
-        <shop-header .departments=${options.departments} query=${options.query ?? ''}></shop-header>
+        <shop-header
+          .departments=${options.departments}
+          query=${options.query ?? ''}
+          current=${options.currentDepartment ?? ''}
+        ></shop-header>
         <main id="main" class="page" tabindex="-1">${options.main}</main>
         ${footer}
       `,
@@ -71,3 +94,8 @@ export function shell(options: ShellOptions): Response {
     { status: options.status ?? 200 },
   );
 }
+
+/** Renders a page inside the shell; created per app so the header's departments are loaded. */
+export type RenderPage = (
+  options: Omit<ShellOptions, 'clientEntry' | 'departments'>,
+) => Promise<Response>;
