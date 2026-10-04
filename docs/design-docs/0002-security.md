@@ -17,3 +17,38 @@ Status: **accepted** (2026-10-04)
   the mock mail outbox. Responses never reveal whether an email exists.
 - **Output:** Lit escapes by default; JSON in pages uses script-safe serialization; strict CSP
   header (no inline scripts except hashed hydration seeds if needed).
+
+## Implementation (shop-1k5.2, 2026-10-04)
+
+`installSecurity(app, …)` in `createApp` registers, for every route: security headers, the
+session middleware, then the CSRF check. Code lives in `src/server/security/` (HTTP) and
+`src/services/{sessions,auth,authz}.ts` (transport-agnostic).
+
+| Need                         | Use                                                                                                                                                                                        |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Members-only page or API     | `app.get(path, requireUser(), …)`: guests get 303 to `/account/login?next=…` (pages) or 401 JSON (`/api/*`, JSON callers)                                                                  |
+| Admin only                   | `requireAdmin()`: as above, plus 403 for signed-in customers                                                                                                                               |
+| A form that POSTs            | `const token = await csrfTokenFor(c)`; render `csrfField(token)` (`src/ui/forms/csrf.ts`) inside the form                                                                                  |
+| fetch / Gyral http driver    | pass `csrfToken` to `shell()` so the page gets `<meta name="csrf-token">`; send it as `x-csrf-token` (`readCsrfToken()`)                                                                   |
+| Login                        | rate-limit first (`limit(c, limiter, [`ip:${ip(c)}`, `acct:${email}`])` with `LIMITS`), then `authenticate()`, then `startMemberSession(c, user)` (rotates the id; the guest cart follows) |
+| Logout                       | `endSession(c)` (POST, so it is CSRF-checked)                                                                                                                                              |
+| Guest cart                   | `ensureSession(c)` starts an anonymous session on demand                                                                                                                                   |
+| Services                     | check again with `requireMember` / `requireRole` / `requireOwnerOrAdmin` (`services/authz.ts`)                                                                                             |
+| JSON inside a script element | `scriptSafeJson()`                                                                                                                                                                         |
+
+Details worth knowing:
+
+- Sessions are created only on demand (forms, cart), never for plain browsing, images or the
+  favicon, so bots don't fill the table.
+- The CSRF check reads a **clone** of form bodies, so handlers and Gyral `formAction()` can
+  still read the request. Requests with a cross-site `Origin` are refused even with a token.
+- Rotation and destroy keep the `carts.session_id` foreign key valid: rotation moves the
+  guest cart to the new id; destroy detaches it (`session_id = null`).
+- Sliding expiry is written at most every 5 minutes (`TOUCH_AFTER_MS`); the cookie is re-sent
+  then.
+- CSP: `script-src 'self'` with no inline scripts (Gyral's seeds are JSON data blocks, which
+  CSP does not execute). `style-src` needs `'unsafe-inline'` for `<style>` inside Declarative
+  Shadow DOM templates and the shell's global styles. Development adds `connect-src ws:` for
+  Vite HMR. HSTS only over HTTPS.
+- Rate limiting is per process and in memory (`SlidingWindowLimiter`); `ip(c)` trusts
+  `x-forwarded-for` only with `trustProxy`.

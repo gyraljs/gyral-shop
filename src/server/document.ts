@@ -5,6 +5,7 @@ import { renderPage } from '@gyral/ssr';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
+import { CSRF_META } from '../ui/forms/csrf.js';
 import { baseCss } from '../ui/styles/base.js';
 import { catalogCss } from '../ui/styles/catalog.js';
 
@@ -22,6 +23,8 @@ export interface ShellOptions {
   readonly status?: number;
   /** Account, cart, checkout and admin pages are not for search engines (SEO spec). */
   readonly noindex?: boolean;
+  /** Pages with forms or fetches pass the session's CSRF token (security/csrfTokenFor). */
+  readonly csrfToken?: string;
 }
 
 const footer = html`
@@ -46,7 +49,12 @@ const footer = html`
 export function shell(options: ShellOptions): Response {
   const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}</style>`)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    ${options.noindex === true ? html`<meta name="robots" content="noindex" />` : nothing}`;
+    ${options.noindex === true ? html`<meta name="robots" content="noindex" />` : nothing}
+    ${
+      options.csrfToken === undefined
+        ? nothing
+        : html`<meta name=${CSRF_META} content=${options.csrfToken} />`
+    }`;
   return renderPage(
     {
       title: options.title === SITE_NAME ? SITE_NAME : `${options.title} — ${SITE_NAME}`,

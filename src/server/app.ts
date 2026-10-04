@@ -4,25 +4,40 @@ import { departmentLinks, homeData } from '../services/catalog.js';
 import { homePage } from '../ui/pages/home.js';
 import { notFoundPage, serverErrorPage } from '../ui/pages/errors.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
+import { SECURITY_TITLES, securityErrorPage } from '../ui/pages/security-errors.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
+import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
 import { placeholderSvg } from './placeholder-image.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
   readonly clientEntry: string;
   readonly db: Db;
+  /** Security settings other than the database (dev CSP, clock, proxy trust). */
+  readonly security?: Omit<SecurityOptions, 'db' | 'render'>;
 }
 
 const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#c8102e"/><text x="16" y="22" font-family="system-ui,sans-serif" font-size="17" font-weight="800" text-anchor="middle" fill="#fff">G</text></svg>`;
 
 type PageOptions = Omit<ShellOptions, 'clientEntry' | 'departments'>;
 
-export function createApp({ clientEntry, db }: AppOptions): Hono {
-  const app = new Hono();
+export function createApp({ clientEntry, db, security }: AppOptions): Hono<AppEnv> {
+  const app = new Hono<AppEnv>();
   // Departments appear in every page's header; they change rarely, so load once per app.
   let departments: Promise<readonly DepartmentLink[]> | undefined;
   const nav = () => (departments ??= departmentLinks(db));
   const page = async (o: PageOptions) => shell({ ...o, clientEntry, departments: await nav() });
+  installSecurity(app, {
+    ...security,
+    db,
+    render: (_c, kind, status, retryAfter) =>
+      page({
+        title: SECURITY_TITLES[kind],
+        status,
+        noindex: true,
+        main: securityErrorPage(kind, retryAfter),
+      }),
+  });
 
   app.get(
     '/favicon.svg',

@@ -26,4 +26,6 @@ hydrates the new markup. Review fixture diffs like code.
 - `mountSsrPage` only applies `<head>` styles: styles inside DSD templates belong to shadow
   roots. (Applying them globally once hid a real cascade bug behind a fake one.)
 - Never mock the database in route tests; use `testApp()`.
-- Logging in: `test/support/auth.ts` (`loginAs`) is a stub until sessions exist.
+- Logging in: `test/support/auth.ts`: `loginAs(test, email)` or `guest(test)` returns a
+  session with `get`, `postForm` (adds the CSRF field) and `postJson` (adds `x-csrf-token`).
+  Pass `testApp({ now })` to control the clock for sessions and rate limits.

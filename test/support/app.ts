@@ -20,16 +20,29 @@ export interface TestApp {
   readonly app: ReturnType<typeof createApp>;
   readonly get: (path: string, init?: RequestInit) => Promise<Response>;
   readonly html: (path: string) => Promise<string>;
+  /** The app's clock (sessions created by test helpers use it too). */
+  readonly now: () => Date;
 }
 
-export async function testApp(options: { readonly seed?: boolean } = {}): Promise<TestApp> {
+export interface TestAppOptions {
+  readonly seed?: boolean;
+  /** Clock for sessions and rate limits. */
+  readonly now?: () => Date;
+  readonly dev?: boolean;
+}
+
+export async function testApp(options: TestAppOptions = {}): Promise<TestApp> {
   const db = await createTestDb();
   if (options.seed !== false) {
     const data = smallCatalog();
     await insertSeed(db, data, new Map(data.users.map((u) => [u.email, FAKE_HASH])));
   }
-  const app = createApp({ clientEntry: CLIENT_ENTRY, db });
+  const security = {
+    ...(options.now === undefined ? {} : { now: options.now }),
+    ...(options.dev === undefined ? {} : { dev: options.dev }),
+  };
+  const app = createApp({ clientEntry: CLIENT_ENTRY, db, security });
   const get = async (path: string, init?: RequestInit) => app.request(path, init);
   const html = async (path: string) => (await get(path)).text();
-  return { db, app, get, html };
+  return { db, app, get, html, now: options.now ?? (() => new Date()) };
 }

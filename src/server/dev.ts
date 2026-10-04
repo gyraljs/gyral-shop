@@ -18,7 +18,9 @@ const vite = await createViteServer({
 
 const ssr = getRequestListener(async (request) => {
   const mod = (await vite.ssrLoadModule('/src/server/app.ts')) as typeof import('./app.js');
-  return mod.createApp({ clientEntry: '/src/client/entry.ts', db }).fetch(request);
+  return mod
+    .createApp({ clientEntry: '/src/client/entry.ts', db, security: { dev: true } })
+    .fetch(request);
 });
 
 http
