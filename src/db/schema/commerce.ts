@@ -122,18 +122,43 @@ export const orderLines = sqliteTable(
   (t) => [index('order_lines_order').on(t.orderId)],
 );
 
+/** Mock provider payment states (src/domain/payments.ts). */
+export const PAYMENT_STATUSES = [
+  'requires_confirmation',
+  'requires_capture',
+  'succeeded',
+  'failed',
+  'refunded',
+  'partially_refunded',
+] as const;
+
+export const PAYMENT_OUTCOMES = [
+  'succeed',
+  'card_declined',
+  'insufficient_funds',
+  'processing_error',
+] as const;
+
 export const payments = sqliteTable('payments', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   orderId: integer('order_id').references(() => orders.id),
   /** The mock provider's id, e.g. pi_…. */
   providerRef: text('provider_ref').notNull().unique(),
-  status: text('status', {
-    enum: ['requires_confirmation', 'succeeded', 'failed', 'refunded', 'partially_refunded'],
-  }).notNull(),
+  status: text('status', { enum: PAYMENT_STATUSES }).notNull(),
   amountCents: cents('amount_cents').notNull(),
   refundedCents: cents('refunded_cents').notNull().default(0),
   brand: text('brand').notNull(),
   last4: text('last4').notNull(),
+  // Defaults exist only so SQLite can add these columns to existing tables.
+  /** Card expiry; with brand and last 4 the only card data ever stored (payments spec). */
+  expMonth: integer('exp_month').notNull().default(0),
+  expYear: integer('exp_year').notNull().default(0),
+  /** What the mock provider will do on confirm, decided from the card number at creation. */
+  outcome: text('outcome', { enum: PAYMENT_OUTCOMES }).notNull().default('succeed'),
+  /** Confirm attempts so far (a processing error succeeds on retry). */
+  attempts: integer('attempts').notNull().default(0),
+  /** The key of the confirm request that settled this payment (idempotent retries). */
+  idempotencyKey: text('idempotency_key').unique(),
   failureCode: text('failure_code'),
   createdAt: createdAt(),
 });
