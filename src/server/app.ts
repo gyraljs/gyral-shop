@@ -4,6 +4,7 @@ import { departmentLinks, homeData } from '../services/catalog.js';
 import { homePage } from '../ui/pages/home.js';
 import { notFoundPage, serverErrorPage } from '../ui/pages/errors.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
+import { catalogRoutes } from './catalog-routes.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { placeholderSvg } from './placeholder-image.js';
 
@@ -48,6 +49,8 @@ export function createApp({ clientEntry, db }: AppOptions): Hono {
       main: homePage({ departments: departmentList, ...data }),
     });
   });
+
+  app.route('/', catalogRoutes({ db, render: page }));
 
   app.notFound(async (c) =>
     page({
