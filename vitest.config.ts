@@ -1,8 +1,10 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 
+import { LIT_PACKAGES } from './vite.config.js';
+
 // Lit must be a single copy even though Gyral is linked from another repo (ADR 0001).
-const dedupe = ['lit', 'lit-html', 'lit-element', '@lit/reactive-element'];
+const dedupe = LIT_PACKAGES;
 
 export default defineConfig({
   resolve: { dedupe },

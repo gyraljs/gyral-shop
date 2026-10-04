@@ -32,6 +32,8 @@
     "@gyral/time": "link:../cyclejs-web-framework/packages/time",
     "@hono/node-server": "2.1.3",
     "@libsql/client": "0.18.0",
+    "@lit-labs/ssr": "4.1.0",
+    "@lit-labs/ssr-client": "1.1.8",
     "drizzle-orm": "0.45.3",
     "hono": "4.13.13",
     "lit": "3.3.3",
