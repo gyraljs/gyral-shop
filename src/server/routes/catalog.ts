@@ -1,16 +1,16 @@
 // Department and category pages (docs/product-specs/catalog.md). Mounted by app.ts.
 import { Hono } from 'hono';
-import type { Db } from '../db/client.js';
-import { parseListing } from '../domain/listing.js';
-import { categoryPage, departmentPage } from '../services/departments.js';
+import type { Db } from '../../db/client.js';
+import { parseListing } from '../../domain/listing.js';
+import { categoryPage, departmentPage } from '../../services/departments.js';
 import {
   categoryCrumbs,
   categoryPage as categoryView,
   categoryPath,
-} from '../ui/pages/category.js';
-import { departmentCrumbs, departmentPage as departmentView } from '../ui/pages/department.js';
-import type { RenderPage } from './document.js';
-import { breadcrumbJsonLd } from './seo.js';
+} from '../../ui/pages/category.js';
+import { departmentCrumbs, departmentPage as departmentView } from '../../ui/pages/department.js';
+import type { RenderPage } from '../document.js';
+import { breadcrumbJsonLd } from '../seo.js';
 
 export interface CatalogRouteOptions {
   readonly db: Db;
