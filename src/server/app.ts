@@ -1,5 +1,7 @@
 import { Hono } from 'hono';
-import { html } from '@gyral/core';
+import type { Db } from '../db/client.js';
+import { departmentLinks, homeData } from '../services/catalog.js';
+import { homePage } from '../ui/pages/home.js';
 import { notFoundPage, serverErrorPage } from '../ui/pages/errors.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
@@ -8,28 +10,19 @@ import { placeholderSvg } from './placeholder-image.js';
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
   readonly clientEntry: string;
+  readonly db: Db;
 }
-
-// Placeholder until the catalog repository exists (shop-jlx.2).
-const DEPARTMENTS: readonly DepartmentLink[] = [
-  { slug: 'electronics', name: 'Electronics' },
-  { slug: 'home-kitchen', name: 'Home & Kitchen' },
-  { slug: 'clothing', name: 'Clothing' },
-  { slug: 'toys-games', name: 'Toys & Games' },
-  { slug: 'grocery', name: 'Grocery' },
-  { slug: 'beauty', name: 'Beauty' },
-  { slug: 'sports-outdoors', name: 'Sports & Outdoors' },
-  { slug: 'books', name: 'Books' },
-];
 
 const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#c8102e"/><text x="16" y="22" font-family="system-ui,sans-serif" font-size="17" font-weight="800" text-anchor="middle" fill="#fff">G</text></svg>`;
 
 type PageOptions = Omit<ShellOptions, 'clientEntry' | 'departments'>;
 
-export function createApp(options: AppOptions): Hono {
+export function createApp({ clientEntry, db }: AppOptions): Hono {
   const app = new Hono();
-  const page = (o: PageOptions) =>
-    shell({ ...o, clientEntry: options.clientEntry, departments: DEPARTMENTS });
+  // Departments appear in every page's header; they change rarely, so load once per app.
+  let departments: Promise<readonly DepartmentLink[]> | undefined;
+  const nav = () => (departments ??= departmentLinks(db));
+  const page = async (o: PageOptions) => shell({ ...o, clientEntry, departments: await nav() });
 
   app.get(
     '/favicon.svg',
@@ -47,30 +40,34 @@ export function createApp(options: AppOptions): Hono {
     });
   });
 
-  app.get('/', () =>
-    page({
+  app.get('/', async () => {
+    const [data, departmentList] = await Promise.all([homeData(db), nav()]);
+    return page({
       title: SITE_NAME,
-      description: 'Everything for home, family and fun, in one store.',
-      main: html`<h1>Welcome to ${SITE_NAME}</h1>
-        <p>Electronics, home, clothing, toys, grocery and more.</p>`,
-    }),
-  );
+      description: 'Electronics, home, clothing, toys, groceries and more, in one store.',
+      main: homePage({ departments: departmentList, ...data }),
+    });
+  });
 
-  app.notFound((c) =>
+  app.notFound(async (c) =>
     page({
       title: 'Page not found',
       status: 404,
       noindex: true,
-      main: notFoundPage(new URL(c.req.url).pathname, DEPARTMENTS),
+      main: notFoundPage(new URL(c.req.url).pathname, await nav()),
     }),
   );
 
-  app.onError((error) => {
+  app.onError(async (error) => {
     console.error(error);
-    return page({
+    // The failure may be the database itself: never let the error page depend on it.
+    const departmentList = await nav().catch(() => []);
+    return shell({
       title: 'Something went wrong',
       status: 500,
       noindex: true,
+      clientEntry,
+      departments: departmentList,
       main: serverErrorPage(),
     });
   });

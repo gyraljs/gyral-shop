@@ -12,6 +12,20 @@ export default defineConfig({
     projects: [
       {
         resolve: { dedupe },
+        // Pre-bundle Lit directive modules and axe so the first run doesn't reload mid-test.
+        optimizeDeps: {
+          include: [
+            'lit',
+            'lit/directive.js',
+            'lit/directives/class-map.js',
+            'lit/directives/keyed.js',
+            'lit/directives/live.js',
+            'lit/directives/repeat.js',
+            'lit/directives/style-map.js',
+            '@lit-labs/ssr-client/lit-element-hydrate-support.js',
+            'axe-core',
+          ],
+        },
         test: {
           name: 'browser',
           include: ['src/ui/**/*.test.ts', 'test/browser/**/*.test.ts'],

@@ -6,6 +6,7 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
 import { baseCss } from '../ui/styles/base.js';
+import { catalogCss } from '../ui/styles/catalog.js';
 
 export const SITE_NAME = 'Gyral Goods';
 
@@ -43,7 +44,7 @@ const footer = html`
 `;
 
 export function shell(options: ShellOptions): Response {
-  const head = html`${unsafeHTML(`<style>${baseCss}</style>`)}
+  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}</style>`)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     ${options.noindex === true ? html`<meta name="robots" content="noindex" />` : nothing}`;
   return renderPage(

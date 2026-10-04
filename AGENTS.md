@@ -40,6 +40,7 @@ system of record.
 | Auth, sessions, CSRF, roles, passwords | [0002-security.md](docs/design-docs/0002-security.md)                   |
 | Money, prices, tax, promos, inventory  | [0003-money-and-pricing.md](docs/design-docs/0003-money-and-pricing.md) |
 | CI                                     | [0004-local-ci.md](docs/design-docs/0004-local-ci.md)                   |
+| Writing tests, fixtures                | [0005-testing.md](docs/design-docs/0005-testing.md)                     |
 
 ## Skills to load
 

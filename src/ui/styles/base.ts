@@ -2,7 +2,7 @@
 // component's `static styles`. Tokens are inherited custom properties, so components use
 // them through the shadow boundary.
 export const baseCss = `
-@layer reset, tokens, base;
+@layer reset, tokens, base, components;
 
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }
@@ -14,7 +14,7 @@ export const baseCss = `
   :root {
     color-scheme: light dark;
     --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --brand: oklch(55% 0.2 25);
+    --brand: oklch(50% 0.2 25);
     --brand-ink: oklch(99% 0 0);
     --surface: light-dark(oklch(99% 0.003 250), oklch(18% 0.01 250));
     --surface-raised: light-dark(oklch(100% 0 0), oklch(23% 0.012 250));
