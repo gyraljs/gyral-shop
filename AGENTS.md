@@ -12,34 +12,34 @@ system of record.
 
 ## Commands
 
-| Command | What it does |
-| --- | --- |
-| `pnpm install` | Install (Gyral is linked from `../cyclejs-web-framework`) |
-| `pnpm check` | **The gate**: typecheck, lint, format, invariants, tests |
-| `pnpm dev` | Dev server with SSR + HMR: http://localhost:5200 |
-| `pnpm db:reset` | Recreate `data/shop.db`, migrate, seed |
-| `pnpm db:generate` | Generate a migration after editing `src/db/schema.ts` |
-| `pnpm ci:local` | Run CI locally in Docker via `gh act` |
+| Command            | What it does                                              |
+| ------------------ | --------------------------------------------------------- |
+| `pnpm install`     | Install (Gyral is linked from `../cyclejs-web-framework`) |
+| `pnpm check`       | **The gate**: typecheck, lint, format, invariants, tests  |
+| `pnpm dev`         | Dev server with SSR + HMR: http://localhost:5200          |
+| `pnpm db:reset`    | Recreate `data/shop.db`, migrate, seed                    |
+| `pnpm db:generate` | Generate a migration after editing `src/db/schema.ts`     |
+| `pnpm ci:local`    | Run CI locally in Docker via `gh act`                     |
 
 ## Where things are
 
-| Path | Contents |
-| --- | --- |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Layers, allowed imports, render modes |
+| Path                                               | Contents                                        |
+| -------------------------------------------------- | ----------------------------------------------- |
+| [ARCHITECTURE.md](ARCHITECTURE.md)                 | Layers, allowed imports, render modes           |
 | [docs/product-specs/](docs/product-specs/index.md) | What each feature must do (acceptance criteria) |
-| [docs/design-docs/](docs/design-docs/index.md) | Decisions (ADRs) |
-| `src/domain` … `src/client` | The layers, in dependency order |
-| `test/node`, `test/browser` | Cross-layer tests (route + DB, full pages) |
+| [docs/design-docs/](docs/design-docs/index.md)     | Decisions (ADRs)                                |
+| `src/domain` … `src/client`                        | The layers, in dependency order                 |
+| `test/node`, `test/browser`                        | Cross-layer tests (route + DB, full pages)      |
 
 ## Read before changing…
 
-| Area | Read |
-| --- | --- |
-| Anything | [core-beliefs.md](docs/design-docs/core-beliefs.md) |
-| Dependencies, Gyral link, no Effect | [0001-stack.md](docs/design-docs/0001-stack.md) |
-| Auth, sessions, CSRF, roles, passwords | [0002-security.md](docs/design-docs/0002-security.md) |
-| Money, prices, tax, promos, inventory | [0003-money-and-pricing.md](docs/design-docs/0003-money-and-pricing.md) |
-| CI | [0004-local-ci.md](docs/design-docs/0004-local-ci.md) |
+| Area                                   | Read                                                                    |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| Anything                               | [core-beliefs.md](docs/design-docs/core-beliefs.md)                     |
+| Dependencies, Gyral link, no Effect    | [0001-stack.md](docs/design-docs/0001-stack.md)                         |
+| Auth, sessions, CSRF, roles, passwords | [0002-security.md](docs/design-docs/0002-security.md)                   |
+| Money, prices, tax, promos, inventory  | [0003-money-and-pricing.md](docs/design-docs/0003-money-and-pricing.md) |
+| CI                                     | [0004-local-ci.md](docs/design-docs/0004-local-ci.md)                   |
 
 ## Skills to load
 

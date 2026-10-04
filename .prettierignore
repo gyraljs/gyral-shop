@@ -1,0 +1,7 @@
+.beads/
+pnpm-lock.yaml
+dist/
+.pnpm-store/
+.claude/worktrees/
+test/fixtures/
+drizzle/meta/
