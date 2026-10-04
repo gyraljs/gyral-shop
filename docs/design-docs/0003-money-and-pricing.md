@@ -15,3 +15,14 @@ Status: **accepted** (2026-10-04)
   releases it.
 - **Order state machine:** `pending_payment → paid → fulfilled → delivered`, with
   `cancelled` and `refunded` branches. Transitions are pure functions that reject invalid moves.
+
+## Addendum: decisions made while implementing `src/domain` (2026-10-04)
+
+- Free shipping is judged on the **discounted** merchandise subtotal.
+- Tax is rounded **once** on the total taxable amount, not per line. Promo discounts are
+  allocated to lines (largest remainder) before tax, so exempt items don't absorb discounts.
+- State rates are base rates only and marked illustrative. Grocery is taxed in AL, HI, ID, MS
+  and SD; clothing is exempt in MN, NJ, PA and VT.
+- Cancelling a paid order moves straight to `cancelled`, with a full refund as an effect.
+- An invalid promo code never fails pricing: the breakdown carries `promoError` instead.
+- The mock provider charges any Luhn-valid card except the documented failure cards.
