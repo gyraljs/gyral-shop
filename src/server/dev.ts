@@ -24,6 +24,7 @@ const ssr = getRequestListener(async (request) => {
       clientEntry: '/src/client/entry.ts',
       db,
       mode: config.NODE_ENV,
+      ...(config.SITE_ORIGIN === undefined ? {} : { siteOrigin: config.SITE_ORIGIN }),
       security: { dev: config.NODE_ENV === 'development' },
       services: {
         paymentLatencyMs: config.PAYMENT_LATENCY_MS,

@@ -29,6 +29,8 @@ export interface TestAppOptions {
   /** Clock for sessions and rate limits. */
   readonly now?: () => Date;
   readonly dev?: boolean;
+  /** Public origin (SITE_ORIGIN) for absolute URLs. */
+  readonly siteOrigin?: string;
 }
 
 export async function testApp(options: TestAppOptions = {}): Promise<TestApp> {
@@ -41,7 +43,12 @@ export async function testApp(options: TestAppOptions = {}): Promise<TestApp> {
     ...(options.now === undefined ? {} : { now: options.now }),
     ...(options.dev === undefined ? {} : { dev: options.dev }),
   };
-  const app = createApp({ clientEntry: CLIENT_ENTRY, db, security });
+  const app = createApp({
+    clientEntry: CLIENT_ENTRY,
+    db,
+    security,
+    ...(options.siteOrigin === undefined ? {} : { siteOrigin: options.siteOrigin }),
+  });
   const get = async (path: string, init?: RequestInit) => app.request(path, init);
   const html = async (path: string) => (await get(path)).text();
   return { db, app, get, html, now: options.now ?? (() => new Date()) };

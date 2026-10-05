@@ -17,3 +17,12 @@ Status: **accepted** (2026-10-04)
 - **Testing:** Vitest browser mode (Chromium) for UI, Node project for domain/db/services and
   route tests against an in-memory SQLite, `@axe-core/playwright` for accessibility.
 - **Local only** for now: no deployment target.
+
+## Addendum: public origin (2026-10-04)
+
+Absolute URLs (canonical links, sitemap, `robots.txt`, structured data, links in emails) use
+`SITE_ORIGIN` (e.g. `https://shop.example`), validated as a bare http(s) origin and required
+in production, because behind a proxy the request URL is internal. Without it (local
+development) they fall back to the request's origin. Routes call `publicOrigin(c)`
+(`src/server/origin.ts`). Same-origin checks (CSRF `Origin`, consent) still compare against
+the request's origin.

@@ -7,6 +7,7 @@ import { productCrumbs, productPage as productView, productPath } from '../../ui
 import type { RenderPage } from '../document.js';
 import { csrfTokenFor, type AppEnv } from '../security/index.js';
 import { breadcrumbJsonLd, productJsonLd, twitterCard } from '../seo.js';
+import { publicOrigin } from '../origin.js';
 
 export interface ProductRouteOptions {
   readonly db: Db;
@@ -27,7 +28,7 @@ export function productRoutes({ db, render }: ProductRouteOptions): Hono<AppEnv>
   routes.get('/p/:slug', async (c) => {
     const data = await productPage(db, c.req.param('slug'));
     if (data === undefined) return c.notFound();
-    const { origin } = new URL(c.req.url);
+    const origin = publicOrigin(c);
     const path = productPath(data.slug);
     const canonical = new URL(path, origin).href;
     const description = metaDescription(data.description);
