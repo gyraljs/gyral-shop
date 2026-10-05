@@ -19,7 +19,9 @@ const USAGE = `Usage: pnpm ui:check [page…] [--baseline] [--compare] [--thresh
   --compare      pixel-diff screenshots against the baseline; fail above --max-diff
   --threshold    per-pixel colour threshold for the diff, 0..1 (default 0.1)
   --max-diff     allowed ratio of differing pixels per screenshot (default 0.001)
-  --port         port for the shop dev server (default 5800, or UI_CHECK_PORT); HMR uses port+1`;
+  --port         port for the shop dev server (default 5800, or UI_CHECK_PORT); HMR uses port+1
+  --theme        run every page under this theme (sets the theme cookie, or UI_THEME); its
+                 baseline lives in .ui-check/baseline/<theme>/`;
 
 export function parseArgs(argv, env = {}) {
   const options = {
@@ -29,6 +31,7 @@ export function parseArgs(argv, env = {}) {
     threshold: 0.1,
     maxDiff: 0.001,
     port: Number(env['UI_CHECK_PORT'] ?? 5800),
+    theme: env['UI_THEME'] ?? '',
   };
   const errors = [];
   for (const arg of argv) {
@@ -37,7 +40,11 @@ export function parseArgs(argv, env = {}) {
     else if (flag === '--baseline') options.baseline = true;
     else if (flag === '--compare') options.compare = true;
     else if (flag === '--help') errors.push('help');
-    else if (['--threshold', '--max-diff', '--port'].includes(flag ?? '')) {
+    else if (flag === '--theme') {
+      if (value === undefined || !/^[a-z][a-z0-9-]*$/.test(value))
+        errors.push(`${arg}: expects a theme name`);
+      else options.theme = value;
+    } else if (['--threshold', '--max-diff', '--port'].includes(flag ?? '')) {
       const n = Number(value);
       if (value === undefined || !Number.isFinite(n) || n < 0)
         errors.push(`${arg}: expects a number`);

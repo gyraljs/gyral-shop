@@ -26,6 +26,14 @@ describe('parseArgs', () => {
     expect(parseArgs(['--threshold=2'], {}).errors).toHaveLength(1);
     expect(parseArgs(['--nope'], {}).errors).toEqual(['unknown option --nope']);
   });
+
+  it('reads a theme from --theme or UI_THEME and rejects bad names', () => {
+    expect(parseArgs(['--theme=marketplace'], {}).options.theme).toBe('marketplace');
+    expect(parseArgs([], { UI_THEME: 'boutique' }).options.theme).toBe('boutique');
+    expect(parseArgs([], {}).options.theme).toBe('');
+    expect(parseArgs(['--theme=Bad Name'], {}).errors).toHaveLength(1);
+    expect(parseArgs(['--theme'], {}).errors).toHaveLength(1);
+  });
 });
 
 describe('scenarios', () => {
