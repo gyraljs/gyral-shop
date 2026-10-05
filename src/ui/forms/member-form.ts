@@ -252,6 +252,7 @@ export const memberFormCss = `
     background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
   }
   [data-component="member-form"] .form-actions { margin: 0; }
+  [data-component="member-form"] button { font: inherit; font-weight: 600; }
   [data-component="member-form"] button:disabled { opacity: 0.6; cursor: progress; }
 }
 `;

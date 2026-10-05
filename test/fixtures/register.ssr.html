@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Create an account — Gyral Goods</title>
     
-    <!--lit-part eabATTlSz5c=--><!--lit-part wx+VKSWcFMQ=--><style>
+    <!--lit-part eabATTlSz5c=--><!--lit-part ClxIMWvKa2c=--><style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -311,6 +311,7 @@
   [data-region="account-nav"] a { display: block; padding: var(--space-1) var(--space-2); border-radius: var(--radius); }
   [data-region="account-nav"] a[aria-current="page"] { background: var(--surface-sunken); font-weight: 600; }
   .account h2 { margin-block: var(--space-3) 0; font-size: 1.15rem; }
+  .account section { display: grid; gap: var(--space-2); }
   .notice {
     margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius);
     border-inline-start: 4px solid var(--ok);
@@ -410,6 +411,7 @@
     background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
   }
   [data-component="member-form"] .form-actions { margin: 0; }
+  [data-component="member-form"] button { font: inherit; font-weight: 600; }
   [data-component="member-form"] button:disabled { opacity: 0.6; cursor: progress; }
 }
 

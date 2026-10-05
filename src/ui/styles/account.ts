@@ -21,6 +21,7 @@ export const accountCss = `
   [data-region="account-nav"] a { display: block; padding: var(--space-1) var(--space-2); border-radius: var(--radius); }
   [data-region="account-nav"] a[aria-current="page"] { background: var(--surface-sunken); font-weight: 600; }
   .account h2 { margin-block: var(--space-3) 0; font-size: 1.15rem; }
+  .account section { display: grid; gap: var(--space-2); }
   .notice {
     margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius);
     border-inline-start: 4px solid var(--ok);
