@@ -56,6 +56,11 @@ export interface ShellOptions {
   readonly metaNames?: readonly (readonly [name: string, content: string])[];
   /** Per-request store instances, read during the render and seeded for hydration. */
   readonly stores?: readonly AnyStoreInstance[];
+  /**
+   * Prerendered at build time (ssg): the same HTML for every visitor, so the header asks for
+   * the account after hydration and the mini-cart loads the cart (Gyral ADR 0016).
+   */
+  readonly static?: boolean;
 }
 
 /** JSON for a <script> body: `<` is escaped so content can never close the element. */
@@ -98,12 +103,20 @@ const DOCUMENT_STYLES = [
   consentCss,
 ];
 
-/** The consent banner for undecided visitors (never on the settings page itself). */
-function consentBanner() {
-  const { decided } = currentConsent();
+/**
+ * The consent banner for undecided visitors (never on the settings page itself). Prerendered
+ * pages can't know the visitor, so they carry a deferred banner that asks `/api/me` after
+ * hydration and opens only if this visitor hasn't decided.
+ */
+function consentBanner(prerendered: boolean) {
   const path = currentPath();
-  if (decided || path.startsWith('/consent')) return nothing;
-  return html`<shop-consent mode="banner" return-to=${path}></shop-consent>`;
+  if (path.startsWith('/consent')) return nothing;
+  if (prerendered) {
+    return html`<shop-consent mode="banner" deferred return-to=${path}></shop-consent>`;
+  }
+  return currentConsent().decided
+    ? nothing
+    : html`<shop-consent mode="banner" return-to=${path}></shop-consent>`;
 }
 
 export function shell(options: ShellOptions): Response {
@@ -139,10 +152,11 @@ export function shell(options: ShellOptions): Response {
           query=${options.query ?? ''}
           current=${options.currentDepartment ?? ''}
           .account=${options.account}
+          ?personalize=${options.static === true}
           ><shop-search slot="search" query=${options.query ?? ''}></shop-search
           ><shop-mini-cart slot="cart" data-region="cart"></shop-mini-cart
         ></shop-header>
-        ${consentBanner()}
+        ${consentBanner(options.static === true)}
         <main id="main" class="page" tabindex="-1">${options.main}</main>
         ${footer}
       `,

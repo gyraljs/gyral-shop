@@ -1,4 +1,4 @@
-import { css, define, html, nothing, repeat, type Stateless } from '@gyral/core';
+import { css, define, html, nothing, repeat, send, type Stateless } from '@gyral/core';
 import { format } from '../../domain/money.js';
 import type { CartClient } from './model.js';
 import { cartStore } from './store.js';
@@ -44,7 +44,11 @@ const panel = (cart: CartClient) =>
 export const MiniCart = define<Stateless, never>('shop-mini-cart', {
   stores: [cartStore],
   intent: {},
-  update: {},
+  update: {
+    // Prerendered pages don't seed the cart (it differs per visitor): load it once hydrated.
+    Hydrated: (s, _m, { read }) =>
+      read(cartStore).cart === undefined ? [s, [send(cartStore, { _tag: 'Refresh' })]] : s,
+  },
   view: (_s, _i, { read }) => {
     const { cart, inFlight } = read(cartStore);
     if (cart === undefined) return html`<a class="plain" part="link" href="/cart">Cart</a>`;

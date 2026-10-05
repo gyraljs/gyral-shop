@@ -293,10 +293,35 @@
   .distribution dd { display: contents; }
   .distribution meter { inline-size: 100%; block-size: 0.75rem; }
   .distribution .count { text-align: end; font-variant-numeric: tabular-nums; color: var(--ink-muted); }
-  .review-list { list-style: none; padding: 0; display: grid; gap: var(--space-4); }
-  .review-list article { border-block-start: 1px solid var(--line); padding-block-start: var(--space-3); }
-  .review-list h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
+  [data-component="review-list"] { list-style: none; padding: 0; display: grid; gap: var(--space-4); }
+  [data-component="review-list"][aria-busy="true"] { opacity: 0.6; }
+  [data-component="review"] { border-block-start: 1px solid var(--line); padding-block-start: var(--space-3); }
+  [data-component="review"] h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
   .byline { color: var(--ink-muted); font-size: 0.9rem; margin-block: var(--space-1); }
+  [data-component="review-helpful"] {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+    color: var(--ink-muted); font-size: 0.9rem;
+  }
+  [data-component="review-helpful"] form { margin: 0; }
+  [data-component="review-helpful"] button {
+    font: inherit; padding: var(--space-1) var(--space-3); cursor: pointer;
+    border: 1px solid var(--line-strong); border-radius: var(--radius);
+    background: var(--surface-raised); color: var(--ink);
+  }
+  [data-component="review-helpful"] button:disabled { opacity: 0.6; cursor: progress; }
+  [data-component="review-cta"] { margin-block: var(--space-3); }
+  [data-component="review-notice"]:empty { display: none; }
+  [data-component="review-notice"] {
+    padding: var(--space-2) var(--space-3); border-inline-start: 4px solid var(--ok);
+    background: var(--surface-sunken);
+  }
+  [data-component="review-notice"].error { border-inline-start-color: var(--danger); }
+  [data-component="review-sort"] ul {
+    list-style: none; padding: 0; margin: var(--space-3) 0; display: flex; gap: var(--space-3);
+  }
+  [data-component="review-sort"] a[aria-current] { font-weight: 700; text-decoration-thickness: 2px; }
+  #reviews-title:focus:not(:focus-visible) { outline: none; }
+  .review-pager { display: flex; gap: var(--space-3); align-items: center; margin-block: var(--space-4); }
 }
 </style><style>
 @layer components {
@@ -768,15 +793,16 @@ shop-checkout {
     <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
     <!--lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:type" content="product" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:title" content="Fieldstone Fantastic Rain Jacket" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:description" content="Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem…" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:url" content="http://localhost/p/fieldstone-fantastic-rain-jacket-27" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:image" content="http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/1.svg" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:image:alt" content="Fieldstone Fantastic Rain Jacket" /><!--/lit-part--><!--/lit-part-->
     <!--lit-part--><!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="twitter:card" content="summary_large_image" /><!--/lit-part--><!--/lit-part-->
-    <!--lit-part 81x61Wk4sCo=--><script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Fieldstone Fantastic Rain Jacket","description":"Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem cubicularis doloribus.","url":"http://localhost/p/fieldstone-fantastic-rain-jacket-27","image":["http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/1.svg","http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/2.svg","http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/3.svg","http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/4.svg"],"brand":{"@type":"Brand","name":"Fieldstone"},"offers":{"@type":"AggregateOffer","url":"http://localhost/p/fieldstone-fantastic-rain-jacket-27","lowPrice":"17.99","highPrice":"17.99","offerCount":15,"priceCurrency":"USD","availability":"https://schema.org/InStock"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"3.8","reviewCount":5,"bestRating":"5","worstRating":"1"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"http://localhost/"},{"@type":"ListItem","position":2,"name":"Clothing","item":"http://localhost/d/clothing"},{"@type":"ListItem","position":3,"name":"Kids' Clothing","item":"http://localhost/c/clothing/kids-clothing"},{"@type":"ListItem","position":4,"name":"Fieldstone Fantastic Rain Jacket","item":"http://localhost/p/fieldstone-fantastic-rain-jacket-27"}]}</script><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[],"itemCount":0,"canCheckout":false,"totals":{"subtotal":{"cents":0,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":0,"currency":"USD"}}},"inFlight":0},"wishlist":{"member":false,"slugs":[],"csrf":"","inFlight":0}}</script>
+    <!--lit-part v7/WtIGribo=--><script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Fieldstone Fantastic Rain Jacket","description":"Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem cubicularis doloribus.","url":"http://localhost/p/fieldstone-fantastic-rain-jacket-27","image":["http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/1.svg","http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/2.svg","http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/3.svg","http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/4.svg"],"brand":{"@type":"Brand","name":"Fieldstone"},"offers":{"@type":"AggregateOffer","url":"http://localhost/p/fieldstone-fantastic-rain-jacket-27","lowPrice":"17.99","highPrice":"17.99","offerCount":15,"priceCurrency":"USD","availability":"https://schema.org/InStock"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"3.8","reviewCount":5,"bestRating":"5","worstRating":"1"},"review":[{"@type":"Review","name":"Exactly what I wanted","reviewBody":"Maiores sollers degenero credo deprimo defungo curso soluta et. Depromo mollitia stultus. Abutor vulnus arbitro comitatus chirographum amiculum decens cito crudelis. Arbustum vomica error assumenda.","datePublished":"2026-06-24","author":{"@type":"Person","name":"Amari H."},"reviewRating":{"@type":"Rating","ratingValue":"5","bestRating":"5","worstRating":"1"}},{"@type":"Review","name":"Happy with it","reviewBody":"Auxilium beatae pauci abduco vito appono vetus cupiditas audeo.","datePublished":"2026-06-17","author":{"@type":"Person","name":"Lavern H."},"reviewRating":{"@type":"Rating","ratingValue":"4","bestRating":"5","worstRating":"1"}},{"@type":"Review","name":"Just okay","reviewBody":"Tabella tergiversatio cimentarius aspernatur suscipio admoneo traho color cupiditate.","datePublished":"2026-05-15","author":{"@type":"Person","name":"Ali N."},"reviewRating":{"@type":"Rating","ratingValue":"2","bestRating":"5","worstRating":"1"}},{"@type":"Review","name":"Really good","reviewBody":"Averto sublime modi tamquam verbum. Compono laudantium vix. Cognomen credo arbitro cuius decerno curatio vester veritatis confido. Clam denego voveo inflammatio.","datePublished":"2026-04-13","author":{"@type":"Person","name":"Burdette P."},"reviewRating":{"@type":"Rating","ratingValue":"4","bestRating":"5","worstRating":"1"}},{"@type":"Review","name":"Happy with it","reviewBody":"Summa communis spes. Vomer tumultus quisquam succedo. Solium absconditus uterque quia quasi sollicito. Adaugeo sum ademptio deficio candidus.","datePublished":"2025-12-14","author":{"@type":"Person","name":"Vivienne Y."},"reviewRating":{"@type":"Rating","ratingValue":"4","bestRating":"5","worstRating":"1"}}]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"http://localhost/"},{"@type":"ListItem","position":2,"name":"Clothing","item":"http://localhost/d/clothing"},{"@type":"ListItem","position":3,"name":"Kids' Clothing","item":"http://localhost/c/clothing/kids-clothing"},{"@type":"ListItem","position":4,"name":"Fieldstone Fantastic Rain Jacket","item":"http://localhost/p/fieldstone-fantastic-rain-jacket-27"}]}</script><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[],"itemCount":0,"canCheckout":false,"totals":{"subtotal":{"cents":0,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":0,"currency":"USD"}}},"inFlight":0},"wishlist":{"member":false,"slugs":[],"csrf":"","inFlight":0}}</script>
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part XoXIiwCTunU=-->
+    <!--lit-part 9F7SK2yT2mY=-->
         <nav class="skip-links" aria-label="Skip links">
           <a class="skip-link" href="#main">Skip to content</a>
         </nav>
         <!--lit-node 2--><shop-header
+          
           
           
           
@@ -1191,7 +1217,7 @@ shop-checkout {
         <!--gyral:lit-part--><!--gyral:/lit-part-->
       </section>
     <!--gyral:/lit-part--></shop-consent><!--/lit-part-->
-        <main id="main" class="page" tabindex="-1"><!--lit-part SjdF4TV8YIg=-->
+        <main id="main" class="page" tabindex="-1"><!--lit-part gNALB/UCcJQ=-->
   <!--lit-part 65Yp3GYlcSg=-->
   <nav class="breadcrumbs" aria-label="Breadcrumb">
     <ol>
@@ -1735,168 +1761,232 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
                 </tr><!--/lit-part--><!--/lit-part-->
           </tbody>
         </table>
-      </section><!--/lit-part--> <!--lit-part KA8nY2in6IM=-->
-  <section id="reviews" aria-labelledby="reviews-title" class="product-section reviews">
-    <h2 id="reviews-title">Customer reviews</h2>
-    <!--lit-part RxsCeroqmJs=-->
-            <div class="reviews-summary">
-              <p class="average">
-                <span class="big"><!--lit-part-->3.8<!--/lit-part--></span>
-                <!--lit-part xHqIPJROMpo=-->
-  <span class="rating">
-    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 3.8"></span>
-    <span class="visually-hidden"><!--lit-part-->out of 5 stars<!--/lit-part--></span>
+      </section><!--/lit-part-->
+  <!--lit-part rChs8GPbd84=--><!--lit-node 0--><shop-reviews
+    
+    
+    
+    
+    
+   list-path="/p/fieldstone-fantastic-rain-jacket-27/reviews" csrf-token="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;slug&quot;:&quot;fieldstone-fantastic-rain-jacket-27&quot;,&quot;productName&quot;:&quot;Fieldstone Fantastic Rain Jacket&quot;,&quot;summary&quot;:{&quot;average&quot;:3.8,&quot;count&quot;:5,&quot;distribution&quot;:[{&quot;stars&quot;:5,&quot;count&quot;:1},{&quot;stars&quot;:4,&quot;count&quot;:3},{&quot;stars&quot;:3,&quot;count&quot;:0},{&quot;stars&quot;:2,&quot;count&quot;:1},{&quot;stars&quot;:1,&quot;count&quot;:0}]},&quot;items&quot;:[{&quot;id&quot;:81,&quot;rating&quot;:5,&quot;title&quot;:&quot;Exactly what I wanted&quot;,&quot;body&quot;:&quot;Maiores sollers degenero credo deprimo defungo curso soluta et. Depromo mollitia stultus. Abutor vulnus arbitro comitatus chirographum amiculum decens cito crudelis. Arbustum vomica error assumenda.&quot;,&quot;author&quot;:&quot;Amari H.&quot;,&quot;date&quot;:&quot;2026-06-24&quot;,&quot;helpfulCount&quot;:0,&quot;own&quot;:false,&quot;voted&quot;:false},{&quot;id&quot;:83,&quot;rating&quot;:4,&quot;title&quot;:&quot;Happy with it&quot;,&quot;body&quot;:&quot;Auxilium beatae pauci abduco vito appono vetus cupiditas audeo.&quot;,&quot;author&quot;:&quot;Lavern H.&quot;,&quot;date&quot;:&quot;2026-06-17&quot;,&quot;helpfulCount&quot;:0,&quot;own&quot;:false,&quot;voted&quot;:false},{&quot;id&quot;:80,&quot;rating&quot;:2,&quot;title&quot;:&quot;Just okay&quot;,&quot;body&quot;:&quot;Tabella tergiversatio cimentarius aspernatur suscipio admoneo traho color cupiditate.&quot;,&quot;author&quot;:&quot;Ali N.&quot;,&quot;date&quot;:&quot;2026-05-15&quot;,&quot;helpfulCount&quot;:0,&quot;own&quot;:false,&quot;voted&quot;:false},{&quot;id&quot;:82,&quot;rating&quot;:4,&quot;title&quot;:&quot;Really good&quot;,&quot;body&quot;:&quot;Averto sublime modi tamquam verbum. Compono laudantium vix. Cognomen credo arbitro cuius decerno curatio vester veritatis confido. Clam denego voveo inflammatio.&quot;,&quot;author&quot;:&quot;Burdette P.&quot;,&quot;date&quot;:&quot;2026-04-13&quot;,&quot;helpfulCount&quot;:0,&quot;own&quot;:false,&quot;voted&quot;:false},{&quot;id&quot;:84,&quot;rating&quot;:4,&quot;title&quot;:&quot;Happy with it&quot;,&quot;body&quot;:&quot;Summa communis spes. Vomer tumultus quisquam succedo. Solium absconditus uterque quia quasi sollicito. Adaugeo sum ademptio deficio candidus.&quot;,&quot;author&quot;:&quot;Vivienne Y.&quot;,&quot;date&quot;:&quot;2025-12-14&quot;,&quot;helpfulCount&quot;:0,&quot;own&quot;:false,&quot;voted&quot;:false}],&quot;sort&quot;:&quot;helpful&quot;,&quot;page&quot;:1,&quot;pages&quot;:1,&quot;total&quot;:5,&quot;eligibility&quot;:{&quot;_tag&quot;:&quot;SignIn&quot;}}}}" data-gyral-light defer-hydration data-gyral-hydrate="visible"><!--gyral:lit-part J17xgKhgqVM=--><section
+    id="reviews"
+    data-region="reviews"
+    aria-labelledby="reviews-title"
+    class="product-section reviews"
+  >
+    <!--gyral:lit-part wIfzhN5dgLc=--><h2 id="reviews-title" tabindex="-1">Customer reviews</h2><!--gyral:/lit-part--> <!--gyral:lit-part +LvaflZz4KE=--><div class="reviews-summary" data-component="rating-summary">
+        <p class="average">
+          <span class="big"><!--gyral:lit-part-->3.8<!--gyral:/lit-part--></span>
+          <!--gyral:lit-part cVxK50m3TGc=-->
+  <span class="rating" data-component="rating">
+    <!--gyral:lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 3.8"></span>
+    <span class="visually-hidden"><!--gyral:lit-part-->out of 5 stars<!--gyral:/lit-part--></span>
   </span>
-<!--/lit-part-->
-                <span><!--lit-part-->5 reviews<!--/lit-part--></span>
-              </p>
-              <!--lit-part fki7CxgSoo8=-->
-  <dl class="distribution">
-    <!--lit-part--><!--lit-part tesZFzUhunc=-->
-        <div>
-          <dt><!--lit-part-->5 stars<!--/lit-part--></dt>
-          <dd>
-            <!--lit-node 4--><meter
-              min="0"
-              max="5"
-              value="1"
-              aria-label="5 stars: 1 review"
-            ></meter>
-            <span class="count"><!--lit-part-->1<!--/lit-part--></span>
-          </dd>
-        </div>
-      <!--/lit-part--><!--lit-part tesZFzUhunc=-->
-        <div>
-          <dt><!--lit-part-->4 stars<!--/lit-part--></dt>
-          <dd>
-            <!--lit-node 4--><meter
-              min="0"
-              max="5"
-              value="3"
-              aria-label="4 stars: 3 reviews"
-            ></meter>
-            <span class="count"><!--lit-part-->3<!--/lit-part--></span>
-          </dd>
-        </div>
-      <!--/lit-part--><!--lit-part tesZFzUhunc=-->
-        <div>
-          <dt><!--lit-part-->3 stars<!--/lit-part--></dt>
-          <dd>
-            <!--lit-node 4--><meter
-              min="0"
-              max="5"
-              value="0"
-              aria-label="3 stars: 0 reviews"
-            ></meter>
-            <span class="count"><!--lit-part-->0<!--/lit-part--></span>
-          </dd>
-        </div>
-      <!--/lit-part--><!--lit-part tesZFzUhunc=-->
-        <div>
-          <dt><!--lit-part-->2 stars<!--/lit-part--></dt>
-          <dd>
-            <!--lit-node 4--><meter
-              min="0"
-              max="5"
-              value="1"
-              aria-label="2 stars: 1 review"
-            ></meter>
-            <span class="count"><!--lit-part-->1<!--/lit-part--></span>
-          </dd>
-        </div>
-      <!--/lit-part--><!--lit-part tesZFzUhunc=-->
-        <div>
-          <dt><!--lit-part-->1 star<!--/lit-part--></dt>
-          <dd>
-            <!--lit-node 4--><meter
-              min="0"
-              max="5"
-              value="0"
-              aria-label="1 star: 0 reviews"
-            ></meter>
-            <span class="count"><!--lit-part-->0<!--/lit-part--></span>
-          </dd>
-        </div>
-      <!--/lit-part--><!--/lit-part-->
-  </dl>
-<!--/lit-part-->
-            </div>
-            <ol class="review-list">
-              <!--lit-part--><!--lit-part drtKB0FtcDE=-->
-                  <li>
-                    <!--lit-node 1--><article aria-labelledby="review-81">
-                      <!--lit-node 2--><h3 id="review-81"><!--lit-part-->Exactly what I wanted<!--/lit-part--></h3>
-                      <!--lit-part xHqIPJROMpo=-->
-  <span class="rating">
-    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 5"></span>
-    <span class="visually-hidden"><!--lit-part-->5 out of 5 stars<!--/lit-part--></span>
+<!--gyral:/lit-part-->
+          <span><!--gyral:lit-part-->5 reviews<!--gyral:/lit-part--></span>
+        </p>
+        <dl class="distribution" data-component="rating-distribution">
+          <!--gyral:lit-part--><!--gyral:lit-part tLkq4tQBkP0=--><div>
+                <dt><!--gyral:lit-part-->5 stars<!--gyral:/lit-part--></dt>
+                <dd>
+                  <!--gyral:lit-node 4--><meter
+                    min="0"
+                    max="5"
+                    value="1"
+                    aria-label="5 stars: 1 review"
+                  ></meter>
+                  <span class="count"><!--gyral:lit-part-->1<!--gyral:/lit-part--></span>
+                </dd>
+              </div><!--gyral:/lit-part--><!--gyral:lit-part tLkq4tQBkP0=--><div>
+                <dt><!--gyral:lit-part-->4 stars<!--gyral:/lit-part--></dt>
+                <dd>
+                  <!--gyral:lit-node 4--><meter
+                    min="0"
+                    max="5"
+                    value="3"
+                    aria-label="4 stars: 3 reviews"
+                  ></meter>
+                  <span class="count"><!--gyral:lit-part-->3<!--gyral:/lit-part--></span>
+                </dd>
+              </div><!--gyral:/lit-part--><!--gyral:lit-part tLkq4tQBkP0=--><div>
+                <dt><!--gyral:lit-part-->3 stars<!--gyral:/lit-part--></dt>
+                <dd>
+                  <!--gyral:lit-node 4--><meter
+                    min="0"
+                    max="5"
+                    value="0"
+                    aria-label="3 stars: 0 reviews"
+                  ></meter>
+                  <span class="count"><!--gyral:lit-part-->0<!--gyral:/lit-part--></span>
+                </dd>
+              </div><!--gyral:/lit-part--><!--gyral:lit-part tLkq4tQBkP0=--><div>
+                <dt><!--gyral:lit-part-->2 stars<!--gyral:/lit-part--></dt>
+                <dd>
+                  <!--gyral:lit-node 4--><meter
+                    min="0"
+                    max="5"
+                    value="1"
+                    aria-label="2 stars: 1 review"
+                  ></meter>
+                  <span class="count"><!--gyral:lit-part-->1<!--gyral:/lit-part--></span>
+                </dd>
+              </div><!--gyral:/lit-part--><!--gyral:lit-part tLkq4tQBkP0=--><div>
+                <dt><!--gyral:lit-part-->1 star<!--gyral:/lit-part--></dt>
+                <dd>
+                  <!--gyral:lit-node 4--><meter
+                    min="0"
+                    max="5"
+                    value="0"
+                    aria-label="1 star: 0 reviews"
+                  ></meter>
+                  <span class="count"><!--gyral:lit-part-->0<!--gyral:/lit-part--></span>
+                </dd>
+              </div><!--gyral:/lit-part--><!--gyral:/lit-part-->
+        </dl>
+      </div><!--gyral:/lit-part-->
+    <p data-component="review-cta"><!--gyral:lit-part 0TjF3RMp9l8=--><!--gyral:lit-node 0--><a href="/account/login?next=%2Fp%2Ffieldstone-fantastic-rain-jacket-27%2Freview"
+        >Sign in to write a review</a
+      ><!--gyral:/lit-part--></p>
+    <!--gyral:lit-node 5--><p data-component="review-notice" role="status" >
+      <!--gyral:lit-part--><!--gyral:/lit-part-->
+    </p>
+    <!--gyral:lit-part qnRVOQPhcXI=--><!--gyral:lit-part THYt+/AOAvY=-->
+  <nav aria-label="Sort reviews" data-component="review-sort">
+    <ul>
+      <!--gyral:lit-part--><!--gyral:lit-part MRiHsxFRloQ=--><li>
+            <!--gyral:lit-node 1--><a
+              href="/p/fieldstone-fantastic-rain-jacket-27/reviews"
+              aria-current="true"
+              data-intent="Load"
+              ><!--gyral:lit-part-->Most helpful<!--gyral:/lit-part--></a
+            >
+          </li><!--gyral:/lit-part--><!--gyral:lit-part MRiHsxFRloQ=--><li>
+            <!--gyral:lit-node 1--><a
+              href="/p/fieldstone-fantastic-rain-jacket-27/reviews?sort=newest"
+              
+              data-intent="Load"
+              ><!--gyral:lit-part-->Newest<!--gyral:/lit-part--></a
+            >
+          </li><!--gyral:/lit-part--><!--gyral:/lit-part-->
+    </ul>
+  </nav>
+<!--gyral:/lit-part-->
+            <!--gyral:lit-node 1--><ol data-component="review-list" aria-busy="false">
+              <!--gyral:lit-part--><!--gyral:lit-part urZJAGKnO+I=-->
+  <li>
+    <!--gyral:lit-node 1--><article
+      id="review-81"
+      data-component="review"
+      aria-labelledby="review-title-81"
+    >
+      <!--gyral:lit-node 2--><h3 id="review-title-81"><!--gyral:lit-part-->Exactly what I wanted<!--gyral:/lit-part--></h3>
+      <!--gyral:lit-part cVxK50m3TGc=-->
+  <span class="rating" data-component="rating">
+    <!--gyral:lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 5"></span>
+    <span class="visually-hidden"><!--gyral:lit-part-->5 out of 5 stars<!--gyral:/lit-part--></span>
   </span>
-<!--/lit-part-->
-                      <p class="byline"><!--lit-part-->Amari H.<!--/lit-part-->, <!--lit-node 7--><time datetime="2026-06-24"><!--lit-part-->2026-06-24<!--/lit-part--></time></p>
-                      <p><!--lit-part-->Maiores sollers degenero credo deprimo defungo curso soluta et. Depromo mollitia stultus. Abutor vulnus arbitro comitatus chirographum amiculum decens cito crudelis. Arbustum vomica error assumenda.<!--/lit-part--></p>
-                    </article>
-                  </li>
-                <!--/lit-part--><!--lit-part drtKB0FtcDE=-->
-                  <li>
-                    <!--lit-node 1--><article aria-labelledby="review-83">
-                      <!--lit-node 2--><h3 id="review-83"><!--lit-part-->Happy with it<!--/lit-part--></h3>
-                      <!--lit-part xHqIPJROMpo=-->
-  <span class="rating">
-    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 4"></span>
-    <span class="visually-hidden"><!--lit-part-->4 out of 5 stars<!--/lit-part--></span>
+<!--gyral:/lit-part-->
+      <p class="byline"><!--gyral:lit-part-->Amari H.<!--gyral:/lit-part-->, <!--gyral:lit-node 7--><time datetime="2026-06-24"><!--gyral:lit-part-->2026-06-24<!--gyral:/lit-part--></time></p>
+      <p><!--gyral:lit-part-->Maiores sollers degenero credo deprimo defungo curso soluta et. Depromo mollitia stultus. Abutor vulnus arbitro comitatus chirographum amiculum decens cito crudelis. Arbustum vomica error assumenda.<!--gyral:/lit-part--></p>
+      <!--gyral:lit-part jTNzEv4bDT4=--><footer data-component="review-helpful">
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+  </footer><!--gyral:/lit-part-->
+    </article>
+  </li>
+<!--gyral:/lit-part--><!--gyral:lit-part urZJAGKnO+I=-->
+  <li>
+    <!--gyral:lit-node 1--><article
+      id="review-83"
+      data-component="review"
+      aria-labelledby="review-title-83"
+    >
+      <!--gyral:lit-node 2--><h3 id="review-title-83"><!--gyral:lit-part-->Happy with it<!--gyral:/lit-part--></h3>
+      <!--gyral:lit-part cVxK50m3TGc=-->
+  <span class="rating" data-component="rating">
+    <!--gyral:lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 4"></span>
+    <span class="visually-hidden"><!--gyral:lit-part-->4 out of 5 stars<!--gyral:/lit-part--></span>
   </span>
-<!--/lit-part-->
-                      <p class="byline"><!--lit-part-->Lavern H.<!--/lit-part-->, <!--lit-node 7--><time datetime="2026-06-17"><!--lit-part-->2026-06-17<!--/lit-part--></time></p>
-                      <p><!--lit-part-->Auxilium beatae pauci abduco vito appono vetus cupiditas audeo.<!--/lit-part--></p>
-                    </article>
-                  </li>
-                <!--/lit-part--><!--lit-part drtKB0FtcDE=-->
-                  <li>
-                    <!--lit-node 1--><article aria-labelledby="review-80">
-                      <!--lit-node 2--><h3 id="review-80"><!--lit-part-->Just okay<!--/lit-part--></h3>
-                      <!--lit-part xHqIPJROMpo=-->
-  <span class="rating">
-    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 2"></span>
-    <span class="visually-hidden"><!--lit-part-->2 out of 5 stars<!--/lit-part--></span>
+<!--gyral:/lit-part-->
+      <p class="byline"><!--gyral:lit-part-->Lavern H.<!--gyral:/lit-part-->, <!--gyral:lit-node 7--><time datetime="2026-06-17"><!--gyral:lit-part-->2026-06-17<!--gyral:/lit-part--></time></p>
+      <p><!--gyral:lit-part-->Auxilium beatae pauci abduco vito appono vetus cupiditas audeo.<!--gyral:/lit-part--></p>
+      <!--gyral:lit-part jTNzEv4bDT4=--><footer data-component="review-helpful">
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+  </footer><!--gyral:/lit-part-->
+    </article>
+  </li>
+<!--gyral:/lit-part--><!--gyral:lit-part urZJAGKnO+I=-->
+  <li>
+    <!--gyral:lit-node 1--><article
+      id="review-80"
+      data-component="review"
+      aria-labelledby="review-title-80"
+    >
+      <!--gyral:lit-node 2--><h3 id="review-title-80"><!--gyral:lit-part-->Just okay<!--gyral:/lit-part--></h3>
+      <!--gyral:lit-part cVxK50m3TGc=-->
+  <span class="rating" data-component="rating">
+    <!--gyral:lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 2"></span>
+    <span class="visually-hidden"><!--gyral:lit-part-->2 out of 5 stars<!--gyral:/lit-part--></span>
   </span>
-<!--/lit-part-->
-                      <p class="byline"><!--lit-part-->Ali N.<!--/lit-part-->, <!--lit-node 7--><time datetime="2026-05-15"><!--lit-part-->2026-05-15<!--/lit-part--></time></p>
-                      <p><!--lit-part-->Tabella tergiversatio cimentarius aspernatur suscipio admoneo traho color cupiditate.<!--/lit-part--></p>
-                    </article>
-                  </li>
-                <!--/lit-part--><!--lit-part drtKB0FtcDE=-->
-                  <li>
-                    <!--lit-node 1--><article aria-labelledby="review-82">
-                      <!--lit-node 2--><h3 id="review-82"><!--lit-part-->Really good<!--/lit-part--></h3>
-                      <!--lit-part xHqIPJROMpo=-->
-  <span class="rating">
-    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 4"></span>
-    <span class="visually-hidden"><!--lit-part-->4 out of 5 stars<!--/lit-part--></span>
+<!--gyral:/lit-part-->
+      <p class="byline"><!--gyral:lit-part-->Ali N.<!--gyral:/lit-part-->, <!--gyral:lit-node 7--><time datetime="2026-05-15"><!--gyral:lit-part-->2026-05-15<!--gyral:/lit-part--></time></p>
+      <p><!--gyral:lit-part-->Tabella tergiversatio cimentarius aspernatur suscipio admoneo traho color cupiditate.<!--gyral:/lit-part--></p>
+      <!--gyral:lit-part jTNzEv4bDT4=--><footer data-component="review-helpful">
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+  </footer><!--gyral:/lit-part-->
+    </article>
+  </li>
+<!--gyral:/lit-part--><!--gyral:lit-part urZJAGKnO+I=-->
+  <li>
+    <!--gyral:lit-node 1--><article
+      id="review-82"
+      data-component="review"
+      aria-labelledby="review-title-82"
+    >
+      <!--gyral:lit-node 2--><h3 id="review-title-82"><!--gyral:lit-part-->Really good<!--gyral:/lit-part--></h3>
+      <!--gyral:lit-part cVxK50m3TGc=-->
+  <span class="rating" data-component="rating">
+    <!--gyral:lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 4"></span>
+    <span class="visually-hidden"><!--gyral:lit-part-->4 out of 5 stars<!--gyral:/lit-part--></span>
   </span>
-<!--/lit-part-->
-                      <p class="byline"><!--lit-part-->Burdette P.<!--/lit-part-->, <!--lit-node 7--><time datetime="2026-04-13"><!--lit-part-->2026-04-13<!--/lit-part--></time></p>
-                      <p><!--lit-part-->Averto sublime modi tamquam verbum. Compono laudantium vix. Cognomen credo arbitro cuius decerno curatio vester veritatis confido. Clam denego voveo inflammatio.<!--/lit-part--></p>
-                    </article>
-                  </li>
-                <!--/lit-part--><!--lit-part drtKB0FtcDE=-->
-                  <li>
-                    <!--lit-node 1--><article aria-labelledby="review-84">
-                      <!--lit-node 2--><h3 id="review-84"><!--lit-part-->Happy with it<!--/lit-part--></h3>
-                      <!--lit-part xHqIPJROMpo=-->
-  <span class="rating">
-    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 4"></span>
-    <span class="visually-hidden"><!--lit-part-->4 out of 5 stars<!--/lit-part--></span>
+<!--gyral:/lit-part-->
+      <p class="byline"><!--gyral:lit-part-->Burdette P.<!--gyral:/lit-part-->, <!--gyral:lit-node 7--><time datetime="2026-04-13"><!--gyral:lit-part-->2026-04-13<!--gyral:/lit-part--></time></p>
+      <p><!--gyral:lit-part-->Averto sublime modi tamquam verbum. Compono laudantium vix. Cognomen credo arbitro cuius decerno curatio vester veritatis confido. Clam denego voveo inflammatio.<!--gyral:/lit-part--></p>
+      <!--gyral:lit-part jTNzEv4bDT4=--><footer data-component="review-helpful">
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+  </footer><!--gyral:/lit-part-->
+    </article>
+  </li>
+<!--gyral:/lit-part--><!--gyral:lit-part urZJAGKnO+I=-->
+  <li>
+    <!--gyral:lit-node 1--><article
+      id="review-84"
+      data-component="review"
+      aria-labelledby="review-title-84"
+    >
+      <!--gyral:lit-node 2--><h3 id="review-title-84"><!--gyral:lit-part-->Happy with it<!--gyral:/lit-part--></h3>
+      <!--gyral:lit-part cVxK50m3TGc=-->
+  <span class="rating" data-component="rating">
+    <!--gyral:lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 4"></span>
+    <span class="visually-hidden"><!--gyral:lit-part-->4 out of 5 stars<!--gyral:/lit-part--></span>
   </span>
-<!--/lit-part-->
-                      <p class="byline"><!--lit-part-->Vivienne Y.<!--/lit-part-->, <!--lit-node 7--><time datetime="2025-12-14"><!--lit-part-->2025-12-14<!--/lit-part--></time></p>
-                      <p><!--lit-part-->Summa communis spes. Vomer tumultus quisquam succedo. Solium absconditus uterque quia quasi sollicito. Adaugeo sum ademptio deficio candidus.<!--/lit-part--></p>
-                    </article>
-                  </li>
-                <!--/lit-part--><!--/lit-part-->
+<!--gyral:/lit-part-->
+      <p class="byline"><!--gyral:lit-part-->Vivienne Y.<!--gyral:/lit-part-->, <!--gyral:lit-node 7--><time datetime="2025-12-14"><!--gyral:lit-part-->2025-12-14<!--gyral:/lit-part--></time></p>
+      <p><!--gyral:lit-part-->Summa communis spes. Vomer tumultus quisquam succedo. Solium absconditus uterque quia quasi sollicito. Adaugeo sum ademptio deficio candidus.<!--gyral:/lit-part--></p>
+      <!--gyral:lit-part jTNzEv4bDT4=--><footer data-component="review-helpful">
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+  </footer><!--gyral:/lit-part-->
+    </article>
+  </li>
+<!--gyral:/lit-part--><!--gyral:/lit-part-->
             </ol>
-          <!--/lit-part-->
-  </section>
-<!--/lit-part-->
+            <!--gyral:lit-part--><!--gyral:/lit-part-->
+            <!--gyral:lit-part--><!--gyral:/lit-part--><?><!--gyral:/lit-part-->
+  </section><!--gyral:/lit-part--></shop-reviews><!--/lit-part-->
   <!--lit-part MEsLYm9f520=-->
   <!--lit-node 0--><section aria-labelledby="related-title" class="card-section">
     <!--lit-node 1--><h2 id="related-title"><!--lit-part-->Customers also viewed<!--/lit-part--></h2>

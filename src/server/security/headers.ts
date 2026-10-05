@@ -28,18 +28,36 @@ export function contentSecurityPolicy(options: { readonly dev: boolean }): strin
     .join('; ');
 }
 
+/**
+ * Every security header for a response. Pure, so the production server can apply the same set
+ * to prerendered files it serves without going through the app (src/server/prod-app.ts).
+ */
+export function securityHeaderValues(options: {
+  readonly dev: boolean;
+  readonly https: boolean;
+}): Readonly<Record<string, string>> {
+  return {
+    'content-security-policy': contentSecurityPolicy(options),
+    'x-content-type-options': 'nosniff',
+    'referrer-policy': 'strict-origin-when-cross-origin',
+    'cross-origin-opener-policy': 'same-origin',
+    'permissions-policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+    ...(options.https
+      ? { 'strict-transport-security': 'max-age=31536000; includeSubDomains' }
+      : {}),
+  };
+}
+
 export const securityHeaders =
   (options: { readonly dev: boolean }): MiddlewareHandler<AppEnv> =>
   async (c, next) => {
     await next();
     const headers = c.res.headers;
-    // A route may set a stricter policy of its own.
-    if (!headers.has('content-security-policy')) {
-      headers.set('content-security-policy', contentSecurityPolicy(options));
+    for (const [name, value] of Object.entries(
+      securityHeaderValues({ dev: options.dev, https: isHttps(c) }),
+    )) {
+      // A route may set a stricter content security policy of its own.
+      if (name === 'content-security-policy' && headers.has(name)) continue;
+      headers.set(name, value);
     }
-    headers.set('x-content-type-options', 'nosniff');
-    headers.set('referrer-policy', 'strict-origin-when-cross-origin');
-    headers.set('cross-origin-opener-policy', 'same-origin');
-    headers.set('permissions-policy', 'camera=(), microphone=(), geolocation=(), payment=()');
-    if (isHttps(c)) headers.set('strict-transport-security', 'max-age=31536000; includeSubDomains');
   };
