@@ -51,14 +51,20 @@ interface Option {
   readonly href: string;
   readonly label: string;
   readonly detail: string;
-  readonly kind: 'category' | 'product';
+  readonly kind: 'department' | 'category' | 'product';
 }
 
-/** Categories first (they lead to whole listings), then products. */
+/** Departments, then categories (they lead to whole listings), then products. */
 export const options = (s: SearchModel): readonly Option[] =>
   s.suggestions === null
     ? []
     : [
+        ...s.suggestions.departments.map((d) => ({
+          href: d.href,
+          label: d.name,
+          detail: 'Department',
+          kind: 'department' as const,
+        })),
         ...s.suggestions.categories.map((c) => ({
           href: c.href,
           label: c.name,
@@ -106,7 +112,9 @@ function fetchSuggestions(s: SearchModel, query: string): Next<SearchModel, Sear
 
 function loaded(s: SearchModel, suggestions: Suggestions): SearchModel {
   if (suggestions.query !== normalizeQuery(s.query)) return s; // an answer to an older query
-  const any = suggestions.products.length + suggestions.categories.length > 0;
+  const any =
+    suggestions.products.length + suggestions.departments.length + suggestions.categories.length >
+    0;
   return { ...s, suggestions, status: 'idle', open: any, highlighted: undefined };
 }
 

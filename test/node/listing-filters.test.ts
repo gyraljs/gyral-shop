@@ -32,6 +32,23 @@ describe('listing queries', () => {
     ]);
   });
 
+  it('ranks one 5-star review below many 4.6-star reviews (Bayesian average)', async () => {
+    const { db } = await testApp();
+    const { slug } = await fixtureCategory(db);
+    const rate = (name: string, sum: number, n: number) =>
+      db.update(products).set({ ratingSum: sum, ratingCount: n }).where(eq(products.name, name));
+    await rate('Delta', 5, 1); // a single 5-star review
+    await rate('Alpha', 230, 50); // fifty reviews averaging 4.6
+    const result = await categoryPage(db, 'electronics', slug, {
+      ...DEFAULT_LISTING,
+      sort: 'rating',
+    });
+    if (result._tag !== 'Found') throw new Error(result._tag);
+    const cards = names(result.data.cards);
+    expect(cards.indexOf('Alpha')).toBeLessThan(cards.indexOf('Delta'));
+    expect(cards.at(-1)).toBe('Charlie'); // unrated stays last
+  });
+
   it('sorts by the price a shopper pays (sale price when on sale), both ways', async () => {
     const ascending = ['Foxtrot', 'Alpha', 'Bravo', 'Hotel', 'Charlie', 'Delta', 'Echo', 'Golf'];
     expect(names((await listing({ sort: 'price-asc' })).cards)).toEqual(ascending);
@@ -105,6 +122,25 @@ describe('listing routes', () => {
     expect(body).toMatch(/name="brand"\s+value="acme"\s*\/>/);
     expect(body).toMatch(/name="sale"\s+value="1"\s*\/>/);
     expect(body).not.toContain('checked="');
+  });
+
+  it('wraps the filters in a disclosure, open with an active count only when filters apply', async () => {
+    const { db, get } = await testApp();
+    const { path } = await fixtureCategory(db);
+    const plain = text(await (await get(path)).text());
+    expect(plain).toMatch(/<details class="filters-panel" data-component="filters-panel"\s*>/);
+    expect(plain).toMatch(/<summary>\s*Filter and\s+sort\s*<\/summary>/);
+
+    // The form submits fields in its own order; the server redirects to the canonical query.
+    let res = await get(`${path}?brand=zenith&stock=1&sort=price-asc`);
+    const location = res.headers.get('location');
+    if (res.status === 301 && location !== null) res = await get(location);
+    expect(res.status).toBe(200);
+    const filtered = text(await res.text());
+    expect(filtered).toMatch(
+      /<details class="filters-panel" data-component="filters-panel"\s+open/,
+    );
+    expect(filtered).toContain('<span class="count">(2 active)</span>'); // sort isn't a filter
   });
 
   it('keeps the query in pager links of a filtered listing', async () => {

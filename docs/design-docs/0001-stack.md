@@ -17,3 +17,33 @@ Status: **accepted** (2026-10-04)
 - **Testing:** Vitest browser mode (Chromium) for UI, Node project for domain/db/services and
   route tests against an in-memory SQLite, `@axe-core/playwright` for accessibility.
 - **Local only** for now: no deployment target.
+
+## Addendum: public origin (2026-10-04)
+
+Absolute URLs (canonical links, sitemap, `robots.txt`, structured data, links in emails) use
+`SITE_ORIGIN` (e.g. `https://shop.example`), validated as a bare http(s) origin and required
+in production, because behind a proxy the request URL is internal. Without it (local
+development) they fall back to the request's origin. Routes call `publicOrigin(c)`
+(`src/server/origin.ts`). Same-origin checks (CSRF `Origin`, consent) still compare against
+the request's origin.
+
+## Addendum: production database settings (2026-10-04)
+
+File databases open with `journal_mode = WAL` and `synchronous = NORMAL` (`openDb`).
+
+- **Why WAL:** readers work from a snapshot and never wait for, or fail because of, a writer.
+  Only writes need coordination, which the async write lock in `src/db/tx.ts` provides, and
+  reads during a long checkout transaction keep flowing.
+- **Why `synchronous = NORMAL`:** the recommended pairing with WAL. A committed transaction
+  survives an application crash; on power loss the last transactions may roll back, but the
+  database stays consistent. Acceptable here (a demo shop; payments are mocked).
+- **No `busy_timeout`:** libsql's native driver is synchronous, so a busy wait blocks the event
+  loop, including the open transaction it is waiting for, a self-deadlock until the timeout.
+  Busy writes from other processes (e.g. `pnpm db:purge` beside the server) are retried
+  asynchronously by `tx.ts` instead.
+- **The write lock stays.** WAL still allows one writer at a time, and libsql runs each
+  transaction on its own connection, so concurrent in-process writers would still collide.
+  Removing the lock would need a driver with async busy handling or a single writer
+  connection; revisit only with a measured need.
+- WAL adds `shop.db-wal` / `shop.db-shm` beside the database (`data/` is gitignored); back up
+  with SQLite's backup API or after a checkpoint, not by copying the main file alone.

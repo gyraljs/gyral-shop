@@ -11,6 +11,7 @@ import {
   type SitemapEntry,
 } from '../sitemap.js';
 import { CONTENT_PATHS } from './content.js';
+import { publicOrigin } from '../origin.js';
 
 export interface SeoRouteOptions {
   readonly db: Db;
@@ -45,11 +46,11 @@ export function seoRoutes({ db, perFile }: SeoRouteOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
 
   app.get('/robots.txt', (c) =>
-    c.text(robotsTxt(new URL(c.req.url).origin), 200, { 'cache-control': 'public, max-age=3600' }),
+    c.text(robotsTxt(publicOrigin(c)), 200, { 'cache-control': 'public, max-age=3600' }),
   );
 
   app.get('/sitemap.xml', async (c) => {
-    const { origin } = new URL(c.req.url);
+    const origin = publicOrigin(c);
     const files = chunkSitemap(await entries(db, origin), perFile);
     const [only] = files;
     if (files.length === 1 && only !== undefined) return xml(urlsetXml(only));
@@ -61,7 +62,7 @@ export function seoRoutes({ db, perFile }: SeoRouteOptions): Hono<AppEnv> {
   app.get('/sitemaps/:file', async (c) => {
     const n = /^(\d{1,4})\.xml$/.exec(c.req.param('file'))?.[1];
     if (n === undefined) return c.notFound();
-    const files = chunkSitemap(await entries(db, new URL(c.req.url).origin), perFile);
+    const files = chunkSitemap(await entries(db, publicOrigin(c)), perFile);
     const file = files[Number(n) - 1];
     return file === undefined || files.length === 1 ? c.notFound() : xml(urlsetXml(file));
   });

@@ -9,3 +9,38 @@
   session rotation, rate limit, reset token single use).
 - **No-JS:** catalog, search, product page, cart, checkout, account forms pass with
   JavaScript disabled (Playwright tests with `javaScriptEnabled: false`).
+
+## Implementation notes
+
+- **Accessibility, every template:** `test/node/a11y-templates.test.ts` serves the real app
+  and runs axe (WCAG 2.2 AA tags) in Chromium on the server-rendered markup of 40 page
+  templates, as a guest, a member with a placed order, and guests at each checkout step. A
+  control page with a missing `alt` proves the run reports violations. Not covered there:
+  `/admin` (client-rendered; its own suite) and `/dev/mail` (development tool). Hydrated
+  states are covered by the browser tests, which also run axe, and by `pnpm ui:check`.
+- **No-JS end to end:** one journey suite with JavaScript disabled, split in two files for
+  size. `test/node/nojs-shopping.test.ts` (seeded catalog): browse, search with refine and no
+  results, filter and sort a listing, choose a variant, edit the cart; register, sign out,
+  sign in with a wrong then right password, save and move a wishlist item, edit profile and
+  addresses; password reset through the outbox; contact form; consent reject then opt in.
+  `test/node/nojs-orders.test.ts` (exact cart fixture): product to cart through every
+  checkout step (with a rejected step) to confirmation and the confirmation email, guest
+  lookup in another browser; a member cancels from history; a buyer reviews, another
+  member votes helpful, reviews sort by link. These replace the earlier per-feature
+  `*-nojs.test.ts` files.
+- **Performance budgets:** `pnpm perf` (`scripts/perf.mjs`, about 45 s, so not part of
+  `pnpm check`) seeds a throwaway database, builds, starts the production server and loads
+  home, a category and a product page cold in Chromium with 4x CPU and 1.6 Mbps / 150 ms
+  network throttling, three runs each. It fails on median LCP ≥ 2.5 s, CLS ≥ 0.1, or JS gzip
+  above the recorded baseline + 10% (`scripts/perf-baseline.json`; refresh with
+  `pnpm perf --update` after an intended change).
+
+  Baseline (2026-10-05, production build):
+
+  | Page     | LCP (median) |   CLS |  JS gzip |    JS raw | CSS (inline + files) |
+  | -------- | -----------: | ----: | -------: | --------: | -------------------: |
+  | home     |       588 ms | 0.000 | 91.3 KiB | 293.0 KiB |             34.5 KiB |
+  | category |       416 ms | 0.012 | 91.3 KiB | 293.0 KiB |             34.5 KiB |
+  | product  |       444 ms | 0.003 | 91.3 KiB | 293.0 KiB |             34.5 KiB |
+
+  Every page loads the same single client bundle: there is no per-route code splitting yet.

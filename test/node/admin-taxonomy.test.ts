@@ -123,6 +123,8 @@ describe('taxonomy admin', () => {
     const home = await (await test.get('/')).text();
     expect(home).not.toContain('href="/d/electronics"');
     expect(await (await test.get('/sitemap.xml')).text()).not.toContain('/d/electronics');
+    const suggest = await (await test.get('/api/search/suggest?q=electr')).text();
+    expect(suggest).not.toContain('electronics');
     // The product editor offers only live choices.
     const choices = v.parse(TaxonomySchema, (await getJson(admin, '/api/admin/taxonomy')).body);
     expect(choices.departments.map((d) => d.name)).not.toContain('Electronics');

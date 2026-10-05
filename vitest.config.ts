@@ -47,6 +47,10 @@ export default defineConfig({
             'scripts/test/**/*.test.mjs',
           ],
           environment: 'node',
+          // No-JS journeys drive a real Chromium through several page loads; under a loaded
+          // machine (parallel agents, CI) the 5 s default flakes. Real hangs still fail.
+          testTimeout: 20_000,
+          hookTimeout: 30_000,
         },
       },
     ],

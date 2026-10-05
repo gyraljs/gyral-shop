@@ -30,6 +30,28 @@ export const searchRank = (match: string): SQL<number> =>
     from products_fts where products_fts.rowid = ${products.id} and products_fts match ${match})`;
 
 /**
+ * Departments whose name contains every term (header suggestions: "kitch" → Home & Kitchen,
+ * which no category name contains). Same term rules as suggestCategories.
+ */
+export function suggestDepartments(
+  db: Db,
+  terms: readonly string[],
+  limit: number,
+): Promise<{ name: string; slug: string }[]> {
+  return db
+    .select({ name: departments.name, slug: departments.slug })
+    .from(departments)
+    .where(
+      and(
+        eq(departments.archived, false),
+        ...terms.map((t) => sql`lower(${departments.name}) like ${`%${t.toLowerCase()}%`}`),
+      ),
+    )
+    .orderBy(departments.position)
+    .limit(limit);
+}
+
+/**
  * Categories whose name contains every term (header suggestions). Terms are letters and digits
  * only (domain searchTerms), so they carry no LIKE wildcards; values are bound parameters.
  */

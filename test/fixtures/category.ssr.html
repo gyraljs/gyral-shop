@@ -234,6 +234,20 @@
     background: var(--surface-sunken);
     border-radius: var(--radius);
   }
+  /* Collapsible on narrow containers; always expanded (no toggle) on wide ones. */
+  .filters { container: filters / inline-size; }
+  .filters-panel > summary {
+    cursor: pointer; font-weight: 600;
+    padding-block: var(--space-1);
+  }
+  .filters-panel > summary .count { color: var(--ink-muted); font-weight: 400; }
+  .filters-panel[open] > summary { margin-block-end: var(--space-3); }
+  @supports selector(::details-content) {
+    @container filters (inline-size >= 36rem) {
+      .filters-panel > summary { display: none; }
+      .filters-panel::details-content { content-visibility: visible; block-size: auto; }
+    }
+  }
   .filter-fields {
     display: grid; gap: var(--space-3);
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
@@ -1504,7 +1518,7 @@ shop-checkout {
           </h1>
           <p class="result-count" role="status"><!--gyral:lit-part-->Showing 25–32 of 32 products<!--gyral:/lit-part--></p>
         </header>
-        <!--gyral:lit-part /tFabat80ko=-->
+        <!--gyral:lit-part uwxjaPX3NPA=-->
     <!--gyral:lit-node 0--><form
       class="filters"
       data-region="filters"
@@ -1514,8 +1528,13 @@ shop-checkout {
       data-intent="Refine"
     >
       <!--gyral:lit-part--><!--gyral:/lit-part-->
-      <!--gyral:lit-node 2--><div class="filter-fields" data-intent="Refine" data-intent-on="change">
-        <!--gyral:lit-part O/ghijeFuCQ=-->
+      <!--gyral:lit-node 2--><details class="filters-panel" data-component="filters-panel" >
+        <summary>
+          Filter and
+          sort<!--gyral:lit-part--><!--gyral:/lit-part-->
+        </summary>
+        <!--gyral:lit-node 5--><div class="filter-fields" data-intent="Refine" data-intent-on="change">
+          <!--gyral:lit-part O/ghijeFuCQ=-->
   <p class="sort-field">
     <label for="sort">Sort by</label>
     <!--gyral:lit-node 2--><select id="sort" name="sort" >
@@ -1533,10 +1552,10 @@ shop-checkout {
     </select>
   </p>
 <!--gyral:/lit-part-->
-        <fieldset>
-          <legend>Price</legend>
-          <div class="price-range">
-            <!--gyral:lit-part 2ntGOcwwf+U=-->
+          <fieldset>
+            <legend>Price</legend>
+            <div class="price-range">
+              <!--gyral:lit-part 2ntGOcwwf+U=-->
   <label class="price-field">
     <span><!--gyral:lit-part-->Min<!--gyral:/lit-part--></span>
     <span class="money-input">
@@ -1569,9 +1588,9 @@ shop-checkout {
     </span>
   </label>
 <!--gyral:/lit-part-->
-          </div>
-        </fieldset>
-        <!--gyral:lit-part Y9FWyX4jGCs=--><fieldset>
+            </div>
+          </fieldset>
+          <!--gyral:lit-part Y9FWyX4jGCs=--><fieldset>
         <legend>Brand</legend>
         <ul class="options">
           <!--gyral:lit-part--><!--gyral:lit-part TvsEps+PVEY=--><li>
@@ -1655,38 +1674,39 @@ shop-checkout {
     </ul>
   </fieldset>
 <!--gyral:/lit-part-->
-        <fieldset>
-          <legend>Availability</legend>
-          <ul class="options">
-            <li>
-              <label
-                ><!--gyral:lit-node 16--><input
-                  type="checkbox"
-                  name="stock"
-                  value="1"
-                  
-                />
-                In stock</label
-              >
-            </li>
-            <li>
-              <label
-                ><!--gyral:lit-node 19--><input
-                  type="checkbox"
-                  name="sale"
-                  value="1"
-                  
-                />
-                On sale</label
-              >
-            </li>
-          </ul>
-        </fieldset>
-      </div>
-      <p class="filter-actions">
-        <button type="submit">Apply</button>
-        <!--gyral:lit-node 22--><a href="/c/electronics/tvs" data-intent="Go">Clear all</a>
-      </p>
+          <fieldset>
+            <legend>Availability</legend>
+            <ul class="options">
+              <li>
+                <label
+                  ><!--gyral:lit-node 19--><input
+                    type="checkbox"
+                    name="stock"
+                    value="1"
+                    
+                  />
+                  In stock</label
+                >
+              </li>
+              <li>
+                <label
+                  ><!--gyral:lit-node 22--><input
+                    type="checkbox"
+                    name="sale"
+                    value="1"
+                    
+                  />
+                  On sale</label
+                >
+              </li>
+            </ul>
+          </fieldset>
+        </div>
+        <p class="filter-actions">
+          <button type="submit">Apply</button>
+          <!--gyral:lit-node 25--><a href="/c/electronics/tvs" data-intent="Go">Clear all</a>
+        </p>
+      </details>
     </form>
   <!--gyral:/lit-part-->
         <!--gyral:lit-part--><!--gyral:/lit-part-->
