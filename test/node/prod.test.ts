@@ -101,7 +101,12 @@ describe('production build', () => {
 
   it('tells a prerendered page who is signed in, without caching or new sessions', async () => {
     const guest = await req('/api/me');
-    expect(await guest.json()).toEqual({ account: null, consentDecided: false, analytics: false });
+    expect(await guest.json()).toEqual({
+      account: null,
+      consentDecided: false,
+      analytics: false,
+      theme: 'default',
+    });
     expect(guest.headers.get('cache-control')).toBe('no-store');
     expect(guest.headers.getSetCookie()).toEqual([]);
   });

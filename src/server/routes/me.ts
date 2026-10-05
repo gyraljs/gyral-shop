@@ -5,6 +5,7 @@
 import { Hono } from 'hono';
 import { firstName } from '../../domain/accounts.js';
 import { readConsent } from '../consent.js';
+import { readTheme } from '../theme.js';
 import type { AppEnv } from '../security/index.js';
 
 export const ME_PATH = '/api/me';
@@ -22,7 +23,10 @@ export function meRoutes(): Hono<AppEnv> {
     const consentDecided = consent !== undefined;
     // Lets a prerendered page decide whether to send its page-view beacon (shop-8c2).
     const analytics = consent?.analytics === true;
-    return c.json({ account, consentDecided, analytics }, 200, { 'cache-control': 'no-store' });
+    const theme = readTheme(c).name;
+    return c.json({ account, consentDecided, analytics, theme }, 200, {
+      'cache-control': 'no-store',
+    });
   });
   return app;
 }

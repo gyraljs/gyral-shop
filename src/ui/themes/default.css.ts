@@ -1,6 +1,8 @@
 // The default look as a theme (ADR 0006 rule 7): today's palette, type and component colours.
 // Sibling themes (Marketplace, Supercenter, Boutique) define the same tokens and may also
 // re-lay out regions through the stable hooks. Writes only to @layer theme.
+import type { ThemeDefinition } from './theme.js';
+
 export const defaultThemeCss = `
 @layer theme {
   :root {
@@ -30,6 +32,9 @@ export const defaultThemeCss = `
 }
 `;
 
-/** The themes the shop ships, by cookie value. The switcher (shop-2w6.3) chooses among them. */
-export const THEMES = { default: defaultThemeCss } as const;
-export type ThemeName = keyof typeof THEMES;
+export const defaultTheme: ThemeDefinition = {
+  name: 'default',
+  label: 'Gyral Goods',
+  description: 'The house look: warm red header, rounded cards, system type.',
+  css: defaultThemeCss,
+};

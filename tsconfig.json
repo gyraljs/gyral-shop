@@ -23,6 +23,7 @@
     "scripts/**/*.ts",
     "vite.config.ts",
     "vitest.config.ts",
-    "drizzle.config.ts"
+    "drizzle.config.ts",
+    "vite.deps.ts"
   ]
 }

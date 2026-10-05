@@ -55,6 +55,7 @@ describe('static (ssg) content pages', () => {
       account: { firstName: 'Grace', csrfToken: member.session.csrfToken },
       consentDecided: false,
       analytics: false,
+      theme: 'default',
     });
   });
 });

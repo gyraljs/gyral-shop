@@ -14,7 +14,9 @@ import { baseCss } from '../ui/styles/base.js';
 import { headerCss } from '../ui/styles/header.js';
 import { authCss } from '../ui/account/auth-form.js';
 import { cartCss } from '../ui/styles/cart.js';
-import { defaultThemeCss } from '../ui/themes/default.css.js';
+import '../ui/theme/switcher.js'; // registers <shop-theme-switcher>
+import { themeSwitcherCss } from '../ui/styles/theme-switcher.js';
+import { CURRENT_THEME_PATH, currentTheme, themeHref, themeOptions } from './theme.js';
 import { catalogCss } from '../ui/styles/catalog.js';
 import { filtersCss } from '../ui/styles/filters.js';
 import { listingCss } from '../ui/styles/listing.js';
@@ -69,7 +71,8 @@ export interface ShellOptions {
 /** JSON for a <script> body: `<` is escaped so content can never close the element. */
 const scriptJson = (value: object): string => JSON.stringify(value).replace(/</g, '\\u003c');
 
-const footer = html`
+/** The footer, with the theme switcher (ADR 0006 rule 8; prerendered pages ask /api/me). */
+const footer = (prerendered: boolean) => html`
   <footer class="site-footer">
     <div class="page">
       <nav aria-label="Site">
@@ -82,6 +85,12 @@ const footer = html`
           <li><a href="/consent">Cookie settings</a></li>
         </ul>
       </nav>
+      <shop-theme-switcher
+        .themes=${themeOptions()}
+        current=${prerendered ? '' : currentTheme().name}
+        return-to=${currentPath()}
+        ?deferred=${prerendered}
+      ></shop-theme-switcher>
       <p>
         <small>© 2026 ${SITE_NAME}. A demo store built with Gyral; nothing here is for sale.</small>
       </p>
@@ -108,9 +117,26 @@ const DOCUMENT_STYLES = [
   adminCss,
   searchCss,
   consentCss,
-  // The theme last: it only writes to @layer theme, which wins by layer order.
-  defaultThemeCss,
+  themeSwitcherCss,
+  // The theme is not inline: <link id="theme-css"> in the head (themeLink below). It only
+  // writes to @layer theme, which wins by layer order wherever the sheet appears.
 ];
+
+/**
+ * The theme stylesheet (ADR 0006 rule 8). A render-blocking <link>, so the right theme paints
+ * first. Server-rendered pages link the visitor's theme by its content-hashed URL; prerendered
+ * pages link /themes/current.css, which the server answers from the visitor's cookie.
+ */
+function themeLink(prerendered: boolean) {
+  if (prerendered) return html`<link rel="stylesheet" id="theme-css" href=${CURRENT_THEME_PATH} />`;
+  const theme = currentTheme();
+  return html`<link
+    rel="stylesheet"
+    id="theme-css"
+    href=${themeHref(theme)}
+    data-theme=${theme.name}
+  />`;
+}
 
 /**
  * The consent banner for undecided visitors (never on the settings page itself). Prerendered
@@ -132,7 +158,9 @@ export function shell(options: ShellOptions): Response {
   const structured = (options.jsonLd ?? [])
     .map((data) => `<script type="application/ld+json">${scriptJson(data)}</script>`)
     .join('');
-  const head = html`<link rel="icon" href="/favicon.svg" type="image/svg+xml" /> ${
+  const head = html`<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    ${themeLink(options.static === true)}
+    ${
       options.canonical === undefined
         ? nothing
         : html`<link rel="canonical" href=${options.canonical} />`
@@ -165,7 +193,7 @@ export function shell(options: ShellOptions): Response {
         ></shop-header>
         ${consentBanner(options.static === true)}
         <main id="main" class="page" tabindex="-1">${options.main}</main>
-        ${footer}
+        ${footer(options.static === true)}
       `,
       scripts: [options.clientEntry],
       stores: options.stores ?? [],

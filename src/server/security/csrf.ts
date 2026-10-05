@@ -42,6 +42,7 @@ function crossSite(request: Request, accepted: ReadonlySet<string>): boolean {
 export const ORIGIN_VERIFIED_PATHS: ReadonlySet<string> = new Set([
   '/consent',
   '/api/analytics/page-view', // page-view beacon of prerendered pages (shop-8c2)
+  '/theme', // the footer theme switcher, on every page (ADR 0006 rule 8)
 ]);
 
 function provenSameOrigin(request: Request, accepted: ReadonlySet<string>): boolean {

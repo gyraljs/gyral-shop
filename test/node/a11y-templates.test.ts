@@ -117,6 +117,7 @@ beforeAll(async () => {
     { name: 'privacy', path: '/privacy' },
     { name: 'contact', path: '/contact' },
     { name: 'consent settings', path: '/consent' },
+    { name: 'theme settings', path: '/theme' },
     { name: 'not found', path: '/no-such-page', status: 404 },
     { name: 'server error', path: '/__boom', status: 500 },
   );

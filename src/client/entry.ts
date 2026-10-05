@@ -6,6 +6,7 @@ import '../ui/layout/site-header.js';
 import '../ui/cart/mini-cart.js';
 import '../ui/layout/search-box.js';
 import '../ui/consent/consent.js';
+import '../ui/theme/switcher.js';
 import { loadComponentsIn, watchForComponents } from './lazy.js';
 
 // Top-level await: importing this module finishes once the page's components are defined,
