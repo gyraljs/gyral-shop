@@ -1,9 +1,13 @@
-// Checkout styles (shadow root of <shop-checkout>; tokens come from the document's :root).
-// Theme contract: docs/design-docs/0006-theming.md (tokens only, layered, parts exposed).
+// Checkout styles. <shop-checkout> renders in light DOM, so these are document styles, scoped
+// to the element with CSS nesting so they never reach the rest of the page.
+// Theme contract: docs/design-docs/0006-theming.md (tokens only, layered, data-component hooks).
 export const checkoutCss = `
 @layer reset, tokens, base, components, theme;
 @layer components {
-  :host { container: checkout / inline-size; }
+shop-checkout {
+  display: block;
+  min-inline-size: 0;
+  container: checkout / inline-size;
   h1 { margin-block: var(--space-3) var(--space-2); }
   .layout { display: grid; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
   @container checkout (min-width: 56rem) {
@@ -85,5 +89,6 @@ export const checkoutCss = `
     position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
     clip-path: inset(50%); white-space: nowrap;
   }
+}
 }
 `;

@@ -5,10 +5,10 @@ import detailHtml from '../fixtures/order-detail.ssr.html?raw';
 import historyHtml from '../fixtures/order-history.ssr.html?raw';
 import lookupHtml from '../fixtures/order-lookup.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
-let page: MountedPage | undefined;
+let page: MountedSsr | undefined;
 
 afterEach(() => {
   page?.unmount();
@@ -16,8 +16,9 @@ afterEach(() => {
 });
 
 const mount = async (html: string) => {
-  page = mountSsrPage(html);
-  await hydrated(page.root);
+  page = mountSsr(html);
+  await import('../../src/client/entry.js'); // the header's components
+  await hydrated(page);
   return page.root;
 };
 

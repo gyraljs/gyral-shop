@@ -9,6 +9,9 @@ import { notFoundPage, serverErrorPage } from '../ui/pages/errors.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
 import { SECURITY_TITLES, securityErrorPage } from '../ui/pages/security-errors.js';
 import { accountRoutes } from './routes/account.js';
+import { accountSettingsRoutes } from './routes/account-settings.js';
+import { passwordResetRoutes } from './routes/password-reset.js';
+import { contentRoutes } from './routes/content.js';
 import { cartRoutes } from './routes/cart-api.js';
 import { catalogRoutes } from './routes/catalog.js';
 import { productRoutes } from './routes/product.js';
@@ -20,6 +23,7 @@ import { searchRoutes } from './routes/search.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
 import { placeholderSvg } from './placeholder-image.js';
+import { productLabel } from '../db/repos/catalog.js';
 import { devMailRoutes } from './routes/dev-mail.js';
 
 export interface AppOptions {
@@ -103,10 +107,12 @@ export function createApp({
     () => new Response(FAVICON, { headers: { 'content-type': 'image/svg+xml' } }),
   );
 
-  app.get('/img/p/:slug/:file', (c) => {
+  app.get('/img/p/:slug/:file', async (c) => {
     const view = /^(\d{1,2})\.svg$/.exec(c.req.param('file'))?.[1];
     if (view === undefined) return c.notFound();
-    return new Response(placeholderSvg(c.req.param('slug'), Number(view)), {
+    const slug = c.req.param('slug');
+    const product = await productLabel(db, slug);
+    return new Response(placeholderSvg(slug, Number(view), product), {
       headers: {
         'content-type': 'image/svg+xml',
         'cache-control': 'public, max-age=31536000, immutable',
@@ -115,16 +121,20 @@ export function createApp({
   });
 
   app.get('/', async () => {
-    const [data, departmentList] = await Promise.all([homeData(db), nav()]);
+    const data = await homeData(db);
     return page({
       title: SITE_NAME,
       description: 'Electronics, home, clothing, toys, groceries and more, in one store.',
-      main: homePage({ departments: departmentList, ...data }),
+      main: homePage(data),
     });
   });
 
   app.route('/', catalogRoutes({ db, render: page }));
-  app.route('/', accountRoutes({ db, render: page, now: () => services.now().getTime() }));
+  const millis = () => services.now().getTime();
+  app.route('/', accountRoutes({ db, render: page, now: millis }));
+  app.route('/', accountSettingsRoutes({ db, render: page, now: millis }));
+  app.route('/', passwordResetRoutes({ db, render: page, mailer: services.mailer, now: millis }));
+  app.route('/', contentRoutes({ render: page, mailer: services.mailer, now: millis }));
   app.route('/', productRoutes({ db, render: page }));
   app.route('/', searchRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));
@@ -152,7 +162,7 @@ export function createApp({
       noindex: true,
       clientEntry,
       departments: departmentList,
-      main: serverErrorPage(),
+      main: serverErrorPage(departmentList),
     });
   });
 

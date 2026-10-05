@@ -3,13 +3,12 @@
 // document styles (filters.ts, listing.ts, catalog.ts) apply directly. Server-rendered from a ListingView; in the browser it changes listing state without a
 // reload. The URL is the source of truth: intents navigate (pushing history), and every URL
 // change (including Back/Forward) streams in through router listen() and fetches that state.
-import { define, html, nothing, type Next } from '@gyral/core';
+import { define, focus, html, nothing, type Next } from '@gyral/core';
 import { get, type HttpError } from '@gyral/http';
 import { listen, makeRouter, navigate, setTitle, type RouteLocation } from '@gyral/router';
 import { isRefined, parseListing, sameListing, type ListingState } from '../../domain/listing.js';
 import { documentTitle } from '../layout/site.js';
 import { filtersForm } from './filters.js';
-import { focusOn } from './focus.js';
 import {
   listingHref,
   listingTitle,
@@ -21,8 +20,8 @@ import { pager } from './pager.js';
 import { productCard } from './product-card.js';
 
 export interface ListingProps {
-  /** Unset until the server render (or the hydration seed) provides it. */
-  readonly view?: ListingView;
+  /** Set by the server render; the browser restores it from the hydration seed. */
+  readonly view: ListingView;
 }
 
 export interface ListingModel {
@@ -30,8 +29,6 @@ export interface ListingModel {
   /** The state the URL asks for. Results are applied only if they answer it. */
   readonly want: ListingState | null;
   readonly status: 'idle' | 'loading' | 'error';
-  /** Bumped to move focus to the heading (after paging), see focusOn(). */
-  readonly focus: number;
   readonly focusPending: boolean;
 }
 
@@ -93,14 +90,11 @@ function routed(s: ListingModel, location: RouteLocation): Next<ListingModel, Li
 
 function loaded(s: ListingModel, view: ListingView): Next<ListingModel, ListingMsg> {
   if (s.want !== null && !sameListing(view.state, s.want)) return s; // an answer to an old URL
-  const next: ListingModel = {
-    ...s,
-    view,
-    status: 'idle',
-    focus: s.focusPending ? s.focus + 1 : s.focus,
-    focusPending: false,
-  };
-  return [next, [setTitle(documentTitle(listingTitle(view)))]];
+  const next: ListingModel = { ...s, view, status: 'idle', focusPending: false };
+  const title = setTitle(documentTitle(listingTitle(view)));
+  // After paging, move focus to the heading so keyboard and screen-reader users land on the
+  // new results (Gyral's focus() runs after the update renders).
+  return [next, s.focusPending ? [title, focus('#listing-title')] : [title]];
 }
 
 const results = (view: ListingView) => {
@@ -116,9 +110,9 @@ const results = (view: ListingView) => {
 
 export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-listing', {
   shadow: false,
-  props: { view: { attribute: false } },
+  props: { view: { attribute: false, required: true } },
   init: (props) => [
-    { view: props.view ?? null, want: null, status: 'idle', focus: 0, focusPending: false },
+    { view: props.view, want: null, status: 'idle', focusPending: false },
     [listen((location) => ({ _tag: 'Routed', location }))],
   ],
   drivers: { router: listingRouter },
@@ -152,7 +146,7 @@ export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-list
     return html`
       <section class="listing-results" data-region="listing" aria-labelledby="listing-title">
         <header class="listing-header">
-          <h1 id="listing-title" tabindex="-1" ${focusOn(s.focus)}>
+          <h1 id="listing-title" tabindex="-1">
             ${view.heading}${
               state.page > 1
                 ? html`<span class="visually-hidden">, page ${state.page}</span>`

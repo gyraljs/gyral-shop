@@ -36,12 +36,12 @@ export const isExempt = (file) =>
   file.endsWith('src/ui/styles/base.ts') || file.includes('src/ui/themes/');
 
 /**
- * Rule 3: every stylesheet sits in a cascade layer. Checks `css` template literals and
- * exported `...Css` strings: each must start (after comments) with `@layer` or with an
+ * Rule 3: every stylesheet sits in a cascade layer. Checks `css` template literals, plain
+ * `styles: `…`` strings and exported `...Css` strings: each must start (after comments) with `@layer` or with an
  * interpolation of another, already layered stylesheet.
  */
 export function unlayeredStyles(file, text) {
-  const blocks = /(?:\bcss`|export const \w+Css = `)([\s\S]*?)`/g;
+  const blocks = /(?:\bcss`|export const \w+Css = `|\bstyles:\s*`)([\s\S]*?)`/g;
   const findings = [];
   for (const match of text.matchAll(blocks)) {
     const body = (match[1] ?? '').replace(/\/\*[\s\S]*?\*\//g, '').trimStart();

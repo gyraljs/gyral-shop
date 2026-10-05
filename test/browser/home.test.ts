@@ -3,11 +3,11 @@ import '@gyral/ssr/hydrate';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/home.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
-let page: MountedPage;
+let page: MountedSsr;
 
 const header = () => {
   const el = page.root.querySelector('shop-header');
@@ -16,7 +16,7 @@ const header = () => {
 };
 
 beforeAll(() => {
-  page = mountSsrPage(serverHtml);
+  page = mountSsr(serverHtml);
 });
 
 afterAll(() => {
@@ -33,7 +33,7 @@ describe('home page', () => {
   it('hydrates in place with no mismatch', async () => {
     const link = header().shadowRoot?.querySelector('nav.departments a');
     await import('../../src/client/entry.js');
-    await hydrated(page.root);
+    await hydrated(page);
     expect(header().shadowRoot?.querySelector('nav.departments a')).toBe(link);
     expect(header().hasAttribute('data-gyral-seed')).toBe(false);
     expect(errors).not.toHaveBeenCalled();

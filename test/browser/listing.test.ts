@@ -5,12 +5,18 @@ import baseJson from '../fixtures/listing-base.json?raw';
 import serverHtml from '../fixtures/listing.ssr.html?raw';
 import saleJson from '../fixtures/listing-sale.json?raw';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const { basePath } = JSON.parse(baseJson) as { basePath: string };
+// A second page of the same listing, for the paging test.
+const page2Json = JSON.stringify({
+  ...(JSON.parse(baseJson) as { state: object }),
+  state: { ...(JSON.parse(baseJson) as { state: object }).state, page: 2 },
+  pageCount: 2,
+});
 const errors = vi.spyOn(console, 'error');
 const fetches: string[] = [];
-let page: MountedPage;
+let page: MountedSsr;
 let originalUrl: string;
 
 const listing = () => {
@@ -32,12 +38,14 @@ beforeAll(async () => {
   vi.spyOn(window, 'fetch').mockImplementation((input) => {
     const url = input instanceof Request ? input.url : String(input);
     fetches.push(url);
-    const body = new URL(url).searchParams.get('sale') === '1' ? saleJson : baseJson;
+    const params = new URL(url).searchParams;
+    const body =
+      params.get('page') === '2' ? page2Json : params.get('sale') === '1' ? saleJson : baseJson;
     return Promise.resolve(new Response(body, { headers: { 'content-type': 'application/json' } }));
   });
-  page = mountSsrPage(serverHtml);
+  page = mountSsr(serverHtml);
   await import('../../src/client/entry.js');
-  await hydrated(page.root);
+  await hydrated(page);
 });
 
 afterAll(() => {
@@ -77,6 +85,17 @@ describe('category listing with filters', () => {
     expect(location.search).toBe('');
     expect(saleBox().checked).toBe(false);
     expect(errors).not.toHaveBeenCalled();
+  });
+
+  it('moves focus to the results heading after paging (focus command)', async () => {
+    const el = listing();
+    const current = el.state.view?.state;
+    if (current === undefined) throw new Error('no listing state');
+    el.send({ _tag: 'Go', state: { ...current, page: 2 } });
+    await vi.waitFor(() => {
+      expect(document.activeElement).toBe(listing().querySelector('#listing-title'));
+    });
+    expect(location.search).toBe('?page=2');
   });
 
   it('has no axe violations', async () => {

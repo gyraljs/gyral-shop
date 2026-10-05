@@ -30,6 +30,16 @@ export const catalogCss = `
     text-decoration: none;
   }
   .department-grid a:hover { border-color: var(--brand); }
+  [data-component="department-tile"] { display: grid; gap: var(--space-1); align-content: start; }
+  [data-component="department-tile"] a { display: grid; gap: var(--space-2); padding: var(--space-2); }
+  [data-component="department-tile"] img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover;
+    border-radius: var(--radius);
+  }
+  [data-component="department-tile"] h3 { margin: 0; font-size: 1rem; }
+  [data-component="department-tile"] p {
+    margin: 0; color: var(--ink-muted); font-size: 0.9rem; text-align: center;
+  }
   .card-grid {
     display: grid; gap: var(--space-4);
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));

@@ -4,14 +4,14 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import reviewHtml from '../fixtures/checkout-review.ssr.html?raw';
 import placed from '../fixtures/checkout-placed.json';
 import declined from '../fixtures/checkout-declined.json';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 // Placing an order with JavaScript (shop-8w0): the review step's form goes through Gyral's
 // submitForm to /checkout/place, and the server's answer (fixtures written by
 // test/node/place-order-js.test.ts) drives a full navigation to the confirmation page.
 
 const errors = vi.spyOn(console, 'error');
-let page: MountedPage;
+let page: MountedSsr;
 
 interface Post {
   readonly url: string;
@@ -67,10 +67,10 @@ const nextPost = async (): Promise<Post> => {
 };
 
 beforeAll(async () => {
-  page = mountSsrPage(reviewHtml);
+  page = mountSsr(reviewHtml);
   restoreFetch = stubPlacePosts();
   await import('../../src/client/entry.js');
-  await hydrated(page.root);
+  await hydrated(page);
   // Record navigations instead of leaving the test page (src/ui/drivers/location.ts).
   checkout().drivers = {
     location: {

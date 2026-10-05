@@ -1,4 +1,4 @@
-import { css, define, html, unsafeCSS } from '@gyral/core';
+import { define, html } from '@gyral/core';
 
 export interface GalleryImage {
   readonly url: string;
@@ -6,7 +6,7 @@ export interface GalleryImage {
 }
 
 export interface GalleryProps {
-  readonly images?: readonly GalleryImage[];
+  readonly images: readonly GalleryImage[];
 }
 
 export interface GalleryState {
@@ -31,7 +31,7 @@ const viewRules = Array.from(
  * matching view. The component adds an "Image n of m" status as the selection changes.
  */
 export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gallery', {
-  props: { images: { attribute: false } },
+  props: { images: { attribute: false, default: [] } },
   init: () => ({ index: 0 }),
   intent: {
     Show: ({ value }) => {
@@ -43,7 +43,7 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gall
     Show: (_s, m) => ({ index: m.index }),
   },
   view: (s, i, { props }) => {
-    const images = (props.images ?? []).slice(0, MAX_IMAGES);
+    const images = props.images.slice(0, MAX_IMAGES);
     if (images.length === 0) return html`<p class="none">No image available</p>`;
     return html`
       <div class="gallery">
@@ -91,7 +91,8 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gall
       </div>
     `;
   },
-  styles: css`
+  // A plain string (Gyral accepts CSS text): the per-view rules are generated above.
+  styles: `
     @layer components {
       :host {
         display: block;
@@ -110,7 +111,7 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gall
       .gallery:not(:has(.thumbs)) .view:first-of-type {
         display: block;
       }
-      ${unsafeCSS(viewRules)}
+      ${viewRules}
       .view img {
         display: block;
         inline-size: 100%;

@@ -14,7 +14,6 @@ export function orderSummary(view: CheckoutClient) {
   return html`<aside
     class="order-summary"
     data-component="order-summary"
-    part="order-summary"
     aria-labelledby="summary-heading"
   >
     <h2 id="summary-heading">Order summary</h2>

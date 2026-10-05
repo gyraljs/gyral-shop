@@ -8,15 +8,14 @@ import type { Db } from '../../db/client.js';
 import { registerErrorMessage, registerMember } from '../../services/accounts.js';
 import { authenticate, loginErrorMessage, normalizeEmail } from '../../services/auth.js';
 import { LoginForm, RegisterForm, SECRET_FIELDS } from '../../ui/account/schemas.js';
-import { accountPage, loginPage, registerPage } from '../../ui/pages/account.js';
+import { loginPage, registerPage } from '../../ui/pages/account.js';
 import type { RenderPage } from '../document.js';
+import { limitedResponse, overLimit } from '../limited-form.js';
 import {
   csrfTokenFor,
   endSession,
   ip,
-  limit,
   LIMITS,
-  requireUser,
   safeNext,
   SlidingWindowLimiter,
   startMemberSession,
@@ -99,11 +98,15 @@ export function accountRoutes({ db, render, now = Date.now }: AccountRouteOption
   app.post('/account/login', async (c) => {
     const peek = await peekForm(c);
     const email = normalizeEmail(field(peek, 'email'));
-    const limited =
-      (await limit(c, loginPerIp, [`ip:${ip(c)}`])) ??
-      (await limit(c, loginPerAccount, [`account:${email}`]));
-    if (limited !== undefined) return limited;
     const next = cleanNext(peek.get('next'));
+    const wait =
+      overLimit(loginPerIp, [`ip:${ip(c)}`]) ?? overLimit(loginPerAccount, [`account:${email}`]);
+    if (wait !== undefined) {
+      // The form again, with the message and what was typed (never the password).
+      return limitedResponse(c, 'Login', wait, (r) =>
+        authPage(c, 'login', next, { ...r, values: { email } }),
+      );
+    }
     return formAction(LoginForm, {
       intent: 'Login',
       valid: async (data) => {
@@ -121,9 +124,11 @@ export function accountRoutes({ db, render, now = Date.now }: AccountRouteOption
   });
 
   app.post('/account/register', async (c) => {
-    const limited = await limit(c, registerPerIp, [`ip:${ip(c)}`]);
-    if (limited !== undefined) return limited;
     const next = cleanNext((await peekForm(c)).get('next'));
+    const wait = overLimit(registerPerIp, [`ip:${ip(c)}`]);
+    if (wait !== undefined) {
+      return limitedResponse(c, 'Register', wait, (r) => authPage(c, 'register', next, r));
+    }
     return formAction(RegisterForm, {
       intent: 'Register',
       valid: async ({ name, email, password }) => {
@@ -141,18 +146,6 @@ export function accountRoutes({ db, render, now = Date.now }: AccountRouteOption
   app.post('/account/logout', async (c) => {
     await endSession(c);
     return wantsJson(c) ? c.json({ _tag: 'SignedOut' }) : c.redirect('/', 303);
-  });
-
-  app.get('/account', requireUser(), async (c) => {
-    const user = c.get('user');
-    if (user === undefined) return c.notFound(); // requireUser() already redirected guests
-    return noStore(
-      await render({
-        title: 'Your account',
-        noindex: true,
-        main: accountPage({ ...user, csrfToken: await csrfTokenFor(c) }),
-      }),
-    );
   });
 
   return app;

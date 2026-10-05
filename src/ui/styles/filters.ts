@@ -35,7 +35,7 @@ export const filtersCss = `
   .results { transition: opacity 150ms; }
   shop-listing { display: block; min-inline-size: 0; }
   shop-listing:state(loading) .results { opacity: 0.55; }
-  /* Focus moves to the heading after paging (focusOn): only show a ring for keyboard focus. */
+  /* Focus moves to the heading after paging (focus() command): only show a ring for keyboard focus. */
   .listing-header h1:focus:not(:focus-visible) { outline: none; }
   .load-error {
     padding: var(--space-3); border-radius: var(--radius);

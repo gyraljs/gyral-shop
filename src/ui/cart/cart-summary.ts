@@ -47,7 +47,7 @@ const promoBlock = (
         <div class="promo applied" data-component="promo-code" part="promo">
           <p>
             Promo code <strong>${cart.promo.code}</strong>
-            ${cart.promo.applied ? 'applied.' : html`not applied: ${cart.promo.message ?? ''}`}
+            ${cart.promo.applied ? 'applied.' : html`not applied: ${cart.promo.message ?? nothing}`}
           </p>
           <form method="post" action="/cart/promo/remove" data-intent=${i.RemovePromo}>
             ${csrfField(csrf)}

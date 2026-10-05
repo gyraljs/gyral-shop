@@ -5,11 +5,11 @@ import baseJson from '../fixtures/search-base.json?raw';
 import serverHtml from '../fixtures/search.ssr.html?raw';
 import saleJson from '../fixtures/search-sale.json?raw';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
 const fetches: string[] = [];
-let page: MountedPage;
+let page: MountedSsr;
 let originalUrl: string;
 
 const listing = () => {
@@ -34,9 +34,9 @@ beforeAll(async () => {
     const body = new URL(url).searchParams.get('sale') === '1' ? saleJson : baseJson;
     return Promise.resolve(new Response(body, { headers: { 'content-type': 'application/json' } }));
   });
-  page = mountSsrPage(serverHtml);
+  page = mountSsr(serverHtml);
   await import('../../src/client/entry.js');
-  await hydrated(page.root);
+  await hydrated(page);
 });
 
 afterAll(() => {

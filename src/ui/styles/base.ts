@@ -53,6 +53,8 @@ export const baseCss = `
     grid-template-columns: minmax(0, 1fr);
   }
   a { color: inherit; }
+  /* Form controls take the page font (shadow roots get this from shadow-base.ts). */
+  button, input, select, textarea { font: inherit; }
   .skip-link {
     position: absolute;
     inset-inline-start: var(--space-2);

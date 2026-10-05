@@ -121,7 +121,7 @@ export const fieldView = (s: AuthState, f: FieldSpec) => {
       aria-invalid=${errors === undefined ? nothing : 'true'}
       ${invalid(errors)}
     />
-    <span id=${`${f.name}-error`} class="error">${errors?.join(' ') ?? ''}</span>
+    <span id=${`${f.name}-error`} class="error">${errors?.join(' ') ?? nothing}</span>
   </p>`;
 };
 

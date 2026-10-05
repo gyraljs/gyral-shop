@@ -4,11 +4,11 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import serverHtml from '../fixtures/product.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
-let page: MountedPage;
+let page: MountedSsr;
 
 const shadow = (tag: string): ShadowRoot => {
   const root = page.root.querySelector(tag)?.shadowRoot;
@@ -28,7 +28,7 @@ const skuValue = () =>
   )?.value;
 
 beforeAll(() => {
-  page = mountSsrPage(serverHtml);
+  page = mountSsr(serverHtml);
 });
 
 afterAll(() => {
@@ -47,7 +47,7 @@ describe('product page', () => {
   it('hydrates in place, then switches to per-option choices', async () => {
     const form = buyBox().querySelector('form');
     await import('../../src/client/entry.js');
-    await hydrated(page.root);
+    await hydrated(page);
     await vi.waitFor(() => {
       expect(all(buyBox(), 'fieldset.axis').length).toBeGreaterThan(0);
     });

@@ -6,6 +6,7 @@ export interface CategoryLinkView {
   readonly slug: string;
   readonly name: string;
   readonly count: number;
+  readonly image?: { readonly url: string; readonly alt: string };
 }
 
 export interface DepartmentView {
@@ -40,8 +41,19 @@ export const departmentPage = (view: DepartmentView) => {
       <ul class="category-grid">
         ${view.categories.map(
           (c) =>
-            html`<li>
+            html`<li data-component="category-tile">
               <a href="/c/${department.slug}/${c.slug}">
+                ${
+                  c.image === undefined
+                    ? nothing
+                    : html`<img
+                        src=${c.image.url}
+                        alt=""
+                        width="400"
+                        height="400"
+                        loading="lazy"
+                      />`
+                }
                 <span class="name">${c.name}</span>
                 <span class="count">${products(c.count)}</span>
               </a>

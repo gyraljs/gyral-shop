@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Checkout — Gyral Goods</title>
     
-    <!--lit-part eabATTlSz5c=--><!--lit-part hKwia4hjmL4=--><style>
+    <style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -57,6 +57,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
   a { color: inherit; }
+  /* Form controls take the page font (shadow roots get this from shadow-base.ts). */
+  button, input, select, textarea { font: inherit; }
   .skip-link {
     position: absolute;
     inset-inline-start: var(--space-2);
@@ -84,7 +86,7 @@
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 }
-
+</style><style>
 @layer components {
   .visually-hidden {
     position: absolute; inline-size: 1px; block-size: 1px;
@@ -115,6 +117,16 @@
     text-decoration: none;
   }
   .department-grid a:hover { border-color: var(--brand); }
+  [data-component="department-tile"] { display: grid; gap: var(--space-1); align-content: start; }
+  [data-component="department-tile"] a { display: grid; gap: var(--space-2); padding: var(--space-2); }
+  [data-component="department-tile"] img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover;
+    border-radius: var(--radius);
+  }
+  [data-component="department-tile"] h3 { margin: 0; font-size: 1rem; }
+  [data-component="department-tile"] p {
+    margin: 0; color: var(--ink-muted); font-size: 0.9rem; text-align: center;
+  }
   .card-grid {
     display: grid; gap: var(--space-4);
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
@@ -146,7 +158,7 @@
   .count { color: var(--ink-muted); }
   .stock.out { color: var(--sale); font-weight: 600; font-size: 0.9rem; }
 }
-
+</style><style>
 @layer components {
   .breadcrumbs ol {
     list-style: none; padding: 0; margin-block: 0 var(--space-3);
@@ -169,6 +181,10 @@
     border-radius: var(--radius); text-decoration: none;
   }
   .category-grid a:hover { border-color: var(--brand); }
+  [data-component="category-tile"] img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover;
+    border-radius: var(--radius); margin-block-end: var(--space-2);
+  }
   .category-grid .name { font-weight: 600; }
   .category-grid .count { color: var(--ink-muted); font-size: 0.9rem; }
   .listing {
@@ -203,7 +219,7 @@
     background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
   }
 }
-
+</style><style>
 @layer components {
   .filters {
     margin-block-start: var(--space-3);
@@ -238,14 +254,14 @@
   .results { transition: opacity 150ms; }
   shop-listing { display: block; min-inline-size: 0; }
   shop-listing:state(loading) .results { opacity: 0.55; }
-  /* Focus moves to the heading after paging (focusOn): only show a ring for keyboard focus. */
+  /* Focus moves to the heading after paging (focus() command): only show a ring for keyboard focus. */
   .listing-header h1:focus:not(:focus-visible) { outline: none; }
   .load-error {
     padding: var(--space-3); border-radius: var(--radius);
     border: 1px solid var(--sale); color: var(--sale);
   }
 }
-
+</style><style>
 @layer components {
   .product {
     display: grid; gap: var(--space-5);
@@ -275,7 +291,7 @@
   .review-list h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
   .byline { color: var(--ink-muted); font-size: 0.9rem; margin-block: var(--space-1); }
 }
-
+</style><style>
 @layer components {
   .auth, .account { max-inline-size: 32rem; display: grid; gap: var(--space-3); }
   .auth h1, .account h1 { margin-block: 0; }
@@ -286,8 +302,50 @@
   }
   .account-details dt { font-weight: 600; }
   .account-details dd { margin: 0; overflow-wrap: anywhere; }
+  .account-layout {
+    display: grid; gap: var(--space-4);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (width > 48rem) {
+    .account-layout { grid-template-columns: 14rem minmax(0, 1fr); }
+  }
+  [data-region="account-nav"] ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
+  [data-region="account-nav"] a { display: block; padding: var(--space-1) var(--space-2); border-radius: var(--radius); }
+  [data-region="account-nav"] a[aria-current="page"] { background: var(--surface-sunken); font-weight: 600; }
+  .account h2 { margin-block: var(--space-3) 0; font-size: 1.15rem; }
+  .account section { display: grid; gap: var(--space-2); }
+  .notice {
+    margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius);
+    border-inline-start: 4px solid var(--ok);
+    background: color-mix(in oklch, var(--ok) 10%, var(--surface-raised));
+  }
+  .notice[data-kind="error"] {
+    border-inline-start-color: var(--danger);
+    background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
+  }
+  .address-list {
+    list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  }
+  [data-component="address-card"] {
+    display: grid; gap: var(--space-2); align-content: start;
+    padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface-raised);
+  }
+  [data-component="address-card"][data-default] { border-color: var(--brand); }
+  [data-component="address-card"] address { font-style: normal; }
+  [data-component="address-card"] form, .address-actions { margin: 0; }
+  [data-component="badge"] {
+    margin: 0; justify-self: start; font-size: 0.8rem; font-weight: 700;
+    padding-inline: var(--space-2); border-radius: var(--radius);
+    background: var(--brand); color: var(--brand-ink);
+  }
+  .button-link {
+    font: inherit; padding: 0; border: 0; background: none; color: inherit;
+    text-decoration: underline; cursor: pointer;
+  }
 }
-
+</style><style>
 @layer components {
   .confirmation, .order-page {
     container: confirmation / inline-size;
@@ -390,9 +448,160 @@
     .order-table :is(thead th, td):nth-child(4) { display: none; }
   }
 }
-</style><!--/lit-part-->
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!--lit-part--><!--/lit-part-->
+</style><style>
+@layer components {
+  [data-component="member-form"] { display: grid; gap: var(--space-3); max-inline-size: 32rem; }
+  [data-component="member-form"] .field { display: grid; gap: var(--space-1); margin: 0; }
+  [data-component="member-form"] .field[data-kind="checkbox"] {
+    grid-template-columns: auto 1fr; align-items: center; column-gap: var(--space-2);
+  }
+  [data-component="member-form"] .field[data-kind="checkbox"] .error,
+  [data-component="member-form"] .field[data-kind="checkbox"] small { grid-column: 1 / -1; }
+  [data-component="member-form"] label { font-weight: 600; }
+  [data-component="member-form"] small { color: var(--ink-muted); }
+  [data-component="member-form"] :is(input:not([type="checkbox"]), select, textarea) {
+    font: inherit; padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--line-strong); border-radius: var(--radius);
+    background: var(--surface-raised); color: var(--ink);
+  }
+  [data-component="member-form"] :is(input, select, textarea):focus-visible {
+    outline: 2px solid var(--focus); outline-offset: 1px;
+  }
+  [data-component="member-form"] :is(input, select, textarea):is(:user-invalid, [aria-invalid="true"]) {
+    border-color: var(--danger);
+  }
+  [data-component="member-form"] .error { color: var(--danger); font-size: 0.9rem; }
+  [data-component="member-form"] .error:empty { display: none; }
+  [data-component="member-form"] .form-error {
+    margin: 0; padding: var(--space-2) var(--space-3);
+    border-inline-start: 4px solid var(--danger);
+    background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
+  }
+  [data-component="member-form"] .form-actions { margin: 0; }
+  [data-component="member-form"] button { font: inherit; font-weight: 600; }
+  [data-component="member-form"] button:disabled { opacity: 0.6; cursor: progress; }
+}
+</style><style>
+@layer components {
+  .prose { max-inline-size: 42rem; display: grid; gap: var(--space-3); }
+  .prose header { display: grid; gap: var(--space-1); }
+  .prose h1, .prose h2 { margin: 0; text-wrap: balance; }
+  .prose h2 { font-size: 1.2rem; margin-block-start: var(--space-2); }
+  .prose p, .prose ul, .prose dl { margin: 0; text-wrap: pretty; }
+  .prose .lead { color: var(--ink-muted); font-size: 1.1rem; }
+  .prose section { display: grid; gap: var(--space-2); }
+  .prose dt { font-weight: 600; }
+  .prose dd { margin-inline-start: 0; margin-block-end: var(--space-2); }
+  [data-component="faq"] { display: grid; gap: var(--space-2); }
+  [data-component="faq"] details {
+    border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface-raised); padding: var(--space-2) var(--space-3);
+  }
+  [data-component="faq"] summary { cursor: pointer; font-weight: 600; }
+  [data-component="faq"] details[open] summary { margin-block-end: var(--space-2); }
+  [data-component="faq"] details::details-content {
+    transition: content-visibility 0.2s allow-discrete, opacity 0.2s;
+    opacity: 0;
+  }
+  [data-component="faq"] details[open]::details-content { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-component="faq"] details::details-content { transition: none; }
+  }
+  [data-region="error"] { display: grid; gap: var(--space-3); max-inline-size: 42rem; }
+  [data-region="error"] h1 { margin: 0; }
+  [data-region="error"] form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+}
+</style><style>
+@layer reset, tokens, base, components, theme;
+@layer components {
+shop-checkout {
+  display: block;
+  min-inline-size: 0;
+  container: checkout / inline-size;
+  h1 { margin-block: var(--space-3) var(--space-2); }
+  .layout { display: grid; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
+  @container checkout (min-width: 56rem) {
+    .layout { grid-template-columns: minmax(0, 1fr) 20rem; align-items: start; }
+    .order-summary { position: sticky; inset-block-start: var(--space-3); }
+  }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .step {
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+  }
+  .step.open { border-color: var(--line-strong); }
+  .step.locked { background: var(--surface-sunken); color: var(--ink-muted); }
+  .step h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+  .step.locked h2 { margin: 0; }
+  .number { color: var(--ink-muted); }
+  .locked { margin: 0; font-size: 0.9rem; }
+  .step.locked .locked { display: none; }
+  .step-summary { display: flex; justify-content: space-between; gap: var(--space-3); align-items: start; }
+  .step-summary p, .step-summary address { margin: 0; font-style: normal; }
+  form { display: grid; gap: var(--space-2); }
+  fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  legend { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
+  .field { display: grid; gap: var(--space-1); margin: 0; }
+  .row { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+  input:not([type='radio'], [type='checkbox']), select {
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  input[aria-invalid='true'], input:user-invalid { border-color: var(--danger); }
+  .error { color: var(--danger); font-size: 0.9rem; }
+  .error:empty { display: none; }
+  .hint { color: var(--ink-muted); font-size: 0.9rem; margin: 0; }
+  .choice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-1) var(--space-2);
+    align-items: center;
+    padding: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .choice:has(input:checked) { border-color: var(--brand); background: var(--surface-sunken); }
+  .choice .estimate { grid-column: 2; color: var(--ink-muted); font-size: 0.9rem; }
+  .choice .amount { grid-row: 1; grid-column: 3; font-weight: 600; }
+  button.primary {
+    justify-self: start;
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--brand);
+    color: var(--brand-ink);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.6; cursor: progress; }
+  .order-summary {
+    padding: var(--space-3);
+    border-radius: var(--radius);
+    background: var(--surface-sunken);
+  }
+  .order-summary h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+  .summary-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .summary-lines li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--space-2); }
+  .summary-lines .options { grid-column: 1; color: var(--ink-muted); font-size: 0.85rem; }
+  .summary-lines .amount { grid-row: 1; grid-column: 2; font-variant-numeric: tabular-nums; }
+  .totals { margin: var(--space-3) 0 0; display: grid; gap: var(--space-1); }
+  .totals div { display: flex; justify-content: space-between; gap: var(--space-2); }
+  .totals dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .totals .discount dd { color: var(--sale); }
+  .totals .total { border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-2); font-weight: 700; }
+  .visually-hidden {
+    position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+}
+}
+</style><!--lit-part kzktHFP7Xvk=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part--><!--/lit-part-->
     <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
     <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
@@ -738,210 +947,119 @@
         
         
         
-       data-region="checkout" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;open&quot;:&quot;review&quot;,&quot;steps&quot;:[{&quot;step&quot;:&quot;contact&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;address&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;shipping&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;payment&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;review&quot;,&quot;status&quot;:&quot;open&quot;}],&quot;email&quot;:&quot;ada@example.com&quot;,&quot;address&quot;:{&quot;name&quot;:&quot;Ada Lovelace&quot;,&quot;line1&quot;:&quot;1 Analytical Way&quot;,&quot;line2&quot;:&quot;&quot;,&quot;city&quot;:&quot;Albany&quot;,&quot;state&quot;:&quot;NY&quot;,&quot;postalCode&quot;:&quot;12207&quot;,&quot;phone&quot;:&quot;&quot;},&quot;shippingMethod&quot;:&quot;standard&quot;,&quot;card&quot;:{&quot;brand&quot;:&quot;visa&quot;,&quot;last4&quot;:&quot;4242&quot;,&quot;expMonth&quot;:12,&quot;expYear&quot;:2030},&quot;savedAddresses&quot;:[],&quot;shippingOptions&quot;:[{&quot;method&quot;:&quot;standard&quot;,&quot;label&quot;:&quot;Standard&quot;,&quot;price&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:5,&quot;max&quot;:7}},{&quot;method&quot;:&quot;express&quot;,&quot;label&quot;:&quot;Express&quot;,&quot;price&quot;:{&quot;cents&quot;:1299,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:2,&quot;max&quot;:3}},{&quot;method&quot;:&quot;next_day&quot;,&quot;label&quot;:&quot;Next day&quot;,&quot;price&quot;:{&quot;cents&quot;:2499,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:1,&quot;max&quot;:1}}],&quot;lines&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;name&quot;:&quot;LEGO&quot;,&quot;href&quot;:&quot;/p/lego&quot;,&quot;options&quot;:{},&quot;quantity&quot;:1,&quot;lineTotal&quot;:{&quot;cents&quot;:5000,&quot;currency&quot;:&quot;USD&quot;}}],&quot;totals&quot;:{&quot;subtotal&quot;:{&quot;cents&quot;:5000,&quot;currency&quot;:&quot;USD&quot;},&quot;discount&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;shipping&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;tax&quot;:{&quot;cents&quot;:200,&quot;currency&quot;:&quot;USD&quot;},&quot;taxPending&quot;:false,&quot;total&quot;:{&quot;cents&quot;:5200,&quot;currency&quot;:&quot;USD&quot;}},&quot;ready&quot;:true,&quot;placeKey&quot;:&quot;test-place-key&quot;}}}"><template shadowroot="open" shadowrootmode="open"><style>
-@layer reset, base, components;
-@layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-  img, svg { display: block; max-inline-size: 100%; }
-}
-@layer base {
-  :host { display: block; min-inline-size: 0; }
-  a { color: inherit; }
-  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-  h1, h2 { line-height: 1.2; text-wrap: balance; }
-  h1:focus { outline: none; }
-  h1:focus-visible { outline: 2px solid var(--focus); }
-  p { text-wrap: pretty; }
-  button, input, select { font: inherit; }
-}
-
-@layer reset, tokens, base, components, theme;
-@layer components {
-  :host { container: checkout / inline-size; }
-  h1 { margin-block: var(--space-3) var(--space-2); }
-  .layout { display: grid; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
-  @container checkout (min-width: 56rem) {
-    .layout { grid-template-columns: minmax(0, 1fr) 20rem; align-items: start; }
-    .order-summary { position: sticky; inset-block-start: var(--space-3); }
-  }
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
-  .step {
-    padding: var(--space-3);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--surface-raised);
-  }
-  .step.open { border-color: var(--line-strong); }
-  .step.locked { background: var(--surface-sunken); color: var(--ink-muted); }
-  .step h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
-  .step.locked h2 { margin: 0; }
-  .number { color: var(--ink-muted); }
-  .locked { margin: 0; font-size: 0.9rem; }
-  .step.locked .locked { display: none; }
-  .step-summary { display: flex; justify-content: space-between; gap: var(--space-3); align-items: start; }
-  .step-summary p, .step-summary address { margin: 0; font-style: normal; }
-  form { display: grid; gap: var(--space-2); }
-  fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
-  legend { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
-  .field { display: grid; gap: var(--space-1); margin: 0; }
-  .row { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
-  input:not([type='radio'], [type='checkbox']), select {
-    padding: var(--space-1) var(--space-2);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
-    background: var(--surface);
-    color: var(--ink);
-  }
-  input[aria-invalid='true'], input:user-invalid { border-color: var(--danger); }
-  .error { color: var(--danger); font-size: 0.9rem; }
-  .error:empty { display: none; }
-  .hint { color: var(--ink-muted); font-size: 0.9rem; margin: 0; }
-  .choice {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: var(--space-1) var(--space-2);
-    align-items: center;
-    padding: var(--space-2);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    cursor: pointer;
-  }
-  .choice:has(input:checked) { border-color: var(--brand); background: var(--surface-sunken); }
-  .choice .estimate { grid-column: 2; color: var(--ink-muted); font-size: 0.9rem; }
-  .choice .amount { grid-row: 1; grid-column: 3; font-weight: 600; }
-  button.primary {
-    justify-self: start;
-    padding: var(--space-2) var(--space-4);
-    border: 0;
-    border-radius: var(--radius);
-    background: var(--brand);
-    color: var(--brand-ink);
-    font-weight: 700;
-    cursor: pointer;
-  }
-  button.primary:disabled { opacity: 0.6; cursor: progress; }
-  .order-summary {
-    padding: var(--space-3);
-    border-radius: var(--radius);
-    background: var(--surface-sunken);
-  }
-  .order-summary h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
-  .summary-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
-  .summary-lines li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--space-2); }
-  .summary-lines .options { grid-column: 1; color: var(--ink-muted); font-size: 0.85rem; }
-  .summary-lines .amount { grid-row: 1; grid-column: 2; font-variant-numeric: tabular-nums; }
-  .totals { margin: var(--space-3) 0 0; display: grid; gap: var(--space-1); }
-  .totals div { display: flex; justify-content: space-between; gap: var(--space-2); }
-  .totals dd { margin: 0; font-variant-numeric: tabular-nums; }
-  .totals .discount dd { color: var(--sale); }
-  .totals .total { border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-2); font-weight: 700; }
-  .visually-hidden {
-    position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
-    clip-path: inset(50%); white-space: nowrap;
-  }
-}
-</style><!--lit-part ZCmhcLWsXoI=--><h1>Checkout</h1>
+       data-region="checkout" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;open&quot;:&quot;review&quot;,&quot;steps&quot;:[{&quot;step&quot;:&quot;contact&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;address&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;shipping&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;payment&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;review&quot;,&quot;status&quot;:&quot;open&quot;}],&quot;email&quot;:&quot;ada@example.com&quot;,&quot;address&quot;:{&quot;name&quot;:&quot;Ada Lovelace&quot;,&quot;line1&quot;:&quot;1 Analytical Way&quot;,&quot;line2&quot;:&quot;&quot;,&quot;city&quot;:&quot;Albany&quot;,&quot;state&quot;:&quot;NY&quot;,&quot;postalCode&quot;:&quot;12207&quot;,&quot;phone&quot;:&quot;&quot;},&quot;shippingMethod&quot;:&quot;standard&quot;,&quot;card&quot;:{&quot;brand&quot;:&quot;visa&quot;,&quot;last4&quot;:&quot;4242&quot;,&quot;expMonth&quot;:12,&quot;expYear&quot;:2030},&quot;savedAddresses&quot;:[],&quot;shippingOptions&quot;:[{&quot;method&quot;:&quot;standard&quot;,&quot;label&quot;:&quot;Standard&quot;,&quot;price&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:5,&quot;max&quot;:7}},{&quot;method&quot;:&quot;express&quot;,&quot;label&quot;:&quot;Express&quot;,&quot;price&quot;:{&quot;cents&quot;:1299,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:2,&quot;max&quot;:3}},{&quot;method&quot;:&quot;next_day&quot;,&quot;label&quot;:&quot;Next day&quot;,&quot;price&quot;:{&quot;cents&quot;:2499,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:1,&quot;max&quot;:1}}],&quot;lines&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;name&quot;:&quot;LEGO&quot;,&quot;href&quot;:&quot;/p/lego&quot;,&quot;options&quot;:{},&quot;quantity&quot;:1,&quot;lineTotal&quot;:{&quot;cents&quot;:5000,&quot;currency&quot;:&quot;USD&quot;}}],&quot;totals&quot;:{&quot;subtotal&quot;:{&quot;cents&quot;:5000,&quot;currency&quot;:&quot;USD&quot;},&quot;discount&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;shipping&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;tax&quot;:{&quot;cents&quot;:200,&quot;currency&quot;:&quot;USD&quot;},&quot;taxPending&quot;:false,&quot;total&quot;:{&quot;cents&quot;:5200,&quot;currency&quot;:&quot;USD&quot;}},&quot;ready&quot;:true,&quot;placeKey&quot;:&quot;test-place-key&quot;}}}" data-gyral-light><!--gyral:lit-part ZCmhcLWsXoI=--><h1>Checkout</h1>
       <p class="visually-hidden" role="status">
-        <!--lit-part--><!--/lit-part-->
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
       </p>
       <div class="layout">
         <ol class="steps">
-          <!--lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+          <!--gyral:lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
               class="step done"
               data-component="checkout-step"
               data-step="contact"
-              part="step"
               aria-current="false"
             >
-              <!--lit-node 1--><section aria-labelledby="contact-heading">
-                <!--lit-node 2--><h2 id="contact-heading">
-                  <span class="number"><!--lit-part-->1<!--/lit-part-->.</span> <!--lit-part-->Contact<!--/lit-part-->
+              <!--gyral:lit-node 1--><section aria-labelledby="contact-heading">
+                <!--gyral:lit-node 2--><h2 id="contact-heading">
+                  <span class="number"><!--gyral:lit-part-->1<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Contact<!--gyral:/lit-part-->
                 </h2>
-                <!--lit-part N79clM4wywc=--><div class="step-summary" part="step-summary">
-      <!--lit-part y6RVfKR7hws=--><p><!--lit-part-->ada@example.com<!--/lit-part--></p><!--/lit-part-->
-      <!--lit-node 2--><a href="/checkout?edit=contact" data-intent="Edit" data-step="contact" part="edit"
-        >Edit <span class="visually-hidden"><!--lit-part-->Contact<!--/lit-part--></span></a
+                <!--gyral:lit-part cYmKr/erLFw=--><div class="step-summary" data-component="step-summary">
+      <!--gyral:lit-part y6RVfKR7hws=--><p><!--gyral:lit-part-->ada@example.com<!--gyral:/lit-part--></p><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><a
+        href="/checkout?edit=contact"
+        data-intent="Edit"
+        data-step="contact"
+        data-component="step-edit"
+        >Edit <span class="visually-hidden"><!--gyral:lit-part-->Contact<!--gyral:/lit-part--></span></a
       >
-    </div><!--/lit-part-->
+    </div><!--gyral:/lit-part-->
               </section>
-            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
               class="step done"
               data-component="checkout-step"
               data-step="address"
-              part="step"
               aria-current="false"
             >
-              <!--lit-node 1--><section aria-labelledby="address-heading">
-                <!--lit-node 2--><h2 id="address-heading">
-                  <span class="number"><!--lit-part-->2<!--/lit-part-->.</span> <!--lit-part-->Shipping address<!--/lit-part-->
+              <!--gyral:lit-node 1--><section aria-labelledby="address-heading">
+                <!--gyral:lit-node 2--><h2 id="address-heading">
+                  <span class="number"><!--gyral:lit-part-->2<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Shipping address<!--gyral:/lit-part-->
                 </h2>
-                <!--lit-part N79clM4wywc=--><div class="step-summary" part="step-summary">
-      <!--lit-part zQAv+wISgT4=--><address><!--lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Ada Lovelace<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->1 Analytical Way<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Albany, NY 12207<!--/lit-part--><br /><!--/lit-part--><!--/lit-part--></address><!--/lit-part-->
-      <!--lit-node 2--><a href="/checkout?edit=address" data-intent="Edit" data-step="address" part="edit"
-        >Edit <span class="visually-hidden"><!--lit-part-->Shipping address<!--/lit-part--></span></a
+                <!--gyral:lit-part cYmKr/erLFw=--><div class="step-summary" data-component="step-summary">
+      <!--gyral:lit-part zQAv+wISgT4=--><address><!--gyral:lit-part--><!--gyral:lit-part BIKGC1k/hws=--><!--gyral:lit-part-->Ada Lovelace<!--gyral:/lit-part--><br /><!--gyral:/lit-part--><!--gyral:lit-part BIKGC1k/hws=--><!--gyral:lit-part-->1 Analytical Way<!--gyral:/lit-part--><br /><!--gyral:/lit-part--><!--gyral:lit-part BIKGC1k/hws=--><!--gyral:lit-part-->Albany, NY 12207<!--gyral:/lit-part--><br /><!--gyral:/lit-part--><!--gyral:/lit-part--></address><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><a
+        href="/checkout?edit=address"
+        data-intent="Edit"
+        data-step="address"
+        data-component="step-edit"
+        >Edit <span class="visually-hidden"><!--gyral:lit-part-->Shipping address<!--gyral:/lit-part--></span></a
       >
-    </div><!--/lit-part-->
+    </div><!--gyral:/lit-part-->
               </section>
-            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
               class="step done"
               data-component="checkout-step"
               data-step="shipping"
-              part="step"
               aria-current="false"
             >
-              <!--lit-node 1--><section aria-labelledby="shipping-heading">
-                <!--lit-node 2--><h2 id="shipping-heading">
-                  <span class="number"><!--lit-part-->3<!--/lit-part-->.</span> <!--lit-part-->Shipping method<!--/lit-part-->
+              <!--gyral:lit-node 1--><section aria-labelledby="shipping-heading">
+                <!--gyral:lit-node 2--><h2 id="shipping-heading">
+                  <span class="number"><!--gyral:lit-part-->3<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Shipping method<!--gyral:/lit-part-->
                 </h2>
-                <!--lit-part N79clM4wywc=--><div class="step-summary" part="step-summary">
-      <!--lit-part B/UJByTWdnw=--><p><!--lit-part-->Standard<!--/lit-part-->, <!--lit-part-->5–7 business days<!--/lit-part--></p><!--/lit-part-->
-      <!--lit-node 2--><a href="/checkout?edit=shipping" data-intent="Edit" data-step="shipping" part="edit"
-        >Edit <span class="visually-hidden"><!--lit-part-->Shipping method<!--/lit-part--></span></a
+                <!--gyral:lit-part cYmKr/erLFw=--><div class="step-summary" data-component="step-summary">
+      <!--gyral:lit-part B/UJByTWdnw=--><p><!--gyral:lit-part-->Standard<!--gyral:/lit-part-->, <!--gyral:lit-part-->5–7 business days<!--gyral:/lit-part--></p><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><a
+        href="/checkout?edit=shipping"
+        data-intent="Edit"
+        data-step="shipping"
+        data-component="step-edit"
+        >Edit <span class="visually-hidden"><!--gyral:lit-part-->Shipping method<!--gyral:/lit-part--></span></a
       >
-    </div><!--/lit-part-->
+    </div><!--gyral:/lit-part-->
               </section>
-            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
               class="step done"
               data-component="checkout-step"
               data-step="payment"
-              part="step"
               aria-current="false"
             >
-              <!--lit-node 1--><section aria-labelledby="payment-heading">
-                <!--lit-node 2--><h2 id="payment-heading">
-                  <span class="number"><!--lit-part-->4<!--/lit-part-->.</span> <!--lit-part-->Payment<!--/lit-part-->
+              <!--gyral:lit-node 1--><section aria-labelledby="payment-heading">
+                <!--gyral:lit-node 2--><h2 id="payment-heading">
+                  <span class="number"><!--gyral:lit-part-->4<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Payment<!--gyral:/lit-part-->
                 </h2>
-                <!--lit-part N79clM4wywc=--><div class="step-summary" part="step-summary">
-      <!--lit-part y6RVfKR7hws=--><p><!--lit-part-->Visa ending 4242, expires 12/30<!--/lit-part--></p><!--/lit-part-->
-      <!--lit-node 2--><a href="/checkout?edit=payment" data-intent="Edit" data-step="payment" part="edit"
-        >Edit <span class="visually-hidden"><!--lit-part-->Payment<!--/lit-part--></span></a
+                <!--gyral:lit-part cYmKr/erLFw=--><div class="step-summary" data-component="step-summary">
+      <!--gyral:lit-part y6RVfKR7hws=--><p><!--gyral:lit-part-->Visa ending 4242, expires 12/30<!--gyral:/lit-part--></p><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><a
+        href="/checkout?edit=payment"
+        data-intent="Edit"
+        data-step="payment"
+        data-component="step-edit"
+        >Edit <span class="visually-hidden"><!--gyral:lit-part-->Payment<!--gyral:/lit-part--></span></a
       >
-    </div><!--/lit-part-->
+    </div><!--gyral:/lit-part-->
               </section>
-            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
               class="step open"
               data-component="checkout-step"
               data-step="review"
-              part="step"
               aria-current="step"
             >
-              <!--lit-node 1--><section aria-labelledby="review-heading">
-                <!--lit-node 2--><h2 id="review-heading">
-                  <span class="number"><!--lit-part-->5<!--/lit-part-->.</span> <!--lit-part-->Review and place order<!--/lit-part-->
+              <!--gyral:lit-node 1--><section aria-labelledby="review-heading">
+                <!--gyral:lit-node 2--><h2 id="review-heading">
+                  <span class="number"><!--gyral:lit-part-->5<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Review and place order<!--gyral:/lit-part-->
                 </h2>
-                <!--lit-part Ux1yUU+3Z5Y=--><!--lit-node 0--><form
+                <!--gyral:lit-part dl8m7W9hs2E=--><!--gyral:lit-node 0--><form
     action="/checkout/place"
     method="post"
     class="place-order"
-    part="place-order"
+    data-component="place-order"
     data-intent="PlaceOrder"
   >
-    <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--/lit-part-->
-    <!--lit-node 2--><input type="hidden" name="key" value="test-place-key" />
-    <!--lit-node 3--><input type="hidden" name="expectedTotal" value="5200" />
-    <p>Total to pay: <strong data-component="price"><!--lit-part-->$52.00<!--/lit-part--></strong></p>
+    <!--gyral:lit-part TIYrCHR1D68=--><!--gyral:lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--gyral:/lit-part-->
+    <!--gyral:lit-node 2--><input type="hidden" name="key" value="test-place-key" />
+    <!--gyral:lit-node 3--><input type="hidden" name="expectedTotal" value="5200" />
+    <p>Total to pay: <strong data-component="price"><!--gyral:lit-part-->$52.00<!--gyral:/lit-part--></strong></p>
     <label class="choice"
-      ><!--lit-node 8--><input
+      ><!--gyral:lit-node 8--><input
         type="checkbox"
         name="terms"
         required
@@ -950,50 +1068,49 @@
       />
       <span>I accept the <a href="/terms">terms of sale</a>.</span></label
     >
-    <span id="PlaceOrder-terms-error" class="error"><!--lit-part--><!--/lit-part--></span>
-    <!--lit-part--><!--/lit-part--> <!--lit-part MJXybzLLglI=--><!--lit-node 0--><button class="primary" ><!--lit-part-->Place order<!--/lit-part--></button><!--/lit-part-->
-  </form><!--/lit-part-->
+    <span id="PlaceOrder-terms-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+    <!--gyral:lit-part--><!--gyral:/lit-part--> <!--gyral:lit-part MJXybzLLglI=--><!--gyral:lit-node 0--><button class="primary" ><!--gyral:lit-part-->Place order<!--gyral:/lit-part--></button><!--gyral:/lit-part-->
+  </form><!--gyral:/lit-part-->
               </section>
-            </li><!--/lit-part--><!--/lit-part-->
+            </li><!--gyral:/lit-part--><!--gyral:/lit-part-->
         </ol>
-        <!--lit-part IIDOdyLuca0=--><aside
+        <!--gyral:lit-part JmysGYtuQgw=--><aside
     class="order-summary"
     data-component="order-summary"
-    part="order-summary"
     aria-labelledby="summary-heading"
   >
     <h2 id="summary-heading">Order summary</h2>
     <ul class="summary-lines">
-      <!--lit-part--><!--lit-part uZ/0PH+Hd7o=--><li data-component="summary-line">
+      <!--gyral:lit-part--><!--gyral:lit-part uZ/0PH+Hd7o=--><li data-component="summary-line">
             <span class="name"
-              ><!--lit-part-->LEGO<!--/lit-part--><!--lit-part--><!--/lit-part--></span
+              ><!--gyral:lit-part-->LEGO<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part--></span
             >
-            <!--lit-part--><!--/lit-part-->
-            <span class="amount" data-component="price"><!--lit-part-->$50.00<!--/lit-part--></span>
-          </li><!--/lit-part--><!--/lit-part-->
+            <!--gyral:lit-part--><!--gyral:/lit-part-->
+            <span class="amount" data-component="price"><!--gyral:lit-part-->$50.00<!--gyral:/lit-part--></span>
+          </li><!--gyral:/lit-part--><!--gyral:/lit-part-->
     </ul>
     <dl class="totals">
       <div>
         <dt>Subtotal</dt>
-        <dd><!--lit-part-->$50.00<!--/lit-part--></dd>
+        <dd><!--gyral:lit-part-->$50.00<!--gyral:/lit-part--></dd>
       </div>
-      <!--lit-part--><!--/lit-part-->
+      <!--gyral:lit-part--><!--gyral:/lit-part-->
       <div>
         <dt>Shipping</dt>
-        <dd><!--lit-part-->Free<!--/lit-part--></dd>
+        <dd><!--gyral:lit-part-->Free<!--gyral:/lit-part--></dd>
       </div>
       <div>
         <dt>Tax</dt>
-        <dd><!--lit-part-->$2.00<!--/lit-part--></dd>
+        <dd><!--gyral:lit-part-->$2.00<!--gyral:/lit-part--></dd>
       </div>
       <div class="total">
         <dt>Total</dt>
-        <dd data-component="price"><!--lit-part-->$52.00<!--/lit-part--></dd>
+        <dd data-component="price"><!--gyral:lit-part-->$52.00<!--gyral:/lit-part--></dd>
       </div>
     </dl>
     <p><a href="/cart">Edit cart</a></p>
-  </aside><!--/lit-part-->
-      </div><!--/lit-part--></template></shop-checkout><!--/lit-part--></main>
+  </aside><!--gyral:/lit-part-->
+      </div><!--gyral:/lit-part--></shop-checkout><!--/lit-part--></main>
         <!--lit-part STG64S/HenM=-->
   <footer class="site-footer">
     <div class="page">

@@ -3,11 +3,11 @@ import '@gyral/ssr/hydrate';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/category.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
-let page: MountedPage;
+let page: MountedSsr;
 
 const listing = () => {
   const el = page.root.querySelector('shop-listing');
@@ -23,7 +23,7 @@ const header = () => {
 };
 
 beforeAll(() => {
-  page = mountSsrPage(serverHtml);
+  page = mountSsr(serverHtml);
 });
 
 afterAll(() => {
@@ -43,10 +43,10 @@ describe('category page (page 2 of a 32-product listing)', () => {
     const link = header().shadowRoot?.querySelector('nav.departments a[aria-current]');
     expect(link?.textContent.trim()).toBe('Electronics');
     await import('../../src/client/entry.js');
-    await hydrated(page.root);
+    await hydrated(page);
     expect(header().shadowRoot?.querySelector('nav.departments a[aria-current]')).toBe(link);
     const card = listing().querySelector('.product-card');
-    await hydrated(page.root);
+    await hydrated(page);
     expect(listing().querySelector('.product-card')).toBe(card); // hydrated in place
     expect(errors).not.toHaveBeenCalled();
     expect(warnings).not.toHaveBeenCalled();

@@ -4,10 +4,12 @@
 // A small dedicated driver rather than @gyral/http: every status (2xx and 404/409/422) carries
 // the same answer shape (the cart plus an optional error), requests are domain-shaped and
 // queued, and tests fake it by name. @gyral/http now exposes error bodies (Gyral gyral-ud5.7),
-// but routing both outcomes through it would add mapping without removing code.
+// but routing both outcomes through it would add mapping without removing code. The CSRF
+// header comes from @gyral/http's csrfFromMeta, the same source submitForm uses.
 import { defineDriver } from '@gyral/core';
+import { csrfFromMeta } from '@gyral/http';
 import * as v from 'valibot';
-import { CSRF_HEADER, readCsrfToken } from '../forms/csrf.js';
+import { CSRF_HEADER, CSRF_META } from '../forms/csrf.js';
 import { ApiAnswerSchema, type ApiAnswer } from './model.js';
 
 export type CartRequest =
@@ -19,6 +21,9 @@ export type CartRequest =
   | { readonly _tag: 'RemovePromo' };
 
 export const CART_API = 'cart-api';
+
+/** `x-csrf-token` from the page's `<meta name="csrf-token">`, read per request. */
+const csrfHeaders = csrfFromMeta(CSRF_META, CSRF_HEADER);
 
 interface Http {
   readonly method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
@@ -65,7 +70,6 @@ export const cartApi = defineDriver<CartRequest, ApiAnswer, CartApiError>({
     cause instanceof CartApiError ? cause : new CartApiError('The cart could not be updated.'),
   run: async (request, { signal }) => {
     const { method, path, body } = toHttp(request);
-    const token = readCsrfToken();
     const response = await fetch(path, {
       method,
       signal,
@@ -73,7 +77,7 @@ export const cartApi = defineDriver<CartRequest, ApiAnswer, CartApiError>({
       headers: {
         accept: 'application/json',
         ...(body === undefined ? {} : { 'content-type': 'application/json' }),
-        ...(token === undefined ? {} : { [CSRF_HEADER]: token }),
+        ...csrfHeaders(),
       },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });

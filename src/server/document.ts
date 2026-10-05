@@ -12,8 +12,11 @@ import { catalogCss } from '../ui/styles/catalog.js';
 import { filtersCss } from '../ui/styles/filters.js';
 import { listingCss } from '../ui/styles/listing.js';
 import { accountCss } from '../ui/styles/account.js';
+import { memberFormCss } from '../ui/forms/member-form.js';
+import { contentCss } from '../ui/styles/content.js';
 import { productCss } from '../ui/styles/product.js';
 import { ordersCss } from '../ui/styles/orders.js';
+import { checkoutCss } from '../ui/styles/checkout.js';
 
 import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
 
@@ -69,13 +72,25 @@ const footer = html`
   </footer>
 `;
 
+/** Document CSS, in cascade order (each sheet declares its layers; ADR 0006 rule 3). */
+const DOCUMENT_STYLES = [
+  baseCss,
+  catalogCss,
+  listingCss,
+  filtersCss,
+  productCss,
+  accountCss,
+  ordersCss,
+  memberFormCss,
+  contentCss,
+  checkoutCss,
+];
+
 export function shell(options: ShellOptions): Response {
   const structured = (options.jsonLd ?? [])
     .map((data) => `<script type="application/ld+json">${scriptJson(data)}</script>`)
     .join('');
-  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}${listingCss}${filtersCss}${productCss}${accountCss}${ordersCss}</style>`)}
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    ${
+  const head = html`<link rel="icon" href="/favicon.svg" type="image/svg+xml" /> ${
       options.canonical === undefined
         ? nothing
         : html`<link rel="canonical" href=${options.canonical} />`
@@ -91,6 +106,7 @@ export function shell(options: ShellOptions): Response {
   return renderPage(
     {
       title: documentTitle(options.title),
+      styles: DOCUMENT_STYLES,
       ...(options.description === undefined ? {} : { description: options.description }),
       head,
       body: html`
