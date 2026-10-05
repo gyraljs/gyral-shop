@@ -25,6 +25,8 @@ export const baseCss = `
     --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
     --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
     --focus: oklch(60% 0.18 250);
+    --rating-fill: light-dark(oklch(75% 0.16 80), oklch(80% 0.15 80));
+    --shadow-popover: 0 0.5rem 1.5rem light-dark(oklch(0% 0 0 / 0.15), oklch(0% 0 0 / 0.5));
     --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
     --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
     --radius: 0.5rem;

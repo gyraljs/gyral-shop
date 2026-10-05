@@ -210,7 +210,7 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
       color: var(--ink);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.15);
+      box-shadow: var(--shadow-popover);
     }
     .account-menu ul a,
     .account-menu ul button {

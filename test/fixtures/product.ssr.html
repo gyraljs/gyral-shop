@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Fieldstone Fantastic Rain Jacket — Fieldstone — Gyral Goods</title>
     <meta name="description" content="Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem…">
-    <!--lit-part eabATTlSz5c=--><!--lit-part hz9fDTEaMVo=--><style>
+    <!--lit-part eabATTlSz5c=--><!--lit-part sdFfatTNAXo=--><style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -29,6 +29,8 @@
     --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
     --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
     --focus: oklch(60% 0.18 250);
+    --rating-fill: light-dark(oklch(75% 0.16 80), oklch(80% 0.15 80));
+    --shadow-popover: 0 0.5rem 1.5rem light-dark(oklch(0% 0 0 / 0.15), oklch(0% 0 0 / 0.5));
     --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
     --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
     --radius: 0.5rem;
@@ -138,7 +140,7 @@
   .stars {
     --pct: calc(var(--rating) / 5 * 100%);
     inline-size: 5.5em; block-size: 1em;
-    background: linear-gradient(90deg, oklch(75% 0.16 80) var(--pct), var(--line) var(--pct));
+    background: linear-gradient(90deg, var(--rating-fill) var(--pct), var(--line) var(--pct));
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 20'%3E%3Cpath d='M10 1l2.6 6 6.4.5-4.9 4.2 1.5 6.3L10 14.6 4.4 18l1.5-6.3L1 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L32 14.6 26.4 18l1.5-6.3L23 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L54 14.6 48.4 18l1.5-6.3L45 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L76 14.6 70.4 18l1.5-6.3L67 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L98 14.6 92.4 18l1.5-6.3L89 7.5l6.4-.5z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
   }
   .count { color: var(--ink-muted); }
@@ -371,7 +373,7 @@
       color: var(--ink);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.15);
+      box-shadow: var(--shadow-popover);
     }
     .account-menu ul a,
     .account-menu ul button {
@@ -600,8 +602,8 @@
     }
     .views {
       aspect-ratio: 1;
-      border-radius: var(--radius, 0.5rem);
-      background: var(--surface-sunken, #eee);
+      border-radius: var(--radius);
+      background: var(--surface-sunken);
       overflow: hidden;
     }
     .view {
@@ -628,17 +630,17 @@
     .thumbs {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--space-2, 0.5rem);
+      gap: var(--space-2);
       border: 0;
       padding: 0;
-      margin: var(--space-2, 0.5rem) 0 0;
+      margin: var(--space-2) 0 0;
     }
     .thumb {
       position: relative;
       display: block;
       inline-size: 4.5rem;
-      border: 2px solid var(--line, #ccc);
-      border-radius: var(--radius, 0.5rem);
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
       overflow: hidden;
       cursor: pointer;
     }
@@ -655,16 +657,16 @@
       cursor: pointer;
     }
     .thumb:has(input:checked) {
-      border-color: var(--brand, currentColor);
+      border-color: var(--brand);
     }
     .thumb:has(input:focus-visible) {
-      outline: 3px solid var(--focus, var(--brand, currentColor));
+      outline: 3px solid var(--focus, var(--brand));
       outline-offset: 2px;
     }
     .status {
-      margin: var(--space-1, 0.25rem) 0 0;
+      margin: var(--space-1) 0 0;
       font-size: 0.9rem;
-      color: var(--ink-muted, inherit);
+      color: var(--ink-muted);
     }
     .visually-hidden {
       position: absolute;
@@ -798,47 +800,47 @@
         
         
        action="/cart/add" csrf="test-csrf-token" data-gyral-seed="{&quot;state&quot;:{&quot;selection&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;enhanced&quot;:false},&quot;props&quot;:{&quot;variants&quot;:[{&quot;sku&quot;:&quot;CLO0027-01&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-02&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:0},{&quot;sku&quot;:&quot;CLO0027-03&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-04&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-05&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-06&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-07&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-08&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-09&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-10&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-11&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-12&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-13&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-14&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-15&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20}]}}"><template shadowroot="open" shadowrootmode="open"><style>
-:host { display: grid; gap: var(--space-3, 1rem); }
+:host { display: grid; gap: var(--space-3); }
 p { margin: 0; }
 .price { font-size: 1.6rem; font-weight: 800; }
-.price.sale ins { color: var(--sale, #b00020); text-decoration: none; }
+.price.sale ins { color: var(--sale); text-decoration: none; }
 .price.sale del {
-  color: var(--ink-muted, inherit); font-weight: 400; font-size: 1rem;
-  margin-inline-start: var(--space-2, 0.5rem);
+  color: var(--ink-muted); font-weight: 400; font-size: 1rem;
+  margin-inline-start: var(--space-2);
 }
-.stock { font-weight: 600; color: var(--ok, inherit); }
-.stock.out { color: var(--sale, #b00020); }
-.stock .label { font-weight: 400; color: var(--ink-muted, inherit); }
-form { display: grid; gap: var(--space-3, 1rem); }
+.stock { font-weight: 600; color: var(--ok); }
+.stock.out { color: var(--sale); }
+.stock .label { font-weight: 400; color: var(--ink-muted); }
+form { display: grid; gap: var(--space-3); }
 .choices {
-  border: 1px solid var(--line, #ccc); border-radius: var(--radius, 0.5rem);
-  padding: var(--space-2, 0.5rem) var(--space-3, 1rem); margin: 0;
-  display: flex; flex-wrap: wrap; gap: var(--space-2, 0.5rem);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3); margin: 0;
+  display: flex; flex-wrap: wrap; gap: var(--space-2);
 }
-.choices legend { padding-inline: var(--space-1, 0.25rem); }
-.sku { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: var(--space-2, 0.5rem); align-items: baseline; }
-.sku .meta { color: var(--ink-muted, inherit); font-size: 0.9rem; }
+.choices legend { padding-inline: var(--space-1); }
+.sku { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: baseline; }
+.sku .meta { color: var(--ink-muted); font-size: 0.9rem; }
 .option {
   position: relative; display: inline-grid; justify-items: center;
-  padding: var(--space-1, 0.25rem) var(--space-3, 1rem);
-  border: 1px solid var(--line, #ccc); border-radius: var(--radius, 0.5rem); cursor: pointer;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer;
 }
 .option input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
-.option:has(input:checked) { border-color: var(--brand, currentColor); box-shadow: inset 0 0 0 1px var(--brand, currentColor); }
-.option:has(input:focus-visible) { outline: 3px solid var(--focus, var(--brand, currentColor)); outline-offset: 2px; }
+.option:has(input:checked) { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); }
+.option:has(input:focus-visible) { outline: 3px solid var(--focus, var(--brand)); outline-offset: 2px; }
 .option:has(input:disabled) { opacity: 0.6; cursor: not-allowed; }
 .option:has(input:disabled) > span { text-decoration: line-through; }
-.option small { font-size: 0.75rem; color: var(--ink-muted, inherit); }
-.quantity { display: flex; align-items: center; gap: var(--space-2, 0.5rem); }
-.quantity input { inline-size: 5rem; font: inherit; padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem); }
+.option small { font-size: 0.75rem; color: var(--ink-muted); }
+.quantity { display: flex; align-items: center; gap: var(--space-2); }
+.quantity input { inline-size: 5rem; font: inherit; padding: var(--space-1) var(--space-2); }
 button {
-  font: inherit; font-weight: 700; padding: var(--space-2, 0.5rem) var(--space-4, 1.5rem);
-  border: 0; border-radius: var(--radius, 0.5rem);
-  background: var(--brand, #c8102e); color: var(--brand-ink, #fff); cursor: pointer;
+  font: inherit; font-weight: 700; padding: var(--space-2) var(--space-4);
+  border: 0; border-radius: var(--radius);
+  background: var(--brand); color: var(--brand-ink); cursor: pointer;
   justify-self: start;
 }
-button:disabled { background: var(--line, #ccc); color: var(--ink-muted, #555); cursor: not-allowed; }
-button:focus-visible { outline: 3px solid var(--focus, currentColor); outline-offset: 2px; }
+button:disabled { background: var(--line); color: var(--ink-muted); cursor: not-allowed; }
+button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .visually-hidden {
   position: absolute; inline-size: 1px; block-size: 1px;
   overflow: hidden; clip-path: inset(50%); white-space: nowrap;

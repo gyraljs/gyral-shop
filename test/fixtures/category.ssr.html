@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>TVs — Electronics (page 2) — Gyral Goods</title>
     <meta name="description" content="Shop tvs in Electronics at Gyral Goods. Showing 25–32 of 32 products.">
-    <!--lit-part eabATTlSz5c=--><!--lit-part hz9fDTEaMVo=--><style>
+    <!--lit-part eabATTlSz5c=--><!--lit-part sdFfatTNAXo=--><style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -29,6 +29,8 @@
     --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
     --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
     --focus: oklch(60% 0.18 250);
+    --rating-fill: light-dark(oklch(75% 0.16 80), oklch(80% 0.15 80));
+    --shadow-popover: 0 0.5rem 1.5rem light-dark(oklch(0% 0 0 / 0.15), oklch(0% 0 0 / 0.5));
     --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
     --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
     --radius: 0.5rem;
@@ -138,7 +140,7 @@
   .stars {
     --pct: calc(var(--rating) / 5 * 100%);
     inline-size: 5.5em; block-size: 1em;
-    background: linear-gradient(90deg, oklch(75% 0.16 80) var(--pct), var(--line) var(--pct));
+    background: linear-gradient(90deg, var(--rating-fill) var(--pct), var(--line) var(--pct));
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 20'%3E%3Cpath d='M10 1l2.6 6 6.4.5-4.9 4.2 1.5 6.3L10 14.6 4.4 18l1.5-6.3L1 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L32 14.6 26.4 18l1.5-6.3L23 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L54 14.6 48.4 18l1.5-6.3L45 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L76 14.6 70.4 18l1.5-6.3L67 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L98 14.6 92.4 18l1.5-6.3L89 7.5l6.4-.5z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
   }
   .count { color: var(--ink-muted); }
@@ -371,7 +373,7 @@
       color: var(--ink);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.15);
+      box-shadow: var(--shadow-popover);
     }
     .account-menu ul a,
     .account-menu ul button {
@@ -710,7 +712,7 @@
   .stars {
     --pct: calc(var(--rating) / 5 * 100%);
     inline-size: 5.5em; block-size: 1em;
-    background: linear-gradient(90deg, oklch(75% 0.16 80) var(--pct), var(--line) var(--pct));
+    background: linear-gradient(90deg, var(--rating-fill) var(--pct), var(--line) var(--pct));
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 20'%3E%3Cpath d='M10 1l2.6 6 6.4.5-4.9 4.2 1.5 6.3L10 14.6 4.4 18l1.5-6.3L1 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L32 14.6 26.4 18l1.5-6.3L23 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L54 14.6 48.4 18l1.5-6.3L45 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L76 14.6 70.4 18l1.5-6.3L67 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L98 14.6 92.4 18l1.5-6.3L89 7.5l6.4-.5z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
   }
   .count { color: var(--ink-muted); }

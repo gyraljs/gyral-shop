@@ -97,8 +97,8 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gall
     }
     .views {
       aspect-ratio: 1;
-      border-radius: var(--radius, 0.5rem);
-      background: var(--surface-sunken, #eee);
+      border-radius: var(--radius);
+      background: var(--surface-sunken);
       overflow: hidden;
     }
     .view {
@@ -118,17 +118,17 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gall
     .thumbs {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--space-2, 0.5rem);
+      gap: var(--space-2);
       border: 0;
       padding: 0;
-      margin: var(--space-2, 0.5rem) 0 0;
+      margin: var(--space-2) 0 0;
     }
     .thumb {
       position: relative;
       display: block;
       inline-size: 4.5rem;
-      border: 2px solid var(--line, #ccc);
-      border-radius: var(--radius, 0.5rem);
+      border: 2px solid var(--line);
+      border-radius: var(--radius);
       overflow: hidden;
       cursor: pointer;
     }
@@ -145,16 +145,16 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gall
       cursor: pointer;
     }
     .thumb:has(input:checked) {
-      border-color: var(--brand, currentColor);
+      border-color: var(--brand);
     }
     .thumb:has(input:focus-visible) {
-      outline: 3px solid var(--focus, var(--brand, currentColor));
+      outline: 3px solid var(--focus, var(--brand));
       outline-offset: 2px;
     }
     .status {
-      margin: var(--space-1, 0.25rem) 0 0;
+      margin: var(--space-1) 0 0;
       font-size: 0.9rem;
-      color: var(--ink-muted, inherit);
+      color: var(--ink-muted);
     }
     .visually-hidden {
       position: absolute;

@@ -33,14 +33,15 @@ system of record.
 
 ## Read before changing…
 
-| Area                                   | Read                                                                    |
-| -------------------------------------- | ----------------------------------------------------------------------- |
-| Anything                               | [core-beliefs.md](docs/design-docs/core-beliefs.md)                     |
-| Dependencies, Gyral link, no Effect    | [0001-stack.md](docs/design-docs/0001-stack.md)                         |
-| Auth, sessions, CSRF, roles, passwords | [0002-security.md](docs/design-docs/0002-security.md)                   |
-| Money, prices, tax, promos, inventory  | [0003-money-and-pricing.md](docs/design-docs/0003-money-and-pricing.md) |
-| CI                                     | [0004-local-ci.md](docs/design-docs/0004-local-ci.md)                   |
-| Writing tests, fixtures                | [0005-testing.md](docs/design-docs/0005-testing.md)                     |
+| Area                                   | Read                                                                         |
+| -------------------------------------- | ---------------------------------------------------------------------------- |
+| Anything                               | [core-beliefs.md](docs/design-docs/core-beliefs.md)                          |
+| Dependencies, Gyral link, no Effect    | [0001-stack.md](docs/design-docs/0001-stack.md)                              |
+| Auth, sessions, CSRF, roles, passwords | [0002-security.md](docs/design-docs/0002-security.md)                        |
+| Money, prices, tax, promos, inventory  | [0003-money-and-pricing.md](docs/design-docs/0003-money-and-pricing.md)      |
+| CI                                     | [0004-local-ci.md](docs/design-docs/0004-local-ci.md)                        |
+| **Any markup or CSS**                  | [0006-theming.md](docs/design-docs/0006-theming.md) (binding theme contract) |
+| Writing tests, fixtures                | [0005-testing.md](docs/design-docs/0005-testing.md)                          |
 
 ## Skills to load
 
@@ -52,6 +53,11 @@ system of record.
 ## Hard rules (enforced by `pnpm check`)
 
 - Layer imports per ARCHITECTURE.md; no `effect` anywhere; Gyral via public entry points.
+- **Theme contract (ADR 0006), for every UI change:** semantic markup with `data-region` /
+  `data-component` hooks, styles in `@layer reset, tokens, base, components, theme`, every
+  colour, font, radius and shadow from a token (no literals, no literal `var()` fallbacks;
+  `scripts/check-styles.mjs`), widgets expose `::part()`s, and the ADR's hook and part tables
+  are updated when you add hooks or parts.
 - Money is integer cents (`domain/money.ts`), never floats.
 - Every external input is parsed with valibot at the boundary (forms, JSON, env, DB seeds).
 - Workflows trigger on `workflow_dispatch` only. Files ≤ 300 lines. No `any`, no `!`.
