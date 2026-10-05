@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Order GG-20261004-TEST — Gyral Goods</title>
+    <title>Checkout — Gyral Goods</title>
     
     <!--lit-part eabATTlSz5c=--><!--lit-part hKwia4hjmL4=--><style>
 @layer reset, tokens, base, components;
@@ -394,9 +394,9 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <!--lit-part--><!--/lit-part-->
     <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
-    <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="token" /><!--/lit-part-->
+    <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
-    <!--lit-part--><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[],"itemCount":0,"canCheckout":false,"totals":{"subtotal":{"cents":0,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":0,"currency":"USD"}}},"inFlight":0}}</script>
+    <!--lit-part--><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[{"sku":"LEGO-1","quantity":1,"productName":"LEGO","href":"/p/lego","options":{},"unit":{"cents":5000,"currency":"USD"},"listPrice":{"cents":5000,"currency":"USD"},"onSale":false,"lineTotal":{"cents":5000,"currency":"USD"},"maxQuantity":10}],"itemCount":1,"canCheckout":true,"totals":{"subtotal":{"cents":5000,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":5000,"currency":"USD"}}},"inFlight":0}}</script>
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
@@ -407,7 +407,7 @@
           
           
           
-           query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}],&quot;account&quot;:{&quot;firstName&quot;:&quot;Grace&quot;,&quot;csrfToken&quot;:&quot;zp9gNLYpdBH3nAD9YE0Q7EFYDKMVl9AM03ir2OTcq4M&quot;}}}"><template shadowroot="open" shadowrootmode="open"><style>
+           query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
     @layer components {
       :host {
         display: block;
@@ -575,19 +575,7 @@
           </form>
         </search>
         <nav class="utility" aria-label="Account and cart">
-          <!--lit-part dSU5RAQw+eU=--><details class="account-menu">
-        <summary>Hi, <!--lit-part-->Grace<!--/lit-part--></summary>
-        <ul>
-          <li><a href="/account">Your account</a></li>
-          <li><a href="/account/orders">Your orders</a></li>
-          <li>
-            <form method="post" action="/account/logout">
-              <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="token" /><!--/lit-part-->
-              <button type="submit">Sign out</button>
-            </form>
-          </li>
-        </ul>
-      </details><!--/lit-part-->
+          <!--lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--/lit-part-->
           <!-- The document shell slots <shop-mini-cart> here. It must stay in the light DOM:
                Gyral components nested in another component's server-rendered shadow root get
                defer-hydration, and Gyral then never wires their intents (Gyral bug, reported). -->
@@ -722,111 +710,290 @@
   </style><!--lit-part HOZmKPXsb8I=-->
       <!--lit-node 0--><details class="mini-cart" part="disclosure" aria-busy="false">
         <summary part="summary">
-          Cart<span class="badge" part="badge" aria-hidden="true"><!--lit-part-->0<!--/lit-part--></span
-          ><span class="visually-hidden">, <!--lit-part-->0 items<!--/lit-part--></span>
+          Cart<span class="badge" part="badge" aria-hidden="true"><!--lit-part-->1<!--/lit-part--></span
+          ><span class="visually-hidden">, <!--lit-part-->1 item<!--/lit-part--></span>
         </summary>
-        <div class="panel" part="panel"><!--lit-part +G7B0qPP8mo=--><p>Your cart is empty.</p><!--/lit-part--></div>
+        <div class="panel" part="panel"><!--lit-part 2fCK+xlPk5Q=-->
+        <ul>
+          <!--lit-part--><!--lit-part L9RnVOKL9UQ=--><li data-component="cart-line" part="line">
+                <!--lit-node 1--><a href="/p/lego"><!--lit-part-->LEGO<!--/lit-part--></a>
+                <span class="qty">× <!--lit-part-->1<!--/lit-part--></span>
+                <span class="amount" data-component="price"><!--lit-part-->$50.00<!--/lit-part--></span>
+              </li><!--/lit-part--><!--/lit-part-->
+        </ul>
+        <!--lit-part--><!--/lit-part-->
+        <p class="subtotal" part="subtotal">
+          <span>Subtotal</span> <strong><!--lit-part-->$50.00<!--/lit-part--></strong>
+        </p>
+        <p class="actions" part="actions">
+          <a href="/cart">View cart</a>
+          <!--lit-part UyDA2YgzmK0=--><a class="primary" href="/checkout">Checkout</a><!--/lit-part-->
+        </p>
+      <!--/lit-part--></div>
       </details>
     <!--/lit-part--></template></shop-mini-cart
         ></shop-header>
-        <main id="main" class="page" tabindex="-1"><!--lit-part gUek7cH1fTg=-->
-  <article class="order-page order-detail" data-region="order-detail" aria-labelledby="title">
-    <header>
-      <nav class="crumbs" aria-label="Breadcrumb"><!--lit-node 3--><a href="/account/orders"><!--lit-part-->Your orders<!--/lit-part--></a></nav>
-      <h1 id="title">Order <span data-component="order-number"><!--lit-part-->GG-20261004-TEST<!--/lit-part--></span></h1>
-      <p>
-        Placed <!--lit-node 9--><time datetime="2026-10-04"><!--lit-part-->Oct 4, 2026<!--/lit-part--></time>
-        <!--lit-part EoP/VLXYkGk=--><!--lit-node 0--><span class="order-status" data-component="order-status" data-status="paid"
-    ><!--lit-part-->Paid<!--/lit-part--></span
-  ><!--/lit-part-->
+        <main id="main" class="page" tabindex="-1"><!--lit-part XABnjrv1IV8=--><!--lit-node 0--><shop-checkout
+        
+        
+        
+        
+       data-region="checkout" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;open&quot;:&quot;review&quot;,&quot;steps&quot;:[{&quot;step&quot;:&quot;contact&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;address&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;shipping&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;payment&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;review&quot;,&quot;status&quot;:&quot;open&quot;}],&quot;email&quot;:&quot;ada@example.com&quot;,&quot;address&quot;:{&quot;name&quot;:&quot;Ada Lovelace&quot;,&quot;line1&quot;:&quot;1 Analytical Way&quot;,&quot;line2&quot;:&quot;&quot;,&quot;city&quot;:&quot;Albany&quot;,&quot;state&quot;:&quot;NY&quot;,&quot;postalCode&quot;:&quot;12207&quot;,&quot;phone&quot;:&quot;&quot;},&quot;shippingMethod&quot;:&quot;standard&quot;,&quot;card&quot;:{&quot;brand&quot;:&quot;visa&quot;,&quot;last4&quot;:&quot;4242&quot;,&quot;expMonth&quot;:12,&quot;expYear&quot;:2030},&quot;savedAddresses&quot;:[],&quot;shippingOptions&quot;:[{&quot;method&quot;:&quot;standard&quot;,&quot;label&quot;:&quot;Standard&quot;,&quot;price&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:5,&quot;max&quot;:7}},{&quot;method&quot;:&quot;express&quot;,&quot;label&quot;:&quot;Express&quot;,&quot;price&quot;:{&quot;cents&quot;:1299,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:2,&quot;max&quot;:3}},{&quot;method&quot;:&quot;next_day&quot;,&quot;label&quot;:&quot;Next day&quot;,&quot;price&quot;:{&quot;cents&quot;:2499,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:1,&quot;max&quot;:1}}],&quot;lines&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;name&quot;:&quot;LEGO&quot;,&quot;href&quot;:&quot;/p/lego&quot;,&quot;options&quot;:{},&quot;quantity&quot;:1,&quot;lineTotal&quot;:{&quot;cents&quot;:5000,&quot;currency&quot;:&quot;USD&quot;}}],&quot;totals&quot;:{&quot;subtotal&quot;:{&quot;cents&quot;:5000,&quot;currency&quot;:&quot;USD&quot;},&quot;discount&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;shipping&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;tax&quot;:{&quot;cents&quot;:200,&quot;currency&quot;:&quot;USD&quot;},&quot;taxPending&quot;:false,&quot;total&quot;:{&quot;cents&quot;:5200,&quot;currency&quot;:&quot;USD&quot;}},&quot;ready&quot;:true,&quot;placeKey&quot;:&quot;test-place-key&quot;}}}"><template shadowroot="open" shadowrootmode="open"><style>
+@layer reset, base, components;
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  img, svg { display: block; max-inline-size: 100%; }
+}
+@layer base {
+  :host { display: block; min-inline-size: 0; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  h1, h2 { line-height: 1.2; text-wrap: balance; }
+  h1:focus { outline: none; }
+  h1:focus-visible { outline: 2px solid var(--focus); }
+  p { text-wrap: pretty; }
+  button, input, select { font: inherit; }
+}
+
+@layer reset, tokens, base, components, theme;
+@layer components {
+  :host { container: checkout / inline-size; }
+  h1 { margin-block: var(--space-3) var(--space-2); }
+  .layout { display: grid; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
+  @container checkout (min-width: 56rem) {
+    .layout { grid-template-columns: minmax(0, 1fr) 20rem; align-items: start; }
+    .order-summary { position: sticky; inset-block-start: var(--space-3); }
+  }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .step {
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+  }
+  .step.open { border-color: var(--line-strong); }
+  .step.locked { background: var(--surface-sunken); color: var(--ink-muted); }
+  .step h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+  .step.locked h2 { margin: 0; }
+  .number { color: var(--ink-muted); }
+  .locked { margin: 0; font-size: 0.9rem; }
+  .step.locked .locked { display: none; }
+  .step-summary { display: flex; justify-content: space-between; gap: var(--space-3); align-items: start; }
+  .step-summary p, .step-summary address { margin: 0; font-style: normal; }
+  form { display: grid; gap: var(--space-2); }
+  fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  legend { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
+  .field { display: grid; gap: var(--space-1); margin: 0; }
+  .row { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+  input:not([type='radio'], [type='checkbox']), select {
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  input[aria-invalid='true'], input:user-invalid { border-color: var(--danger); }
+  .error { color: var(--danger); font-size: 0.9rem; }
+  .error:empty { display: none; }
+  .hint { color: var(--ink-muted); font-size: 0.9rem; margin: 0; }
+  .choice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-1) var(--space-2);
+    align-items: center;
+    padding: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .choice:has(input:checked) { border-color: var(--brand); background: var(--surface-sunken); }
+  .choice .estimate { grid-column: 2; color: var(--ink-muted); font-size: 0.9rem; }
+  .choice .amount { grid-row: 1; grid-column: 3; font-weight: 600; }
+  button.primary {
+    justify-self: start;
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--brand);
+    color: var(--brand-ink);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.6; cursor: progress; }
+  .order-summary {
+    padding: var(--space-3);
+    border-radius: var(--radius);
+    background: var(--surface-sunken);
+  }
+  .order-summary h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+  .summary-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .summary-lines li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--space-2); }
+  .summary-lines .options { grid-column: 1; color: var(--ink-muted); font-size: 0.85rem; }
+  .summary-lines .amount { grid-row: 1; grid-column: 2; font-variant-numeric: tabular-nums; }
+  .totals { margin: var(--space-3) 0 0; display: grid; gap: var(--space-1); }
+  .totals div { display: flex; justify-content: space-between; gap: var(--space-2); }
+  .totals dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .totals .discount dd { color: var(--sale); }
+  .totals .total { border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-2); font-weight: 700; }
+  .visually-hidden {
+    position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+}
+</style><!--lit-part ZCmhcLWsXoI=--><h1>Checkout</h1>
+      <p class="visually-hidden" role="status">
+        <!--lit-part--><!--/lit-part-->
       </p>
-    </header>
-    <!--lit-part--><!--/lit-part-->
-
-    <section data-region="order-timeline" aria-labelledby="timeline-title">
-      <h2 id="timeline-title">Status</h2>
-      <ol class="timeline">
-        <!--lit-part--><!--lit-part 9kCKmwK9UEk=--><!--lit-node 0--><li data-component="order-event" data-status="pending_payment">
-              <!--lit-part pCMtI3cckck=--><!--lit-node 0--><time datetime="2026-10-04T12:00:00.000Z"><!--lit-part-->Oct 4, 2026<!--/lit-part--></time><!--/lit-part--> <strong><!--lit-part-->Awaiting payment<!--/lit-part--></strong><!--lit-part BWZZALGVAgA=--> — <!--lit-part-->Order placed<!--/lit-part--><?><!--/lit-part-->
-            </li><!--/lit-part--><!--lit-part 9kCKmwK9UEk=--><!--lit-node 0--><li data-component="order-event" data-status="paid">
-              <!--lit-part pCMtI3cckck=--><!--lit-node 0--><time datetime="2026-10-04T12:00:00.000Z"><!--lit-part-->Oct 4, 2026<!--/lit-part--></time><!--/lit-part--> <strong><!--lit-part-->Paid<!--/lit-part--></strong><!--lit-part BWZZALGVAgA=--> — <!--lit-part-->Payment received<!--/lit-part--><?><!--/lit-part-->
-            </li><!--/lit-part--><!--/lit-part-->
-      </ol>
-    </section>
-
-    <section class="delivery" data-region="delivery" aria-labelledby="delivery-title">
-      <h2 id="delivery-title">Delivery</h2>
-      <p><!--lit-part-->Standard<!--/lit-part--></p>
+      <div class="layout">
+        <ol class="steps">
+          <!--lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+              class="step done"
+              data-component="checkout-step"
+              data-step="contact"
+              part="step"
+              aria-current="false"
+            >
+              <!--lit-node 1--><section aria-labelledby="contact-heading">
+                <!--lit-node 2--><h2 id="contact-heading">
+                  <span class="number"><!--lit-part-->1<!--/lit-part-->.</span> <!--lit-part-->Contact<!--/lit-part-->
+                </h2>
+                <!--lit-part N79clM4wywc=--><div class="step-summary" part="step-summary">
+      <!--lit-part y6RVfKR7hws=--><p><!--lit-part-->ada@example.com<!--/lit-part--></p><!--/lit-part-->
+      <!--lit-node 2--><a href="/checkout?edit=contact" data-intent="Edit" data-step="contact" part="edit"
+        >Edit <span class="visually-hidden"><!--lit-part-->Contact<!--/lit-part--></span></a
+      >
+    </div><!--/lit-part-->
+              </section>
+            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+              class="step done"
+              data-component="checkout-step"
+              data-step="address"
+              part="step"
+              aria-current="false"
+            >
+              <!--lit-node 1--><section aria-labelledby="address-heading">
+                <!--lit-node 2--><h2 id="address-heading">
+                  <span class="number"><!--lit-part-->2<!--/lit-part-->.</span> <!--lit-part-->Shipping address<!--/lit-part-->
+                </h2>
+                <!--lit-part N79clM4wywc=--><div class="step-summary" part="step-summary">
       <!--lit-part zQAv+wISgT4=--><address><!--lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Ada Lovelace<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->1 Analytical Way<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Albany, NY 12207<!--/lit-part--><br /><!--/lit-part--><!--/lit-part--></address><!--/lit-part-->
-    </section>
-
-    <!--lit-part qKPOLsJM+sM=-->
-  <section data-region="order-lines" aria-labelledby="items-title">
-    <h2 id="items-title">Items</h2>
-    <table class="order-lines">
-      <thead>
-        <tr>
-          <th scope="col">Item</th>
-          <th scope="col">Qty</th>
-          <th scope="col">Price</th>
-          <th scope="col">Total</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!--lit-part--><!--lit-part a2l9tDHGFxw=--><tr data-component="order-line">
-              <th scope="row">
-                <!--lit-part-->LEGO<!--/lit-part--><!--lit-part--><!--/lit-part-->
-              </th>
-              <td><!--lit-part-->2<!--/lit-part--></td>
-              <td data-component="price"><!--lit-part-->$50.00<!--/lit-part--></td>
-              <td data-component="price"><!--lit-part-->$100.00<!--/lit-part--></td>
-            </tr><!--/lit-part--><!--/lit-part-->
-      </tbody>
-    </table>
-  </section>
-<!--/lit-part--> <!--lit-part aw43dAvcf/8=-->
-  <section class="totals" data-region="order-totals" aria-labelledby="totals-title">
-    <h2 id="totals-title">Summary</h2>
-    <dl>
-      <!--lit-part yibPaxTiLS4=--><div class="row">
-    <dt><!--lit-part-->Subtotal<!--/lit-part--></dt>
-    <dd data-component="price"><!--lit-part-->$100.00<!--/lit-part--></dd>
-  </div><!--/lit-part-->
-      <!--lit-part--><!--/lit-part-->
-      <!--lit-part yibPaxTiLS4=--><div class="row">
-    <dt><!--lit-part-->Shipping<!--/lit-part--></dt>
-    <dd data-component="price"><!--lit-part-->$0.00<!--/lit-part--></dd>
-  </div><!--/lit-part--> <!--lit-part yibPaxTiLS4=--><div class="row">
-    <dt><!--lit-part-->Tax<!--/lit-part--></dt>
-    <dd data-component="price"><!--lit-part-->$4.00<!--/lit-part--></dd>
-  </div><!--/lit-part-->
-      <div class="row total">
-        <dt>Total charged</dt>
-        <dd data-component="price"><!--lit-part-->$104.00<!--/lit-part--></dd>
+      <!--lit-node 2--><a href="/checkout?edit=address" data-intent="Edit" data-step="address" part="edit"
+        >Edit <span class="visually-hidden"><!--lit-part-->Shipping address<!--/lit-part--></span></a
+      >
+    </div><!--/lit-part-->
+              </section>
+            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+              class="step done"
+              data-component="checkout-step"
+              data-step="shipping"
+              part="step"
+              aria-current="false"
+            >
+              <!--lit-node 1--><section aria-labelledby="shipping-heading">
+                <!--lit-node 2--><h2 id="shipping-heading">
+                  <span class="number"><!--lit-part-->3<!--/lit-part-->.</span> <!--lit-part-->Shipping method<!--/lit-part-->
+                </h2>
+                <!--lit-part N79clM4wywc=--><div class="step-summary" part="step-summary">
+      <!--lit-part B/UJByTWdnw=--><p><!--lit-part-->Standard<!--/lit-part-->, <!--lit-part-->5–7 business days<!--/lit-part--></p><!--/lit-part-->
+      <!--lit-node 2--><a href="/checkout?edit=shipping" data-intent="Edit" data-step="shipping" part="edit"
+        >Edit <span class="visually-hidden"><!--lit-part-->Shipping method<!--/lit-part--></span></a
+      >
+    </div><!--/lit-part-->
+              </section>
+            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+              class="step done"
+              data-component="checkout-step"
+              data-step="payment"
+              part="step"
+              aria-current="false"
+            >
+              <!--lit-node 1--><section aria-labelledby="payment-heading">
+                <!--lit-node 2--><h2 id="payment-heading">
+                  <span class="number"><!--lit-part-->4<!--/lit-part-->.</span> <!--lit-part-->Payment<!--/lit-part-->
+                </h2>
+                <!--lit-part N79clM4wywc=--><div class="step-summary" part="step-summary">
+      <!--lit-part y6RVfKR7hws=--><p><!--lit-part-->Visa ending 4242, expires 12/30<!--/lit-part--></p><!--/lit-part-->
+      <!--lit-node 2--><a href="/checkout?edit=payment" data-intent="Edit" data-step="payment" part="edit"
+        >Edit <span class="visually-hidden"><!--lit-part-->Payment<!--/lit-part--></span></a
+      >
+    </div><!--/lit-part-->
+              </section>
+            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+              class="step open"
+              data-component="checkout-step"
+              data-step="review"
+              part="step"
+              aria-current="step"
+            >
+              <!--lit-node 1--><section aria-labelledby="review-heading">
+                <!--lit-node 2--><h2 id="review-heading">
+                  <span class="number"><!--lit-part-->5<!--/lit-part-->.</span> <!--lit-part-->Review and place order<!--/lit-part-->
+                </h2>
+                <!--lit-part Ux1yUU+3Z5Y=--><!--lit-node 0--><form
+    action="/checkout/place"
+    method="post"
+    class="place-order"
+    part="place-order"
+    data-intent="PlaceOrder"
+  >
+    <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--/lit-part-->
+    <!--lit-node 2--><input type="hidden" name="key" value="test-place-key" />
+    <!--lit-node 3--><input type="hidden" name="expectedTotal" value="5200" />
+    <p>Total to pay: <strong data-component="price"><!--lit-part-->$52.00<!--/lit-part--></strong></p>
+    <label class="choice"
+      ><!--lit-node 8--><input
+        type="checkbox"
+        name="terms"
+        required
+        aria-describedby="PlaceOrder-terms-error"
+        
+      />
+      <span>I accept the <a href="/terms">terms of sale</a>.</span></label
+    >
+    <span id="PlaceOrder-terms-error" class="error"><!--lit-part--><!--/lit-part--></span>
+    <!--lit-part--><!--/lit-part--> <!--lit-part MJXybzLLglI=--><!--lit-node 0--><button class="primary" ><!--lit-part-->Place order<!--/lit-part--></button><!--/lit-part-->
+  </form><!--/lit-part-->
+              </section>
+            </li><!--/lit-part--><!--/lit-part-->
+        </ol>
+        <!--lit-part IIDOdyLuca0=--><aside
+    class="order-summary"
+    data-component="order-summary"
+    part="order-summary"
+    aria-labelledby="summary-heading"
+  >
+    <h2 id="summary-heading">Order summary</h2>
+    <ul class="summary-lines">
+      <!--lit-part--><!--lit-part uZ/0PH+Hd7o=--><li data-component="summary-line">
+            <span class="name"
+              ><!--lit-part-->LEGO<!--/lit-part--><!--lit-part--><!--/lit-part--></span
+            >
+            <!--lit-part--><!--/lit-part-->
+            <span class="amount" data-component="price"><!--lit-part-->$50.00<!--/lit-part--></span>
+          </li><!--/lit-part--><!--/lit-part-->
+    </ul>
+    <dl class="totals">
+      <div>
+        <dt>Subtotal</dt>
+        <dd><!--lit-part-->$50.00<!--/lit-part--></dd>
       </div>
       <!--lit-part--><!--/lit-part-->
+      <div>
+        <dt>Shipping</dt>
+        <dd><!--lit-part-->Free<!--/lit-part--></dd>
+      </div>
+      <div>
+        <dt>Tax</dt>
+        <dd><!--lit-part-->$2.00<!--/lit-part--></dd>
+      </div>
+      <div class="total">
+        <dt>Total</dt>
+        <dd data-component="price"><!--lit-part-->$52.00<!--/lit-part--></dd>
+      </div>
     </dl>
-    <!--lit-part 3Q3WuQ0274U=--><p>
-            Paid with <!--lit-part-->Visa<!--/lit-part--> ending <!--lit-part-->4242<!--/lit-part-->.
-          </p><!--/lit-part-->
-  </section>
-<!--/lit-part-->
-    <!--lit-part dJdn1JR8lrE=--><section data-region="order-cancel" aria-labelledby="cancel-title">
-            <h2 id="cancel-title">Cancel order</h2>
-            <details>
-              <summary>Cancel this order</summary>
-              <!--lit-node 4--><form method="post" action="/account/orders/GG-20261004-TEST/cancel" data-component="cancel-form">
-                <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="token" /><!--/lit-part-->
-                <p>
-                  We'll refund the full amount to your card and put the items back on the shelf.
-                  This can't be undone.
-                </p>
-                <button type="submit">Yes, cancel order <!--lit-part-->GG-20261004-TEST<!--/lit-part--></button>
-              </form>
-            </details>
-          </section><!--/lit-part-->
-  </article>
-<!--/lit-part--></main>
+    <p><a href="/cart">Edit cart</a></p>
+  </aside><!--/lit-part-->
+      </div><!--/lit-part--></template></shop-checkout><!--/lit-part--></main>
         <!--lit-part STG64S/HenM=-->
   <footer class="site-footer">
     <div class="page">
