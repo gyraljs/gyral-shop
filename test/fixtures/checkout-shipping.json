@@ -1,0 +1,111 @@
+{
+  "open": "shipping",
+  "steps": [
+    {
+      "step": "contact",
+      "status": "done"
+    },
+    {
+      "step": "address",
+      "status": "done"
+    },
+    {
+      "step": "shipping",
+      "status": "open"
+    },
+    {
+      "step": "payment",
+      "status": "locked"
+    },
+    {
+      "step": "review",
+      "status": "locked"
+    }
+  ],
+  "email": "ada@example.com",
+  "address": {
+    "name": "Ada Lovelace",
+    "line1": "1 Analytical Way",
+    "line2": "",
+    "city": "Albany",
+    "state": "NY",
+    "postalCode": "12207",
+    "phone": ""
+  },
+  "savedAddresses": [],
+  "shippingOptions": [
+    {
+      "method": "standard",
+      "label": "Standard",
+      "price": {
+        "cents": 0,
+        "currency": "USD"
+      },
+      "days": {
+        "min": 5,
+        "max": 7
+      }
+    },
+    {
+      "method": "express",
+      "label": "Express",
+      "price": {
+        "cents": 1299,
+        "currency": "USD"
+      },
+      "days": {
+        "min": 2,
+        "max": 3
+      }
+    },
+    {
+      "method": "next_day",
+      "label": "Next day",
+      "price": {
+        "cents": 2499,
+        "currency": "USD"
+      },
+      "days": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  ],
+  "lines": [
+    {
+      "sku": "LEGO-1",
+      "name": "LEGO",
+      "href": "/p/lego",
+      "options": {},
+      "quantity": 2,
+      "lineTotal": {
+        "cents": 10000,
+        "currency": "USD"
+      }
+    }
+  ],
+  "totals": {
+    "subtotal": {
+      "cents": 10000,
+      "currency": "USD"
+    },
+    "discount": {
+      "cents": 0,
+      "currency": "USD"
+    },
+    "shipping": {
+      "cents": 0,
+      "currency": "USD"
+    },
+    "tax": {
+      "cents": 400,
+      "currency": "USD"
+    },
+    "taxPending": false,
+    "total": {
+      "cents": 10400,
+      "currency": "USD"
+    }
+  },
+  "ready": false
+}

@@ -13,6 +13,8 @@ import { cartRoutes } from './routes/cart-api.js';
 import { catalogRoutes } from './routes/catalog.js';
 import { productRoutes } from './routes/product.js';
 import { cartPageRoutes } from './routes/cart-page.js';
+import { checkoutRoutes } from './routes/checkout.js';
+import { createPaymentProvider } from '../services/payments.js';
 import { cartStoreFor } from './cart-seed.js';
 import { searchRoutes } from './routes/search.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
@@ -122,6 +124,9 @@ export function createApp({
   app.route('/', searchRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));
   app.route('/', cartPageRoutes({ render: page }));
+  // Latency config is wired by the services-container bead (shop-6p6).
+  const payments = createPaymentProvider(db, { now: () => clock?.() ?? new Date() });
+  app.route('/', checkoutRoutes({ db, render: page, payments }));
   if (mode !== 'production') app.route('/dev/mail', devMailRoutes(createMailer(db), page));
 
   app.notFound(async (c) =>

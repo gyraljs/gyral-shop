@@ -9,3 +9,4 @@ import '../ui/product/buy-box.js';
 import '../ui/product/gallery.js';
 import '../ui/cart/mini-cart.js';
 import '../ui/cart/cart-page.js';
+import '../ui/checkout/checkout-page.js';

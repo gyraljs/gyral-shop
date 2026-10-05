@@ -103,12 +103,19 @@ export interface BuildCartView {
   readonly now: Date;
 }
 
-export function buildCartView({ rows, promoCode, promo, now }: BuildCartView): CartView {
-  const priced = rows.flatMap((row) => {
+/**
+ * The lines the price pipeline sees: what can actually be bought now. Shared with checkout, so
+ * the cart and checkout always price the same lines.
+ */
+export const priceLines = (rows: readonly CartLineRow[]): PriceLineInput[] =>
+  rows.flatMap((row) => {
     const sku = skuCode(row.sku);
     const qty = buyable(row);
     return sku.ok && qty > 0 ? [priceInput(row, sku.value, qty)] : [];
   });
+
+export function buildCartView({ rows, promoCode, promo, now }: BuildCartView): CartView {
+  const priced = priceLines(rows);
   const result = priceOrder({
     lines: priced,
     ...(promoCode === undefined ? {} : { promo: { code: promoCode, found: promo } }),

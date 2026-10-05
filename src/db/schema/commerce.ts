@@ -75,6 +75,30 @@ export interface ShippingAddress {
   readonly phone: string;
 }
 
+/**
+ * A cart's checkout in progress (docs/product-specs/checkout.md): what each step saved, so the
+ * flow survives reloads, the no-JS path and devices of the same member. Card data is limited to
+ * what payments may store (brand, last 4, expiry) plus the provider's payment reference.
+ */
+export const checkouts = sqliteTable('checkouts', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  cartId: integer('cart_id')
+    .notNull()
+    .unique()
+    .references(() => carts.id, { onDelete: 'cascade' }),
+  email: text('email'),
+  shippingAddress: text('shipping_address', { mode: 'json' }).$type<ShippingAddress>(),
+  shippingMethod: text('shipping_method'),
+  paymentRef: text('payment_ref'),
+  cardBrand: text('card_brand'),
+  cardLast4: text('card_last4'),
+  cardExpMonth: integer('card_exp_month'),
+  cardExpYear: integer('card_exp_year'),
+  updatedAt: timestamp('updated_at')
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
 export const orders = sqliteTable(
   'orders',
   {
