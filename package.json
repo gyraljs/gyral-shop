@@ -22,7 +22,9 @@
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "tsx scripts/seed.ts",
     "db:reset": "rm -rf data && pnpm db:migrate && pnpm db:seed",
-    "ci:local": "gh act workflow_dispatch -W .github/workflows/ci.yml -s GITHUB_TOKEN=\"$(gh auth token)\""
+    "ci:local": "gh act workflow_dispatch -W .github/workflows/ci.yml -s GITHUB_TOKEN=\"$(gh auth token)\"",
+    "build": "vite build && tsx src/server/prerender.ts",
+    "start": "NODE_ENV=production tsx src/server/prod.ts"
   },
   "dependencies": {
     "@gyral/core": "link:../cyclejs-web-framework/packages/core",

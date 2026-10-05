@@ -9,6 +9,18 @@ const Env = v.object({
     v.pipe(v.string(), v.transform(Number), v.integer(), v.minValue(0), v.maxValue(10_000)),
     '0',
   ),
+  /**
+   * The public origin of the site, used for absolute URLs (canonical links, sitemaps) in pages
+   * prerendered at build time, where there is no request to take the origin from.
+   */
+  SITE_ORIGIN: v.optional(
+    v.pipe(
+      v.string(),
+      v.url(),
+      v.transform((u) => new URL(u).origin),
+    ),
+    'http://localhost:5200',
+  ),
   /** Signs values such as order-confirmation access cookies. Required in production. */
   APP_SECRET: v.optional(v.pipe(v.string(), v.minLength(32))),
 });

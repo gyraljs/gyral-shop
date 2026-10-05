@@ -48,6 +48,11 @@ export interface ShellOptions {
   readonly meta?: readonly (readonly [property: string, content: string])[];
   /** Per-request store instances, read during the render and seeded for hydration. */
   readonly stores?: readonly AnyStoreInstance[];
+  /**
+   * Prerendered at build time (ssg): the same HTML for every visitor, so the header asks for
+   * the account after hydration and the mini-cart loads the cart (Gyral ADR 0016).
+   */
+  readonly static?: boolean;
 }
 
 /** JSON for a <script> body: `<` is escaped so content can never close the element. */
@@ -116,6 +121,7 @@ export function shell(options: ShellOptions): Response {
           query=${options.query ?? ''}
           current=${options.currentDepartment ?? ''}
           .account=${options.account}
+          ?personalize=${options.static === true}
           ><shop-mini-cart slot="cart" data-region="cart"></shop-mini-cart
         ></shop-header>
         <main id="main" class="page" tabindex="-1">${options.main}</main>

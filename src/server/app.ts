@@ -21,6 +21,7 @@ import { orderRoutes } from './routes/orders.js';
 import { cartStoreFor } from './cart-seed.js';
 import { searchRoutes } from './routes/search.js';
 import { reviewRoutes } from './routes/reviews.js';
+import { meRoutes } from './routes/me.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
 import { placeholderSvg } from './placeholder-image.js';
@@ -71,6 +72,8 @@ export function createApp({
   let departments: Promise<readonly DepartmentLink[]> | undefined;
   const nav = () => (departments ??= departmentLinks(db));
   const page = async (o: PageOptions) => {
+    // Prerendered pages are the same for everyone: no account, token or cart in the HTML.
+    if (o.static === true) return shell({ ...o, clientEntry, departments: await nav() });
     const account = accountSummary();
     const c = tryGetContext<AppEnv>();
     // The cart store is read by the header on every page (and by cart and product pages).
@@ -138,6 +141,7 @@ export function createApp({
   app.route('/', contentRoutes({ render: page, mailer: services.mailer, now: millis }));
   app.route('/', productRoutes({ db, render: page }));
   app.route('/', reviewRoutes({ db, render: page }));
+  app.route('/', meRoutes());
   app.route('/', searchRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));
   app.route('/', cartPageRoutes({ render: page }));

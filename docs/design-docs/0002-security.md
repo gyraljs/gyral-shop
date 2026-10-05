@@ -62,3 +62,11 @@ session cookie behind it, and every form post from that page would fail the CSRF
 session middleware now queues session cookies and appends them to whatever response the
 route produced (`flushCookies` in `src/server/security/sessions.ts`). Covered by the product
 page route test (`Set-Cookie: sid=…`) and the no-JS add-to-cart test.
+
+## Addendum: production serving (shop-2gz, 2026-10-04)
+
+`pnpm start` serves prerendered pages and hashed assets from disk without passing through the
+app, so `src/server/prod-app.ts` adds the same headers (`securityHeaderValues` in
+`src/server/security/headers.ts`) to those responses. Prerendered pages contain no session,
+CSRF token or account: `/api/me` (never cached, never starts a session) personalizes them after
+hydration. `pnpm start` refuses to run unless `NODE_ENV=production` and `APP_SECRET` is set.

@@ -37,6 +37,9 @@ const STATIC_PAGES = [
   ],
 ] as const;
 
+/** Paths rendered once at build time (`ssg`); every other route renders per request. */
+export const STATIC_PATHS: readonly string[] = STATIC_PAGES.map(([path]) => path);
+
 export function contentRoutes({
   render,
   mailer,
@@ -46,8 +49,15 @@ export function contentRoutes({
   const contactLimiter = new SlidingWindowLimiter({ ...LIMITS.contactPerIp, now });
 
   for (const [path, title, description, view] of STATIC_PAGES) {
+    // Prerendered at build time in production (ADR 0016 in Gyral): identical for everyone.
     app.get(path, (c) =>
-      render({ title, description, canonical: new URL(path, c.req.url).href, main: view() }),
+      render({
+        title,
+        description,
+        canonical: new URL(path, c.req.url).href,
+        static: true,
+        main: view(),
+      }),
     );
   }
 
