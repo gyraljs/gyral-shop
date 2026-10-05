@@ -22,6 +22,7 @@ import { contentCss } from '../ui/styles/content.js';
 import { productCss } from '../ui/styles/product.js';
 import { ordersCss } from '../ui/styles/orders.js';
 import { checkoutCss } from '../ui/styles/checkout.js';
+import { adminCss } from '../ui/styles/admin.js';
 
 import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
 
@@ -92,6 +93,7 @@ const DOCUMENT_STYLES = [
   memberFormCss,
   contentCss,
   checkoutCss,
+  adminCss,
   searchCss,
   consentCss,
 ];
