@@ -3,7 +3,7 @@
 // to the shared store, which updates optimistically and reconciles with the JSON API.
 import { define, fieldErrors, form, html, send, unsafeCSS } from '@gyral/core';
 import { cartCss } from '../styles/cart.js';
-import { shadowBaseCss } from '../styles/filters.js';
+import { shadowBaseCss } from '../styles/shadow-base.js';
 import { cartLines } from './cart-lines.js';
 import { cartSummary } from './cart-summary.js';
 import { PromoForm, RemoveForm, SetQuantityForm } from './schemas.js';

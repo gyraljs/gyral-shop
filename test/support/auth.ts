@@ -18,6 +18,8 @@ export interface TestSession {
   readonly postForm: (path: string, fields?: Record<string, string>) => Promise<Response>;
   /** POST JSON with the session cookie and `x-csrf-token` header. */
   readonly postJson: (path: string, body: unknown) => Promise<Response>;
+  /** What Gyral's submitForm sends: FormData, `Accept: application/json`, the CSRF header. */
+  readonly submitForm: (path: string, fields?: Record<string, string>) => Promise<Response>;
 }
 
 function bind(test: TestApp, session: Session): TestSession {
@@ -38,6 +40,18 @@ function bind(test: TestApp, session: Session): TestSession {
           body: new URLSearchParams({ ...fields, [CSRF_FIELD]: session.csrfToken }),
         }),
       ),
+    submitForm: (path, fields = {}) => {
+      const body = new FormData();
+      for (const [key, value] of Object.entries(fields)) body.append(key, value);
+      return test.get(
+        path,
+        withCookie({
+          method: 'POST',
+          headers: { accept: 'application/json', [CSRF_HEADER]: session.csrfToken },
+          body,
+        }),
+      );
+    },
     postJson: (path, body) =>
       test.get(
         path,

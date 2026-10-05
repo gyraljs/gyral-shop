@@ -22,7 +22,7 @@ import { isCheckoutStep, type CheckoutStep } from '../../domain/checkout.js';
 import { goTo } from '../drivers/location.js';
 import { CSRF_META } from '../forms/csrf.js';
 import { checkoutCss } from '../styles/checkout.js';
-import { shadowBaseCss } from '../styles/filters.js';
+import { shadowBaseCss } from '../styles/shadow-base.js';
 import { parseCheckout, type CheckoutClient } from './model.js';
 import { AddressForm, ContactForm, PaymentForm, SECRET_FIELDS, ShippingForm } from './schemas.js';
 import { STEP_TITLES, stepBody } from './steps.js';

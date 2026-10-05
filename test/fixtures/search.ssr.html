@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Results for “quokka” — Gyral Goods</title>
     <meta name="description" content="Products matching “quokka” at Gyral Goods.">
-    <!--lit-part eabATTlSz5c=--><!--lit-part sdFfatTNAXo=--><style>
+    <!--lit-part eabATTlSz5c=--><!--lit-part 1BiWxnWGwTU=--><style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -201,6 +201,48 @@
   .pager a:hover { border-color: var(--brand); }
   .pager a[aria-current="page"] {
     background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
+  }
+}
+
+@layer components {
+  .filters {
+    margin-block-start: var(--space-3);
+    padding: var(--space-3);
+    background: var(--surface-sunken);
+    border-radius: var(--radius);
+  }
+  .filter-fields {
+    display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    align-items: start;
+  }
+  .filters fieldset { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
+  .filters legend, .sort-field label { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
+  .sort-field { margin: 0; display: grid; }
+  .sort-field select { padding: var(--space-1) var(--space-2); border-radius: var(--radius); }
+  .options { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.15rem; }
+  .options label { display: flex; align-items: center; gap: var(--space-1); cursor: pointer; }
+  .options .count { color: var(--ink-muted); font-size: 0.9rem; }
+  .price-range { display: flex; gap: var(--space-2); }
+  .price-field { display: grid; gap: 0.15rem; font-size: 0.9rem; min-inline-size: 0; }
+  .money-input { display: flex; align-items: center; gap: 0.2rem; }
+  .money-input input { inline-size: 100%; min-inline-size: 4rem; padding: var(--space-1); }
+  .filter-actions {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+    margin-block: var(--space-3) 0;
+  }
+  .filter-actions button {
+    padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius);
+    background: var(--brand); color: var(--brand-ink); font-weight: 600; cursor: pointer;
+  }
+  .results { transition: opacity 150ms; }
+  shop-listing { display: block; min-inline-size: 0; }
+  shop-listing:state(loading) .results { opacity: 0.55; }
+  /* Focus moves to the heading after paging (focusOn): only show a ring for keyboard focus. */
+  .listing-header h1:focus:not(:focus-visible) { outline: none; }
+  .load-error {
+    padding: var(--space-3); border-radius: var(--radius);
+    border: 1px solid var(--sale); color: var(--sale);
   }
 }
 
@@ -592,225 +634,52 @@
       </details>
     <!--/lit-part--></template></shop-mini-cart
         ></shop-header>
-        <main id="main" class="page" tabindex="-1"><!--lit-part 2DpPLunvXm0=--><!--lit-node 0--><shop-listing  data-gyral-seed="{&quot;state&quot;:{&quot;view&quot;:{&quot;basePath&quot;:&quot;/search&quot;,&quot;api&quot;:&quot;/api/listing/search&quot;,&quot;fixedQuery&quot;:&quot;q=quokka&quot;,&quot;heading&quot;:&quot;Results for “quokka”&quot;,&quot;context&quot;:&quot;&quot;,&quot;relevanceLabel&quot;:&quot;Best match&quot;,&quot;state&quot;:{&quot;page&quot;:1,&quot;sort&quot;:&quot;relevance&quot;,&quot;minPrice&quot;:null,&quot;maxPrice&quot;:null,&quot;brands&quot;:[],&quot;rating&quot;:null,&quot;inStock&quot;:false,&quot;onSale&quot;:false},&quot;cards&quot;:[{&quot;slug&quot;:&quot;quokka-lamp&quot;,&quot;name&quot;:&quot;Quokka Lamp&quot;,&quot;brand&quot;:&quot;Ampere &amp; Co&quot;,&quot;priceCents&quot;:3000,&quot;salePriceCents&quot;:null,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false},{&quot;slug&quot;:&quot;desk-fan&quot;,&quot;name&quot;:&quot;Zircon Desk Fan&quot;,&quot;brand&quot;:&quot;Quokka Works&quot;,&quot;priceCents&quot;:1000,&quot;salePriceCents&quot;:null,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false},{&quot;slug&quot;:&quot;plain-stool&quot;,&quot;name&quot;:&quot;Zircon Plain Stool&quot;,&quot;brand&quot;:&quot;Ampere &amp; Co&quot;,&quot;priceCents&quot;:2000,&quot;salePriceCents&quot;:1500,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false}],&quot;total&quot;:3,&quot;pageCount&quot;:1,&quot;brands&quot;:[{&quot;slug&quot;:&quot;ampere-co&quot;,&quot;name&quot;:&quot;Ampere &amp; Co&quot;,&quot;count&quot;:2},{&quot;slug&quot;:&quot;quokka-works&quot;,&quot;name&quot;:&quot;Quokka Works&quot;,&quot;count&quot;:1}]},&quot;want&quot;:null,&quot;status&quot;:&quot;idle&quot;,&quot;focus&quot;:0,&quot;focusPending&quot;:false},&quot;props&quot;:{&quot;view&quot;:{&quot;basePath&quot;:&quot;/search&quot;,&quot;api&quot;:&quot;/api/listing/search&quot;,&quot;fixedQuery&quot;:&quot;q=quokka&quot;,&quot;heading&quot;:&quot;Results for “quokka”&quot;,&quot;context&quot;:&quot;&quot;,&quot;relevanceLabel&quot;:&quot;Best match&quot;,&quot;state&quot;:{&quot;page&quot;:1,&quot;sort&quot;:&quot;relevance&quot;,&quot;minPrice&quot;:null,&quot;maxPrice&quot;:null,&quot;brands&quot;:[],&quot;rating&quot;:null,&quot;inStock&quot;:false,&quot;onSale&quot;:false},&quot;cards&quot;:[{&quot;slug&quot;:&quot;quokka-lamp&quot;,&quot;name&quot;:&quot;Quokka Lamp&quot;,&quot;brand&quot;:&quot;Ampere &amp; Co&quot;,&quot;priceCents&quot;:3000,&quot;salePriceCents&quot;:null,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false},{&quot;slug&quot;:&quot;desk-fan&quot;,&quot;name&quot;:&quot;Zircon Desk Fan&quot;,&quot;brand&quot;:&quot;Quokka Works&quot;,&quot;priceCents&quot;:1000,&quot;salePriceCents&quot;:null,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false},{&quot;slug&quot;:&quot;plain-stool&quot;,&quot;name&quot;:&quot;Zircon Plain Stool&quot;,&quot;brand&quot;:&quot;Ampere &amp; Co&quot;,&quot;priceCents&quot;:2000,&quot;salePriceCents&quot;:1500,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false}],&quot;total&quot;:3,&quot;pageCount&quot;:1,&quot;brands&quot;:[{&quot;slug&quot;:&quot;ampere-co&quot;,&quot;name&quot;:&quot;Ampere &amp; Co&quot;,&quot;count&quot;:2},{&quot;slug&quot;:&quot;quokka-works&quot;,&quot;name&quot;:&quot;Quokka Works&quot;,&quot;count&quot;:1}]}}}"><template shadowroot="open" shadowrootmode="open"><style>
-@layer reset, base, components;
-@layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-  img, svg { display: block; max-inline-size: 100%; }
-}
-@layer base {
-  :host { display: block; min-inline-size: 0; }
-  a { color: inherit; }
-  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-  h1, h2 { line-height: 1.2; text-wrap: balance; }
-  h1:focus { outline: none; }
-  h1:focus-visible { outline: 2px solid var(--focus); }
-  p { text-wrap: pretty; }
-  button, input, select { font: inherit; }
-}
-
-@layer components {
-  .visually-hidden {
-    position: absolute; inline-size: 1px; block-size: 1px;
-    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
-  }
-  .button {
-    display: inline-block; padding: var(--space-2) var(--space-4);
-    background: var(--brand); color: var(--brand-ink);
-    border-radius: var(--radius); font-weight: 600; text-decoration: none;
-  }
-  .hero {
-    padding: var(--space-5) var(--space-4);
-    border-radius: calc(var(--radius) * 2);
-    background:
-      radial-gradient(circle at 85% 20%, oklch(from var(--brand) l c h / 0.25), transparent 50%),
-      var(--surface-sunken);
-  }
-  .hero h1 { font-size: clamp(1.8rem, 1rem + 3vw, 3rem); margin-block: 0 var(--space-2); }
-  .card-section { margin-block: var(--space-5); }
-  .department-grid {
-    list-style: none; padding: 0; margin: 0;
-    display: grid; gap: var(--space-3);
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
-  }
-  .department-grid a {
-    display: block; padding: var(--space-3); text-align: center; font-weight: 600;
-    background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius);
-    text-decoration: none;
-  }
-  .department-grid a:hover { border-color: var(--brand); }
-  .card-grid {
-    display: grid; gap: var(--space-4);
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
-  }
-  .product-card {
-    container-type: inline-size;
-    display: grid; align-content: start; gap: var(--space-1);
-    content-visibility: auto; contain-intrinsic-size: auto 22rem;
-  }
-  .product-card > a { text-decoration: none; }
-  .product-card > a:hover h3 { text-decoration: underline; }
-  .product-card img {
-    inline-size: 100%; block-size: auto; aspect-ratio: 1;
-    border-radius: var(--radius); background: var(--surface-sunken);
-  }
-  .product-card h3 { font-size: 1rem; margin-block: var(--space-2) 0; line-height: 1.3; }
-  .product-card p { margin: 0; }
-  .brand { color: var(--ink-muted); font-size: 0.9rem; }
-  .price { font-weight: 700; font-size: 1.1rem; }
-  .price.sale ins { color: var(--sale); text-decoration: none; }
-  .price.sale del { color: var(--ink-muted); font-weight: 400; font-size: 0.9rem; margin-inline-start: var(--space-1); }
-  .rating { display: flex; align-items: center; gap: var(--space-1); font-size: 0.9rem; }
-  .stars {
-    --pct: calc(var(--rating) / 5 * 100%);
-    inline-size: 5.5em; block-size: 1em;
-    background: linear-gradient(90deg, var(--rating-fill) var(--pct), var(--line) var(--pct));
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 20'%3E%3Cpath d='M10 1l2.6 6 6.4.5-4.9 4.2 1.5 6.3L10 14.6 4.4 18l1.5-6.3L1 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L32 14.6 26.4 18l1.5-6.3L23 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L54 14.6 48.4 18l1.5-6.3L45 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L76 14.6 70.4 18l1.5-6.3L67 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L98 14.6 92.4 18l1.5-6.3L89 7.5l6.4-.5z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
-  }
-  .count { color: var(--ink-muted); }
-  .stock.out { color: var(--sale); font-weight: 600; font-size: 0.9rem; }
-}
-
-@layer components {
-  .breadcrumbs ol {
-    list-style: none; padding: 0; margin-block: 0 var(--space-3);
-    display: flex; flex-wrap: wrap; gap: var(--space-1); font-size: 0.9rem;
-  }
-  .breadcrumbs li:not(:last-child)::after {
-    content: "›"; margin-inline-start: var(--space-1); color: var(--ink-muted);
-  }
-  .breadcrumbs [aria-current="page"] { color: var(--ink-muted); }
-  .page-intro h1 { margin-block: 0 var(--space-2); }
-  .page-intro p { max-inline-size: 65ch; color: var(--ink-muted); margin-block: 0; }
-  .category-grid {
-    list-style: none; padding: 0; margin: 0;
-    display: grid; gap: var(--space-3);
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
-  }
-  .category-grid a {
-    display: grid; gap: var(--space-1); padding: var(--space-3);
-    background: var(--surface-raised); border: 1px solid var(--line);
-    border-radius: var(--radius); text-decoration: none;
-  }
-  .category-grid a:hover { border-color: var(--brand); }
-  .category-grid .name { font-weight: 600; }
-  .category-grid .count { color: var(--ink-muted); font-size: 0.9rem; }
-  .listing {
-    display: grid; gap: var(--space-5); align-items: start;
-    grid-template-columns: minmax(0, 1fr);
-  }
-  @media (width >= 48rem) {
-    .listing { grid-template-columns: 14rem minmax(0, 1fr); }
-  }
-  .listing-nav h2 { font-size: 1.1rem; margin-block: 0 var(--space-2); }
-  .listing-nav ul { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-1); }
-  .listing-nav a { text-decoration: none; }
-  .listing-nav a:hover { text-decoration: underline; }
-  .listing-nav [aria-current="page"] { font-weight: 700; text-decoration: underline; }
-  .listing-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); }
-  .listing-header h1 { margin-block: 0; }
-  .result-count { color: var(--ink-muted); margin-block: 0; }
-  .listing-results .card-grid { margin-block-start: var(--space-4); }
-  .empty { padding: var(--space-4); background: var(--surface-sunken); border-radius: var(--radius); }
-  .pager ul {
-    list-style: none; padding: 0; margin-block: var(--space-5) 0;
-    display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-1);
-  }
-  .pager a, .pager .gap {
-    display: inline-grid; place-items: center;
-    min-inline-size: 2.75rem; min-block-size: 2.75rem; padding-inline: var(--space-2);
-    border-radius: var(--radius);
-  }
-  .pager a { border: 1px solid var(--line); text-decoration: none; }
-  .pager a:hover { border-color: var(--brand); }
-  .pager a[aria-current="page"] {
-    background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
-  }
-}
-
-@layer components {
-  .filters {
-    margin-block-start: var(--space-3);
-    padding: var(--space-3);
-    background: var(--surface-sunken);
-    border-radius: var(--radius);
-  }
-  .filter-fields {
-    display: grid; gap: var(--space-3);
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
-    align-items: start;
-  }
-  .filters fieldset { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
-  .filters legend, .sort-field label { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
-  .sort-field { margin: 0; display: grid; }
-  .sort-field select { padding: var(--space-1) var(--space-2); border-radius: var(--radius); }
-  .options { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.15rem; }
-  .options label { display: flex; align-items: center; gap: var(--space-1); cursor: pointer; }
-  .options .count { color: var(--ink-muted); font-size: 0.9rem; }
-  .price-range { display: flex; gap: var(--space-2); }
-  .price-field { display: grid; gap: 0.15rem; font-size: 0.9rem; min-inline-size: 0; }
-  .money-input { display: flex; align-items: center; gap: 0.2rem; }
-  .money-input input { inline-size: 100%; min-inline-size: 4rem; padding: var(--space-1); }
-  .filter-actions {
-    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
-    margin-block: var(--space-3) 0;
-  }
-  .filter-actions button {
-    padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius);
-    background: var(--brand); color: var(--brand-ink); font-weight: 600; cursor: pointer;
-  }
-  .results { transition: opacity 150ms; }
-  :host(:state(loading)) .results { opacity: 0.55; }
-  .load-error {
-    padding: var(--space-3); border-radius: var(--radius);
-    border: 1px solid var(--sale); color: var(--sale);
-  }
-}
-</style><!--lit-part rYjM8PDjMIM=-->
-      <section class="listing-results" aria-labelledby="listing-title">
+        <main id="main" class="page" tabindex="-1"><!--lit-part 2DpPLunvXm0=--><!--lit-node 0--><shop-listing  data-gyral-seed="{&quot;state&quot;:{&quot;view&quot;:{&quot;basePath&quot;:&quot;/search&quot;,&quot;api&quot;:&quot;/api/listing/search&quot;,&quot;fixedQuery&quot;:&quot;q=quokka&quot;,&quot;heading&quot;:&quot;Results for “quokka”&quot;,&quot;context&quot;:&quot;&quot;,&quot;relevanceLabel&quot;:&quot;Best match&quot;,&quot;state&quot;:{&quot;page&quot;:1,&quot;sort&quot;:&quot;relevance&quot;,&quot;minPrice&quot;:null,&quot;maxPrice&quot;:null,&quot;brands&quot;:[],&quot;rating&quot;:null,&quot;inStock&quot;:false,&quot;onSale&quot;:false},&quot;cards&quot;:[{&quot;slug&quot;:&quot;quokka-lamp&quot;,&quot;name&quot;:&quot;Quokka Lamp&quot;,&quot;brand&quot;:&quot;Ampere &amp; Co&quot;,&quot;priceCents&quot;:3000,&quot;salePriceCents&quot;:null,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false},{&quot;slug&quot;:&quot;desk-fan&quot;,&quot;name&quot;:&quot;Zircon Desk Fan&quot;,&quot;brand&quot;:&quot;Quokka Works&quot;,&quot;priceCents&quot;:1000,&quot;salePriceCents&quot;:null,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false},{&quot;slug&quot;:&quot;plain-stool&quot;,&quot;name&quot;:&quot;Zircon Plain Stool&quot;,&quot;brand&quot;:&quot;Ampere &amp; Co&quot;,&quot;priceCents&quot;:2000,&quot;salePriceCents&quot;:1500,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false}],&quot;total&quot;:3,&quot;pageCount&quot;:1,&quot;brands&quot;:[{&quot;slug&quot;:&quot;ampere-co&quot;,&quot;name&quot;:&quot;Ampere &amp; Co&quot;,&quot;count&quot;:2},{&quot;slug&quot;:&quot;quokka-works&quot;,&quot;name&quot;:&quot;Quokka Works&quot;,&quot;count&quot;:1}]},&quot;want&quot;:null,&quot;status&quot;:&quot;idle&quot;,&quot;focus&quot;:0,&quot;focusPending&quot;:false},&quot;props&quot;:{&quot;view&quot;:{&quot;basePath&quot;:&quot;/search&quot;,&quot;api&quot;:&quot;/api/listing/search&quot;,&quot;fixedQuery&quot;:&quot;q=quokka&quot;,&quot;heading&quot;:&quot;Results for “quokka”&quot;,&quot;context&quot;:&quot;&quot;,&quot;relevanceLabel&quot;:&quot;Best match&quot;,&quot;state&quot;:{&quot;page&quot;:1,&quot;sort&quot;:&quot;relevance&quot;,&quot;minPrice&quot;:null,&quot;maxPrice&quot;:null,&quot;brands&quot;:[],&quot;rating&quot;:null,&quot;inStock&quot;:false,&quot;onSale&quot;:false},&quot;cards&quot;:[{&quot;slug&quot;:&quot;quokka-lamp&quot;,&quot;name&quot;:&quot;Quokka Lamp&quot;,&quot;brand&quot;:&quot;Ampere &amp; Co&quot;,&quot;priceCents&quot;:3000,&quot;salePriceCents&quot;:null,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false},{&quot;slug&quot;:&quot;desk-fan&quot;,&quot;name&quot;:&quot;Zircon Desk Fan&quot;,&quot;brand&quot;:&quot;Quokka Works&quot;,&quot;priceCents&quot;:1000,&quot;salePriceCents&quot;:null,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false},{&quot;slug&quot;:&quot;plain-stool&quot;,&quot;name&quot;:&quot;Zircon Plain Stool&quot;,&quot;brand&quot;:&quot;Ampere &amp; Co&quot;,&quot;priceCents&quot;:2000,&quot;salePriceCents&quot;:1500,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false}],&quot;total&quot;:3,&quot;pageCount&quot;:1,&quot;brands&quot;:[{&quot;slug&quot;:&quot;ampere-co&quot;,&quot;name&quot;:&quot;Ampere &amp; Co&quot;,&quot;count&quot;:2},{&quot;slug&quot;:&quot;quokka-works&quot;,&quot;name&quot;:&quot;Quokka Works&quot;,&quot;count&quot;:1}]}}}" data-gyral-light><!--gyral:lit-part TGNLJymWtV8=-->
+      <section class="listing-results" data-region="listing" aria-labelledby="listing-title">
         <header class="listing-header">
-          <!--lit-node 2--><h1 id="listing-title" tabindex="-1" >
-            <!--lit-part-->Results for “quokka”<!--/lit-part--><!--lit-part--><!--/lit-part-->
+          <!--gyral:lit-node 2--><h1 id="listing-title" tabindex="-1" >
+            <!--gyral:lit-part-->Results for “quokka”<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part-->
           </h1>
-          <p class="result-count" role="status"><!--lit-part-->Showing 1–3 of 3 products<!--/lit-part--></p>
+          <p class="result-count" role="status"><!--gyral:lit-part-->Showing 1–3 of 3 products<!--gyral:/lit-part--></p>
         </header>
-        <!--lit-part j0EpqXuvMKU=-->
-    <!--lit-node 0--><form
+        <!--gyral:lit-part /tFabat80ko=-->
+    <!--gyral:lit-node 0--><form
       class="filters"
+      data-region="filters"
       method="get"
       action="/search"
       aria-label="Filter and sort"
       data-intent="Refine"
     >
-      <!--lit-part--><!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="q" value="quokka" /><!--/lit-part--><!--/lit-part-->
-      <!--lit-node 2--><div class="filter-fields" data-intent="Refine" data-intent-on="change">
-        <!--lit-part O/ghijeFuCQ=-->
+      <!--gyral:lit-part--><!--gyral:lit-part TIYrCHR1D68=--><!--gyral:lit-node 0--><input type="hidden" name="q" value="quokka" /><!--gyral:/lit-part--><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><div class="filter-fields" data-intent="Refine" data-intent-on="change">
+        <!--gyral:lit-part O/ghijeFuCQ=-->
   <p class="sort-field">
     <label for="sort">Sort by</label>
-    <!--lit-node 2--><select id="sort" name="sort" >
-      <!--lit-part--><!--lit-part GeanqUtyzZw=--><!--lit-node 0--><option value="relevance" selected>
-            <!--lit-part-->Best match<!--/lit-part-->
-          </option><!--/lit-part--><!--lit-part GeanqUtyzZw=--><!--lit-node 0--><option value="price-asc" >
-            <!--lit-part-->Price: low to high<!--/lit-part-->
-          </option><!--/lit-part--><!--lit-part GeanqUtyzZw=--><!--lit-node 0--><option value="price-desc" >
-            <!--lit-part-->Price: high to low<!--/lit-part-->
-          </option><!--/lit-part--><!--lit-part GeanqUtyzZw=--><!--lit-node 0--><option value="rating" >
-            <!--lit-part-->Customer rating<!--/lit-part-->
-          </option><!--/lit-part--><!--lit-part GeanqUtyzZw=--><!--lit-node 0--><option value="newest" >
-            <!--lit-part-->Newest<!--/lit-part-->
-          </option><!--/lit-part--><!--/lit-part-->
+    <!--gyral:lit-node 2--><select id="sort" name="sort" >
+      <!--gyral:lit-part--><!--gyral:lit-part GeanqUtyzZw=--><!--gyral:lit-node 0--><option value="relevance" selected>
+            <!--gyral:lit-part-->Best match<!--gyral:/lit-part-->
+          </option><!--gyral:/lit-part--><!--gyral:lit-part GeanqUtyzZw=--><!--gyral:lit-node 0--><option value="price-asc" >
+            <!--gyral:lit-part-->Price: low to high<!--gyral:/lit-part-->
+          </option><!--gyral:/lit-part--><!--gyral:lit-part GeanqUtyzZw=--><!--gyral:lit-node 0--><option value="price-desc" >
+            <!--gyral:lit-part-->Price: high to low<!--gyral:/lit-part-->
+          </option><!--gyral:/lit-part--><!--gyral:lit-part GeanqUtyzZw=--><!--gyral:lit-node 0--><option value="rating" >
+            <!--gyral:lit-part-->Customer rating<!--gyral:/lit-part-->
+          </option><!--gyral:/lit-part--><!--gyral:lit-part GeanqUtyzZw=--><!--gyral:lit-node 0--><option value="newest" >
+            <!--gyral:lit-part-->Newest<!--gyral:/lit-part-->
+          </option><!--gyral:/lit-part--><!--gyral:/lit-part-->
     </select>
   </p>
-<!--/lit-part-->
+<!--gyral:/lit-part-->
         <fieldset>
           <legend>Price</legend>
           <div class="price-range">
-            <!--lit-part 2ntGOcwwf+U=-->
+            <!--gyral:lit-part 2ntGOcwwf+U=-->
   <label class="price-field">
-    <span><!--lit-part-->Min<!--/lit-part--></span>
+    <span><!--gyral:lit-part-->Min<!--gyral:/lit-part--></span>
     <span class="money-input">
       <span aria-hidden="true">$</span>
-      <!--lit-node 5--><input
+      <!--gyral:lit-node 5--><input
         type="number"
         name="min"
         min="0"
@@ -821,12 +690,12 @@
       />
     </span>
   </label>
-<!--/lit-part--> <!--lit-part 2ntGOcwwf+U=-->
+<!--gyral:/lit-part--> <!--gyral:lit-part 2ntGOcwwf+U=-->
   <label class="price-field">
-    <span><!--lit-part-->Max<!--/lit-part--></span>
+    <span><!--gyral:lit-part-->Max<!--gyral:/lit-part--></span>
     <span class="money-input">
       <span aria-hidden="true">$</span>
-      <!--lit-node 5--><input
+      <!--gyral:lit-node 5--><input
         type="number"
         name="max"
         min="0"
@@ -837,110 +706,102 @@
       />
     </span>
   </label>
-<!--/lit-part-->
+<!--gyral:/lit-part-->
           </div>
         </fieldset>
-        <!--lit-part Y9FWyX4jGCs=--><fieldset>
+        <!--gyral:lit-part Y9FWyX4jGCs=--><fieldset>
         <legend>Brand</legend>
         <ul class="options">
-          <!--lit-part--><!--lit-part pA18R0+SPYU=--><li>
+          <!--gyral:lit-part--><!--gyral:lit-part TvsEps+PVEY=--><li>
                 <label>
-                  <!--lit-node 2--><input
+                  <!--gyral:lit-node 2--><input
                     type="checkbox"
                     name="brand"
                     value="ampere-co"
                     
-                    
                   />
-                  <!--lit-part-->Ampere &amp; Co<!--/lit-part--> <span class="count">(<!--lit-part-->2<!--/lit-part-->)</span>
+                  <!--gyral:lit-part-->Ampere &amp; Co<!--gyral:/lit-part--> <span class="count">(<!--gyral:lit-part-->2<!--gyral:/lit-part-->)</span>
                 </label>
-              </li><!--/lit-part--><!--lit-part pA18R0+SPYU=--><li>
+              </li><!--gyral:/lit-part--><!--gyral:lit-part TvsEps+PVEY=--><li>
                 <label>
-                  <!--lit-node 2--><input
+                  <!--gyral:lit-node 2--><input
                     type="checkbox"
                     name="brand"
                     value="quokka-works"
                     
-                    
                   />
-                  <!--lit-part-->Quokka Works<!--/lit-part--> <span class="count">(<!--lit-part-->1<!--/lit-part-->)</span>
+                  <!--gyral:lit-part-->Quokka Works<!--gyral:/lit-part--> <span class="count">(<!--gyral:lit-part-->1<!--gyral:/lit-part-->)</span>
                 </label>
-              </li><!--/lit-part--><!--/lit-part-->
+              </li><!--gyral:/lit-part--><!--gyral:/lit-part-->
         </ul>
-      </fieldset><!--/lit-part--> <!--lit-part FXnu+kD1dxQ=-->
+      </fieldset><!--gyral:/lit-part--> <!--gyral:lit-part P9/lkkBq1U4=-->
   <fieldset>
     <legend>Customer rating</legend>
     <ul class="options">
       <li>
         <label
-          ><!--lit-node 5--><input
+          ><!--gyral:lit-node 5--><input
             type="radio"
             name="rating"
             value=""
             checked
-            
           />
           Any rating</label
         >
       </li>
-      <!--lit-part--><!--lit-part GjUf7pWtO1k=--><li>
+      <!--gyral:lit-part--><!--gyral:lit-part kHkke5Uzf3s=--><li>
             <label
-              ><!--lit-node 2--><input
+              ><!--gyral:lit-node 2--><input
                 type="radio"
                 name="rating"
                 value="4"
                 
-                
               />
-              <!--lit-part-->4<!--/lit-part--> <!--lit-part-->stars<!--/lit-part--> &amp; up</label
+              <!--gyral:lit-part-->4<!--gyral:/lit-part--> <!--gyral:lit-part-->stars<!--gyral:/lit-part--> &amp; up</label
             >
-          </li><!--/lit-part--><!--lit-part GjUf7pWtO1k=--><li>
+          </li><!--gyral:/lit-part--><!--gyral:lit-part kHkke5Uzf3s=--><li>
             <label
-              ><!--lit-node 2--><input
+              ><!--gyral:lit-node 2--><input
                 type="radio"
                 name="rating"
                 value="3"
                 
-                
               />
-              <!--lit-part-->3<!--/lit-part--> <!--lit-part-->stars<!--/lit-part--> &amp; up</label
+              <!--gyral:lit-part-->3<!--gyral:/lit-part--> <!--gyral:lit-part-->stars<!--gyral:/lit-part--> &amp; up</label
             >
-          </li><!--/lit-part--><!--lit-part GjUf7pWtO1k=--><li>
+          </li><!--gyral:/lit-part--><!--gyral:lit-part kHkke5Uzf3s=--><li>
             <label
-              ><!--lit-node 2--><input
+              ><!--gyral:lit-node 2--><input
                 type="radio"
                 name="rating"
                 value="2"
                 
-                
               />
-              <!--lit-part-->2<!--/lit-part--> <!--lit-part-->stars<!--/lit-part--> &amp; up</label
+              <!--gyral:lit-part-->2<!--gyral:/lit-part--> <!--gyral:lit-part-->stars<!--gyral:/lit-part--> &amp; up</label
             >
-          </li><!--/lit-part--><!--lit-part GjUf7pWtO1k=--><li>
+          </li><!--gyral:/lit-part--><!--gyral:lit-part kHkke5Uzf3s=--><li>
             <label
-              ><!--lit-node 2--><input
+              ><!--gyral:lit-node 2--><input
                 type="radio"
                 name="rating"
                 value="1"
                 
-                
               />
-              <!--lit-part-->1<!--/lit-part--> <!--lit-part-->star<!--/lit-part--> &amp; up</label
+              <!--gyral:lit-part-->1<!--gyral:/lit-part--> <!--gyral:lit-part-->star<!--gyral:/lit-part--> &amp; up</label
             >
-          </li><!--/lit-part--><!--/lit-part-->
+          </li><!--gyral:/lit-part--><!--gyral:/lit-part-->
     </ul>
   </fieldset>
-<!--/lit-part-->
+<!--gyral:/lit-part-->
         <fieldset>
           <legend>Availability</legend>
           <ul class="options">
             <li>
               <label
-                ><!--lit-node 16--><input
+                ><!--gyral:lit-node 16--><input
                   type="checkbox"
                   name="stock"
                   value="1"
-                  
                   
                 />
                 In stock</label
@@ -948,11 +809,10 @@
             </li>
             <li>
               <label
-                ><!--lit-node 19--><input
+                ><!--gyral:lit-node 19--><input
                   type="checkbox"
                   name="sale"
                   value="1"
-                  
                   
                 />
                 On sale</label
@@ -963,85 +823,89 @@
       </div>
       <p class="filter-actions">
         <button type="submit">Apply</button>
-        <!--lit-node 22--><a href="/search?q=quokka" data-intent="Go">Clear all</a>
+        <!--gyral:lit-node 22--><a href="/search?q=quokka" data-intent="Go">Clear all</a>
       </p>
     </form>
-  <!--/lit-part-->
-        <!--lit-part--><!--/lit-part-->
-        <!--lit-node 9--><div class="results" aria-busy="false">
+  <!--gyral:/lit-part-->
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
+        <!--gyral:lit-node 9--><div
+          class="results"
+          data-region="results"
+          aria-busy="false"
+        >
           <h2 class="visually-hidden">Products</h2>
-          <!--lit-part lOwejqnWzW8=--><div class="card-grid">
-      <!--lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
-    <!--lit-node 1--><a href="/p/quokka-lamp">
-      <!--lit-part--><!--/lit-part-->
-      <h3><!--lit-part-->Quokka Lamp<!--/lit-part--></h3>
+          <!--gyral:lit-part lOwejqnWzW8=--><div class="card-grid">
+      <!--gyral:lit-part--><!--gyral:lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--gyral:lit-node 1--><a href="/p/quokka-lamp">
+      <!--gyral:lit-part--><!--gyral:/lit-part-->
+      <h3><!--gyral:lit-part-->Quokka Lamp<!--gyral:/lit-part--></h3>
     </a>
-    <p class="brand"><!--lit-part-->Ampere &amp; Co<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$30.00<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 3.6">
+    <p class="brand"><!--gyral:lit-part-->Ampere &amp; Co<!--gyral:/lit-part--></p>
+    <!--gyral:lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--gyral:lit-part-->$30.00<!--gyral:/lit-part--></p><!--gyral:/lit-part--> <!--gyral:lit-part xwrdDhbCGaQ=--><!--gyral:lit-node 0--><p class="rating" data-component="rating" style="--rating: 3.6">
         <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->3.6<!--/lit-part--><span
+        <span class="visually-hidden">Rated </span><!--gyral:lit-part-->3.6<!--gyral:/lit-part--><span
           class="visually-hidden"
         >
           out of 5</span
         >
         <span class="count"
-          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+          >(<!--gyral:lit-part-->5<!--gyral:/lit-part--><span class="visually-hidden"> reviews</span>)</span
         >
-      </p><!--/lit-part-->
-    <!--lit-part 3BzIbwmErGQ=--><p class="stock out">Out of stock</p><!--/lit-part-->
+      </p><!--gyral:/lit-part-->
+    <!--gyral:lit-part 3BzIbwmErGQ=--><p class="stock out">Out of stock</p><!--gyral:/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
-    <!--lit-node 1--><a href="/p/desk-fan">
-      <!--lit-part--><!--/lit-part-->
-      <h3><!--lit-part-->Zircon Desk Fan<!--/lit-part--></h3>
+<!--gyral:/lit-part--><!--gyral:lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--gyral:lit-node 1--><a href="/p/desk-fan">
+      <!--gyral:lit-part--><!--gyral:/lit-part-->
+      <h3><!--gyral:lit-part-->Zircon Desk Fan<!--gyral:/lit-part--></h3>
     </a>
-    <p class="brand"><!--lit-part-->Quokka Works<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$10.00<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 3.6">
+    <p class="brand"><!--gyral:lit-part-->Quokka Works<!--gyral:/lit-part--></p>
+    <!--gyral:lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--gyral:lit-part-->$10.00<!--gyral:/lit-part--></p><!--gyral:/lit-part--> <!--gyral:lit-part xwrdDhbCGaQ=--><!--gyral:lit-node 0--><p class="rating" data-component="rating" style="--rating: 3.6">
         <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->3.6<!--/lit-part--><span
+        <span class="visually-hidden">Rated </span><!--gyral:lit-part-->3.6<!--gyral:/lit-part--><span
           class="visually-hidden"
         >
           out of 5</span
         >
         <span class="count"
-          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+          >(<!--gyral:lit-part-->5<!--gyral:/lit-part--><span class="visually-hidden"> reviews</span>)</span
         >
-      </p><!--/lit-part-->
-    <!--lit-part 3BzIbwmErGQ=--><p class="stock out">Out of stock</p><!--/lit-part-->
+      </p><!--gyral:/lit-part-->
+    <!--gyral:lit-part 3BzIbwmErGQ=--><p class="stock out">Out of stock</p><!--gyral:/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
-    <!--lit-node 1--><a href="/p/plain-stool">
-      <!--lit-part--><!--/lit-part-->
-      <h3><!--lit-part-->Zircon Plain Stool<!--/lit-part--></h3>
+<!--gyral:/lit-part--><!--gyral:lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--gyral:lit-node 1--><a href="/p/plain-stool">
+      <!--gyral:lit-part--><!--gyral:/lit-part-->
+      <h3><!--gyral:lit-part-->Zircon Plain Stool<!--gyral:/lit-part--></h3>
     </a>
-    <p class="brand"><!--lit-part-->Ampere &amp; Co<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <p class="brand"><!--gyral:lit-part-->Ampere &amp; Co<!--gyral:/lit-part--></p>
+    <!--gyral:lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
-          ><span class="visually-hidden">Sale price </span><!--lit-part-->$15.00<!--/lit-part--></ins
+          ><span class="visually-hidden">Sale price </span><!--gyral:lit-part-->$15.00<!--gyral:/lit-part--></ins
         >
-        <del><span class="visually-hidden">Was </span><!--lit-part-->$20.00<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 3.6">
+        <del><span class="visually-hidden">Was </span><!--gyral:lit-part-->$20.00<!--gyral:/lit-part--></del>
+      </p><!--gyral:/lit-part--> <!--gyral:lit-part xwrdDhbCGaQ=--><!--gyral:lit-node 0--><p class="rating" data-component="rating" style="--rating: 3.6">
         <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->3.6<!--/lit-part--><span
+        <span class="visually-hidden">Rated </span><!--gyral:lit-part-->3.6<!--gyral:/lit-part--><span
           class="visually-hidden"
         >
           out of 5</span
         >
         <span class="count"
-          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+          >(<!--gyral:lit-part-->5<!--gyral:/lit-part--><span class="visually-hidden"> reviews</span>)</span
         >
-      </p><!--/lit-part-->
-    <!--lit-part 3BzIbwmErGQ=--><p class="stock out">Out of stock</p><!--/lit-part-->
+      </p><!--gyral:/lit-part-->
+    <!--gyral:lit-part 3BzIbwmErGQ=--><p class="stock out">Out of stock</p><!--gyral:/lit-part-->
   </article>
-<!--/lit-part--><!--/lit-part-->
-    </div><!--/lit-part-->
+<!--gyral:/lit-part--><!--gyral:/lit-part-->
+    </div><!--gyral:/lit-part-->
         </div>
-        <!--lit-part--><!--/lit-part-->
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
       </section>
-    <!--/lit-part--></template></shop-listing><!--/lit-part--></main>
+    <!--gyral:/lit-part--></shop-listing><!--/lit-part--></main>
         <!--lit-part STG64S/HenM=-->
   <footer class="site-footer">
     <div class="page">

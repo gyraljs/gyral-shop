@@ -1,19 +1,21 @@
 // What the sign-in and registration components share: state, the server round trip, field
 // rendering and styles. Both work as plain POST forms without JavaScript; with it, Gyral's
-// form() validates first and the submission goes to the same route as JSON.
+// form() validates first and submitForm() posts the same FormData to the same route, which
+// answers JSON (Gyral ADR 0008, "Round trip").
 import {
   css,
   fieldErrors,
   html,
   invalid,
   nothing,
+  redirectedTo,
   type Command,
   type FormFields,
   type IntentRejected,
 } from '@gyral/core';
-import { request, type HttpError } from '@gyral/http';
+import { submitForm, type HttpError } from '@gyral/http';
 import { CSRF_FIELD, CSRF_HEADER } from '../forms/csrf.js';
-import { AuthOutcome, SECRET_FIELDS } from './schemas.js';
+import { SECRET_FIELDS } from './schemas.js';
 
 export interface AuthState {
   /** Text to re-fill after a rejection. Never passwords: state is serialized into the page. */
@@ -49,42 +51,35 @@ export const failed = (s: AuthState, m: Failed): AuthState => ({
   pending: false,
 });
 
+const GENERIC_FAILURE = 'Something went wrong. Check your connection and try again.';
+
 const failureMessage = (error: HttpError): string =>
   error._tag === 'HttpStatusError' && error.status === 429
     ? 'Too many attempts. Wait a few minutes, then try again.'
     : error._tag === 'HttpStatusError' && error.status === 403
       ? 'Your session expired. Reload the page and try again.'
-      : 'Something went wrong. Check your connection and try again.';
+      : GENERIC_FAILURE;
 
-/** POSTs the parsed form as JSON to the same route the no-JS form posts to. */
+/**
+ * Sends the validated form to the route the no-JS form posts to. A 422 answer arrives as
+ * `IntentRejected` (wrong password, email taken), anything else but success as `Failed`.
+ */
 export function submit(
   path: string,
-  body: Readonly<Record<string, string>>,
+  form: FormData,
   csrfToken: string | undefined,
-): Command<SignedIn | IntentRejected | Failed> {
-  return request<AuthOutcome, SignedIn | IntentRejected, Failed>(
-    {
-      url: path,
-      method: 'POST',
-      headers: { accept: 'application/json', [CSRF_HEADER]: csrfToken ?? '' },
-      body,
+): Command<SignedIn | Failed | IntentRejected> {
+  return submitForm<SignedIn | Failed, Failed>(path, form, {
+    ...(csrfToken === undefined ? {} : { csrf: { token: csrfToken, header: CSRF_HEADER } }),
+    onSuccess: (body) => {
+      const location = redirectedTo(body);
+      return location === undefined
+        ? { _tag: 'Failed', message: GENERIC_FAILURE }
+        : { _tag: 'SignedIn', location };
     },
-    {
-      schema: AuthOutcome,
-      onSuccess: (outcome) =>
-        outcome._tag === 'SignedIn'
-          ? outcome
-          : {
-              _tag: 'IntentRejected',
-              intent: outcome.intent,
-              issues: outcome.issues,
-              ...(outcome.values === undefined ? {} : { values: outcome.values }),
-            },
-      onFailure: (error) => ({ _tag: 'Failed', message: failureMessage(error) }),
-      key: 'auth',
-      concurrency: 'exhaust',
-    },
-  );
+    onFailure: (error) => ({ _tag: 'Failed', message: failureMessage(error) }),
+    key: 'auth',
+  });
 }
 
 export interface FieldSpec {

@@ -1,15 +1,13 @@
 // <shop-listing>: one listing's heading, result count, filter/sort form, product grid and
-// pager. Server-rendered from a ListingView; in the browser it changes listing state without a
+// pager. Light DOM (Gyral ADR 0014): crawlers read the heading and products as plain HTML and
+// document styles (filters.ts, listing.ts, catalog.ts) apply directly. Server-rendered from a ListingView; in the browser it changes listing state without a
 // reload. The URL is the source of truth: intents navigate (pushing history), and every URL
 // change (including Back/Forward) streams in through router listen() and fetches that state.
-import { define, html, nothing, unsafeCSS, type Next } from '@gyral/core';
+import { define, html, nothing, type Next } from '@gyral/core';
 import { get, type HttpError } from '@gyral/http';
 import { listen, makeRouter, navigate, setTitle, type RouteLocation } from '@gyral/router';
 import { isRefined, parseListing, sameListing, type ListingState } from '../../domain/listing.js';
 import { documentTitle } from '../layout/site.js';
-import { catalogCss } from '../styles/catalog.js';
-import { filtersCss, shadowBaseCss } from '../styles/filters.js';
-import { listingCss } from '../styles/listing.js';
 import { filtersForm } from './filters.js';
 import { focusOn } from './focus.js';
 import {
@@ -117,6 +115,7 @@ const results = (view: ListingView) => {
 };
 
 export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-listing', {
+  shadow: false,
   props: { view: { attribute: false } },
   init: (props) => [
     { view: props.view ?? null, want: null, status: 'idle', focus: 0, focusPending: false },
@@ -151,7 +150,7 @@ export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-list
     if (view === null) return nothing;
     const { state } = view;
     return html`
-      <section class="listing-results" aria-labelledby="listing-title">
+      <section class="listing-results" data-region="listing" aria-labelledby="listing-title">
         <header class="listing-header">
           <h1 id="listing-title" tabindex="-1" ${focusOn(s.focus)}>
             ${view.heading}${
@@ -171,7 +170,11 @@ export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-list
               </p>`
             : nothing
         }
-        <div class="results" aria-busy=${s.status === 'loading' ? 'true' : 'false'}>
+        <div
+          class="results"
+          data-region="results"
+          aria-busy=${s.status === 'loading' ? 'true' : 'false'}
+        >
           <h2 class="visually-hidden">Products</h2>
           ${results(view)}
         </div>
@@ -184,7 +187,6 @@ export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-list
       </section>
     `;
   },
-  styles: unsafeCSS(`${shadowBaseCss}${catalogCss}${listingCss}${filtersCss}`),
 });
 
 declare global {

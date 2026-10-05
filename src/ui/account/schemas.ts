@@ -55,22 +55,5 @@ export const RegisterForm = defineForm(
   ),
 );
 
-/**
- * What the server answers a JavaScript submission with: where to go next, or the same
- * `IntentRejected` the no-JS path renders. Always 200, because @gyral/http drops the body of
- * error statuses (a Gyral bead tracks that).
- */
-export const AuthOutcome = v.variant('_tag', [
-  v.object({ _tag: v.literal('SignedIn'), location: v.string() }),
-  v.object({
-    _tag: v.literal('IntentRejected'),
-    intent: v.string(),
-    issues: v.array(v.object({ path: v.string(), message: v.string() })),
-    values: v.optional(v.record(v.string(), v.union([v.string(), v.array(v.string())]))),
-  }),
-]);
-
-export type AuthOutcome = v.InferOutput<typeof AuthOutcome>;
-
 /** Fields never echoed back into a page (state is serialized into the HTML). */
 export const SECRET_FIELDS: ReadonlySet<string> = new Set(['password', 'confirm', '_csrf']);
