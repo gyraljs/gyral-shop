@@ -10,6 +10,7 @@ import type { DepartmentLink } from '../ui/layout/site-header.js';
 import { SECURITY_TITLES, securityErrorPage } from '../ui/pages/security-errors.js';
 import { accountRoutes } from './routes/account.js';
 import { accountSettingsRoutes } from './routes/account-settings.js';
+import { passwordResetRoutes } from './routes/password-reset.js';
 import { cartRoutes } from './routes/cart-api.js';
 import { catalogRoutes } from './routes/catalog.js';
 import { productRoutes } from './routes/product.js';
@@ -120,6 +121,7 @@ export function createApp({
   const millis = () => (clock?.() ?? new Date()).getTime();
   app.route('/', accountRoutes({ db, render: page, now: millis }));
   app.route('/', accountSettingsRoutes({ db, render: page, now: millis }));
+  app.route('/', passwordResetRoutes({ db, render: page, mailer: createMailer(db), now: millis }));
   app.route('/', productRoutes({ db, render: page }));
   app.route('/', searchRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));

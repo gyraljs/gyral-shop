@@ -53,8 +53,11 @@ export interface MemberFormProps {
   readonly csrfToken?: string;
   /** Initial field values (edit forms), as strings; checkboxes use `'on'`. */
   readonly values?: FormFields;
-  /** Extra hidden fields, e.g. a reset token. */
-  readonly hidden?: Readonly<Record<string, string>>;
+  /**
+   * Extra hidden fields, e.g. a reset token. Not named `hidden`: that is HTMLElement's own
+   * boolean property, and setting it would hide the whole form.
+   */
+  readonly hiddenFields?: Readonly<Record<string, string>>;
   /** Overrides the spec's action, e.g. `/account/addresses/12` for one edit form element. */
   readonly action?: string;
 }
@@ -167,7 +170,7 @@ export function defineMemberForm(spec: MemberFormSpec) {
     props: {
       csrfToken: { attribute: 'csrf-token' },
       values: { attribute: false },
-      hidden: { attribute: false },
+      hiddenFields: { attribute: false },
       action: { type: String },
     },
     init: (props) => ({ values: props.values ?? {}, errors: {}, pending: false }),
@@ -200,7 +203,7 @@ export function defineMemberForm(spec: MemberFormSpec) {
       >
         ${formError(s)}
         <input type="hidden" name=${CSRF_FIELD} value=${props.csrfToken ?? ''} />
-        ${Object.entries(props.hidden ?? {}).map(
+        ${Object.entries(props.hiddenFields ?? {}).map(
           ([name, value]) => html`<input type="hidden" name=${name} value=${value} />`,
         )}
         ${spec.fields.map((f) => fieldView(s, f, id))}

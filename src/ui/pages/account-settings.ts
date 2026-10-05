@@ -279,7 +279,7 @@ export const resetPage = (csrfToken: string, token: string, rejected?: IntentRej
     <h1 id="title">Choose a new password</h1>
     <shop-reset-form
       csrf-token=${csrfToken}
-      .hidden=${{ token }}
+      .hiddenFields=${{ token }}
       .initialMessages=${rejections(rejected)}
     ></shop-reset-form>
   </section>
