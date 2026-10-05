@@ -68,7 +68,7 @@ describe('Marketplace theme', () => {
           (name === 'data-region' || name === 'data-component') &&
           !adr.includes(`"${value ?? ''}"`)
         )
-          problems.push(`undocumented hook ${name ?? ''}="${value ?? ''}"`);
+          problems.push(`undocumented hook ${name}="${value ?? ''}"`);
       }
       for (const [, part] of selector.matchAll(/::part\(([\w-]+)\)/g))
         if (!adr.includes(`\`${part ?? ''}\``)) problems.push(`undocumented part ${part ?? ''}`);
