@@ -1,0 +1,1201 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fieldstone Fantastic Rain Jacket — Fieldstone — Gyral Goods</title>
+    <meta name="description" content="Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem…">
+    <!--lit-part eabATTlSz5c=--><!--lit-part hz9fDTEaMVo=--><style>
+@layer reset, tokens, base, components;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  img, svg { display: block; max-inline-size: 100%; }
+}
+
+@layer tokens {
+  :root {
+    color-scheme: light dark;
+    --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --brand: oklch(50% 0.2 25);
+    --brand-ink: oklch(99% 0 0);
+    --surface: light-dark(oklch(99% 0.003 250), oklch(18% 0.01 250));
+    --surface-raised: light-dark(oklch(100% 0 0), oklch(23% 0.012 250));
+    --surface-sunken: light-dark(oklch(96% 0.005 250), oklch(15% 0.01 250));
+    --ink: light-dark(oklch(22% 0.02 250), oklch(93% 0.01 250));
+    --ink-muted: light-dark(oklch(45% 0.02 250), oklch(72% 0.015 250));
+    --line: light-dark(oklch(88% 0.01 250), oklch(32% 0.015 250));
+    --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
+    --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
+    --focus: oklch(60% 0.18 250);
+    --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
+    --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
+    --radius: 0.5rem;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 1rem;
+    --space-4: 1.5rem;
+    --space-5: 2.5rem;
+    --page-max: 80rem;
+  }
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    background: var(--surface);
+    color: var(--ink);
+    min-block-size: 100dvb;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    /* One column no wider than the viewport: an auto column would grow to the widest
+       unwrapped content (the department nav) and overflow phones. */
+    grid-template-columns: minmax(0, 1fr);
+  }
+  a { color: inherit; }
+  .skip-link {
+    position: absolute;
+    inset-inline-start: var(--space-2);
+    inset-block-start: -10rem;
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface-raised);
+    color: var(--ink);
+    border-radius: var(--radius);
+    z-index: 10;
+  }
+  .skip-link:focus { inset-block-start: var(--space-2); }
+  main:focus { outline: none; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .page { inline-size: min(100% - 2 * var(--space-3), var(--page-max)); margin-inline: auto; padding-block: var(--space-4); }
+  h1, h2 { line-height: 1.2; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  .site-footer {
+    border-block-start: 1px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+  }
+  .site-footer nav ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+
+@layer components {
+  .visually-hidden {
+    position: absolute; inline-size: 1px; block-size: 1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .button {
+    display: inline-block; padding: var(--space-2) var(--space-4);
+    background: var(--brand); color: var(--brand-ink);
+    border-radius: var(--radius); font-weight: 600; text-decoration: none;
+  }
+  .hero {
+    padding: var(--space-5) var(--space-4);
+    border-radius: calc(var(--radius) * 2);
+    background:
+      radial-gradient(circle at 85% 20%, oklch(from var(--brand) l c h / 0.25), transparent 50%),
+      var(--surface-sunken);
+  }
+  .hero h1 { font-size: clamp(1.8rem, 1rem + 3vw, 3rem); margin-block: 0 var(--space-2); }
+  .card-section { margin-block: var(--space-5); }
+  .department-grid {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  }
+  .department-grid a {
+    display: block; padding: var(--space-3); text-align: center; font-weight: 600;
+    background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius);
+    text-decoration: none;
+  }
+  .department-grid a:hover { border-color: var(--brand); }
+  .card-grid {
+    display: grid; gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  }
+  .product-card {
+    container-type: inline-size;
+    display: grid; align-content: start; gap: var(--space-1);
+    content-visibility: auto; contain-intrinsic-size: auto 22rem;
+  }
+  .product-card > a { text-decoration: none; }
+  .product-card > a:hover h3 { text-decoration: underline; }
+  .product-card img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1;
+    border-radius: var(--radius); background: var(--surface-sunken);
+  }
+  .product-card h3 { font-size: 1rem; margin-block: var(--space-2) 0; line-height: 1.3; }
+  .product-card p { margin: 0; }
+  .brand { color: var(--ink-muted); font-size: 0.9rem; }
+  .price { font-weight: 700; font-size: 1.1rem; }
+  .price.sale ins { color: var(--sale); text-decoration: none; }
+  .price.sale del { color: var(--ink-muted); font-weight: 400; font-size: 0.9rem; margin-inline-start: var(--space-1); }
+  .rating { display: flex; align-items: center; gap: var(--space-1); font-size: 0.9rem; }
+  .stars {
+    --pct: calc(var(--rating) / 5 * 100%);
+    inline-size: 5.5em; block-size: 1em;
+    background: linear-gradient(90deg, oklch(75% 0.16 80) var(--pct), var(--line) var(--pct));
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 20'%3E%3Cpath d='M10 1l2.6 6 6.4.5-4.9 4.2 1.5 6.3L10 14.6 4.4 18l1.5-6.3L1 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L32 14.6 26.4 18l1.5-6.3L23 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L54 14.6 48.4 18l1.5-6.3L45 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L76 14.6 70.4 18l1.5-6.3L67 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L98 14.6 92.4 18l1.5-6.3L89 7.5l6.4-.5z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
+  }
+  .count { color: var(--ink-muted); }
+  .stock.out { color: var(--sale); font-weight: 600; font-size: 0.9rem; }
+}
+
+@layer components {
+  .breadcrumbs ol {
+    list-style: none; padding: 0; margin-block: 0 var(--space-3);
+    display: flex; flex-wrap: wrap; gap: var(--space-1); font-size: 0.9rem;
+  }
+  .breadcrumbs li:not(:last-child)::after {
+    content: "›"; margin-inline-start: var(--space-1); color: var(--ink-muted);
+  }
+  .breadcrumbs [aria-current="page"] { color: var(--ink-muted); }
+  .page-intro h1 { margin-block: 0 var(--space-2); }
+  .page-intro p { max-inline-size: 65ch; color: var(--ink-muted); margin-block: 0; }
+  .category-grid {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  }
+  .category-grid a {
+    display: grid; gap: var(--space-1); padding: var(--space-3);
+    background: var(--surface-raised); border: 1px solid var(--line);
+    border-radius: var(--radius); text-decoration: none;
+  }
+  .category-grid a:hover { border-color: var(--brand); }
+  .category-grid .name { font-weight: 600; }
+  .category-grid .count { color: var(--ink-muted); font-size: 0.9rem; }
+  .listing {
+    display: grid; gap: var(--space-5); align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (width >= 48rem) {
+    .listing { grid-template-columns: 14rem minmax(0, 1fr); }
+  }
+  .listing-nav h2 { font-size: 1.1rem; margin-block: 0 var(--space-2); }
+  .listing-nav ul { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-1); }
+  .listing-nav a { text-decoration: none; }
+  .listing-nav a:hover { text-decoration: underline; }
+  .listing-nav [aria-current="page"] { font-weight: 700; text-decoration: underline; }
+  .listing-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); }
+  .listing-header h1 { margin-block: 0; }
+  .result-count { color: var(--ink-muted); margin-block: 0; }
+  .listing-results .card-grid { margin-block-start: var(--space-4); }
+  .empty { padding: var(--space-4); background: var(--surface-sunken); border-radius: var(--radius); }
+  .pager ul {
+    list-style: none; padding: 0; margin-block: var(--space-5) 0;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-1);
+  }
+  .pager a, .pager .gap {
+    display: inline-grid; place-items: center;
+    min-inline-size: 2.75rem; min-block-size: 2.75rem; padding-inline: var(--space-2);
+    border-radius: var(--radius);
+  }
+  .pager a { border: 1px solid var(--line); text-decoration: none; }
+  .pager a:hover { border-color: var(--brand); }
+  .pager a[aria-current="page"] {
+    background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
+  }
+}
+
+@layer components {
+  .product {
+    display: grid; gap: var(--space-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    align-items: start;
+  }
+  .product-info { display: grid; gap: var(--space-3); align-content: start; }
+  .product-info h1 { margin: 0; font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem); line-height: 1.2; text-wrap: balance; }
+  .product-info .brand { margin: 0; }
+  .rating-summary { display: flex; align-items: center; gap: var(--space-2); margin: 0; }
+  .product-section { margin-block: var(--space-5); max-inline-size: 70ch; }
+  .product-section p { text-wrap: pretty; }
+  .specs { border-collapse: collapse; inline-size: 100%; }
+  .specs th, .specs td { text-align: start; padding: var(--space-2) var(--space-3); border-block-end: 1px solid var(--line); }
+  .specs th { font-weight: 600; inline-size: 40%; }
+  .reviews-summary { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; }
+  .average { display: grid; justify-items: start; gap: var(--space-1); margin: 0; }
+  .average .big { font-size: 2.5rem; font-weight: 800; line-height: 1; }
+  .distribution { display: grid; gap: var(--space-1); margin: 0; min-inline-size: min(100%, 18rem); }
+  .distribution div { display: grid; grid-template-columns: 4.5rem 1fr 2.5rem; align-items: center; gap: var(--space-2); }
+  .distribution dt { font-size: 0.9rem; }
+  .distribution dd { display: contents; }
+  .distribution meter { inline-size: 100%; block-size: 0.75rem; }
+  .distribution .count { text-align: end; font-variant-numeric: tabular-nums; color: var(--ink-muted); }
+  .review-list { list-style: none; padding: 0; display: grid; gap: var(--space-4); }
+  .review-list article { border-block-start: 1px solid var(--line); padding-block-start: var(--space-3); }
+  .review-list h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
+  .byline { color: var(--ink-muted); font-size: 0.9rem; margin-block: var(--space-1); }
+}
+
+@layer components {
+  .auth, .account { max-inline-size: 32rem; display: grid; gap: var(--space-3); }
+  .auth h1, .account h1 { margin-block: 0; }
+  .auth > p { margin-block: 0; }
+  .account-details {
+    display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3);
+    margin: 0;
+  }
+  .account-details dt { font-weight: 600; }
+  .account-details dd { margin: 0; overflow-wrap: anywhere; }
+}
+</style><!--/lit-part-->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!--lit-part TWCHfggzWRs=--><!--lit-node 0--><link rel="canonical" href="http://localhost/p/fieldstone-fantastic-rain-jacket-27" /><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+    <!--lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:type" content="product" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:title" content="Fieldstone Fantastic Rain Jacket" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:description" content="Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem…" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:url" content="http://localhost/p/fieldstone-fantastic-rain-jacket-27" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:image" content="http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/1.svg" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:image:alt" content="Fieldstone Fantastic Rain Jacket" /><!--/lit-part--><!--/lit-part-->
+    <!--lit-part 81x61Wk4sCo=--><script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Fieldstone Fantastic Rain Jacket","description":"Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem cubicularis doloribus.","url":"http://localhost/p/fieldstone-fantastic-rain-jacket-27","image":["http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/1.svg","http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/2.svg","http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/3.svg","http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/4.svg"],"brand":{"@type":"Brand","name":"Fieldstone"},"offers":{"@type":"AggregateOffer","url":"http://localhost/p/fieldstone-fantastic-rain-jacket-27","lowPrice":"17.99","highPrice":"17.99","offerCount":15,"priceCurrency":"USD","availability":"https://schema.org/InStock"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"3.8","reviewCount":5,"bestRating":"5","worstRating":"1"}}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"http://localhost/"},{"@type":"ListItem","position":2,"name":"Clothing","item":"http://localhost/d/clothing"},{"@type":"ListItem","position":3,"name":"Kids' Clothing","item":"http://localhost/c/clothing/kids-clothing"},{"@type":"ListItem","position":4,"name":"Fieldstone Fantastic Rain Jacket","item":"http://localhost/p/fieldstone-fantastic-rain-jacket-27"}]}</script><!--/lit-part--><?><!--/lit-part-->
+    <script type="module" src="/src/client/entry.ts"></script>
+  </head>
+  <body>
+    <!--lit-part ma8unLBnXLY=-->
+        <a class="skip-link" href="#main">Skip to content</a>
+        <!--lit-node 1--><shop-header
+          
+          
+          
+          
+         query current="clothing" data-gyral-seed="{&quot;state&quot;:{},&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;home-kitchen&quot;,&quot;name&quot;:&quot;Home &amp; Kitchen&quot;},{&quot;slug&quot;:&quot;clothing&quot;,&quot;name&quot;:&quot;Clothing&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;beauty&quot;,&quot;name&quot;:&quot;Beauty&quot;},{&quot;slug&quot;:&quot;sports-outdoors&quot;,&quot;name&quot;:&quot;Sports &amp; Outdoors&quot;},{&quot;slug&quot;:&quot;books&quot;,&quot;name&quot;:&quot;Books&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+    :host {
+      display: block;
+      background: var(--brand);
+      color: var(--brand-ink);
+    }
+    .bar,
+    .departments ul {
+      inline-size: min(100% - 2 * var(--space-3), var(--page-max));
+      margin-inline: auto;
+    }
+    .bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-3);
+      padding-block: var(--space-2);
+    }
+    .brand {
+      font-weight: 800;
+      font-size: 1.4rem;
+      text-decoration: none;
+      color: inherit;
+      letter-spacing: -0.02em;
+    }
+    .brand span {
+      font-weight: 400;
+    }
+    search {
+      flex: 1 1 18rem;
+    }
+    form {
+      display: flex;
+    }
+    input {
+      flex: 1;
+      min-inline-size: 0;
+      font: inherit;
+      padding: var(--space-2) var(--space-3);
+      border: 0;
+      border-start-start-radius: var(--radius);
+      border-end-start-radius: var(--radius);
+      background: var(--surface-raised);
+      color: var(--ink);
+    }
+    button {
+      font: inherit;
+      font-weight: 600;
+      padding-inline: var(--space-3);
+      border: 0;
+      border-start-end-radius: var(--radius);
+      border-end-end-radius: var(--radius);
+      background: oklch(from var(--brand) calc(l - 0.15) c h);
+      color: inherit;
+      cursor: pointer;
+    }
+    .utility {
+      display: flex;
+      gap: var(--space-3);
+    }
+    a {
+      color: inherit;
+    }
+    .departments {
+      background: oklch(from var(--brand) calc(l - 0.08) c h);
+    }
+    .departments ul {
+      list-style: none;
+      display: flex;
+      gap: var(--space-3);
+      overflow-x: auto;
+      padding-block: var(--space-2);
+      padding-inline: 0;
+      margin-block: 0;
+      scrollbar-width: thin;
+    }
+    .departments a {
+      white-space: nowrap;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .departments a:hover,
+    .departments a[aria-current] {
+      text-decoration: underline;
+    }
+    .departments a[aria-current] {
+      font-weight: 700;
+      text-underline-offset: 0.3em;
+    }
+    .account-menu {
+      position: relative;
+    }
+    .account-menu summary {
+      cursor: pointer;
+      list-style-position: inside;
+    }
+    .account-menu ul {
+      position: absolute;
+      inset-inline-end: 0;
+      inset-block-start: calc(100% + var(--space-1));
+      z-index: 10;
+      min-inline-size: 12rem;
+      margin: 0;
+      padding: var(--space-2);
+      list-style: none;
+      display: grid;
+      gap: var(--space-1);
+      background: var(--surface-raised);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.15);
+    }
+    .account-menu ul a,
+    .account-menu ul button {
+      display: block;
+      inline-size: 100%;
+      padding: var(--space-1) var(--space-2);
+      text-align: start;
+      color: inherit;
+      border-radius: calc(var(--radius) / 2);
+    }
+    .account-menu ul button {
+      font: inherit;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+    .account-menu ul a:hover,
+    .account-menu ul button:hover {
+      background: var(--surface-sunken);
+    }
+    .account-menu ul :focus-visible {
+      outline-color: var(--focus);
+    }
+    :focus-visible {
+      outline: 2px solid var(--brand-ink);
+      outline-offset: 2px;
+    }
+    .visually-hidden {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  </style><!--lit-part MvQZgyN4DFg=-->
+    <header>
+      <div class="bar">
+        <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
+        <search>
+          <form action="/search" method="get" role="search">
+            <label for="q" class="visually-hidden">Search products</label>
+            <!--lit-node 7--><input
+              id="q"
+              name="q"
+              type="search"
+              placeholder="Search everything"
+              autocomplete="off"
+              value=""
+            />
+            <button type="submit">Search</button>
+          </form>
+        </search>
+        <nav class="utility" aria-label="Account and cart">
+          <!--lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--/lit-part-->
+          <a href="/cart">Cart</a>
+        </nav>
+      </div>
+      <nav class="departments" aria-label="Departments">
+        <ul>
+          <!--lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/electronics" 
+                  ><!--lit-part-->Electronics<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/home-kitchen" 
+                  ><!--lit-part-->Home &amp; Kitchen<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/clothing" aria-current="true"
+                  ><!--lit-part-->Clothing<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/toys-games" 
+                  ><!--lit-part-->Toys &amp; Games<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/grocery" 
+                  ><!--lit-part-->Grocery<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/beauty" 
+                  ><!--lit-part-->Beauty<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/sports-outdoors" 
+                  ><!--lit-part-->Sports &amp; Outdoors<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/books" 
+                  ><!--lit-part-->Books<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--/lit-part-->
+        </ul>
+      </nav>
+    </header>
+  <!--/lit-part--></template></shop-header>
+        <main id="main" class="page" tabindex="-1"><!--lit-part kxuc7MOZrHM=-->
+  <!--lit-part 65Yp3GYlcSg=-->
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ol>
+      <!--lit-part--><!--lit-part NQbfclFMBrg=--><li><!--lit-node 1--><a href="/"><!--lit-part-->Home<!--/lit-part--></a></li><!--/lit-part--><!--lit-part NQbfclFMBrg=--><li><!--lit-node 1--><a href="/d/clothing"><!--lit-part-->Clothing<!--/lit-part--></a></li><!--/lit-part--><!--lit-part NQbfclFMBrg=--><li><!--lit-node 1--><a href="/c/clothing/kids-clothing"><!--lit-part-->Kids&#39; Clothing<!--/lit-part--></a></li><!--/lit-part--><!--lit-part 4DZVNHFawI8=--><li><span aria-current="page"><!--lit-part-->Fieldstone Fantastic Rain Jacket<!--/lit-part--></span></li><!--/lit-part--><!--/lit-part-->
+    </ol>
+  </nav>
+<!--/lit-part-->
+  <div class="product">
+    <!--lit-node 2--><shop-gallery   class="product-gallery" data-gyral-seed="{&quot;state&quot;:{&quot;index&quot;:0},&quot;props&quot;:{&quot;images&quot;:[{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/1.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket&quot;},{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/2.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket, view 2&quot;},{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/3.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket, view 3&quot;},{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/4.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket, view 4&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+    :host {
+      display: block;
+    }
+    .views {
+      aspect-ratio: 1;
+      border-radius: var(--radius, 0.5rem);
+      background: var(--surface-sunken, #eee);
+      overflow: hidden;
+    }
+    .view {
+      display: none;
+      margin: 0;
+    }
+    /* One image: no radios, so the first view is always shown. */
+    .gallery:not(:has(.thumbs)) .view:first-of-type {
+      display: block;
+    }
+    .gallery:has(.thumb:nth-of-type(1) input:checked) .view:nth-of-type(1) { display: block; }
+.gallery:has(.thumb:nth-of-type(2) input:checked) .view:nth-of-type(2) { display: block; }
+.gallery:has(.thumb:nth-of-type(3) input:checked) .view:nth-of-type(3) { display: block; }
+.gallery:has(.thumb:nth-of-type(4) input:checked) .view:nth-of-type(4) { display: block; }
+.gallery:has(.thumb:nth-of-type(5) input:checked) .view:nth-of-type(5) { display: block; }
+.gallery:has(.thumb:nth-of-type(6) input:checked) .view:nth-of-type(6) { display: block; }
+.gallery:has(.thumb:nth-of-type(7) input:checked) .view:nth-of-type(7) { display: block; }
+.gallery:has(.thumb:nth-of-type(8) input:checked) .view:nth-of-type(8) { display: block; }
+    .view img {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+    }
+    .thumbs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2, 0.5rem);
+      border: 0;
+      padding: 0;
+      margin: var(--space-2, 0.5rem) 0 0;
+    }
+    .thumb {
+      position: relative;
+      display: block;
+      inline-size: 4.5rem;
+      border: 2px solid var(--line, #ccc);
+      border-radius: var(--radius, 0.5rem);
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .thumb img {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+    }
+    .thumb input {
+      position: absolute;
+      opacity: 0;
+      inset: 0;
+      margin: 0;
+      cursor: pointer;
+    }
+    .thumb:has(input:checked) {
+      border-color: var(--brand, currentColor);
+    }
+    .thumb:has(input:focus-visible) {
+      outline: 3px solid var(--focus, var(--brand, currentColor));
+      outline-offset: 2px;
+    }
+    .status {
+      margin: var(--space-1, 0.25rem) 0 0;
+      font-size: 0.9rem;
+      color: var(--ink-muted, inherit);
+    }
+    .visually-hidden {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  </style><!--lit-part 7pfKujJKhLU=-->
+      <div class="gallery">
+        <div class="views">
+          <!--lit-part--><!--lit-part CT3/cC6ZjaY=-->
+              <figure class="view">
+                <!--lit-node 1--><img
+                  src="/img/p/fieldstone-fantastic-rain-jacket-27/1.svg"
+                  alt="Fieldstone Fantastic Rain Jacket"
+                  width="800"
+                  height="800"
+                  loading="eager"
+                  fetchpriority="high"
+                  decoding="async"
+                />
+              </figure>
+            <!--/lit-part--><!--lit-part CT3/cC6ZjaY=-->
+              <figure class="view">
+                <!--lit-node 1--><img
+                  src="/img/p/fieldstone-fantastic-rain-jacket-27/2.svg"
+                  alt="Fieldstone Fantastic Rain Jacket, view 2"
+                  width="800"
+                  height="800"
+                  loading="lazy"
+                  fetchpriority="auto"
+                  decoding="async"
+                />
+              </figure>
+            <!--/lit-part--><!--lit-part CT3/cC6ZjaY=-->
+              <figure class="view">
+                <!--lit-node 1--><img
+                  src="/img/p/fieldstone-fantastic-rain-jacket-27/3.svg"
+                  alt="Fieldstone Fantastic Rain Jacket, view 3"
+                  width="800"
+                  height="800"
+                  loading="lazy"
+                  fetchpriority="auto"
+                  decoding="async"
+                />
+              </figure>
+            <!--/lit-part--><!--lit-part CT3/cC6ZjaY=-->
+              <figure class="view">
+                <!--lit-node 1--><img
+                  src="/img/p/fieldstone-fantastic-rain-jacket-27/4.svg"
+                  alt="Fieldstone Fantastic Rain Jacket, view 4"
+                  width="800"
+                  height="800"
+                  loading="lazy"
+                  fetchpriority="auto"
+                  decoding="async"
+                />
+              </figure>
+            <!--/lit-part--><!--/lit-part-->
+        </div>
+        <!--lit-part xzVNtboK32k=-->
+                <fieldset class="thumbs">
+                  <legend class="visually-hidden">Choose an image</legend>
+                  <!--lit-part--><!--lit-part 19oFIszHXWQ=-->
+                      <label class="thumb">
+                        <!--lit-node 1--><input
+                          type="radio"
+                          name="view"
+                          value="0"
+                          checked
+                          data-intent="Show"
+                        />
+                        <!--lit-node 2--><img src="/img/p/fieldstone-fantastic-rain-jacket-27/1.svg" alt="Fieldstone Fantastic Rain Jacket" width="96" height="96" />
+                      </label>
+                    <!--/lit-part--><!--lit-part 19oFIszHXWQ=-->
+                      <label class="thumb">
+                        <!--lit-node 1--><input
+                          type="radio"
+                          name="view"
+                          value="1"
+                          
+                          data-intent="Show"
+                        />
+                        <!--lit-node 2--><img src="/img/p/fieldstone-fantastic-rain-jacket-27/2.svg" alt="Fieldstone Fantastic Rain Jacket, view 2" width="96" height="96" />
+                      </label>
+                    <!--/lit-part--><!--lit-part 19oFIszHXWQ=-->
+                      <label class="thumb">
+                        <!--lit-node 1--><input
+                          type="radio"
+                          name="view"
+                          value="2"
+                          
+                          data-intent="Show"
+                        />
+                        <!--lit-node 2--><img src="/img/p/fieldstone-fantastic-rain-jacket-27/3.svg" alt="Fieldstone Fantastic Rain Jacket, view 3" width="96" height="96" />
+                      </label>
+                    <!--/lit-part--><!--lit-part 19oFIszHXWQ=-->
+                      <label class="thumb">
+                        <!--lit-node 1--><input
+                          type="radio"
+                          name="view"
+                          value="3"
+                          
+                          data-intent="Show"
+                        />
+                        <!--lit-node 2--><img src="/img/p/fieldstone-fantastic-rain-jacket-27/4.svg" alt="Fieldstone Fantastic Rain Jacket, view 4" width="96" height="96" />
+                      </label>
+                    <!--/lit-part--><!--/lit-part-->
+                </fieldset>
+                <p class="status" role="status">Image <!--lit-part-->1<!--/lit-part--> of <!--lit-part-->4<!--/lit-part--></p>
+              <!--/lit-part-->
+      </div>
+    <!--/lit-part--></template></shop-gallery>
+    <div class="product-info">
+      <p class="brand"><!--lit-part-->Fieldstone<!--/lit-part--></p>
+      <h1><!--lit-part-->Fieldstone Fantastic Rain Jacket<!--/lit-part--></h1>
+      <!--lit-part kCODePOGng4=--><p class="rating-summary">
+        <!--lit-part xHqIPJROMpo=-->
+  <span class="rating">
+    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 3.8"></span>
+    <span class="visually-hidden"><!--lit-part-->Rated 3.8 out of 5<!--/lit-part--></span>
+  </span>
+<!--/lit-part-->
+        <span aria-hidden="true"><!--lit-part-->3.8<!--/lit-part--></span>
+        <a href="#reviews"><!--lit-part-->5 reviews<!--/lit-part--></a>
+      </p><!--/lit-part-->
+      <!--lit-node 9--><shop-buy-box
+        
+        
+        
+       action="/cart/add" csrf="test-csrf-token" data-gyral-seed="{&quot;state&quot;:{&quot;selection&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;enhanced&quot;:false},&quot;props&quot;:{&quot;variants&quot;:[{&quot;sku&quot;:&quot;CLO0027-01&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-02&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:0},{&quot;sku&quot;:&quot;CLO0027-03&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-04&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-05&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-06&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-07&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-08&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-09&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-10&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-11&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-12&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-13&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-14&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-15&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+:host { display: grid; gap: var(--space-3, 1rem); }
+p { margin: 0; }
+.price { font-size: 1.6rem; font-weight: 800; }
+.price.sale ins { color: var(--sale, #b00020); text-decoration: none; }
+.price.sale del {
+  color: var(--ink-muted, inherit); font-weight: 400; font-size: 1rem;
+  margin-inline-start: var(--space-2, 0.5rem);
+}
+.stock { font-weight: 600; color: var(--ok, inherit); }
+.stock.out { color: var(--sale, #b00020); }
+.stock .label { font-weight: 400; color: var(--ink-muted, inherit); }
+form { display: grid; gap: var(--space-3, 1rem); }
+.choices {
+  border: 1px solid var(--line, #ccc); border-radius: var(--radius, 0.5rem);
+  padding: var(--space-2, 0.5rem) var(--space-3, 1rem); margin: 0;
+  display: flex; flex-wrap: wrap; gap: var(--space-2, 0.5rem);
+}
+.choices legend { padding-inline: var(--space-1, 0.25rem); }
+.sku { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: var(--space-2, 0.5rem); align-items: baseline; }
+.sku .meta { color: var(--ink-muted, inherit); font-size: 0.9rem; }
+.option {
+  position: relative; display: inline-grid; justify-items: center;
+  padding: var(--space-1, 0.25rem) var(--space-3, 1rem);
+  border: 1px solid var(--line, #ccc); border-radius: var(--radius, 0.5rem); cursor: pointer;
+}
+.option input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.option:has(input:checked) { border-color: var(--brand, currentColor); box-shadow: inset 0 0 0 1px var(--brand, currentColor); }
+.option:has(input:focus-visible) { outline: 3px solid var(--focus, var(--brand, currentColor)); outline-offset: 2px; }
+.option:has(input:disabled) { opacity: 0.6; cursor: not-allowed; }
+.option:has(input:disabled) > span { text-decoration: line-through; }
+.option small { font-size: 0.75rem; color: var(--ink-muted, inherit); }
+.quantity { display: flex; align-items: center; gap: var(--space-2, 0.5rem); }
+.quantity input { inline-size: 5rem; font: inherit; padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem); }
+button {
+  font: inherit; font-weight: 700; padding: var(--space-2, 0.5rem) var(--space-4, 1.5rem);
+  border: 0; border-radius: var(--radius, 0.5rem);
+  background: var(--brand, #c8102e); color: var(--brand-ink, #fff); cursor: pointer;
+  justify-self: start;
+}
+button:disabled { background: var(--line, #ccc); color: var(--ink-muted, #555); cursor: not-allowed; }
+button:focus-visible { outline: 3px solid var(--focus, currentColor); outline-offset: 2px; }
+.visually-hidden {
+  position: absolute; inline-size: 1px; block-size: 1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+</style><!--lit-part nTxnM89zGpI=-->
+      <!--lit-part avUzt7kyZQQ=--><p class="price sale">
+        <ins><span class="visually-hidden">Sale price </span><!--lit-part-->$17.99<!--/lit-part--></ins>
+        <del><span class="visually-hidden">Was </span><!--lit-part-->$23.99<!--/lit-part--></del>
+      </p><!--/lit-part-->
+      <!--lit-node 1--><p class="stock " role="status">
+        <!--lit-part 2KEDyxgwfiA=--><span class="label"><!--lit-part-->Sage / XS<!--/lit-part-->: </span><!--/lit-part--><!--lit-part-->In stock<!--/lit-part-->
+      </p>
+      <!--lit-node 4--><form method="post" action="/cart/add">
+        <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--/lit-part-->
+        <!--lit-part mjfx+srT1HM=-->
+  <fieldset class="choices">
+    <legend>Choose an option</legend>
+    <!--lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-01"
+            required
+            checked
+            
+          />
+          <span><!--lit-part-->Sage / XS<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-02"
+            required
+            
+            disabled
+          />
+          <span><!--lit-part-->Sage / S<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->Out of stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-03"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Sage / M<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-04"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Sage / L<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-05"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Sage / XL<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-06"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Navy / XS<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-07"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Navy / S<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-08"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Navy / M<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-09"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Navy / L<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-10"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Navy / XL<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-11"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Charcoal / XS<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-12"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Charcoal / S<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-13"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Charcoal / M<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-14"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Charcoal / L<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
+        <label class="sku">
+          <!--lit-node 1--><input
+            type="radio"
+            name="sku"
+            value="CLO0027-15"
+            required
+            
+            
+          />
+          <span><!--lit-part-->Charcoal / XL<!--/lit-part--></span>
+          <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
+        </label>
+      <!--/lit-part--><!--/lit-part-->
+  </fieldset>
+<!--/lit-part-->
+        <p class="quantity">
+          <label for="quantity">Quantity</label>
+          <!--lit-node 9--><input
+            id="quantity"
+            name="quantity"
+            type="number"
+            inputmode="numeric"
+            min="1"
+            max="10"
+            value="1"
+            required
+            
+          />
+        </p>
+        <!--lit-node 10--><button type="submit" >
+          <!--lit-part-->Add to cart<!--/lit-part-->
+        </button>
+      </form>
+    <!--/lit-part--></template></shop-buy-box>
+    </div>
+  </div>
+  <section aria-labelledby="description-title" class="product-section">
+    <h2 id="description-title">About this item</h2>
+    <p><!--lit-part-->Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem cubicularis doloribus.<!--/lit-part--></p>
+  </section>
+  <!--lit-part EPyELgaaWOE=--><section aria-labelledby="specs-title" class="product-section">
+        <h2 id="specs-title">Specifications</h2>
+        <table class="specs">
+          <tbody>
+            <!--lit-part--><!--lit-part zsh5MNb0lyI=--><tr>
+                  <th scope="row"><!--lit-part-->Brand<!--/lit-part--></th>
+                  <td><!--lit-part-->Fieldstone<!--/lit-part--></td>
+                </tr><!--/lit-part--><!--lit-part zsh5MNb0lyI=--><tr>
+                  <th scope="row"><!--lit-part-->Model<!--/lit-part--></th>
+                  <td><!--lit-part-->FIE-2830<!--/lit-part--></td>
+                </tr><!--/lit-part--><!--lit-part zsh5MNb0lyI=--><tr>
+                  <th scope="row"><!--lit-part-->Weight<!--/lit-part--></th>
+                  <td><!--lit-part-->21.6 lb<!--/lit-part--></td>
+                </tr><!--/lit-part--><!--lit-part zsh5MNb0lyI=--><tr>
+                  <th scope="row"><!--lit-part-->Warranty<!--/lit-part--></th>
+                  <td><!--lit-part-->2 years<!--/lit-part--></td>
+                </tr><!--/lit-part--><!--/lit-part-->
+          </tbody>
+        </table>
+      </section><!--/lit-part--> <!--lit-part KA8nY2in6IM=-->
+  <section id="reviews" aria-labelledby="reviews-title" class="product-section reviews">
+    <h2 id="reviews-title">Customer reviews</h2>
+    <!--lit-part RxsCeroqmJs=-->
+            <div class="reviews-summary">
+              <p class="average">
+                <span class="big"><!--lit-part-->3.8<!--/lit-part--></span>
+                <!--lit-part xHqIPJROMpo=-->
+  <span class="rating">
+    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 3.8"></span>
+    <span class="visually-hidden"><!--lit-part-->out of 5 stars<!--/lit-part--></span>
+  </span>
+<!--/lit-part-->
+                <span><!--lit-part-->5 reviews<!--/lit-part--></span>
+              </p>
+              <!--lit-part fki7CxgSoo8=-->
+  <dl class="distribution">
+    <!--lit-part--><!--lit-part tesZFzUhunc=-->
+        <div>
+          <dt><!--lit-part-->5 stars<!--/lit-part--></dt>
+          <dd>
+            <!--lit-node 4--><meter
+              min="0"
+              max="5"
+              value="1"
+              aria-label="5 stars: 1 review"
+            ></meter>
+            <span class="count"><!--lit-part-->1<!--/lit-part--></span>
+          </dd>
+        </div>
+      <!--/lit-part--><!--lit-part tesZFzUhunc=-->
+        <div>
+          <dt><!--lit-part-->4 stars<!--/lit-part--></dt>
+          <dd>
+            <!--lit-node 4--><meter
+              min="0"
+              max="5"
+              value="3"
+              aria-label="4 stars: 3 reviews"
+            ></meter>
+            <span class="count"><!--lit-part-->3<!--/lit-part--></span>
+          </dd>
+        </div>
+      <!--/lit-part--><!--lit-part tesZFzUhunc=-->
+        <div>
+          <dt><!--lit-part-->3 stars<!--/lit-part--></dt>
+          <dd>
+            <!--lit-node 4--><meter
+              min="0"
+              max="5"
+              value="0"
+              aria-label="3 stars: 0 reviews"
+            ></meter>
+            <span class="count"><!--lit-part-->0<!--/lit-part--></span>
+          </dd>
+        </div>
+      <!--/lit-part--><!--lit-part tesZFzUhunc=-->
+        <div>
+          <dt><!--lit-part-->2 stars<!--/lit-part--></dt>
+          <dd>
+            <!--lit-node 4--><meter
+              min="0"
+              max="5"
+              value="1"
+              aria-label="2 stars: 1 review"
+            ></meter>
+            <span class="count"><!--lit-part-->1<!--/lit-part--></span>
+          </dd>
+        </div>
+      <!--/lit-part--><!--lit-part tesZFzUhunc=-->
+        <div>
+          <dt><!--lit-part-->1 star<!--/lit-part--></dt>
+          <dd>
+            <!--lit-node 4--><meter
+              min="0"
+              max="5"
+              value="0"
+              aria-label="1 star: 0 reviews"
+            ></meter>
+            <span class="count"><!--lit-part-->0<!--/lit-part--></span>
+          </dd>
+        </div>
+      <!--/lit-part--><!--/lit-part-->
+  </dl>
+<!--/lit-part-->
+            </div>
+            <ol class="review-list">
+              <!--lit-part--><!--lit-part drtKB0FtcDE=-->
+                  <li>
+                    <!--lit-node 1--><article aria-labelledby="review-81">
+                      <!--lit-node 2--><h3 id="review-81"><!--lit-part-->Exactly what I wanted<!--/lit-part--></h3>
+                      <!--lit-part xHqIPJROMpo=-->
+  <span class="rating">
+    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 5"></span>
+    <span class="visually-hidden"><!--lit-part-->5 out of 5 stars<!--/lit-part--></span>
+  </span>
+<!--/lit-part-->
+                      <p class="byline"><!--lit-part-->Amari H.<!--/lit-part-->, <!--lit-node 7--><time datetime="2026-06-24"><!--lit-part-->2026-06-24<!--/lit-part--></time></p>
+                      <p><!--lit-part-->Maiores sollers degenero credo deprimo defungo curso soluta et. Depromo mollitia stultus. Abutor vulnus arbitro comitatus chirographum amiculum decens cito crudelis. Arbustum vomica error assumenda.<!--/lit-part--></p>
+                    </article>
+                  </li>
+                <!--/lit-part--><!--lit-part drtKB0FtcDE=-->
+                  <li>
+                    <!--lit-node 1--><article aria-labelledby="review-83">
+                      <!--lit-node 2--><h3 id="review-83"><!--lit-part-->Happy with it<!--/lit-part--></h3>
+                      <!--lit-part xHqIPJROMpo=-->
+  <span class="rating">
+    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 4"></span>
+    <span class="visually-hidden"><!--lit-part-->4 out of 5 stars<!--/lit-part--></span>
+  </span>
+<!--/lit-part-->
+                      <p class="byline"><!--lit-part-->Lavern H.<!--/lit-part-->, <!--lit-node 7--><time datetime="2026-06-17"><!--lit-part-->2026-06-17<!--/lit-part--></time></p>
+                      <p><!--lit-part-->Auxilium beatae pauci abduco vito appono vetus cupiditas audeo.<!--/lit-part--></p>
+                    </article>
+                  </li>
+                <!--/lit-part--><!--lit-part drtKB0FtcDE=-->
+                  <li>
+                    <!--lit-node 1--><article aria-labelledby="review-80">
+                      <!--lit-node 2--><h3 id="review-80"><!--lit-part-->Just okay<!--/lit-part--></h3>
+                      <!--lit-part xHqIPJROMpo=-->
+  <span class="rating">
+    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 2"></span>
+    <span class="visually-hidden"><!--lit-part-->2 out of 5 stars<!--/lit-part--></span>
+  </span>
+<!--/lit-part-->
+                      <p class="byline"><!--lit-part-->Ali N.<!--/lit-part-->, <!--lit-node 7--><time datetime="2026-05-15"><!--lit-part-->2026-05-15<!--/lit-part--></time></p>
+                      <p><!--lit-part-->Tabella tergiversatio cimentarius aspernatur suscipio admoneo traho color cupiditate.<!--/lit-part--></p>
+                    </article>
+                  </li>
+                <!--/lit-part--><!--lit-part drtKB0FtcDE=-->
+                  <li>
+                    <!--lit-node 1--><article aria-labelledby="review-82">
+                      <!--lit-node 2--><h3 id="review-82"><!--lit-part-->Really good<!--/lit-part--></h3>
+                      <!--lit-part xHqIPJROMpo=-->
+  <span class="rating">
+    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 4"></span>
+    <span class="visually-hidden"><!--lit-part-->4 out of 5 stars<!--/lit-part--></span>
+  </span>
+<!--/lit-part-->
+                      <p class="byline"><!--lit-part-->Burdette P.<!--/lit-part-->, <!--lit-node 7--><time datetime="2026-04-13"><!--lit-part-->2026-04-13<!--/lit-part--></time></p>
+                      <p><!--lit-part-->Averto sublime modi tamquam verbum. Compono laudantium vix. Cognomen credo arbitro cuius decerno curatio vester veritatis confido. Clam denego voveo inflammatio.<!--/lit-part--></p>
+                    </article>
+                  </li>
+                <!--/lit-part--><!--lit-part drtKB0FtcDE=-->
+                  <li>
+                    <!--lit-node 1--><article aria-labelledby="review-84">
+                      <!--lit-node 2--><h3 id="review-84"><!--lit-part-->Happy with it<!--/lit-part--></h3>
+                      <!--lit-part xHqIPJROMpo=-->
+  <span class="rating">
+    <!--lit-node 1--><span class="stars" aria-hidden="true" style="--rating: 4"></span>
+    <span class="visually-hidden"><!--lit-part-->4 out of 5 stars<!--/lit-part--></span>
+  </span>
+<!--/lit-part-->
+                      <p class="byline"><!--lit-part-->Vivienne Y.<!--/lit-part-->, <!--lit-node 7--><time datetime="2025-12-14"><!--lit-part-->2025-12-14<!--/lit-part--></time></p>
+                      <p><!--lit-part-->Summa communis spes. Vomer tumultus quisquam succedo. Solium absconditus uterque quia quasi sollicito. Adaugeo sum ademptio deficio candidus.<!--/lit-part--></p>
+                    </article>
+                  </li>
+                <!--/lit-part--><!--/lit-part-->
+            </ol>
+          <!--/lit-part-->
+  </section>
+<!--/lit-part-->
+  <!--lit-part MEsLYm9f520=-->
+  <!--lit-node 0--><section aria-labelledby="related-title" class="card-section">
+    <!--lit-node 1--><h2 id="related-title"><!--lit-part-->Customers also viewed<!--/lit-part--></h2>
+    <div class="card-grid"><!--lit-part--><!--lit-part Yl/9nh9mmrU=-->
+  <article class="product-card">
+    <!--lit-node 1--><a href="/p/stride-fresh-joggers-28">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/stride-fresh-joggers-28/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Stride Fresh Joggers<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Stride<!--/lit-part--></p>
+    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$30.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 4.7">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.7<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->3<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--/lit-part--></div>
+  </section>
+<!--/lit-part-->
+<!--/lit-part--></main>
+        <!--lit-part STG64S/HenM=-->
+  <footer class="site-footer">
+    <div class="page">
+      <nav aria-label="Site">
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/terms">Terms</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+        </ul>
+      </nav>
+      <p>
+        <small>© 2026 <!--lit-part-->Gyral Goods<!--/lit-part-->. A demo store built with Gyral; nothing here is for sale.</small>
+      </p>
+    </div>
+  </footer>
+<!--/lit-part-->
+      <!--/lit-part-->
+  </body>
+</html>
