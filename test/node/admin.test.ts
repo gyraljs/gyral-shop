@@ -60,6 +60,24 @@ describe('admin access', () => {
     expect(home).toMatch(/<title>Dashboard — Admin — /);
     expect(home).toContain('aria-current="page"');
   });
+
+  it('uses the admin shell: no storefront header, cart, consent banner or footer', async () => {
+    const body = await (await admin.get('/admin/products')).text();
+    for (const storefront of ['<shop-header', '<shop-mini-cart', '<shop-consent', '<footer']) {
+      expect(body, storefront).not.toContain(storefront);
+    }
+    expect(body).toContain('data-region="admin-header"');
+    expect(body).toMatch(/Signed in as\s*(<!--[^>]*-->)?\s*Ada Admin/);
+    expect(body).toContain('href="/" data-component="admin-store-link"');
+    // Signing out is a real POST form with the session's CSRF token.
+    const token = /<meta name="csrf-token" content="([^"]+)"/.exec(body)?.[1] ?? '';
+    expect(token).not.toBe('');
+    expect(body).toMatch(/action="\/account\/logout"[^>]*data-component="admin-sign-out"/);
+    expect(body).toContain(`name="_csrf" value="${token}"`);
+    const out = await admin.postForm('/account/logout');
+    expect(out.status).toBe(303);
+    expect((await admin.get('/admin')).status).toBe(303);
+  });
 });
 
 describe('dashboard', () => {
