@@ -22,7 +22,10 @@ const all = <T extends Element>(root: ParentNode, selector: string) => [
 ];
 const visibleViews = () =>
   all<HTMLElement>(gallery(), '.view').filter((v) => getComputedStyle(v).display !== 'none');
-const skuValue = () => buyBox().querySelector<HTMLInputElement>('input[name="sku"]:checked, input[type="hidden"][name="sku"]')?.value;
+const skuValue = () =>
+  buyBox().querySelector<HTMLInputElement>(
+    'input[name="sku"]:checked, input[type="hidden"][name="sku"]',
+  )?.value;
 
 beforeAll(() => {
   page = mountSsrPage(serverHtml);
@@ -60,12 +63,17 @@ describe('product page', () => {
     const [first] = disabled;
     const reason = first?.getAttribute('aria-describedby');
     expect(reason).toBeTruthy();
-    expect(buyBox().getElementById(reason ?? '')?.textContent).toMatch(/Out of stock|Not available/);
+    expect(buyBox().getElementById(reason ?? '')?.textContent).toMatch(
+      /Out of stock|Not available/,
+    );
   });
 
   it('switches SKU, price and stock when an option changes', async () => {
     const before = skuValue();
-    const choices = all<HTMLInputElement>(buyBox(), 'fieldset.axis input:not(:checked):not(:disabled)');
+    const choices = all<HTMLInputElement>(
+      buyBox(),
+      'fieldset.axis input:not(:checked):not(:disabled)',
+    );
     const [next] = choices;
     if (next === undefined) throw new Error('no other available option');
     await userEvent.click(next);

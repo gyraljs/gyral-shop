@@ -128,7 +128,7 @@ describe('product page route', () => {
     expect(body.match(/type="radio"\s+name="sku"/g)).toHaveLength(n);
     expect(body.match(/name="sku"[^>]*disabled/g)).toHaveLength(1);
     expect(body).toMatch(/<input type="hidden" name="_csrf" value="[\w-]{20,}"/);
-    expect(body).toMatch(/name="qty"\s+type="number"/);
+    expect(body).toMatch(/name="quantity"\s+type="number"/);
   });
 
   it('answers unknown products with the 404 page', async () => {

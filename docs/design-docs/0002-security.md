@@ -52,3 +52,13 @@ Details worth knowing:
   Vite HMR. HSTS only over HTTPS.
 - Rate limiting is per process and in memory (`SlidingWindowLimiter`); `ip(c)` trusts
   `x-forwarded-for` only with `trustProxy`.
+
+## Addendum: session cookies on rendered pages (shop-t3l.3, 2026-10-04)
+
+Hono's `setCookie(c, …)` only reaches responses built through `c` (`c.html`, `c.redirect`).
+Pages return their own `Response` from `renderPage()`, so a page that started or rotated a
+session (for example a product page calling `csrfTokenFor(c)`) sent a CSRF token without the
+session cookie behind it, and every form post from that page would fail the CSRF check. The
+session middleware now queues session cookies and appends them to whatever response the
+route produced (`flushCookies` in `src/server/security/sessions.ts`). Covered by the product
+page route test (`Set-Cookie: sid=…`) and the no-JS add-to-cart test.

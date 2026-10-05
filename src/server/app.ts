@@ -6,6 +6,7 @@ import { homePage } from '../ui/pages/home.js';
 import { notFoundPage, serverErrorPage } from '../ui/pages/errors.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
 import { SECURITY_TITLES, securityErrorPage } from '../ui/pages/security-errors.js';
+import { cartRoutes } from './routes/cart-api.js';
 import { catalogRoutes } from './routes/catalog.js';
 import { productRoutes } from './routes/product.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
@@ -77,6 +78,7 @@ export function createApp({
 
   app.route('/', catalogRoutes({ db, render: page }));
   app.route('/', productRoutes({ db, render: page }));
+  app.route('/', cartRoutes(db));
   if (mode !== 'production') app.route('/dev/mail', devMailRoutes(createMailer(db), page));
 
   app.notFound(async (c) =>

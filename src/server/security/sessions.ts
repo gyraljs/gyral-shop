@@ -10,6 +10,7 @@ import {
   type Session,
   type SessionUser,
 } from '../../services/sessions.js';
+import { mergeGuestCart } from '../../services/cart.js';
 import type { AppEnv } from './context.js';
 import { isHttps } from './request.js';
 import { now, runtime } from './runtime.js';
@@ -102,13 +103,15 @@ export async function csrfTokenFor(c: Context<AppEnv>): Promise<string> {
 
 /**
  * After a successful login (or a role change): a fresh session id and CSRF token for this
- * member. The guest cart moves along; merging it is the cart service's job.
+ * member. The guest cart moves along and is merged into the member's cart.
  */
 export async function startMemberSession(c: Context<AppEnv>, user: SessionUser): Promise<Session> {
   const session = await rotateSession(runtime(c).db, c.get('session')?.id, {
     userId: user.id,
     now: now(c),
   });
+  // The guest cart moved to the new session with the rotation; fold it into the member's cart.
+  await mergeGuestCart(runtime(c).db, session.id, user.id);
   use(c, session);
   sendCookie(c, session);
   return session;

@@ -174,10 +174,10 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
               : skuList(variants, current.sku)
         }
         <p class="quantity">
-          <label for="qty">Quantity</label>
+          <label for="quantity">Quantity</label>
           <input
-            id="qty"
-            name="qty"
+            id="quantity"
+            name="quantity"
             type="number"
             inputmode="numeric"
             min="1"
