@@ -3,11 +3,11 @@ import '@gyral/ssr/hydrate';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import rejectedHtml from '../fixtures/contact-rejected.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
-let page: MountedPage | undefined;
+let page: MountedSsr | undefined;
 
 afterEach(() => {
   page?.unmount();
@@ -16,10 +16,10 @@ afterEach(() => {
 
 describe('contact form after a rejection (no-JS render)', () => {
   it('hydrates in place keeping the typed message, errors and accessibility', async () => {
-    page = mountSsrPage(rejectedHtml);
+    page = mountSsr(rejectedHtml);
     const before = page.root.querySelector('textarea');
     await import('../../src/client/entry.js');
-    await hydrated(page.root);
+    await hydrated(page);
     const el = page.root.querySelector('shop-contact-form');
     expect(customElements.get('shop-contact-form')).toBeDefined();
     const textarea = el?.querySelector('textarea');

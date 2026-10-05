@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Checkout — Gyral Goods</title>
     
-    <!--lit-part EyIJ0bnI7Mg=--><!--lit-part yorebNvZB1c=--><style>
+    <style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -57,6 +57,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
   a { color: inherit; }
+  /* Form controls take the page font (shadow roots get this from shadow-base.ts). */
+  button, input, select, textarea { font: inherit; }
   .skip-link {
     position: absolute;
     inset-inline-start: var(--space-2);
@@ -84,7 +86,7 @@
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 }
-
+</style><style>
 @layer components {
   .visually-hidden {
     position: absolute; inline-size: 1px; block-size: 1px;
@@ -156,7 +158,7 @@
   .count { color: var(--ink-muted); }
   .stock.out { color: var(--sale); font-weight: 600; font-size: 0.9rem; }
 }
-
+</style><style>
 @layer components {
   .breadcrumbs ol {
     list-style: none; padding: 0; margin-block: 0 var(--space-3);
@@ -217,7 +219,7 @@
     background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
   }
 }
-
+</style><style>
 @layer components {
   .filters {
     margin-block-start: var(--space-3);
@@ -252,14 +254,14 @@
   .results { transition: opacity 150ms; }
   shop-listing { display: block; min-inline-size: 0; }
   shop-listing:state(loading) .results { opacity: 0.55; }
-  /* Focus moves to the heading after paging (focusOn): only show a ring for keyboard focus. */
+  /* Focus moves to the heading after paging (focus() command): only show a ring for keyboard focus. */
   .listing-header h1:focus:not(:focus-visible) { outline: none; }
   .load-error {
     padding: var(--space-3); border-radius: var(--radius);
     border: 1px solid var(--sale); color: var(--sale);
   }
 }
-
+</style><style>
 @layer components {
   .product {
     display: grid; gap: var(--space-5);
@@ -289,7 +291,7 @@
   .review-list h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
   .byline { color: var(--ink-muted); font-size: 0.9rem; margin-block: var(--space-1); }
 }
-
+</style><style>
 @layer components {
   .auth, .account { max-inline-size: 32rem; display: grid; gap: var(--space-3); }
   .auth h1, .account h1 { margin-block: 0; }
@@ -343,7 +345,7 @@
     text-decoration: underline; cursor: pointer;
   }
 }
-
+</style><style>
 @layer components {
   .confirmation {
     container: confirmation / inline-size;
@@ -381,7 +383,7 @@
     .order-lines thead th:nth-child(3), .order-lines td:nth-child(3) { display: none; }
   }
 }
-
+</style><style>
 @layer components {
   [data-component="member-form"] { display: grid; gap: var(--space-3); max-inline-size: 32rem; }
   [data-component="member-form"] .field { display: grid; gap: var(--space-1); margin: 0; }
@@ -414,7 +416,7 @@
   [data-component="member-form"] button { font: inherit; font-weight: 600; }
   [data-component="member-form"] button:disabled { opacity: 0.6; cursor: progress; }
 }
-
+</style><style>
 @layer components {
   .prose { max-inline-size: 42rem; display: grid; gap: var(--space-3); }
   .prose header { display: grid; gap: var(--space-1); }
@@ -444,7 +446,97 @@
   [data-region="error"] h1 { margin: 0; }
   [data-region="error"] form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
 }
-
+</style><style>
+@layer reset, tokens, base, components, theme;
+@layer components {
+shop-checkout {
+  display: block;
+  min-inline-size: 0;
+  container: checkout / inline-size;
+  h1 { margin-block: var(--space-3) var(--space-2); }
+  .layout { display: grid; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
+  @container checkout (min-width: 56rem) {
+    .layout { grid-template-columns: minmax(0, 1fr) 20rem; align-items: start; }
+    .order-summary { position: sticky; inset-block-start: var(--space-3); }
+  }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .step {
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+  }
+  .step.open { border-color: var(--line-strong); }
+  .step.locked { background: var(--surface-sunken); color: var(--ink-muted); }
+  .step h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+  .step.locked h2 { margin: 0; }
+  .number { color: var(--ink-muted); }
+  .locked { margin: 0; font-size: 0.9rem; }
+  .step.locked .locked { display: none; }
+  .step-summary { display: flex; justify-content: space-between; gap: var(--space-3); align-items: start; }
+  .step-summary p, .step-summary address { margin: 0; font-style: normal; }
+  form { display: grid; gap: var(--space-2); }
+  fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  legend { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
+  .field { display: grid; gap: var(--space-1); margin: 0; }
+  .row { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+  input:not([type='radio'], [type='checkbox']), select {
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  input[aria-invalid='true'], input:user-invalid { border-color: var(--danger); }
+  .error { color: var(--danger); font-size: 0.9rem; }
+  .error:empty { display: none; }
+  .hint { color: var(--ink-muted); font-size: 0.9rem; margin: 0; }
+  .choice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-1) var(--space-2);
+    align-items: center;
+    padding: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .choice:has(input:checked) { border-color: var(--brand); background: var(--surface-sunken); }
+  .choice .estimate { grid-column: 2; color: var(--ink-muted); font-size: 0.9rem; }
+  .choice .amount { grid-row: 1; grid-column: 3; font-weight: 600; }
+  button.primary {
+    justify-self: start;
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--brand);
+    color: var(--brand-ink);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.6; cursor: progress; }
+  .order-summary {
+    padding: var(--space-3);
+    border-radius: var(--radius);
+    background: var(--surface-sunken);
+  }
+  .order-summary h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+  .summary-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .summary-lines li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--space-2); }
+  .summary-lines .options { grid-column: 1; color: var(--ink-muted); font-size: 0.85rem; }
+  .summary-lines .amount { grid-row: 1; grid-column: 2; font-variant-numeric: tabular-nums; }
+  .totals { margin: var(--space-3) 0 0; display: grid; gap: var(--space-1); }
+  .totals div { display: flex; justify-content: space-between; gap: var(--space-2); }
+  .totals dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .totals .discount dd { color: var(--sale); }
+  .totals .total { border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-2); font-weight: 700; }
+  .visually-hidden {
+    position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+}
+}
+</style><style>
 @layer components {
   shop-search { display: block; flex: 1 1 18rem; min-inline-size: 0; }
   shop-search form { display: flex; position: relative; }
@@ -508,9 +600,7 @@
     shop-search [role='option'] { grid-template-columns: 1fr; }
   }
 }
-</style><!--/lit-part-->
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!--lit-part--><!--/lit-part-->
+</style><!--lit-part eVKfaNMXC80=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part--><!--/lit-part-->
     <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
     <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
@@ -890,160 +980,59 @@
         
         
         
-       data-region="checkout" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;open&quot;:&quot;address&quot;,&quot;steps&quot;:[{&quot;step&quot;:&quot;contact&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;address&quot;,&quot;status&quot;:&quot;open&quot;},{&quot;step&quot;:&quot;shipping&quot;,&quot;status&quot;:&quot;locked&quot;},{&quot;step&quot;:&quot;payment&quot;,&quot;status&quot;:&quot;locked&quot;},{&quot;step&quot;:&quot;review&quot;,&quot;status&quot;:&quot;locked&quot;}],&quot;email&quot;:&quot;ada@example.com&quot;,&quot;savedAddresses&quot;:[],&quot;shippingOptions&quot;:[{&quot;method&quot;:&quot;standard&quot;,&quot;label&quot;:&quot;Standard&quot;,&quot;price&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:5,&quot;max&quot;:7}},{&quot;method&quot;:&quot;express&quot;,&quot;label&quot;:&quot;Express&quot;,&quot;price&quot;:{&quot;cents&quot;:1299,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:2,&quot;max&quot;:3}},{&quot;method&quot;:&quot;next_day&quot;,&quot;label&quot;:&quot;Next day&quot;,&quot;price&quot;:{&quot;cents&quot;:2499,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:1,&quot;max&quot;:1}}],&quot;lines&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;name&quot;:&quot;LEGO&quot;,&quot;href&quot;:&quot;/p/lego&quot;,&quot;options&quot;:{},&quot;quantity&quot;:2,&quot;lineTotal&quot;:{&quot;cents&quot;:10000,&quot;currency&quot;:&quot;USD&quot;}}],&quot;totals&quot;:{&quot;subtotal&quot;:{&quot;cents&quot;:10000,&quot;currency&quot;:&quot;USD&quot;},&quot;discount&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;shipping&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;tax&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;taxPending&quot;:true,&quot;total&quot;:{&quot;cents&quot;:10000,&quot;currency&quot;:&quot;USD&quot;}},&quot;ready&quot;:false}}}"><template shadowroot="open" shadowrootmode="open"><style>
-@layer reset, base, components;
-@layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-  img, svg { display: block; max-inline-size: 100%; }
-}
-@layer base {
-  :host { display: block; min-inline-size: 0; }
-  a { color: inherit; }
-  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-  h1, h2 { line-height: 1.2; text-wrap: balance; }
-  h1:focus { outline: none; }
-  h1:focus-visible { outline: 2px solid var(--focus); }
-  p { text-wrap: pretty; }
-  button, input, select { font: inherit; }
-}
-
-@layer reset, tokens, base, components, theme;
-@layer components {
-  :host { container: checkout / inline-size; }
-  h1 { margin-block: var(--space-3) var(--space-2); }
-  .layout { display: grid; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
-  @container checkout (min-width: 56rem) {
-    .layout { grid-template-columns: minmax(0, 1fr) 20rem; align-items: start; }
-    .order-summary { position: sticky; inset-block-start: var(--space-3); }
-  }
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
-  .step {
-    padding: var(--space-3);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    background: var(--surface-raised);
-  }
-  .step.open { border-color: var(--line-strong); }
-  .step.locked { background: var(--surface-sunken); color: var(--ink-muted); }
-  .step h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
-  .step.locked h2 { margin: 0; }
-  .number { color: var(--ink-muted); }
-  .locked { margin: 0; font-size: 0.9rem; }
-  .step.locked .locked { display: none; }
-  .step-summary { display: flex; justify-content: space-between; gap: var(--space-3); align-items: start; }
-  .step-summary p, .step-summary address { margin: 0; font-style: normal; }
-  form { display: grid; gap: var(--space-2); }
-  fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
-  legend { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
-  .field { display: grid; gap: var(--space-1); margin: 0; }
-  .row { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
-  input:not([type='radio'], [type='checkbox']), select {
-    padding: var(--space-1) var(--space-2);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
-    background: var(--surface);
-    color: var(--ink);
-  }
-  input[aria-invalid='true'], input:user-invalid { border-color: var(--danger); }
-  .error { color: var(--danger); font-size: 0.9rem; }
-  .error:empty { display: none; }
-  .hint { color: var(--ink-muted); font-size: 0.9rem; margin: 0; }
-  .choice {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: var(--space-1) var(--space-2);
-    align-items: center;
-    padding: var(--space-2);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    cursor: pointer;
-  }
-  .choice:has(input:checked) { border-color: var(--brand); background: var(--surface-sunken); }
-  .choice .estimate { grid-column: 2; color: var(--ink-muted); font-size: 0.9rem; }
-  .choice .amount { grid-row: 1; grid-column: 3; font-weight: 600; }
-  button.primary {
-    justify-self: start;
-    padding: var(--space-2) var(--space-4);
-    border: 0;
-    border-radius: var(--radius);
-    background: var(--brand);
-    color: var(--brand-ink);
-    font-weight: 700;
-    cursor: pointer;
-  }
-  button.primary:disabled { opacity: 0.6; cursor: progress; }
-  .order-summary {
-    padding: var(--space-3);
-    border-radius: var(--radius);
-    background: var(--surface-sunken);
-  }
-  .order-summary h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
-  .summary-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
-  .summary-lines li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--space-2); }
-  .summary-lines .options { grid-column: 1; color: var(--ink-muted); font-size: 0.85rem; }
-  .summary-lines .amount { grid-row: 1; grid-column: 2; font-variant-numeric: tabular-nums; }
-  .totals { margin: var(--space-3) 0 0; display: grid; gap: var(--space-1); }
-  .totals div { display: flex; justify-content: space-between; gap: var(--space-2); }
-  .totals dd { margin: 0; font-variant-numeric: tabular-nums; }
-  .totals .discount dd { color: var(--sale); }
-  .totals .total { border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-2); font-weight: 700; }
-  .visually-hidden {
-    position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
-    clip-path: inset(50%); white-space: nowrap;
-  }
-}
-</style><!--lit-part ZCmhcLWsXoI=--><h1>Checkout</h1>
+       data-region="checkout" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;open&quot;:&quot;address&quot;,&quot;steps&quot;:[{&quot;step&quot;:&quot;contact&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;address&quot;,&quot;status&quot;:&quot;open&quot;},{&quot;step&quot;:&quot;shipping&quot;,&quot;status&quot;:&quot;locked&quot;},{&quot;step&quot;:&quot;payment&quot;,&quot;status&quot;:&quot;locked&quot;},{&quot;step&quot;:&quot;review&quot;,&quot;status&quot;:&quot;locked&quot;}],&quot;email&quot;:&quot;ada@example.com&quot;,&quot;savedAddresses&quot;:[],&quot;shippingOptions&quot;:[{&quot;method&quot;:&quot;standard&quot;,&quot;label&quot;:&quot;Standard&quot;,&quot;price&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:5,&quot;max&quot;:7}},{&quot;method&quot;:&quot;express&quot;,&quot;label&quot;:&quot;Express&quot;,&quot;price&quot;:{&quot;cents&quot;:1299,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:2,&quot;max&quot;:3}},{&quot;method&quot;:&quot;next_day&quot;,&quot;label&quot;:&quot;Next day&quot;,&quot;price&quot;:{&quot;cents&quot;:2499,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:1,&quot;max&quot;:1}}],&quot;lines&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;name&quot;:&quot;LEGO&quot;,&quot;href&quot;:&quot;/p/lego&quot;,&quot;options&quot;:{},&quot;quantity&quot;:2,&quot;lineTotal&quot;:{&quot;cents&quot;:10000,&quot;currency&quot;:&quot;USD&quot;}}],&quot;totals&quot;:{&quot;subtotal&quot;:{&quot;cents&quot;:10000,&quot;currency&quot;:&quot;USD&quot;},&quot;discount&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;shipping&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;tax&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;taxPending&quot;:true,&quot;total&quot;:{&quot;cents&quot;:10000,&quot;currency&quot;:&quot;USD&quot;}},&quot;ready&quot;:false}}}" data-gyral-light><!--gyral:lit-part ZCmhcLWsXoI=--><h1>Checkout</h1>
       <p class="visually-hidden" role="status">
-        <!--lit-part--><!--/lit-part-->
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
       </p>
       <div class="layout">
         <ol class="steps">
-          <!--lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+          <!--gyral:lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
               class="step done"
               data-component="checkout-step"
               data-step="contact"
-              part="step"
               aria-current="false"
             >
-              <!--lit-node 1--><section aria-labelledby="contact-heading">
-                <!--lit-node 2--><h2 id="contact-heading">
-                  <span class="number"><!--lit-part-->1<!--/lit-part-->.</span> <!--lit-part-->Contact<!--/lit-part-->
+              <!--gyral:lit-node 1--><section aria-labelledby="contact-heading">
+                <!--gyral:lit-node 2--><h2 id="contact-heading">
+                  <span class="number"><!--gyral:lit-part-->1<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Contact<!--gyral:/lit-part-->
                 </h2>
-                <!--lit-part N79clM4wywc=--><div class="step-summary" part="step-summary">
-      <!--lit-part y6RVfKR7hws=--><p><!--lit-part-->ada@example.com<!--/lit-part--></p><!--/lit-part-->
-      <!--lit-node 2--><a href="/checkout?edit=contact" data-intent="Edit" data-step="contact" part="edit"
-        >Edit <span class="visually-hidden"><!--lit-part-->Contact<!--/lit-part--></span></a
+                <!--gyral:lit-part cYmKr/erLFw=--><div class="step-summary" data-component="step-summary">
+      <!--gyral:lit-part y6RVfKR7hws=--><p><!--gyral:lit-part-->ada@example.com<!--gyral:/lit-part--></p><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><a
+        href="/checkout?edit=contact"
+        data-intent="Edit"
+        data-step="contact"
+        data-component="step-edit"
+        >Edit <span class="visually-hidden"><!--gyral:lit-part-->Contact<!--gyral:/lit-part--></span></a
       >
-    </div><!--/lit-part-->
+    </div><!--gyral:/lit-part-->
               </section>
-            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
               class="step open"
               data-component="checkout-step"
               data-step="address"
-              part="step"
               aria-current="step"
             >
-              <!--lit-node 1--><section aria-labelledby="address-heading">
-                <!--lit-node 2--><h2 id="address-heading">
-                  <span class="number"><!--lit-part-->2<!--/lit-part-->.</span> <!--lit-part-->Shipping address<!--/lit-part-->
+              <!--gyral:lit-node 1--><section aria-labelledby="address-heading">
+                <!--gyral:lit-node 2--><h2 id="address-heading">
+                  <span class="number"><!--gyral:lit-part-->2<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Shipping address<!--gyral:/lit-part-->
                 </h2>
-                <!--lit-part nEiAISfluFU=--><!--lit-node 0--><form
+                <!--gyral:lit-part SzN/UT3GKPc=--><!--gyral:lit-node 0--><form
     data-intent="Address"
     data-component="address-form"
-    part="address-form"
     action="/checkout/address"
     method="post"
     novalidate
   >
-    <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--/lit-part-->
-    <!--lit-part onWe5b26NnY=--><input type="hidden" name="addressId" value="new" /><!--/lit-part-->
+    <!--gyral:lit-part TIYrCHR1D68=--><!--gyral:lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--gyral:/lit-part-->
+    <!--gyral:lit-part onWe5b26NnY=--><input type="hidden" name="addressId" value="new" /><!--gyral:/lit-part-->
     <fieldset class="new-address">
-      <legend><!--lit-part-->Address<!--/lit-part--></legend>
-      <!--lit-part O6GoCf8KhfA=--><p class="field">
-    <!--lit-node 1--><label for="Address-name"
-      ><!--lit-part-->Full name<!--/lit-part--><!--lit-part--><!--/lit-part--></label
+      <legend><!--gyral:lit-part-->Address<!--gyral:/lit-part--></legend>
+      <!--gyral:lit-part O6GoCf8KhfA=--><p class="field">
+    <!--gyral:lit-node 1--><label for="Address-name"
+      ><!--gyral:lit-part-->Full name<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part--></label
     >
-    <!--lit-node 4--><input
+    <!--gyral:lit-node 4--><input
       id="Address-name"
       name="name"
       type="text"
@@ -1056,13 +1045,13 @@
       
       
     />
-    <!--lit-node 5--><span id="Address-name-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part-->
-      <!--lit-part O6GoCf8KhfA=--><p class="field">
-    <!--lit-node 1--><label for="Address-line1"
-      ><!--lit-part-->Street address<!--/lit-part--><!--lit-part--><!--/lit-part--></label
+    <!--gyral:lit-node 5--><span id="Address-name-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+  </p><!--gyral:/lit-part-->
+      <!--gyral:lit-part O6GoCf8KhfA=--><p class="field">
+    <!--gyral:lit-node 1--><label for="Address-line1"
+      ><!--gyral:lit-part-->Street address<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part--></label
     >
-    <!--lit-node 4--><input
+    <!--gyral:lit-node 4--><input
       id="Address-line1"
       name="line1"
       type="text"
@@ -1075,13 +1064,13 @@
       
       
     />
-    <!--lit-node 5--><span id="Address-line1-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part-->
-      <!--lit-part O6GoCf8KhfA=--><p class="field">
-    <!--lit-node 1--><label for="Address-line2"
-      ><!--lit-part-->Apartment, suite, etc.<!--/lit-part--><!--lit-part yrmMS+pydms=--> <small>(optional)</small><!--/lit-part--></label
+    <!--gyral:lit-node 5--><span id="Address-line1-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+  </p><!--gyral:/lit-part-->
+      <!--gyral:lit-part O6GoCf8KhfA=--><p class="field">
+    <!--gyral:lit-node 1--><label for="Address-line2"
+      ><!--gyral:lit-part-->Apartment, suite, etc.<!--gyral:/lit-part--><!--gyral:lit-part yrmMS+pydms=--> <small>(optional)</small><!--gyral:/lit-part--></label
     >
-    <!--lit-node 4--><input
+    <!--gyral:lit-node 4--><input
       id="Address-line2"
       name="line2"
       type="text"
@@ -1094,13 +1083,13 @@
       
       
     />
-    <!--lit-node 5--><span id="Address-line2-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part-->
-      <!--lit-part O6GoCf8KhfA=--><p class="field">
-    <!--lit-node 1--><label for="Address-city"
-      ><!--lit-part-->City<!--/lit-part--><!--lit-part--><!--/lit-part--></label
+    <!--gyral:lit-node 5--><span id="Address-line2-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+  </p><!--gyral:/lit-part-->
+      <!--gyral:lit-part O6GoCf8KhfA=--><p class="field">
+    <!--gyral:lit-node 1--><label for="Address-city"
+      ><!--gyral:lit-part-->City<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part--></label
     >
-    <!--lit-node 4--><input
+    <!--gyral:lit-node 4--><input
       id="Address-city"
       name="city"
       type="text"
@@ -1113,23 +1102,23 @@
       
       
     />
-    <!--lit-node 5--><span id="Address-city-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part-->
+    <!--gyral:lit-node 5--><span id="Address-city-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+  </p><!--gyral:/lit-part-->
       <p class="field">
         <label for="Address-state">State</label>
         <select id="Address-state" name="state" autocomplete="shipping address-level1">
-          <!--lit-node 13--><option value="" selected>Choose…</option>
-          <!--lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="AL" ><!--lit-part-->AL<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="AK" ><!--lit-part-->AK<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="AZ" ><!--lit-part-->AZ<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="AR" ><!--lit-part-->AR<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="CA" ><!--lit-part-->CA<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="CO" ><!--lit-part-->CO<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="CT" ><!--lit-part-->CT<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="DE" ><!--lit-part-->DE<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="DC" ><!--lit-part-->DC<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="FL" ><!--lit-part-->FL<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="GA" ><!--lit-part-->GA<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="HI" ><!--lit-part-->HI<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="ID" ><!--lit-part-->ID<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="IL" ><!--lit-part-->IL<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="IN" ><!--lit-part-->IN<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="IA" ><!--lit-part-->IA<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="KS" ><!--lit-part-->KS<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="KY" ><!--lit-part-->KY<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="LA" ><!--lit-part-->LA<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="ME" ><!--lit-part-->ME<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="MD" ><!--lit-part-->MD<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="MA" ><!--lit-part-->MA<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="MI" ><!--lit-part-->MI<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="MN" ><!--lit-part-->MN<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="MS" ><!--lit-part-->MS<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="MO" ><!--lit-part-->MO<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="MT" ><!--lit-part-->MT<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="NE" ><!--lit-part-->NE<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="NV" ><!--lit-part-->NV<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="NH" ><!--lit-part-->NH<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="NJ" ><!--lit-part-->NJ<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="NM" ><!--lit-part-->NM<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="NY" ><!--lit-part-->NY<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="NC" ><!--lit-part-->NC<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="ND" ><!--lit-part-->ND<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="OH" ><!--lit-part-->OH<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="OK" ><!--lit-part-->OK<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="OR" ><!--lit-part-->OR<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="PA" ><!--lit-part-->PA<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="RI" ><!--lit-part-->RI<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="SC" ><!--lit-part-->SC<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="SD" ><!--lit-part-->SD<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="TN" ><!--lit-part-->TN<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="TX" ><!--lit-part-->TX<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="UT" ><!--lit-part-->UT<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="VT" ><!--lit-part-->VT<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="VA" ><!--lit-part-->VA<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="WA" ><!--lit-part-->WA<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="WV" ><!--lit-part-->WV<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="WI" ><!--lit-part-->WI<!--/lit-part--></option><!--/lit-part--><!--lit-part /Z2ahC9IPds=--><!--lit-node 0--><option value="WY" ><!--lit-part-->WY<!--/lit-part--></option><!--/lit-part--><!--/lit-part-->
+          <!--gyral:lit-node 13--><option value="" selected>Choose…</option>
+          <!--gyral:lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="AL" ><!--gyral:lit-part-->AL<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="AK" ><!--gyral:lit-part-->AK<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="AZ" ><!--gyral:lit-part-->AZ<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="AR" ><!--gyral:lit-part-->AR<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="CA" ><!--gyral:lit-part-->CA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="CO" ><!--gyral:lit-part-->CO<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="CT" ><!--gyral:lit-part-->CT<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="DE" ><!--gyral:lit-part-->DE<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="DC" ><!--gyral:lit-part-->DC<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="FL" ><!--gyral:lit-part-->FL<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="GA" ><!--gyral:lit-part-->GA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="HI" ><!--gyral:lit-part-->HI<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="ID" ><!--gyral:lit-part-->ID<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="IL" ><!--gyral:lit-part-->IL<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="IN" ><!--gyral:lit-part-->IN<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="IA" ><!--gyral:lit-part-->IA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="KS" ><!--gyral:lit-part-->KS<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="KY" ><!--gyral:lit-part-->KY<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="LA" ><!--gyral:lit-part-->LA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="ME" ><!--gyral:lit-part-->ME<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MD" ><!--gyral:lit-part-->MD<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MA" ><!--gyral:lit-part-->MA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MI" ><!--gyral:lit-part-->MI<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MN" ><!--gyral:lit-part-->MN<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MS" ><!--gyral:lit-part-->MS<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MO" ><!--gyral:lit-part-->MO<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MT" ><!--gyral:lit-part-->MT<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NE" ><!--gyral:lit-part-->NE<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NV" ><!--gyral:lit-part-->NV<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NH" ><!--gyral:lit-part-->NH<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NJ" ><!--gyral:lit-part-->NJ<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NM" ><!--gyral:lit-part-->NM<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NY" ><!--gyral:lit-part-->NY<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NC" ><!--gyral:lit-part-->NC<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="ND" ><!--gyral:lit-part-->ND<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="OH" ><!--gyral:lit-part-->OH<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="OK" ><!--gyral:lit-part-->OK<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="OR" ><!--gyral:lit-part-->OR<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="PA" ><!--gyral:lit-part-->PA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="RI" ><!--gyral:lit-part-->RI<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="SC" ><!--gyral:lit-part-->SC<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="SD" ><!--gyral:lit-part-->SD<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="TN" ><!--gyral:lit-part-->TN<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="TX" ><!--gyral:lit-part-->TX<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="UT" ><!--gyral:lit-part-->UT<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="VT" ><!--gyral:lit-part-->VT<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="VA" ><!--gyral:lit-part-->VA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="WA" ><!--gyral:lit-part-->WA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="WV" ><!--gyral:lit-part-->WV<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="WI" ><!--gyral:lit-part-->WI<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="WY" ><!--gyral:lit-part-->WY<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:/lit-part-->
         </select>
         <span id="Address-state-error" class="error"
-          ><!--lit-part--><!--/lit-part--></span
+          ><!--gyral:lit-part--><!--gyral:/lit-part--></span
         >
       </p>
-      <!--lit-part O6GoCf8KhfA=--><p class="field">
-    <!--lit-node 1--><label for="Address-postalCode"
-      ><!--lit-part-->ZIP code<!--/lit-part--><!--lit-part--><!--/lit-part--></label
+      <!--gyral:lit-part O6GoCf8KhfA=--><p class="field">
+    <!--gyral:lit-node 1--><label for="Address-postalCode"
+      ><!--gyral:lit-part-->ZIP code<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part--></label
     >
-    <!--lit-node 4--><input
+    <!--gyral:lit-node 4--><input
       id="Address-postalCode"
       name="postalCode"
       type="text"
@@ -1142,13 +1131,13 @@
       
       
     />
-    <!--lit-node 5--><span id="Address-postalCode-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part-->
-      <!--lit-part O6GoCf8KhfA=--><p class="field">
-    <!--lit-node 1--><label for="Address-phone"
-      ><!--lit-part-->Phone<!--/lit-part--><!--lit-part yrmMS+pydms=--> <small>(optional)</small><!--/lit-part--></label
+    <!--gyral:lit-node 5--><span id="Address-postalCode-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+  </p><!--gyral:/lit-part-->
+      <!--gyral:lit-part O6GoCf8KhfA=--><p class="field">
+    <!--gyral:lit-node 1--><label for="Address-phone"
+      ><!--gyral:lit-part-->Phone<!--gyral:/lit-part--><!--gyral:lit-part yrmMS+pydms=--> <small>(optional)</small><!--gyral:/lit-part--></label
     >
-    <!--lit-node 4--><input
+    <!--gyral:lit-node 4--><input
       id="Address-phone"
       name="phone"
       type="tel"
@@ -1161,92 +1150,88 @@
       
       
     />
-    <!--lit-node 5--><span id="Address-phone-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part-->
-      <!--lit-part--><!--/lit-part-->
+    <!--gyral:lit-node 5--><span id="Address-phone-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+  </p><!--gyral:/lit-part-->
+      <!--gyral:lit-part--><!--gyral:/lit-part-->
     </fieldset>
-    <!--lit-part--><!--/lit-part--> <!--lit-part MJXybzLLglI=--><!--lit-node 0--><button class="primary" ><!--lit-part-->Continue to shipping method<!--/lit-part--></button><!--/lit-part-->
-  </form><!--/lit-part-->
+    <!--gyral:lit-part--><!--gyral:/lit-part--> <!--gyral:lit-part MJXybzLLglI=--><!--gyral:lit-node 0--><button class="primary" ><!--gyral:lit-part-->Continue to shipping method<!--gyral:/lit-part--></button><!--gyral:/lit-part-->
+  </form><!--gyral:/lit-part-->
               </section>
-            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
               class="step locked"
               data-component="checkout-step"
               data-step="shipping"
-              part="step"
               aria-current="false"
             >
-              <!--lit-node 1--><section aria-labelledby="shipping-heading">
-                <!--lit-node 2--><h2 id="shipping-heading">
-                  <span class="number"><!--lit-part-->3<!--/lit-part-->.</span> <!--lit-part-->Shipping method<!--/lit-part-->
+              <!--gyral:lit-node 1--><section aria-labelledby="shipping-heading">
+                <!--gyral:lit-node 2--><h2 id="shipping-heading">
+                  <span class="number"><!--gyral:lit-part-->3<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Shipping method<!--gyral:/lit-part-->
                 </h2>
-                <!--lit-part WFZKujQ03Fg=--><p class="locked">Complete the steps above first.</p><!--/lit-part-->
+                <!--gyral:lit-part WFZKujQ03Fg=--><p class="locked">Complete the steps above first.</p><!--gyral:/lit-part-->
               </section>
-            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
               class="step locked"
               data-component="checkout-step"
               data-step="payment"
-              part="step"
               aria-current="false"
             >
-              <!--lit-node 1--><section aria-labelledby="payment-heading">
-                <!--lit-node 2--><h2 id="payment-heading">
-                  <span class="number"><!--lit-part-->4<!--/lit-part-->.</span> <!--lit-part-->Payment<!--/lit-part-->
+              <!--gyral:lit-node 1--><section aria-labelledby="payment-heading">
+                <!--gyral:lit-node 2--><h2 id="payment-heading">
+                  <span class="number"><!--gyral:lit-part-->4<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Payment<!--gyral:/lit-part-->
                 </h2>
-                <!--lit-part WFZKujQ03Fg=--><p class="locked">Complete the steps above first.</p><!--/lit-part-->
+                <!--gyral:lit-part WFZKujQ03Fg=--><p class="locked">Complete the steps above first.</p><!--gyral:/lit-part-->
               </section>
-            </li><!--/lit-part--><!--lit-part VMyW3to8vpQ=--><!--lit-node 0--><li
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
               class="step locked"
               data-component="checkout-step"
               data-step="review"
-              part="step"
               aria-current="false"
             >
-              <!--lit-node 1--><section aria-labelledby="review-heading">
-                <!--lit-node 2--><h2 id="review-heading">
-                  <span class="number"><!--lit-part-->5<!--/lit-part-->.</span> <!--lit-part-->Review and place order<!--/lit-part-->
+              <!--gyral:lit-node 1--><section aria-labelledby="review-heading">
+                <!--gyral:lit-node 2--><h2 id="review-heading">
+                  <span class="number"><!--gyral:lit-part-->5<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Review and place order<!--gyral:/lit-part-->
                 </h2>
-                <!--lit-part WFZKujQ03Fg=--><p class="locked">Complete the steps above first.</p><!--/lit-part-->
+                <!--gyral:lit-part WFZKujQ03Fg=--><p class="locked">Complete the steps above first.</p><!--gyral:/lit-part-->
               </section>
-            </li><!--/lit-part--><!--/lit-part-->
+            </li><!--gyral:/lit-part--><!--gyral:/lit-part-->
         </ol>
-        <!--lit-part IIDOdyLuca0=--><aside
+        <!--gyral:lit-part JmysGYtuQgw=--><aside
     class="order-summary"
     data-component="order-summary"
-    part="order-summary"
     aria-labelledby="summary-heading"
   >
     <h2 id="summary-heading">Order summary</h2>
     <ul class="summary-lines">
-      <!--lit-part--><!--lit-part uZ/0PH+Hd7o=--><li data-component="summary-line">
+      <!--gyral:lit-part--><!--gyral:lit-part uZ/0PH+Hd7o=--><li data-component="summary-line">
             <span class="name"
-              ><!--lit-part-->LEGO<!--/lit-part--><!--lit-part BWZZAHK1AgA=--> × <!--lit-part-->2<!--/lit-part--><?><!--/lit-part--></span
+              ><!--gyral:lit-part-->LEGO<!--gyral:/lit-part--><!--gyral:lit-part BWZZAHK1AgA=--> × <!--gyral:lit-part-->2<!--gyral:/lit-part--><?><!--gyral:/lit-part--></span
             >
-            <!--lit-part--><!--/lit-part-->
-            <span class="amount" data-component="price"><!--lit-part-->$100.00<!--/lit-part--></span>
-          </li><!--/lit-part--><!--/lit-part-->
+            <!--gyral:lit-part--><!--gyral:/lit-part-->
+            <span class="amount" data-component="price"><!--gyral:lit-part-->$100.00<!--gyral:/lit-part--></span>
+          </li><!--gyral:/lit-part--><!--gyral:/lit-part-->
     </ul>
     <dl class="totals">
       <div>
         <dt>Subtotal</dt>
-        <dd><!--lit-part-->$100.00<!--/lit-part--></dd>
+        <dd><!--gyral:lit-part-->$100.00<!--gyral:/lit-part--></dd>
       </div>
-      <!--lit-part--><!--/lit-part-->
+      <!--gyral:lit-part--><!--gyral:/lit-part-->
       <div>
         <dt>Shipping</dt>
-        <dd><!--lit-part-->Free<!--/lit-part--></dd>
+        <dd><!--gyral:lit-part-->Free<!--gyral:/lit-part--></dd>
       </div>
       <div>
         <dt>Tax</dt>
-        <dd><!--lit-part-->Calculated after the address<!--/lit-part--></dd>
+        <dd><!--gyral:lit-part-->Calculated after the address<!--gyral:/lit-part--></dd>
       </div>
       <div class="total">
         <dt>Total</dt>
-        <dd data-component="price"><!--lit-part-->$100.00<!--/lit-part--></dd>
+        <dd data-component="price"><!--gyral:lit-part-->$100.00<!--gyral:/lit-part--></dd>
       </div>
     </dl>
     <p><a href="/cart">Edit cart</a></p>
-  </aside><!--/lit-part-->
-      </div><!--/lit-part--></template></shop-checkout><!--/lit-part--></main>
+  </aside><!--gyral:/lit-part-->
+      </div><!--gyral:/lit-part--></shop-checkout><!--/lit-part--></main>
         <!--lit-part STG64S/HenM=-->
   <footer class="site-footer">
     <div class="page">

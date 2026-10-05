@@ -3,13 +3,13 @@ import '@gyral/ssr/hydrate';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/order-confirmation.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
-let page: MountedPage;
+let page: MountedSsr;
 
 beforeAll(() => {
-  page = mountSsrPage(serverHtml);
+  page = mountSsr(serverHtml);
 });
 
 afterAll(() => {
@@ -29,7 +29,8 @@ describe('order confirmation (fixture from test/node/place-order.test.ts)', () =
   });
 
   it('hydrates the page shell without errors and has no axe violations', async () => {
-    await hydrated(page.root);
+    await import('../../src/client/entry.js');
+    await hydrated(page);
     expect(errors).not.toHaveBeenCalled();
     expect(await a11yViolations(page.root)).toEqual([]);
   });

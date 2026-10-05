@@ -36,6 +36,7 @@ describe('unlayeredStyles', () => {
     expect(
       unlayeredStyles('x.ts', 'export const fooCss = `\n.a { color: var(--ink); }`;'),
     ).toHaveLength(1);
+    expect(unlayeredStyles('x.ts', 'styles: `:host { display: block; }`,')).toHaveLength(1);
   });
 
   it('accepts layered or composed stylesheets', () => {

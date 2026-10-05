@@ -4,8 +4,9 @@
 // submitForm posts to the same route, which answers with the new view (or the same
 // IntentRejected the no-JS path renders). The server always has the last word.
 //
-// Shadow DOM, not light DOM (ADR 0006 rule 5 exception): Gyral's light-DOM mode re-renders at
-// hydration, which would throw away anything typed into these forms before the script loads.
+// Light DOM (ADR 0006 rule 5): Gyral hydrates light-DOM components in place (Gyral ADR 0014
+// addendum), so anything typed before the script loads survives; a browser test proves it.
+// Styles are document CSS (styles/checkout.ts, scoped to shop-checkout).
 import {
   define,
   fieldErrors,
@@ -13,7 +14,6 @@ import {
   html,
   nothing,
   redirectedTo,
-  unsafeCSS,
   type FormFields,
   type IntentRejected,
 } from '@gyral/core';
@@ -21,8 +21,6 @@ import { submitForm } from '@gyral/http';
 import { isCheckoutStep, type CheckoutStep } from '../../domain/checkout.js';
 import { goTo } from '../drivers/location.js';
 import { CSRF_META } from '../forms/csrf.js';
-import { checkoutCss } from '../styles/checkout.js';
-import { shadowBaseCss } from '../styles/shadow-base.js';
 import { parseCheckout, type CheckoutClient } from './model.js';
 import {
   AddressForm,
@@ -52,7 +50,7 @@ export type CheckoutMsg =
 
 export interface CheckoutProps {
   /** Set by the server render; the browser restores it from the hydration seed. */
-  readonly view?: CheckoutClient;
+  readonly view: CheckoutClient;
   /** For the no-JS forms (the JS path reads the page's <meta> token). */
   readonly csrf?: string;
 }
@@ -115,10 +113,11 @@ const toForm =
   });
 
 export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>('shop-checkout', {
-  props: { view: { attribute: false }, csrf: { type: String } },
+  shadow: false,
+  props: { view: { attribute: false, required: true }, csrf: { type: String } },
   init: (props) => ({
     view: props.view,
-    open: props.view?.open ?? 'contact',
+    open: props.view.open,
     errors: {},
     values: {},
     pending: undefined,
@@ -191,7 +190,6 @@ export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>('shop-
               class="step ${status}"
               data-component="checkout-step"
               data-step=${step}
-              part="step"
               aria-current=${status === 'open' ? 'step' : 'false'}
             >
               <section aria-labelledby=${`${step}-heading`}>
@@ -206,7 +204,6 @@ export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>('shop-
         ${orderSummary(view)}
       </div>`;
   },
-  styles: unsafeCSS(`${shadowBaseCss}${checkoutCss}`),
 });
 
 declare global {

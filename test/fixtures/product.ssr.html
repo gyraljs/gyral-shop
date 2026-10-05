@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Fieldstone Fantastic Rain Jacket — Fieldstone — Gyral Goods</title>
     <meta name="description" content="Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem…">
-    <!--lit-part EyIJ0bnI7Mg=--><!--lit-part yorebNvZB1c=--><style>
+    <style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -57,6 +57,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
   a { color: inherit; }
+  /* Form controls take the page font (shadow roots get this from shadow-base.ts). */
+  button, input, select, textarea { font: inherit; }
   .skip-link {
     position: absolute;
     inset-inline-start: var(--space-2);
@@ -84,7 +86,7 @@
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 }
-
+</style><style>
 @layer components {
   .visually-hidden {
     position: absolute; inline-size: 1px; block-size: 1px;
@@ -156,7 +158,7 @@
   .count { color: var(--ink-muted); }
   .stock.out { color: var(--sale); font-weight: 600; font-size: 0.9rem; }
 }
-
+</style><style>
 @layer components {
   .breadcrumbs ol {
     list-style: none; padding: 0; margin-block: 0 var(--space-3);
@@ -217,7 +219,7 @@
     background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
   }
 }
-
+</style><style>
 @layer components {
   .filters {
     margin-block-start: var(--space-3);
@@ -252,14 +254,14 @@
   .results { transition: opacity 150ms; }
   shop-listing { display: block; min-inline-size: 0; }
   shop-listing:state(loading) .results { opacity: 0.55; }
-  /* Focus moves to the heading after paging (focusOn): only show a ring for keyboard focus. */
+  /* Focus moves to the heading after paging (focus() command): only show a ring for keyboard focus. */
   .listing-header h1:focus:not(:focus-visible) { outline: none; }
   .load-error {
     padding: var(--space-3); border-radius: var(--radius);
     border: 1px solid var(--sale); color: var(--sale);
   }
 }
-
+</style><style>
 @layer components {
   .product {
     display: grid; gap: var(--space-5);
@@ -289,7 +291,7 @@
   .review-list h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
   .byline { color: var(--ink-muted); font-size: 0.9rem; margin-block: var(--space-1); }
 }
-
+</style><style>
 @layer components {
   .auth, .account { max-inline-size: 32rem; display: grid; gap: var(--space-3); }
   .auth h1, .account h1 { margin-block: 0; }
@@ -343,7 +345,7 @@
     text-decoration: underline; cursor: pointer;
   }
 }
-
+</style><style>
 @layer components {
   .confirmation {
     container: confirmation / inline-size;
@@ -381,7 +383,7 @@
     .order-lines thead th:nth-child(3), .order-lines td:nth-child(3) { display: none; }
   }
 }
-
+</style><style>
 @layer components {
   [data-component="member-form"] { display: grid; gap: var(--space-3); max-inline-size: 32rem; }
   [data-component="member-form"] .field { display: grid; gap: var(--space-1); margin: 0; }
@@ -414,7 +416,7 @@
   [data-component="member-form"] button { font: inherit; font-weight: 600; }
   [data-component="member-form"] button:disabled { opacity: 0.6; cursor: progress; }
 }
-
+</style><style>
 @layer components {
   .prose { max-inline-size: 42rem; display: grid; gap: var(--space-3); }
   .prose header { display: grid; gap: var(--space-1); }
@@ -444,7 +446,97 @@
   [data-region="error"] h1 { margin: 0; }
   [data-region="error"] form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
 }
-
+</style><style>
+@layer reset, tokens, base, components, theme;
+@layer components {
+shop-checkout {
+  display: block;
+  min-inline-size: 0;
+  container: checkout / inline-size;
+  h1 { margin-block: var(--space-3) var(--space-2); }
+  .layout { display: grid; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
+  @container checkout (min-width: 56rem) {
+    .layout { grid-template-columns: minmax(0, 1fr) 20rem; align-items: start; }
+    .order-summary { position: sticky; inset-block-start: var(--space-3); }
+  }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .step {
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+  }
+  .step.open { border-color: var(--line-strong); }
+  .step.locked { background: var(--surface-sunken); color: var(--ink-muted); }
+  .step h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+  .step.locked h2 { margin: 0; }
+  .number { color: var(--ink-muted); }
+  .locked { margin: 0; font-size: 0.9rem; }
+  .step.locked .locked { display: none; }
+  .step-summary { display: flex; justify-content: space-between; gap: var(--space-3); align-items: start; }
+  .step-summary p, .step-summary address { margin: 0; font-style: normal; }
+  form { display: grid; gap: var(--space-2); }
+  fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  legend { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
+  .field { display: grid; gap: var(--space-1); margin: 0; }
+  .row { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+  input:not([type='radio'], [type='checkbox']), select {
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  input[aria-invalid='true'], input:user-invalid { border-color: var(--danger); }
+  .error { color: var(--danger); font-size: 0.9rem; }
+  .error:empty { display: none; }
+  .hint { color: var(--ink-muted); font-size: 0.9rem; margin: 0; }
+  .choice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-1) var(--space-2);
+    align-items: center;
+    padding: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .choice:has(input:checked) { border-color: var(--brand); background: var(--surface-sunken); }
+  .choice .estimate { grid-column: 2; color: var(--ink-muted); font-size: 0.9rem; }
+  .choice .amount { grid-row: 1; grid-column: 3; font-weight: 600; }
+  button.primary {
+    justify-self: start;
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--brand);
+    color: var(--brand-ink);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.6; cursor: progress; }
+  .order-summary {
+    padding: var(--space-3);
+    border-radius: var(--radius);
+    background: var(--surface-sunken);
+  }
+  .order-summary h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+  .summary-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .summary-lines li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--space-2); }
+  .summary-lines .options { grid-column: 1; color: var(--ink-muted); font-size: 0.85rem; }
+  .summary-lines .amount { grid-row: 1; grid-column: 2; font-variant-numeric: tabular-nums; }
+  .totals { margin: var(--space-3) 0 0; display: grid; gap: var(--space-1); }
+  .totals div { display: flex; justify-content: space-between; gap: var(--space-2); }
+  .totals dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .totals .discount dd { color: var(--sale); }
+  .totals .total { border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-2); font-weight: 700; }
+  .visually-hidden {
+    position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+}
+}
+</style><style>
 @layer components {
   shop-search { display: block; flex: 1 1 18rem; min-inline-size: 0; }
   shop-search form { display: flex; position: relative; }
@@ -508,9 +600,7 @@
     shop-search [role='option'] { grid-template-columns: 1fr; }
   }
 }
-</style><!--/lit-part-->
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!--lit-part TWCHfggzWRs=--><!--lit-node 0--><link rel="canonical" href="http://localhost/p/fieldstone-fantastic-rain-jacket-27" /><!--/lit-part-->
+</style><!--lit-part eVKfaNMXC80=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part TWCHfggzWRs=--><!--lit-node 0--><link rel="canonical" href="http://localhost/p/fieldstone-fantastic-rain-jacket-27" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
     <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
     <!--lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:type" content="product" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:title" content="Fieldstone Fantastic Rain Jacket" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:description" content="Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem…" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:url" content="http://localhost/p/fieldstone-fantastic-rain-jacket-27" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:image" content="http://localhost/img/p/fieldstone-fantastic-rain-jacket-27/1.svg" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:image:alt" content="Fieldstone Fantastic Rain Jacket" /><!--/lit-part--><!--/lit-part-->

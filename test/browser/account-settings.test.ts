@@ -6,16 +6,16 @@ import type { HttpRequest } from '@gyral/http';
 import addressesHtml from '../fixtures/addresses.ssr.html?raw';
 import { locationDriver } from '../../src/ui/drivers/location.js';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
-let page: MountedPage | undefined;
+let page: MountedSsr | undefined;
 
 beforeAll(async () => {
-  const first = mountSsrPage(addressesHtml);
+  const first = mountSsr(addressesHtml);
   await import('../../src/client/entry.js');
-  await hydrated(first.root);
+  await hydrated(first);
   first.unmount();
 });
 
@@ -25,9 +25,9 @@ afterEach(() => {
 });
 
 async function mountAddressForm() {
-  page = mountSsrPage(addressesHtml);
+  page = mountSsr(addressesHtml);
   const before = page.root.querySelector('shop-address-form input[name="line1"]');
-  await hydrated(page.root);
+  await hydrated(page);
   const el = page.root.querySelector('shop-address-form');
   if (el === null) throw new Error('no shop-address-form');
   const http = fakeDriver<HttpRequest>('http');
