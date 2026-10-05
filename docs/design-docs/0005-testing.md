@@ -52,3 +52,39 @@ any problem. `--baseline` saves screenshots; `--compare` pixel-diffs against the
 - First run found and fixed: the skip link outside any landmark (now in a "Skip links" nav),
   two search landmarks with the same name on the 404 page, and a heading-order gap on the
   wishlist page.
+
+## Addendum: Production builds (2026-10-05)
+
+Every other test runs Lit's **development** build. Production builds differ: Lit renames its
+private fields, and Rolldown reorders module evaluation across chunks (the client entry's
+top-level await let Lit run before `@gyral/ssr/hydrate`). Both caused production-only bugs that
+no development test could see: the consent banner rendered twice, the header and listing
+logged hydration mismatches, and the cart heading doubled (Gyral gyral-czi.38, gyral-czi.41).
+
+`pnpm smoke:prod` (`scripts/smoke-prod.mjs`, pure checks in `scripts/lib/smoke.mjs`) runs inside
+`pnpm check`. It seeds a throwaway database, builds, starts the production server and, in
+Chromium, loads home, a department, a category, a product, search, the cart (empty and with a
+line), sign-in, `/about` (prerendered) and checkout. For each page it requires:
+
+- exactly one `<h1>`, and every `data-region` as often as the server sent it;
+- no element left in `defer-hydration`, except lazy islands, which must hydrate once scrolled
+  into view;
+- no page errors or console errors;
+- **the server's nodes survive hydration**: an init script tags every element when parsing
+  finishes, before any module script runs, and headings, regions and each component's
+  top-level view must still be those nodes afterwards. A fresh client render looks identical
+  but replaces them, and counting alone cannot tell the difference: with
+  `@gyral/ssr/hydrate` removed from the entry, the counts still matched but all ten page checks
+  failed on replaced nodes.
+
+It also adds to the cart from a product page (the badge updates without navigating) and ticks a
+listing filter (the URL and results update in place). Content the client creates on purpose
+after hydration (the deferred consent banner and the cart on prerendered pages) is allowed per
+page.
+
+**Rolldown `strictExecutionOrder`: not adopted.** It restores import-order evaluation, so Lit's
+hydrate support patches LitElement (verified), but it added 8.5–28 KiB gzip per page (category
++35%), over the JS budget. Gyral's `define()` hydrates correctly without the patch, and the
+shop has no raw LitElement code; an ESLint rule (`NO_RAW_LIT`) keeps it that way. If raw Lit
+components are ever needed, load `@gyral/ssr/hydrate` as its own module script before the entry
+instead (Gyral ADR 0012).
