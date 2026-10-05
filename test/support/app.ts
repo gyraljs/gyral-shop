@@ -31,6 +31,8 @@ export interface TestAppOptions {
   readonly dev?: boolean;
   /** Public origin (SITE_ORIGIN) for absolute URLs. */
   readonly siteOrigin?: string;
+  /** Trust X-Forwarded-* headers (security/request.ts). */
+  readonly trustProxy?: boolean;
 }
 
 export async function testApp(options: TestAppOptions = {}): Promise<TestApp> {
@@ -42,6 +44,7 @@ export async function testApp(options: TestAppOptions = {}): Promise<TestApp> {
   const security = {
     ...(options.now === undefined ? {} : { now: options.now }),
     ...(options.dev === undefined ? {} : { dev: options.dev }),
+    ...(options.trustProxy === undefined ? {} : { trustProxy: options.trustProxy }),
   };
   const app = createApp({
     clientEntry: CLIENT_ENTRY,

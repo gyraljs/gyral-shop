@@ -6,6 +6,8 @@ import type { MiddlewareHandler } from 'hono';
 import { CSRF_FIELD, CSRF_HEADER } from '../../ui/forms/csrf.js';
 import type { AppEnv } from './context.js';
 import { reject } from './reject.js';
+import { acceptedOrigins } from './request.js';
+import { runtime } from './runtime.js';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 const FORM_TYPES = ['application/x-www-form-urlencoded', 'multipart/form-data'];
@@ -26,9 +28,9 @@ async function submittedToken(request: Request): Promise<string | undefined> {
   return typeof value === 'string' ? value : undefined;
 }
 
-function crossSite(request: Request): boolean {
+function crossSite(request: Request, accepted: ReadonlySet<string>): boolean {
   const origin = request.headers.get('origin');
-  return origin !== null && origin !== 'null' && origin !== new URL(request.url).origin;
+  return origin !== null && origin !== 'null' && !accepted.has(origin);
 }
 
 /**
@@ -39,20 +41,21 @@ function crossSite(request: Request): boolean {
  */
 export const ORIGIN_VERIFIED_PATHS: ReadonlySet<string> = new Set(['/consent']);
 
-function provenSameOrigin(request: Request): boolean {
+function provenSameOrigin(request: Request, accepted: ReadonlySet<string>): boolean {
   const origin = request.headers.get('origin');
-  if (origin !== null) return origin === new URL(request.url).origin;
+  if (origin !== null) return accepted.has(origin);
   return request.headers.get('sec-fetch-site') === 'same-origin';
 }
 
 export const csrfMiddleware = (): MiddlewareHandler<AppEnv> => async (c, next) => {
   if (SAFE_METHODS.has(c.req.method)) return next();
+  const accepted = acceptedOrigins(c.req.raw, c.get('siteOrigin'), runtime(c).trustProxy ?? false);
   if (ORIGIN_VERIFIED_PATHS.has(c.req.path)) {
-    return provenSameOrigin(c.req.raw) ? next() : reject(c, 'csrf');
+    return provenSameOrigin(c.req.raw, accepted) ? next() : reject(c, 'csrf');
   }
   const session = c.get('session');
   const token = await submittedToken(c.req.raw);
-  if (crossSite(c.req.raw) || session === undefined || token === undefined) {
+  if (crossSite(c.req.raw, accepted) || session === undefined || token === undefined) {
     return reject(c, 'csrf');
   }
   if (!same(token, session.csrfToken)) return reject(c, 'csrf');
