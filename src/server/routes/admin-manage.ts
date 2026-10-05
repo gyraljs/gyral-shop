@@ -4,7 +4,7 @@
 import { Hono, type Context } from 'hono';
 import { formAction } from '@gyral/ssr';
 import * as v from 'valibot';
-import { REVIEW_FILTERS } from '../../domain/admin-manage.js';
+import { REVIEW_FILTERS, TAXON_KINDS } from '../../domain/admin-manage.js';
 import type { Services } from '../../services/container.js';
 import {
   adminPromos,
@@ -14,11 +14,14 @@ import {
   type DayStart,
 } from '../../services/admin-promos.js';
 import { adminReviews, moderateReview } from '../../services/admin-reviews.js';
+import { adminTaxonomy, archiveTaxon, createTaxon } from '../../services/admin-taxonomy.js';
 import { adminUsers, changeUser } from '../../services/admin-users.js';
 import {
   PromoDeleteForm,
   PromoForm,
   ReviewVisibilityForm,
+  TaxonArchiveForm,
+  TaxonCreateForm,
   UserActionForm,
 } from '../../ui/admin/manage-schemas.js';
 import { requireAdmin, type AppEnv } from '../security/index.js';
@@ -134,6 +137,37 @@ export function adminManageRoutes({ services, dayStart }: AdminManageOptions): H
               _tag: 'ReviewModerated',
               ...r,
             })),
+      invalid: asJson,
+    })(c.req.raw);
+  });
+
+  // ── Departments, categories and brands (rename: admin-products.ts) ──
+  routes.get('/api/admin/taxonomy/manage', async (c) => {
+    const result = await adminTaxonomy(db, c.get('user'));
+    return result.ok ? c.json(result.value, 200, NO_STORE) : adminFailure(c, result.error);
+  });
+  routes.post('/api/admin/taxonomy', (c) =>
+    formAction(TaxonCreateForm, {
+      intent: 'CreateTaxon',
+      valid: async (data) => {
+        const result = await createTaxon(db, c.get('user'), data);
+        if (result.ok) services.catalog.changed();
+        return answer(c, result, (r) => ({ _tag: 'Saved', id: r.id }));
+      },
+      invalid: asJson,
+    })(c.req.raw),
+  );
+  routes.post('/api/admin/taxonomy/:kind/:id/archive', (c) => {
+    const kind = TAXON_KINDS.find((k) => k === c.req.param('kind'));
+    const id = positiveId(c.req.param('id'));
+    if (kind === undefined || id === undefined) return notFound(c);
+    return formAction(TaxonArchiveForm, {
+      intent: 'ArchiveTaxon',
+      valid: async (data) => {
+        const result = await archiveTaxon(db, c.get('user'), kind, id, data.archived === 'yes');
+        if (result.ok) services.catalog.changed();
+        return answer(c, result, (r) => ({ _tag: 'Saved', id: r.id }));
+      },
       invalid: asJson,
     })(c.req.raw);
   });

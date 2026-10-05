@@ -104,3 +104,36 @@ export const ListFilterForm = v.object({
   q: v.pipe(v.optional(v.string(), ''), v.trim(), v.maxLength(100, 'Use at most 100 characters.')),
   filter: v.optional(v.picklist(REVIEW_FILTERS), 'all'),
 });
+
+const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+export const TaxonCreateForm = defineForm(
+  v.pipe(
+    v.object({
+      kind: v.picklist(['department', 'category', 'brand'], 'Choose what to add.'),
+      name: v.pipe(v.string(), v.trim(), v.nonEmpty('Enter a name.'), v.maxLength(120)),
+      slug: v.pipe(
+        v.optional(v.string(), ''),
+        v.trim(),
+        v.toLowerCase(),
+        v.maxLength(60, 'Use at most 60 characters.'),
+        v.check(
+          (s) => s === '' || SLUG.test(s),
+          'Use lowercase letters, digits and single hyphens.',
+        ),
+      ),
+      departmentId: v.optional(v.string(), ''),
+    }),
+    v.forward(
+      v.check(
+        (form) => form.kind !== 'category' || /^\d+$/.test(form.departmentId),
+        'Choose the department this category belongs to.',
+      ),
+      ['departmentId'],
+    ),
+  ),
+);
+
+export const TaxonArchiveForm = defineForm(
+  v.object({ archived: v.picklist(['yes', 'no'], 'Choose archive or restore.') }),
+);

@@ -6,8 +6,15 @@ import type { Db } from '../db/client.js';
 import { createMailer, type Mailer } from './mail.js';
 import { createPaymentProvider, type PaymentProvider } from './payments.js';
 
+/** Bumped when departments, categories or brands change, so cached navigation reloads. */
+export interface CatalogChanges {
+  readonly version: () => number;
+  readonly changed: () => void;
+}
+
 export interface Services {
   readonly db: Db;
+  readonly catalog: CatalogChanges;
   readonly mailer: Mailer;
   readonly payments: PaymentProvider;
   /** The clock every service uses (tests pass a fixed one). */
@@ -30,9 +37,16 @@ export interface ServiceOptions {
 export function createServices(options: ServiceOptions): Services {
   const { db } = options;
   const now = options.now ?? (() => new Date());
+  let version = 0;
   return {
     db,
     now,
+    catalog: {
+      version: () => version,
+      changed: () => {
+        version += 1;
+      },
+    },
     secret: options.secret ?? randomBytes(32).toString('hex'),
     mailer: options.mailer ?? createMailer(db),
     payments:

@@ -43,6 +43,7 @@ export function listDepartments(db: Db): Promise<DepartmentRow[]> {
   return db
     .select(departmentColumns)
     .from(departments)
+    .where(eq(departments.archived, false))
     .orderBy(asc(departments.position), asc(departments.name));
 }
 
@@ -53,12 +54,12 @@ export async function findDepartment(
   const [department] = await db
     .select(departmentColumns)
     .from(departments)
-    .where(eq(departments.slug, slug));
+    .where(and(eq(departments.slug, slug), eq(departments.archived, false)));
   if (department === undefined) return undefined;
   const rows = await db
     .select({ id: categories.id, slug: categories.slug, name: categories.name })
     .from(categories)
-    .where(eq(categories.departmentId, department.id))
+    .where(and(eq(categories.departmentId, department.id), eq(categories.archived, false)))
     .orderBy(asc(categories.position), asc(categories.name));
   return { ...department, categories: rows };
 }
@@ -76,7 +77,14 @@ export async function findCategory(
     })
     .from(categories)
     .innerJoin(departments, eq(departments.id, categories.departmentId))
-    .where(and(eq(departments.slug, departmentSlug), eq(categories.slug, categorySlug)));
+    .where(
+      and(
+        eq(departments.slug, departmentSlug),
+        eq(categories.slug, categorySlug),
+        eq(departments.archived, false),
+        eq(categories.archived, false),
+      ),
+    );
   return row;
 }
 

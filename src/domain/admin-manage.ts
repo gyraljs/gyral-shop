@@ -170,3 +170,33 @@ export const ReviewModeratedSchema = v.object({
   hidden: v.boolean(),
   rating: v.object({ sum: cents, count }),
 });
+
+// ── Departments, categories and brands ──
+
+export const TAXON_KINDS = ['department', 'category', 'brand'] as const;
+export type TaxonKindName = (typeof TAXON_KINDS)[number];
+
+const Taxon = v.object({
+  id: count,
+  slug: v.string(),
+  name: v.string(),
+  archived: v.boolean(),
+  /** Live (not archived) products using it; archiving needs 0. */
+  products: count,
+});
+
+export const TaxonomyAdminSchema = v.object({
+  departments: v.array(v.object({ ...Taxon.entries, categories: v.array(Taxon) })),
+  brands: v.array(Taxon),
+});
+export type TaxonomyAdmin = v.InferOutput<typeof TaxonomyAdminSchema>;
+
+/** "Home & Kitchen" → "home-kitchen": a starting point for a slug. */
+export const slugify = (name: string): string =>
+  name
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60);

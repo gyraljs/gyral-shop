@@ -17,6 +17,7 @@ import './promos.js';
 import './promo-edit.js';
 import './users.js';
 import './reviews.js';
+import './taxonomy.js';
 
 export interface AdminProps {
   /** Path and query of the admin URL the server rendered (the browser seeds it back). */
@@ -34,6 +35,7 @@ export type AdminMsg = { readonly _tag: 'Routed'; readonly location: RouteLocati
 const NAV = [
   ['dashboard', '/admin', 'Dashboard'],
   ['products', '/admin/products', 'Products'],
+  ['taxonomy', '/admin/taxonomy', 'Departments & brands'],
   ['orders', '/admin/orders', 'Orders'],
   ['promos', '/admin/promos', 'Promo codes'],
   ['users', '/admin/users', 'Users'],
@@ -69,6 +71,8 @@ function section(view: AdminView) {
       return html`<shop-admin-users .search=${view.search}></shop-admin-users>`;
     case 'reviews':
       return html`<shop-admin-reviews .search=${view.search}></shop-admin-reviews>`;
+    case 'taxonomy':
+      return html`<shop-admin-taxonomy></shop-admin-taxonomy>`;
   }
 }
 

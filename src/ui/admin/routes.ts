@@ -15,6 +15,7 @@ export const adminRoutes = routes({
   promo: '/admin/promos/:id',
   users: '/admin/users',
   reviews: '/admin/reviews',
+  taxonomy: '/admin/taxonomy',
 });
 
 export type AdminView =
@@ -29,6 +30,7 @@ export type AdminView =
   | { readonly name: 'promo'; readonly id: number }
   | { readonly name: 'users'; readonly search: string }
   | { readonly name: 'reviews'; readonly search: string }
+  | { readonly name: 'taxonomy' }
   | { readonly name: 'notFound' };
 
 /** What an admin URL (path + query) shows. */
@@ -40,6 +42,7 @@ export function adminView(url: string): AdminView {
     case 'newProduct':
     case 'promos':
     case 'newPromo':
+    case 'taxonomy':
       return { name: match.name };
     case 'products':
     case 'orders':
@@ -70,6 +73,7 @@ const LABELS: Readonly<Record<AdminView['name'], string>> = {
   promo: 'Edit promo code',
   users: 'Users',
   reviews: 'Reviews',
+  taxonomy: 'Departments & brands',
   notFound: 'Not found',
 };
 
@@ -86,7 +90,8 @@ export const adminPageTitle = (url: string): string => `${adminLabel(url)} — A
 export const adminTitle = (url: string): string => documentTitle(adminPageTitle(url));
 
 /** Which nav section an admin view belongs to. */
-export type AdminSection = 'dashboard' | 'products' | 'orders' | 'promos' | 'users' | 'reviews';
+export type AdminSection =
+  'dashboard' | 'products' | 'taxonomy' | 'orders' | 'promos' | 'users' | 'reviews';
 
 export function adminSection(view: AdminView): AdminSection | undefined {
   switch (view.name) {
@@ -105,6 +110,7 @@ export function adminSection(view: AdminView): AdminSection | undefined {
       return 'promos';
     case 'users':
     case 'reviews':
+    case 'taxonomy':
       return view.name;
     case 'notFound':
       return undefined;

@@ -47,7 +47,13 @@ export function suggestCategories(
     })
     .from(categories)
     .innerJoin(departments, eq(departments.id, categories.departmentId))
-    .where(and(...terms.map((t) => sql`lower(${categories.name}) like ${`%${t.toLowerCase()}%`}`)))
+    .where(
+      and(
+        eq(departments.archived, false),
+        eq(categories.archived, false),
+        ...terms.map((t) => sql`lower(${categories.name}) like ${`%${t.toLowerCase()}%`}`),
+      ),
+    )
     .orderBy(departments.position, categories.position)
     .limit(limit);
 }

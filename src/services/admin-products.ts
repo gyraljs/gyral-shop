@@ -19,7 +19,7 @@ import {
   type ProductListQuery,
   type VariantFields,
 } from '../db/repos/admin-products.js';
-import { renameTaxon, type TaxonKind } from '../db/repos/admin-taxonomy.js';
+import { productTaxa, renameTaxon, type TaxonKind } from '../db/repos/admin-taxonomy.js';
 import type { Db } from '../db/client.js';
 import { writeTransaction } from '../db/tx.js';
 import {
@@ -134,6 +134,15 @@ export async function archiveProduct(
 ): Promise<Result<{ readonly id: number }, AdminError>> {
   const allowed = admin(actor);
   if (!allowed.ok) return allowed;
+  if (!archived) {
+    // A live product can't sit in a hidden department, category or brand.
+    const taxa = await productTaxa(db, id);
+    if (taxa === undefined) return err({ _tag: 'NotFound' });
+    const hidden = (['department', 'category', 'brand'] as const).filter((k) => taxa[k]);
+    if (hidden.length > 0) {
+      return invalid('', `Restore its ${hidden.join(' and ')} first, or move the product.`);
+    }
+  }
   const done = await writeTransaction(db, (tx) => setArchived(tx, id, archived));
   return done ? ok({ id }) : err({ _tag: 'NotFound' });
 }

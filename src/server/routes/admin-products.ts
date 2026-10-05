@@ -183,11 +183,11 @@ export function adminProductRoutes(services: Services): Hono<AppEnv> {
     if (kind === undefined || id === undefined) return notFound(c);
     return formAction(RenameForm, {
       intent: 'Rename',
-      valid: async (data) =>
-        answer(c, await renameTaxonomy(db, c.get('user'), kind, id, data.name), (r) => ({
-          _tag: 'Saved',
-          id: r.id,
-        })),
+      valid: async (data) => {
+        const result = await renameTaxonomy(db, c.get('user'), kind, id, data.name);
+        if (result.ok) services.catalog.changed(); // the header's department names
+        return answer(c, result, (r) => ({ _tag: 'Saved', id: r.id }));
+      },
       invalid: asJson,
     })(c.req.raw);
   });

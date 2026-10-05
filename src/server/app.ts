@@ -75,9 +75,14 @@ export function createApp({
     db,
     now: () => clock?.() ?? new Date(),
   });
-  // Departments appear in every page's header; they change rarely, so load once per app.
-  let departments: Promise<readonly DepartmentLink[]> | undefined;
-  const nav = () => (departments ??= departmentLinks(db));
+  // Departments appear in every page's header; they change rarely, so load once per app and
+  // again only after an admin changes the catalog structure.
+  let departments: { version: number; list: Promise<readonly DepartmentLink[]> } | undefined;
+  const nav = () => {
+    const version = services.catalog.version();
+    if (departments?.version !== version) departments = { version, list: departmentLinks(db) };
+    return departments.list;
+  };
   const page = async (o: PageOptions) => {
     // Prerendered pages are the same for everyone: no account, token or cart in the HTML.
     if (o.static === true) return shell({ ...o, clientEntry, departments: await nav() });

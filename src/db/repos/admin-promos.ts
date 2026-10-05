@@ -98,9 +98,11 @@ export async function deleteUnusedPromo(tx: Tx, id: number): Promise<'deleted' |
   return (await findPromo(tx, id)) === undefined ? 'gone' : 'used';
 }
 
-export function departmentChoices(db: Reader) {
-  return db
-    .select({ id: departments.id, name: departments.name })
+/** Every department, archived ones labelled (a code may still be restricted to one). */
+export async function departmentChoices(db: Reader) {
+  const rows = await db
+    .select({ id: departments.id, name: departments.name, archived: departments.archived })
     .from(departments)
     .orderBy(asc(departments.position), asc(departments.name));
+  return rows.map((d) => ({ id: d.id, name: d.archived ? `${d.name} (archived)` : d.name }));
 }

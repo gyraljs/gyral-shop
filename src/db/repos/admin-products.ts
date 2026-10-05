@@ -92,12 +92,18 @@ export async function taxonomy(db: Reader) {
     db
       .select({ id: departments.id, name: departments.name })
       .from(departments)
+      .where(eq(departments.archived, false))
       .orderBy(asc(departments.position), asc(departments.name)),
     db
       .select({ id: categories.id, departmentId: categories.departmentId, name: categories.name })
       .from(categories)
+      .where(eq(categories.archived, false))
       .orderBy(asc(categories.departmentId), asc(categories.position), asc(categories.name)),
-    db.select({ id: brands.id, name: brands.name }).from(brands).orderBy(asc(brands.name)),
+    db
+      .select({ id: brands.id, name: brands.name })
+      .from(brands)
+      .where(eq(brands.archived, false))
+      .orderBy(asc(brands.name)),
   ]);
   return { departments: deps, categories: cats, brands: brandRows };
 }

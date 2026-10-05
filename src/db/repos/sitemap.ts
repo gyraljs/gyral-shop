@@ -22,6 +22,7 @@ export async function sitemapRows(db: Db): Promise<SitemapRows> {
       .select({ slug: departments.slug, lastmod: max(products.createdAt) })
       .from(departments)
       .leftJoin(products, and(eq(products.departmentId, departments.id), live))
+      .where(eq(departments.archived, false))
       .groupBy(departments.id)
       .orderBy(departments.position),
     db
@@ -33,6 +34,7 @@ export async function sitemapRows(db: Db): Promise<SitemapRows> {
       .from(categories)
       .innerJoin(departments, eq(departments.id, categories.departmentId))
       .leftJoin(products, and(eq(products.categoryId, categories.id), live))
+      .where(and(eq(departments.archived, false), eq(categories.archived, false)))
       .groupBy(categories.id)
       .orderBy(departments.position, categories.position),
     db
