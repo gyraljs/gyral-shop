@@ -60,7 +60,8 @@ describe('concurrent writes through the lock', () => {
     ]);
     expect(second.filter((r) => r.status === 'rejected')).toEqual([]);
     expect((await mailer.list()).length).toBe(4);
-  });
+    // A real file database fsyncs every commit: slow under the full parallel test run.
+  }, 30_000);
 
   it('runs a locked write nested in another without deadlocking, and rejects db writes inside a transaction', async () => {
     const { lockedWrite, writeTransaction } = await import('../../src/db/tx.js');

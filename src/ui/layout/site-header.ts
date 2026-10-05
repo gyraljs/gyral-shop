@@ -39,6 +39,7 @@ const accountLinks = (account: AccountSummary | undefined) =>
         <summary>Hi, ${account.firstName}</summary>
         <ul>
           <li><a href="/account">Your account</a></li>
+          <li><a href="/account/orders">Your orders</a></li>
           <li>
             <form method="post" action="/account/logout">
               ${csrfField(account.csrfToken)}

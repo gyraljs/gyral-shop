@@ -137,6 +137,22 @@ export const orders = sqliteTable(
 );
 
 /** Lines snapshot names and prices as charged, so history never changes. */
+/** An order's status history, shown as the timeline on the order page (orders spec). */
+export const orderEvents = sqliteTable(
+  'order_events',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    orderId: integer('order_id')
+      .notNull()
+      .references(() => orders.id, { onDelete: 'cascade' }),
+    status: text('status', { enum: ORDER_STATUSES }).notNull(),
+    /** Customer-facing detail, e.g. "Refunded $24.99 to Visa •••• 4242". */
+    note: text('note'),
+    createdAt: createdAt(),
+  },
+  (t) => [index('order_events_order').on(t.orderId)],
+);
+
 export const orderLines = sqliteTable(
   'order_lines',
   {

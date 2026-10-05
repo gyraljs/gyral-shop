@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Create an account — Gyral Goods</title>
+    <title>Order GG-20261004-TEST — Gyral Goods</title>
     
     <!--lit-part eabATTlSz5c=--><!--lit-part hKwia4hjmL4=--><style>
 @layer reset, tokens, base, components;
@@ -394,7 +394,7 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <!--lit-part--><!--/lit-part-->
     <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
-    <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
+    <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="token" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[],"itemCount":0,"canCheckout":false,"totals":{"subtotal":{"cents":0,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":0,"currency":"USD"}}},"inFlight":0}}</script>
     <script type="module" src="/src/client/entry.ts"></script>
@@ -407,7 +407,7 @@
           
           
           
-           query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;home-kitchen&quot;,&quot;name&quot;:&quot;Home &amp; Kitchen&quot;},{&quot;slug&quot;:&quot;clothing&quot;,&quot;name&quot;:&quot;Clothing&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;beauty&quot;,&quot;name&quot;:&quot;Beauty&quot;},{&quot;slug&quot;:&quot;sports-outdoors&quot;,&quot;name&quot;:&quot;Sports &amp; Outdoors&quot;},{&quot;slug&quot;:&quot;books&quot;,&quot;name&quot;:&quot;Books&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+           query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}],&quot;account&quot;:{&quot;firstName&quot;:&quot;Grace&quot;,&quot;csrfToken&quot;:&quot;wCQX4gnrBUTlXvKN1tcgUcDdaA-tovWo6i40A9MGdlQ&quot;}}}"><template shadowroot="open" shadowrootmode="open"><style>
     @layer components {
       :host {
         display: block;
@@ -575,7 +575,19 @@
           </form>
         </search>
         <nav class="utility" aria-label="Account and cart">
-          <!--lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--/lit-part-->
+          <!--lit-part dSU5RAQw+eU=--><details class="account-menu">
+        <summary>Hi, <!--lit-part-->Grace<!--/lit-part--></summary>
+        <ul>
+          <li><a href="/account">Your account</a></li>
+          <li><a href="/account/orders">Your orders</a></li>
+          <li>
+            <form method="post" action="/account/logout">
+              <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="token" /><!--/lit-part-->
+              <button type="submit">Sign out</button>
+            </form>
+          </li>
+        </ul>
+      </details><!--/lit-part-->
           <!-- The document shell slots <shop-mini-cart> here. It must stay in the light DOM:
                Gyral components nested in another component's server-rendered shadow root get
                defer-hydration, and Gyral then never wires their intents (Gyral bug, reported). -->
@@ -589,32 +601,12 @@
                   ><!--lit-part-->Electronics<!--/lit-part--></a
                 >
               </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
-                <!--lit-node 1--><a href="/d/home-kitchen" 
-                  ><!--lit-part-->Home &amp; Kitchen<!--/lit-part--></a
-                >
-              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
-                <!--lit-node 1--><a href="/d/clothing" 
-                  ><!--lit-part-->Clothing<!--/lit-part--></a
-                >
-              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
-                <!--lit-node 1--><a href="/d/toys-games" 
-                  ><!--lit-part-->Toys &amp; Games<!--/lit-part--></a
-                >
-              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
                 <!--lit-node 1--><a href="/d/grocery" 
                   ><!--lit-part-->Grocery<!--/lit-part--></a
                 >
               </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
-                <!--lit-node 1--><a href="/d/beauty" 
-                  ><!--lit-part-->Beauty<!--/lit-part--></a
-                >
-              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
-                <!--lit-node 1--><a href="/d/sports-outdoors" 
-                  ><!--lit-part-->Sports &amp; Outdoors<!--/lit-part--></a
-                >
-              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
-                <!--lit-node 1--><a href="/d/books" 
-                  ><!--lit-part-->Books<!--/lit-part--></a
+                <!--lit-node 1--><a href="/d/toys-games" 
+                  ><!--lit-part-->Toys &amp; Games<!--/lit-part--></a
                 >
               </li><!--/lit-part--><!--/lit-part-->
         </ul>
@@ -737,162 +729,103 @@
       </details>
     <!--/lit-part--></template></shop-mini-cart
         ></shop-header>
-        <main id="main" class="page" tabindex="-1"><!--lit-part HvyH9TbXK90=-->
-  <section class="auth" aria-labelledby="title">
-    <h1 id="title">Create an account</h1>
-    <!--lit-node 2--><shop-register
-      
-      
-      
-     csrf-token="test-csrf-token" next data-gyral-seed="{&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
-  @layer components {
-    :host {
-      display: block;
-      max-inline-size: 26rem;
-    }
-    form {
-      display: grid;
-      gap: var(--space-3);
-    }
-    .field {
-      display: grid;
-      gap: var(--space-1);
-      margin: 0;
-    }
-    label {
-      font-weight: 600;
-    }
-    small {
-      color: var(--ink-muted);
-    }
-    input {
-      font: inherit;
-      padding: var(--space-2) var(--space-3);
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius);
-      background: var(--surface-raised);
-      color: var(--ink);
-    }
-    input:focus-visible {
-      outline: 2px solid var(--focus);
-      outline-offset: 1px;
-    }
-    input:user-invalid,
-    input[aria-invalid='true'] {
-      border-color: var(--danger);
-    }
-    .error {
-      color: var(--danger);
-      min-block-size: 1lh;
-      font-size: 0.9rem;
-    }
-    .form-error {
-      margin: 0;
-      padding: var(--space-2) var(--space-3);
-      border-inline-start: 4px solid var(--danger);
-      background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
-    }
-    button {
-      justify-self: start;
-      font: inherit;
-      font-weight: 600;
-      padding: var(--space-2) var(--space-4);
-      border: 0;
-      border-radius: var(--radius);
-      background: var(--brand);
-      color: var(--brand-ink);
-      cursor: pointer;
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: progress;
-    }
-    button:focus-visible {
-      outline: 2px solid var(--focus);
-      outline-offset: 2px;
-    }
-  }
-</style><!--lit-part fL+8gjksa7M=-->
-    <!--lit-node 0--><form data-intent="Register" action="/account/register" method="post">
-      <!--lit-part--><!--/lit-part--> <!--lit-part Nr23d3ua3tI=--><!--lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" />
-    <!--lit-node 1--><input type="hidden" name="next" value="" /><!--/lit-part--> <!--lit-part--><!--lit-part xjTklfAaMj4=--><p class="field">
-    <!--lit-node 1--><label for="name"><!--lit-part-->Full name<!--/lit-part--></label>
+        <main id="main" class="page" tabindex="-1"><!--lit-part gUek7cH1fTg=-->
+  <article class="order-page order-detail" data-region="order-detail" aria-labelledby="title">
+    <header>
+      <nav class="crumbs" aria-label="Breadcrumb"><!--lit-node 3--><a href="/account/orders"><!--lit-part-->Your orders<!--/lit-part--></a></nav>
+      <h1 id="title">Order <span data-component="order-number"><!--lit-part-->GG-20261004-TEST<!--/lit-part--></span></h1>
+      <p>
+        Placed <!--lit-node 9--><time datetime="2026-10-04"><!--lit-part-->Oct 4, 2026<!--/lit-part--></time>
+        <!--lit-part EoP/VLXYkGk=--><!--lit-node 0--><span class="order-status" data-component="order-status" data-status="paid"
+    ><!--lit-part-->Paid<!--/lit-part--></span
+  ><!--/lit-part-->
+      </p>
+    </header>
     <!--lit-part--><!--/lit-part-->
-    <!--lit-node 4--><input
-      id="name"
-      name="name"
-      type="text"
-      autocomplete="name"
-      
-      maxlength="80"
-      required
-      value=""
-      value=""
-      aria-describedby="name-error"
-      
-      
-    />
-    <!--lit-node 5--><span id="name-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part--><!--lit-part xjTklfAaMj4=--><p class="field">
-    <!--lit-node 1--><label for="email"><!--lit-part-->Email<!--/lit-part--></label>
-    <!--lit-part--><!--/lit-part-->
-    <!--lit-node 4--><input
-      id="email"
-      name="email"
-      type="email"
-      autocomplete="email"
-      
-      
-      required
-      value=""
-      value=""
-      aria-describedby="email-error"
-      
-      
-    />
-    <!--lit-node 5--><span id="email-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part--><!--lit-part xjTklfAaMj4=--><p class="field">
-    <!--lit-node 1--><label for="password"><!--lit-part-->Password<!--/lit-part--></label>
-    <!--lit-part oHcdvf+I3h8=--><!--lit-node 0--><small id="password-hint"><!--lit-part-->At least 10 characters.<!--/lit-part--></small><!--/lit-part-->
-    <!--lit-node 4--><input
-      id="password"
-      name="password"
-      type="password"
-      autocomplete="new-password"
-      minlength="10"
-      
-      required
-      value=""
-      
-      aria-describedby="password-hint password-error"
-      
-      
-    />
-    <!--lit-node 5--><span id="password-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part--><!--lit-part xjTklfAaMj4=--><p class="field">
-    <!--lit-node 1--><label for="confirm"><!--lit-part-->Repeat password<!--/lit-part--></label>
-    <!--lit-part--><!--/lit-part-->
-    <!--lit-node 4--><input
-      id="confirm"
-      name="confirm"
-      type="password"
-      autocomplete="new-password"
-      
-      
-      required
-      value=""
-      
-      aria-describedby="confirm-error"
-      
-      
-    />
-    <!--lit-node 5--><span id="confirm-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part--><!--/lit-part-->
-      <!--lit-node 4--><button ><!--lit-part-->Create account<!--/lit-part--></button>
-    </form>
-  <!--/lit-part--></template></shop-register>
-    <p>Already have an account? <!--lit-node 4--><a href="/account/login">Sign in</a></p>
+
+    <section data-region="order-timeline" aria-labelledby="timeline-title">
+      <h2 id="timeline-title">Status</h2>
+      <ol class="timeline">
+        <!--lit-part--><!--lit-part 9kCKmwK9UEk=--><!--lit-node 0--><li data-component="order-event" data-status="pending_payment">
+              <!--lit-part pCMtI3cckck=--><!--lit-node 0--><time datetime="2026-10-04T12:00:00.000Z"><!--lit-part-->Oct 4, 2026<!--/lit-part--></time><!--/lit-part--> <strong><!--lit-part-->Awaiting payment<!--/lit-part--></strong><!--lit-part BWZZALGVAgA=--> — <!--lit-part-->Order placed<!--/lit-part--><?><!--/lit-part-->
+            </li><!--/lit-part--><!--lit-part 9kCKmwK9UEk=--><!--lit-node 0--><li data-component="order-event" data-status="paid">
+              <!--lit-part pCMtI3cckck=--><!--lit-node 0--><time datetime="2026-10-04T12:00:00.000Z"><!--lit-part-->Oct 4, 2026<!--/lit-part--></time><!--/lit-part--> <strong><!--lit-part-->Paid<!--/lit-part--></strong><!--lit-part BWZZALGVAgA=--> — <!--lit-part-->Payment received<!--/lit-part--><?><!--/lit-part-->
+            </li><!--/lit-part--><!--/lit-part-->
+      </ol>
+    </section>
+
+    <section class="delivery" data-region="delivery" aria-labelledby="delivery-title">
+      <h2 id="delivery-title">Delivery</h2>
+      <p><!--lit-part-->Standard<!--/lit-part--></p>
+      <!--lit-part zQAv+wISgT4=--><address><!--lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Ada Lovelace<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->1 Analytical Way<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Albany, NY 12207<!--/lit-part--><br /><!--/lit-part--><!--/lit-part--></address><!--/lit-part-->
+    </section>
+
+    <!--lit-part qKPOLsJM+sM=-->
+  <section data-region="order-lines" aria-labelledby="items-title">
+    <h2 id="items-title">Items</h2>
+    <table class="order-lines">
+      <thead>
+        <tr>
+          <th scope="col">Item</th>
+          <th scope="col">Qty</th>
+          <th scope="col">Price</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!--lit-part--><!--lit-part a2l9tDHGFxw=--><tr data-component="order-line">
+              <th scope="row">
+                <!--lit-part-->LEGO<!--/lit-part--><!--lit-part--><!--/lit-part-->
+              </th>
+              <td><!--lit-part-->2<!--/lit-part--></td>
+              <td data-component="price"><!--lit-part-->$50.00<!--/lit-part--></td>
+              <td data-component="price"><!--lit-part-->$100.00<!--/lit-part--></td>
+            </tr><!--/lit-part--><!--/lit-part-->
+      </tbody>
+    </table>
   </section>
+<!--/lit-part--> <!--lit-part aw43dAvcf/8=-->
+  <section class="totals" data-region="order-totals" aria-labelledby="totals-title">
+    <h2 id="totals-title">Summary</h2>
+    <dl>
+      <!--lit-part yibPaxTiLS4=--><div class="row">
+    <dt><!--lit-part-->Subtotal<!--/lit-part--></dt>
+    <dd data-component="price"><!--lit-part-->$100.00<!--/lit-part--></dd>
+  </div><!--/lit-part-->
+      <!--lit-part--><!--/lit-part-->
+      <!--lit-part yibPaxTiLS4=--><div class="row">
+    <dt><!--lit-part-->Shipping<!--/lit-part--></dt>
+    <dd data-component="price"><!--lit-part-->$0.00<!--/lit-part--></dd>
+  </div><!--/lit-part--> <!--lit-part yibPaxTiLS4=--><div class="row">
+    <dt><!--lit-part-->Tax<!--/lit-part--></dt>
+    <dd data-component="price"><!--lit-part-->$4.00<!--/lit-part--></dd>
+  </div><!--/lit-part-->
+      <div class="row total">
+        <dt>Total charged</dt>
+        <dd data-component="price"><!--lit-part-->$104.00<!--/lit-part--></dd>
+      </div>
+      <!--lit-part--><!--/lit-part-->
+    </dl>
+    <!--lit-part 3Q3WuQ0274U=--><p>
+            Paid with <!--lit-part-->Visa<!--/lit-part--> ending <!--lit-part-->4242<!--/lit-part-->.
+          </p><!--/lit-part-->
+  </section>
+<!--/lit-part-->
+    <!--lit-part dJdn1JR8lrE=--><section data-region="order-cancel" aria-labelledby="cancel-title">
+            <h2 id="cancel-title">Cancel order</h2>
+            <details>
+              <summary>Cancel this order</summary>
+              <!--lit-node 4--><form method="post" action="/account/orders/GG-20261004-TEST/cancel" data-component="cancel-form">
+                <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="token" /><!--/lit-part-->
+                <p>
+                  We'll refund the full amount to your card and put the items back on the shelf.
+                  This can't be undone.
+                </p>
+                <button type="submit">Yes, cancel order <!--lit-part-->GG-20261004-TEST<!--/lit-part--></button>
+              </form>
+            </details>
+          </section><!--/lit-part-->
+  </article>
 <!--/lit-part--></main>
         <!--lit-part STG64S/HenM=-->
   <footer class="site-footer">
