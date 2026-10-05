@@ -8,17 +8,17 @@ import rejectedHtml from '../fixtures/login-rejected.ssr.html?raw';
 import registerHtml from '../fixtures/register.ssr.html?raw';
 import { locationDriver } from '../../src/ui/drivers/location.js';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
-let page: MountedPage | undefined;
+let page: MountedSsr | undefined;
 
 beforeAll(async () => {
   // Components register once; later mounts upgrade on insertion.
-  const first = mountSsrPage(loginHtml);
+  const first = mountSsr(loginHtml);
   await import('../../src/client/entry.js');
-  await hydrated(first.root);
+  await hydrated(first);
   first.unmount();
 });
 
@@ -28,8 +28,8 @@ afterEach(() => {
 });
 
 async function mount(html: string, tag: 'shop-login' | 'shop-register') {
-  page = mountSsrPage(html);
-  await hydrated(page.root);
+  page = mountSsr(html);
+  await hydrated(page);
   const el = page.root.querySelector(tag);
   if (el === null || el.shadowRoot === null) throw new Error(`no ${tag}`);
   const http = fakeDriver<HttpRequest>('http');
@@ -51,8 +51,8 @@ async function mount(html: string, tag: 'shop-login' | 'shop-register') {
 
 describe('sign-in page', () => {
   it('hydrates without errors and has no axe violations', async () => {
-    page = mountSsrPage(loginHtml);
-    await hydrated(page.root);
+    page = mountSsr(loginHtml);
+    await hydrated(page);
     expect(errors).not.toHaveBeenCalled();
     expect(warnings).not.toHaveBeenCalled();
     expect(await a11yViolations(page.root)).toEqual([]);
@@ -141,8 +141,8 @@ describe('sign-in page after a wrong password (no-JS render)', () => {
 
 describe('registration page', () => {
   it('hydrates without errors and has no axe violations', async () => {
-    page = mountSsrPage(registerHtml);
-    await hydrated(page.root);
+    page = mountSsr(registerHtml);
+    await hydrated(page);
     expect(errors).not.toHaveBeenCalled();
     expect(await a11yViolations(page.root)).toEqual([]);
   });

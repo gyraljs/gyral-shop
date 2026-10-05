@@ -5,11 +5,11 @@ import serverHtml from '../fixtures/cart.ssr.html?raw';
 import { OFFLINE_MESSAGE } from '../../src/ui/cart/store.js';
 import { a11yViolations } from '../support/axe.js';
 import { serverCart, stubCartApi, type ApiCall } from '../support/cart-api.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
-let page: MountedPage;
+let page: MountedSsr;
 let api: ReturnType<typeof stubCartApi>;
 
 // The fixture's cart (test/node/cart-page.test.ts): TV 2 × $450 (list $500), LEGO 3 × $50.
@@ -45,7 +45,7 @@ const lastCall = async (): Promise<ApiCall> => {
 };
 
 beforeAll(() => {
-  page = mountSsrPage(serverHtml);
+  page = mountSsr(serverHtml);
   api = stubCartApi();
 });
 
@@ -64,7 +64,7 @@ describe('cart page', () => {
   it('hydrates in place from the seeded store, with no mismatch', async () => {
     const line = cartPage().querySelector('.cart-line');
     await import('../../src/client/entry.js');
-    await hydrated(page.root);
+    await hydrated(page);
     expect(cartPage().querySelector('.cart-line')).toBe(line);
     expect(badge()).toBe('5');
     expect(api.calls).toHaveLength(0);

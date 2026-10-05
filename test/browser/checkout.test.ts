@@ -5,10 +5,10 @@ import serverHtml from '../fixtures/checkout.ssr.html?raw';
 import shippingView from '../fixtures/checkout-shipping.json';
 import paymentView from '../fixtures/checkout-payment.json';
 import { a11yViolations } from '../support/axe.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
 const errors = vi.spyOn(console, 'error');
-let page: MountedPage;
+let page: MountedSsr;
 
 interface Post {
   readonly url: string;
@@ -78,7 +78,7 @@ const nextPost = async (): Promise<Post> => {
 };
 
 beforeAll(() => {
-  page = mountSsrPage(serverHtml);
+  page = mountSsr(serverHtml);
   restoreFetch = stubCheckoutPosts();
 });
 
@@ -102,7 +102,7 @@ describe('checkout', () => {
     const name = input('name');
     name.value = 'Typed before the script loaded';
     await import('../../src/client/entry.js');
-    await hydrated(page.root);
+    await hydrated(page);
     expect(customElements.get('shop-checkout')).toBeDefined();
     expect(root().querySelector('[aria-current="step"] form')).toBe(form);
     expect(input('name')).toBe(name);

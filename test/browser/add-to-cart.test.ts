@@ -5,9 +5,9 @@ import '@gyral/ssr/hydrate';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/product.ssr.html?raw';
 import { serverCart, stubCartApi } from '../support/cart-api.js';
-import { hydrated, mountSsrPage, type MountedPage } from '../support/page.js';
+import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 
-let page: MountedPage;
+let page: MountedSsr;
 let api: ReturnType<typeof stubCartApi>;
 
 const shadowOf = (tag: string): ShadowRoot => {
@@ -19,7 +19,7 @@ const badge = () => shadowOf('shop-mini-cart').querySelector('.badge')?.textCont
 const buyBox = () => shadowOf('shop-buy-box');
 
 beforeAll(() => {
-  page = mountSsrPage(serverHtml);
+  page = mountSsr(serverHtml);
   api = stubCartApi();
 });
 
@@ -31,7 +31,7 @@ afterAll(() => {
 describe('add to cart with JavaScript', () => {
   it('updates the header badge and announces the add without leaving the page', async () => {
     await import('../../src/client/entry.js');
-    await hydrated(page.root);
+    await hydrated(page);
     expect(badge()).toBe('0');
     // Wait for the enhanced (per-option) form, then add the selected SKU.
     await vi.waitFor(() => {

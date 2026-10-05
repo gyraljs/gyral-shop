@@ -12,8 +12,3 @@ export const CSRF_META = 'csrf-token';
 /** Put inside every state-changing `<form method="post">`. */
 export const csrfField = (token: string) =>
   html`<input type="hidden" name=${CSRF_FIELD} value=${token} />`;
-
-/** Browser side: the current page's token, for `x-csrf-token` on fetches. */
-export function readCsrfToken(doc: Document = document): string | undefined {
-  return doc.querySelector(`meta[name="${CSRF_META}"]`)?.getAttribute('content') ?? undefined;
-}
