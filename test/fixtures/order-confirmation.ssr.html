@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Order GG-20261004-FXTURE placed — Gyral Goods</title>
     
-    <!--lit-part EyIJ0bnI7Mg=--><!--lit-part ClxIMWvKa2c=--><style>
+    <!--lit-part EyIJ0bnI7Mg=--><!--lit-part yorebNvZB1c=--><style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -444,6 +444,70 @@
   [data-region="error"] h1 { margin: 0; }
   [data-region="error"] form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
 }
+
+@layer components {
+  shop-search { display: block; flex: 1 1 18rem; min-inline-size: 0; }
+  shop-search form { display: flex; position: relative; }
+  shop-search .combo { flex: 1; position: relative; display: flex; min-inline-size: 0; }
+  shop-search .keys { display: flex; flex: 1; min-inline-size: 0; }
+  shop-search input {
+    flex: 1;
+    min-inline-size: 0;
+    font: inherit;
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    border-start-start-radius: var(--radius);
+    border-end-start-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+  }
+  shop-search button {
+    font: inherit;
+    font-weight: 600;
+    padding-inline: var(--space-3);
+    border: 0;
+    border-start-end-radius: var(--radius);
+    border-end-end-radius: var(--radius);
+    background: oklch(from var(--brand) calc(l - 0.15) c h);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  shop-search [role='listbox'] {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    z-index: 20;
+    margin: var(--space-1) 0 0;
+    padding: var(--space-1);
+    list-style: none;
+    background: var(--surface-raised);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-popover);
+    max-block-size: min(24rem, 60dvb);
+    overflow-y: auto;
+    container: search-suggestions / inline-size;
+  }
+  shop-search [role='listbox'][hidden] { display: none; }
+  shop-search [role='option'] {
+    display: grid;
+    gap: 0 var(--space-2);
+    grid-template-columns: 1fr auto;
+    padding: var(--space-2);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  shop-search [role='option'] .detail { color: var(--ink-muted); font-size: 0.875rem; }
+  shop-search [role='option'][data-kind='category'] .label { font-weight: 600; }
+  shop-search [role='option']:hover,
+  shop-search [role='option'][aria-selected='true'] { background: var(--surface-sunken); }
+  shop-search [role='option'][aria-selected='true'] { outline: 2px solid var(--focus); }
+
+  @container search-suggestions (inline-size < 26rem) {
+    shop-search [role='option'] { grid-template-columns: 1fr; }
+  }
+}
 </style><!--/lit-part-->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <!--lit-part--><!--/lit-part-->
@@ -455,7 +519,7 @@
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part O6iCW/Yvpmw=-->
+    <!--lit-part wzhhret//Mc=-->
         <a class="skip-link" href="#main">Skip to content</a>
         <!--lit-node 1--><shop-header
           
@@ -611,24 +675,28 @@
         white-space: nowrap;
       }
     }
-  </style><!--lit-part NV46e2OdDB0=-->
+  </style><!--lit-part jJOlMGfqhkY=-->
     <header>
       <div class="bar">
         <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
-        <search>
-          <form action="/search" method="get" role="search">
-            <label for="q" class="visually-hidden">Search products</label>
-            <!--lit-node 7--><input
-              id="q"
-              name="q"
-              type="search"
-              placeholder="Search everything"
-              autocomplete="off"
-              value=""
-            />
-            <button type="submit">Search</button>
-          </form>
-        </search>
+        <!-- The document shell slots <shop-search> (light DOM, with suggestions) here; the plain
+             form is the fallback when nothing is slotted. -->
+        <slot name="search">
+          <search>
+            <form action="/search" method="get" role="search">
+              <label for="q" class="visually-hidden">Search products</label>
+              <!--lit-node 9--><input
+                id="q"
+                name="q"
+                type="search"
+                placeholder="Search everything"
+                autocomplete="off"
+                value=""
+              />
+              <button type="submit">Search</button>
+            </form>
+          </search>
+        </slot>
         <nav class="utility" aria-label="Account and cart">
           <!--lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--/lit-part-->
           <!-- The document shell slots <shop-mini-cart> here. It must stay in the light DOM:
@@ -655,7 +723,36 @@
         </ul>
       </nav>
     </header>
-  <!--/lit-part--></template><shop-mini-cart   slot="cart" data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
+  <!--/lit-part--></template><!--lit-node 2--><shop-search   slot="search" query data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part zkDyF4njGhg=-->
+    <search data-region="search">
+      <!--gyral:lit-node 1--><form action="/search" method="get" role="search" data-intent="Submit">
+        <label for="q" class="visually-hidden">Search products</label>
+        <!--gyral:lit-node 3--><span class="combo" data-intent="Blurred" data-intent-on="focusout">
+          <!--gyral:lit-node 4--><span class="keys" data-intent="Key" data-intent-on="keydown">
+            <!--gyral:lit-node 5--><input
+              id="q"
+              name="q"
+              type="search"
+              placeholder="Search everything"
+              autocomplete="off"
+              
+              
+              
+              
+              
+              value=""
+              value=""
+              data-intent="Typed"
+            />
+          </span>
+          <!--gyral:lit-part--><!--gyral:/lit-part-->
+        </span>
+        <button type="submit">Search</button>
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
+      </form>
+    </search>
+  <!--gyral:/lit-part--></shop-search
+          ><shop-mini-cart   slot="cart" data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
     @layer reset, tokens, base, components, theme;
     @layer components {
       :host {

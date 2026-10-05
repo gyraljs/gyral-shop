@@ -6,6 +6,8 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
 import '../ui/cart/mini-cart.js'; // registers <shop-mini-cart>
+import '../ui/layout/search-box.js'; // registers <shop-search>
+import { searchCss } from '../ui/styles/search.js';
 import { CSRF_META } from '../ui/forms/csrf.js';
 import { baseCss } from '../ui/styles/base.js';
 import { catalogCss } from '../ui/styles/catalog.js';
@@ -77,7 +79,7 @@ export function shell(options: ShellOptions): Response {
   const structured = (options.jsonLd ?? [])
     .map((data) => `<script type="application/ld+json">${scriptJson(data)}</script>`)
     .join('');
-  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}${listingCss}${filtersCss}${productCss}${accountCss}${ordersCss}${memberFormCss}${contentCss}</style>`)}
+  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}${listingCss}${filtersCss}${productCss}${accountCss}${ordersCss}${memberFormCss}${contentCss}${searchCss}</style>`)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     ${
       options.canonical === undefined
@@ -105,6 +107,7 @@ export function shell(options: ShellOptions): Response {
           query=${options.query ?? ''}
           current=${options.currentDepartment ?? ''}
           .account=${options.account}
+          ><shop-search slot="search" query=${options.query ?? ''}></shop-search
           ><shop-mini-cart slot="cart" data-region="cart"></shop-mini-cart
         ></shop-header>
         <main id="main" class="page" tabindex="-1">${options.main}</main>

@@ -61,20 +61,24 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
     <header>
       <div class="bar">
         <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
-        <search>
-          <form action="/search" method="get" role="search">
-            <label for="q" class="visually-hidden">Search products</label>
-            <input
-              id="q"
-              name="q"
-              type="search"
-              placeholder="Search everything"
-              autocomplete="off"
-              .value=${props.query ?? ''}
-            />
-            <button type="submit">Search</button>
-          </form>
-        </search>
+        <!-- The document shell slots <shop-search> (light DOM, with suggestions) here; the plain
+             form is the fallback when nothing is slotted. -->
+        <slot name="search">
+          <search>
+            <form action="/search" method="get" role="search">
+              <label for="q" class="visually-hidden">Search products</label>
+              <input
+                id="q"
+                name="q"
+                type="search"
+                placeholder="Search everything"
+                autocomplete="off"
+                .value=${props.query ?? ''}
+              />
+              <button type="submit">Search</button>
+            </form>
+          </search>
+        </slot>
         <nav class="utility" aria-label="Account and cart">
           ${accountLinks(props.account)}
           <!-- The document shell slots <shop-mini-cart> here. It must stay in the light DOM:
