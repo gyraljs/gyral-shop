@@ -2,8 +2,6 @@
 // control is a POST form. With JavaScript, the same forms become intents that send messages
 // to the shared store, which updates optimistically and reconciles with the JSON API.
 import { define, fieldErrors, form, html, nothing, send } from '@gyral/core';
-import { cartCss } from '../styles/cart.js';
-import { shadowBaseCss } from '../styles/shadow-base.js';
 import { cartLines } from './cart-lines.js';
 import { cartSummary } from './cart-summary.js';
 import { PromoForm, RemoveForm, SetQuantityForm } from './schemas.js';
@@ -66,12 +64,12 @@ export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>('shop-
     const message = shown?.message ?? nothing;
     return html`
       <h1>Your cart</h1>
-      <p class="notice ${shown?.kind ?? ''}" part="notice" role="status">${message}</p>
+      <p data-component="notice" class="notice ${shown?.kind ?? ''}" role="status">${message}</p>
       ${
         cart === undefined
           ? html`<p>Loading your cart…</p>`
           : cart.lines.length === 0
-            ? html`<div class="empty" part="empty">
+            ? html`<div data-component="empty" class="empty">
                 <p>Your cart is empty.</p>
                 <p><a class="button primary" href="/">Continue shopping</a></p>
               </div>`
@@ -85,7 +83,8 @@ export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>('shop-
       }
     `;
   },
-  styles: `${shadowBaseCss}${cartCss}`,
+  // Light DOM (ADR 0006 rule 5): styled by document CSS (src/ui/styles/cart.ts).
+  shadow: false,
 });
 
 declare global {

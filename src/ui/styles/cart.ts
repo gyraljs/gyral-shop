@@ -1,7 +1,9 @@
-// Cart page styles (shadow root of <shop-cart-page>; tokens come from the document's :root).
+// Document styles for <shop-cart-page> (light DOM, ADR 0006 rule 5; tokens only, layered).
 export const cartCss = `
-@layer reset, tokens, base, components, theme;
 @layer components {
+shop-cart-page {
+  & { display: block; min-inline-size: 0; container: cart / inline-size; }
+  h1:focus:not(:focus-visible) { outline: none; }
   h1 { margin-block: var(--space-3) var(--space-2); }
   .notice:empty { display: none; }
   .notice {
@@ -19,7 +21,6 @@ export const cartCss = `
   @container cart (min-width: 52rem) {
     .layout { grid-template-columns: minmax(0, 1fr) 20rem; align-items: start; }
   }
-  :host { container: cart / inline-size; }
   .cart-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
   .cart-line {
     display: grid;
@@ -95,5 +96,6 @@ export const cartCss = `
     position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
     clip-path: inset(50%); white-space: nowrap;
   }
+}
 }
 `;

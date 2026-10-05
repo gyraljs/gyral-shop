@@ -3,7 +3,6 @@
 // form() validates first and submitForm() posts the same FormData to the same route, which
 // answers JSON (Gyral ADR 0008, "Round trip").
 import {
-  css,
   fieldErrors,
   html,
   invalid,
@@ -101,14 +100,16 @@ const text = (values: FormFields, key: string): string => {
 // setCustomValidity), but no-JS users still need errors announced (Gyral ADR 0008).
 export const fieldView = (s: AuthState, f: FieldSpec) => {
   const errors = s.errors[f.name];
-  const described = [f.hint === undefined ? '' : `${f.name}-hint`, `${f.name}-error`]
+  // Light DOM (ADR 0006 rule 5): ids share the document, so they carry a prefix.
+  const id = `auth-${f.name}`;
+  const described = [f.hint === undefined ? '' : `${id}-hint`, `${id}-error`]
     .filter((id) => id !== '')
     .join(' ');
-  return html`<p class="field">
-    <label for=${f.name}>${f.label}</label>
-    ${f.hint === undefined ? nothing : html`<small id=${`${f.name}-hint`}>${f.hint}</small>`}
+  return html`<p class="field" data-component="field">
+    <label for=${id}>${f.label}</label>
+    ${f.hint === undefined ? nothing : html`<small id=${`${id}-hint`}>${f.hint}</small>`}
     <input
-      id=${f.name}
+      id=${id}
       name=${f.name}
       type=${f.type}
       autocomplete=${f.autocomplete}
@@ -121,7 +122,7 @@ export const fieldView = (s: AuthState, f: FieldSpec) => {
       aria-invalid=${errors === undefined ? nothing : 'true'}
       ${invalid(errors)}
     />
-    <span id=${`${f.name}-error`} class="error">${errors?.join(' ') ?? nothing}</span>
+    <span id=${`${id}-error`} class="error">${errors?.join(' ') ?? nothing}</span>
   </p>`;
 };
 
@@ -130,79 +131,83 @@ export const formError = (s: AuthState) => {
   const errors = s.errors[''];
   return errors === undefined
     ? nothing
-    : html`<p class="form-error" role="alert">${errors.join(' ')}</p>`;
+    : html`<p class="form-error" role="alert" data-component="form-error">${errors.join(' ')}</p>`;
 };
 
 export const hiddenFields = (props: AuthProps) =>
   html`<input type="hidden" name=${CSRF_FIELD} value=${props.csrfToken ?? ''} />
     <input type="hidden" name="next" value=${props.next ?? ''} />`;
 
-export const authStyles = css`
-  @layer components {
-    :host {
-      display: block;
-      max-inline-size: 26rem;
-    }
-    form {
-      display: grid;
-      gap: var(--space-3);
-    }
-    .field {
-      display: grid;
-      gap: var(--space-1);
-      margin: 0;
-    }
-    label {
-      font-weight: 600;
-    }
-    small {
-      color: var(--ink-muted);
-    }
-    input {
-      font: inherit;
-      padding: var(--space-2) var(--space-3);
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius);
-      background: var(--surface-raised);
-      color: var(--ink);
-    }
-    input:focus-visible {
-      outline: 2px solid var(--focus);
-      outline-offset: 1px;
-    }
-    input:user-invalid,
-    input[aria-invalid='true'] {
-      border-color: var(--danger);
-    }
-    .error {
-      color: var(--danger);
-      min-block-size: 1lh;
-      font-size: 0.9rem;
-    }
-    .form-error {
-      margin: 0;
-      padding: var(--space-2) var(--space-3);
-      border-inline-start: 4px solid var(--danger);
-      background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
-    }
-    button {
-      justify-self: start;
-      font: inherit;
-      font-weight: 600;
-      padding: var(--space-2) var(--space-4);
-      border: 0;
-      border-radius: var(--radius);
-      background: var(--brand);
-      color: var(--brand-ink);
-      cursor: pointer;
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: progress;
-    }
-    button:focus-visible {
-      outline: 2px solid var(--focus);
-      outline-offset: 2px;
-    }
+/** Document styles for the sign-in and registration forms (light DOM, ADR 0006). */
+export const authCss = `
+@layer components {
+  :is(shop-login, shop-register) {
+
+      & {
+        display: block;
+        max-inline-size: 26rem;
+      }
+      form {
+        display: grid;
+        gap: var(--space-3);
+      }
+      .field {
+        display: grid;
+        gap: var(--space-1);
+        margin: 0;
+      }
+      label {
+        font-weight: 600;
+      }
+      small {
+        color: var(--ink-muted);
+      }
+      input {
+        font: inherit;
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface-raised);
+        color: var(--ink);
+      }
+      input:focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 1px;
+      }
+      input:user-invalid,
+      input[aria-invalid='true'] {
+        border-color: var(--danger);
+      }
+      .error {
+        color: var(--danger);
+        min-block-size: 1lh;
+        font-size: 0.9rem;
+      }
+      .form-error {
+        margin: 0;
+        padding: var(--space-2) var(--space-3);
+        border-inline-start: 4px solid var(--danger);
+        background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
+      }
+      button {
+        justify-self: start;
+        font: inherit;
+        font-weight: 600;
+        padding: var(--space-2) var(--space-4);
+        border: 0;
+        border-radius: var(--radius);
+        background: var(--brand);
+        color: var(--brand-ink);
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: progress;
+      }
+      button:focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+      }
   }
+}
 `;

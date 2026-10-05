@@ -61,7 +61,9 @@ describe('/cart', () => {
     expect(page).toMatch(/<form\s+method="post"\s+action="\/cart\/promo"/);
     expect(page).toContain(`name="_csrf" value="${visitor.session.csrfToken}"`);
     expect(page).toContain('$100.00'); // 2 × $50 line total and subtotal
-    expect(page).toMatch(/<a class="button primary" part="checkout" href="\/checkout">/);
+    expect(page).toMatch(
+      /<a data-component="checkout-link" class="button primary" href="\/checkout"\s*>/,
+    );
     expect(seededCart(page)).toMatchObject({ itemCount: 2, lines: [{ sku: SKU.lego }] });
 
     const again = await (await visitor.get('/cart')).text();

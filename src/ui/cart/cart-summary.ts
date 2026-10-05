@@ -24,7 +24,6 @@ const promoBlock = (
           data-intent=${i.ApplyPromo}
           class="promo"
           data-component="promo-code"
-          part="promo"
         >
           ${csrfField(csrf)}
           <label for="promo-code">Promo code</label>
@@ -44,7 +43,7 @@ const promoBlock = (
         </form>
       `
     : html`
-        <div class="promo applied" data-component="promo-code" part="promo">
+        <div class="promo applied" data-component="promo-code">
           <p>
             Promo code <strong>${cart.promo.code}</strong>
             ${cart.promo.applied ? 'applied.' : html`not applied: ${cart.promo.message ?? nothing}`}
@@ -68,7 +67,6 @@ export function cartSummary(
     <section
       class="summary"
       data-region="cart-summary"
-      part="summary"
       aria-labelledby="summary-heading"
       aria-busy=${updating ? 'true' : 'false'}
     >
@@ -108,12 +106,14 @@ export function cartSummary(
       ${promoBlock(cart, csrf, i, promoError)}
       ${
         cart.canCheckout
-          ? html`<a class="button primary" part="checkout" href="/checkout">Checkout</a>`
+          ? html`<a data-component="checkout-link" class="button primary" href="/checkout"
+              >Checkout</a
+            >`
           : html`
               <button
+                data-component="checkout-link"
                 type="button"
                 class="button primary"
-                part="checkout"
                 disabled
                 aria-describedby="checkout-blocked"
               >

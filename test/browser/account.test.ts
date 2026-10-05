@@ -31,21 +31,21 @@ async function mount(html: string, tag: 'shop-login' | 'shop-register') {
   page = mountSsr(html);
   await hydrated(page);
   const el = page.root.querySelector(tag);
-  if (el === null || el.shadowRoot === null) throw new Error(`no ${tag}`);
+  if (el === null) throw new Error(`no ${tag}`);
   const http = fakeDriver<HttpRequest>('http');
   const location = fakeDriver(locationDriver, { impl: () => undefined });
   el.drivers = { http, location };
   const field = (name: string) => {
-    const input = el.shadowRoot?.querySelector<HTMLInputElement>(`input[name="${name}"]`);
+    const input = el.querySelector<HTMLInputElement>(`input[name="${name}"]`);
     if (input == null) throw new Error(`no field ${name}`);
     return input;
   };
   const submit = async () => {
-    el.shadowRoot?.querySelector('form')?.requestSubmit();
+    el.querySelector('form')?.requestSubmit();
     await vi.waitFor(() => el.updateComplete);
     await el.updateComplete;
   };
-  const alert = () => el.shadowRoot?.querySelector('[role="alert"]')?.textContent.trim();
+  const alert = () => el.querySelector('[role="alert"]')?.textContent.trim();
   return { el, http, location, field, submit, alert };
 }
 

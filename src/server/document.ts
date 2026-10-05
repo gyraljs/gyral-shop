@@ -12,6 +12,8 @@ import { searchCss } from '../ui/styles/search.js';
 import { CSRF_META } from '../ui/forms/csrf.js';
 import { baseCss } from '../ui/styles/base.js';
 import { headerCss } from '../ui/styles/header.js';
+import { authCss } from '../ui/account/auth-form.js';
+import { cartCss } from '../ui/styles/cart.js';
 import { defaultThemeCss } from '../ui/themes/default.css.js';
 import { catalogCss } from '../ui/styles/catalog.js';
 import { filtersCss } from '../ui/styles/filters.js';
@@ -96,6 +98,8 @@ const DOCUMENT_STYLES = [
   filtersCss,
   productCss,
   accountCss,
+  authCss,
+  cartCss,
   ordersCss,
   memberFormCss,
   contentCss,

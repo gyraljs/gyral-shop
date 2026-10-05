@@ -21,7 +21,12 @@ const shadowOf = (root: ParentNode, tag: string): ShadowRoot => {
   if (found == null) throw new Error(`no ${tag}`);
   return found;
 };
-const cartPage = () => shadowOf(page.root, 'shop-cart-page');
+// Light DOM (ADR 0006 rule 5): the cart page's content is in the document.
+const cartPage = (): Element => {
+  const found = page.root.querySelector('shop-cart-page');
+  if (found === null) throw new Error('no shop-cart-page');
+  return found;
+};
 const badge = () => shadowOf(page.root, 'shop-mini-cart').querySelector('.badge')?.textContent;
 const button = (label: string) => {
   const found = cartPage().querySelector<HTMLButtonElement>(`button[aria-label="${label}"]`);

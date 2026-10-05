@@ -490,6 +490,176 @@
 }
 </style><style>
 @layer components {
+  :is(shop-login, shop-register) {
+
+      & {
+        display: block;
+        max-inline-size: 26rem;
+      }
+      form {
+        display: grid;
+        gap: var(--space-3);
+      }
+      .field {
+        display: grid;
+        gap: var(--space-1);
+        margin: 0;
+      }
+      label {
+        font-weight: 600;
+      }
+      small {
+        color: var(--ink-muted);
+      }
+      input {
+        font: inherit;
+        padding: var(--space-2) var(--space-3);
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        background: var(--surface-raised);
+        color: var(--ink);
+      }
+      input:focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 1px;
+      }
+      input:user-invalid,
+      input[aria-invalid='true'] {
+        border-color: var(--danger);
+      }
+      .error {
+        color: var(--danger);
+        min-block-size: 1lh;
+        font-size: 0.9rem;
+      }
+      .form-error {
+        margin: 0;
+        padding: var(--space-2) var(--space-3);
+        border-inline-start: 4px solid var(--danger);
+        background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
+      }
+      button {
+        justify-self: start;
+        font: inherit;
+        font-weight: 600;
+        padding: var(--space-2) var(--space-4);
+        border: 0;
+        border-radius: var(--radius);
+        background: var(--brand);
+        color: var(--brand-ink);
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: progress;
+      }
+      button:focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+      }
+  }
+}
+</style><style>
+@layer components {
+shop-cart-page {
+  & { display: block; min-inline-size: 0; container: cart / inline-size; }
+  h1:focus:not(:focus-visible) { outline: none; }
+  h1 { margin-block: var(--space-3) var(--space-2); }
+  .notice:empty { display: none; }
+  .notice {
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    background: var(--surface-sunken);
+    border-inline-start: 4px solid var(--ok);
+  }
+  .notice.error { border-inline-start-color: var(--danger); }
+  .layout {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @container cart (min-width: 52rem) {
+    .layout { grid-template-columns: minmax(0, 1fr) 20rem; align-items: start; }
+  }
+  .cart-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .cart-line {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr) auto;
+    grid-template-areas:
+      "thumb details total"
+      "thumb quantity remove";
+    gap: var(--space-2) var(--space-3);
+    padding-block-end: var(--space-3);
+    border-block-end: 1px solid var(--line);
+  }
+  .cart-line.has-issue .thumb { opacity: 0.6; }
+  .thumb {
+    grid-area: thumb;
+    inline-size: 5rem;
+    block-size: 5rem;
+    object-fit: cover;
+    border-radius: var(--radius);
+    background: var(--surface-sunken);
+  }
+  .details { grid-area: details; min-inline-size: 0; }
+  .details h3 { font-size: 1rem; margin: 0; }
+  .details p { margin-block: var(--space-1) 0; }
+  .options, .each { color: var(--ink-muted); font-size: 0.9rem; }
+  .unit ins { text-decoration: none; color: var(--sale); font-weight: 600; }
+  .unit del { color: var(--ink-muted); }
+  .issue { color: var(--danger); font-weight: 600; }
+  .quantity { grid-area: quantity; display: flex; align-items: center; gap: var(--space-1); flex-wrap: wrap; }
+  .quantity form { display: flex; gap: var(--space-1); }
+  .quantity input { inline-size: 4.5rem; padding: var(--space-1); }
+  .line-total { grid-area: total; margin: 0; font-weight: 700; text-align: end; font-variant-numeric: tabular-nums; }
+  .remove { grid-area: remove; justify-self: end; align-self: center; }
+  button, .button {
+    font: inherit;
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .step button { inline-size: 2.25rem; padding-inline: 0; font-weight: 700; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .button.primary { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 600; }
+  button.link { border: 0; background: none; padding: 0; text-decoration: underline; color: inherit; }
+  .summary {
+    padding: var(--space-3);
+    background: var(--surface-sunken);
+    border-radius: var(--radius);
+    display: grid;
+    /* One column no wider than the box: an auto column grows to the promo row's content. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+  .summary h2 { font-size: 1.15rem; margin: 0; }
+  .summary dl { margin: 0; display: grid; gap: var(--space-1); }
+  .summary dl div { display: flex; justify-content: space-between; gap: var(--space-2); }
+  .summary dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .summary .total { border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-2); font-weight: 700; }
+  .summary .discount dd, .savings { color: var(--sale); }
+  .summary[aria-busy="true"] dl { opacity: 0.6; }
+  .summary .button.primary { text-align: center; }
+  .updating, .blocked { color: var(--ink-muted); font-size: 0.9rem; margin: 0; }
+  .promo label { display: block; font-weight: 600; margin-block-end: var(--space-1); }
+  .promo .row { display: flex; gap: var(--space-1); }
+  .promo input { flex: 1; min-inline-size: 0; inline-size: 100%; padding: var(--space-1) var(--space-2); text-transform: uppercase; }
+  .promo .error { color: var(--danger); margin-block: var(--space-1) 0; }
+  .promo.applied p { margin: 0; }
+  .empty { padding-block: var(--space-4); }
+  .visually-hidden {
+    position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+}
+}
+</style><style>
+@layer components {
   .confirmation, .order-page {
     container: confirmation / inline-size;
     display: grid;
@@ -1371,82 +1541,14 @@ shop-checkout {
       
       
       
-     csrf-token="test-csrf-token" next data-gyral-seed="{&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
-  @layer components {
-    :host {
-      display: block;
-      max-inline-size: 26rem;
-    }
-    form {
-      display: grid;
-      gap: var(--space-3);
-    }
-    .field {
-      display: grid;
-      gap: var(--space-1);
-      margin: 0;
-    }
-    label {
-      font-weight: 600;
-    }
-    small {
-      color: var(--ink-muted);
-    }
-    input {
-      font: inherit;
-      padding: var(--space-2) var(--space-3);
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius);
-      background: var(--surface-raised);
-      color: var(--ink);
-    }
-    input:focus-visible {
-      outline: 2px solid var(--focus);
-      outline-offset: 1px;
-    }
-    input:user-invalid,
-    input[aria-invalid='true'] {
-      border-color: var(--danger);
-    }
-    .error {
-      color: var(--danger);
-      min-block-size: 1lh;
-      font-size: 0.9rem;
-    }
-    .form-error {
-      margin: 0;
-      padding: var(--space-2) var(--space-3);
-      border-inline-start: 4px solid var(--danger);
-      background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
-    }
-    button {
-      justify-self: start;
-      font: inherit;
-      font-weight: 600;
-      padding: var(--space-2) var(--space-4);
-      border: 0;
-      border-radius: var(--radius);
-      background: var(--brand);
-      color: var(--brand-ink);
-      cursor: pointer;
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: progress;
-    }
-    button:focus-visible {
-      outline: 2px solid var(--focus);
-      outline-offset: 2px;
-    }
-  }
-</style><!--lit-part fL+8gjksa7M=-->
-    <!--lit-node 0--><form data-intent="Register" action="/account/register" method="post">
-      <!--lit-part--><!--/lit-part--> <!--lit-part Nr23d3ua3tI=--><!--lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" />
-    <!--lit-node 1--><input type="hidden" name="next" value="" /><!--/lit-part--> <!--lit-part--><!--lit-part xjTklfAaMj4=--><p class="field">
-    <!--lit-node 1--><label for="name"><!--lit-part-->Full name<!--/lit-part--></label>
-    <!--lit-part--><!--/lit-part-->
-    <!--lit-node 4--><input
-      id="name"
+     csrf-token="test-csrf-token" next data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part fL+8gjksa7M=-->
+    <!--gyral:lit-node 0--><form data-intent="Register" action="/account/register" method="post">
+      <!--gyral:lit-part--><!--gyral:/lit-part--> <!--gyral:lit-part Nr23d3ua3tI=--><!--gyral:lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" />
+    <!--gyral:lit-node 1--><input type="hidden" name="next" value="" /><!--gyral:/lit-part--> <!--gyral:lit-part--><!--gyral:lit-part G/cxcqClD9Q=--><p class="field" data-component="field">
+    <!--gyral:lit-node 1--><label for="auth-name"><!--gyral:lit-part-->Full name<!--gyral:/lit-part--></label>
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+    <!--gyral:lit-node 4--><input
+      id="auth-name"
       name="name"
       type="text"
       autocomplete="name"
@@ -1455,16 +1557,16 @@ shop-checkout {
       required
       value=""
       value=""
-      aria-describedby="name-error"
+      aria-describedby="auth-name-error"
       
       
     />
-    <!--lit-node 5--><span id="name-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part--><!--lit-part xjTklfAaMj4=--><p class="field">
-    <!--lit-node 1--><label for="email"><!--lit-part-->Email<!--/lit-part--></label>
-    <!--lit-part--><!--/lit-part-->
-    <!--lit-node 4--><input
-      id="email"
+    <!--gyral:lit-node 5--><span id="auth-name-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+  </p><!--gyral:/lit-part--><!--gyral:lit-part G/cxcqClD9Q=--><p class="field" data-component="field">
+    <!--gyral:lit-node 1--><label for="auth-email"><!--gyral:lit-part-->Email<!--gyral:/lit-part--></label>
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+    <!--gyral:lit-node 4--><input
+      id="auth-email"
       name="email"
       type="email"
       autocomplete="email"
@@ -1473,16 +1575,16 @@ shop-checkout {
       required
       value=""
       value=""
-      aria-describedby="email-error"
+      aria-describedby="auth-email-error"
       
       
     />
-    <!--lit-node 5--><span id="email-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part--><!--lit-part xjTklfAaMj4=--><p class="field">
-    <!--lit-node 1--><label for="password"><!--lit-part-->Password<!--/lit-part--></label>
-    <!--lit-part oHcdvf+I3h8=--><!--lit-node 0--><small id="password-hint"><!--lit-part-->At least 10 characters.<!--/lit-part--></small><!--/lit-part-->
-    <!--lit-node 4--><input
-      id="password"
+    <!--gyral:lit-node 5--><span id="auth-email-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+  </p><!--gyral:/lit-part--><!--gyral:lit-part G/cxcqClD9Q=--><p class="field" data-component="field">
+    <!--gyral:lit-node 1--><label for="auth-password"><!--gyral:lit-part-->Password<!--gyral:/lit-part--></label>
+    <!--gyral:lit-part oHcdvf+I3h8=--><!--gyral:lit-node 0--><small id="auth-password-hint"><!--gyral:lit-part-->At least 10 characters.<!--gyral:/lit-part--></small><!--gyral:/lit-part-->
+    <!--gyral:lit-node 4--><input
+      id="auth-password"
       name="password"
       type="password"
       autocomplete="new-password"
@@ -1491,16 +1593,16 @@ shop-checkout {
       required
       value=""
       
-      aria-describedby="password-hint password-error"
+      aria-describedby="auth-password-hint auth-password-error"
       
       
     />
-    <!--lit-node 5--><span id="password-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part--><!--lit-part xjTklfAaMj4=--><p class="field">
-    <!--lit-node 1--><label for="confirm"><!--lit-part-->Repeat password<!--/lit-part--></label>
-    <!--lit-part--><!--/lit-part-->
-    <!--lit-node 4--><input
-      id="confirm"
+    <!--gyral:lit-node 5--><span id="auth-password-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+  </p><!--gyral:/lit-part--><!--gyral:lit-part G/cxcqClD9Q=--><p class="field" data-component="field">
+    <!--gyral:lit-node 1--><label for="auth-confirm"><!--gyral:lit-part-->Repeat password<!--gyral:/lit-part--></label>
+    <!--gyral:lit-part--><!--gyral:/lit-part-->
+    <!--gyral:lit-node 4--><input
+      id="auth-confirm"
       name="confirm"
       type="password"
       autocomplete="new-password"
@@ -1509,15 +1611,15 @@ shop-checkout {
       required
       value=""
       
-      aria-describedby="confirm-error"
+      aria-describedby="auth-confirm-error"
       
       
     />
-    <!--lit-node 5--><span id="confirm-error" class="error"><!--lit-part--><!--/lit-part--></span>
-  </p><!--/lit-part--><!--/lit-part-->
-      <!--lit-node 4--><button ><!--lit-part-->Create account<!--/lit-part--></button>
+    <!--gyral:lit-node 5--><span id="auth-confirm-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+  </p><!--gyral:/lit-part--><!--gyral:/lit-part-->
+      <!--gyral:lit-node 4--><button ><!--gyral:lit-part-->Create account<!--gyral:/lit-part--></button>
     </form>
-  <!--/lit-part--></template></shop-register>
+  <!--gyral:/lit-part--></shop-register>
     <p>Already have an account? <!--lit-node 4--><a href="/account/login">Sign in</a></p>
   </section>
 <!--/lit-part--></main>

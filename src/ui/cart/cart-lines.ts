@@ -39,11 +39,7 @@ function lineTemplate(line: CartLine, csrf: string, i: LineIntents) {
   const options = optionText(line.options);
   const max = Math.max(line.maxQuantity, 1);
   return html`
-    <li
-      class="cart-line ${line.issue === undefined ? '' : 'has-issue'}"
-      data-component="cart-line"
-      part="line"
-    >
+    <li class="cart-line ${line.issue === undefined ? '' : 'has-issue'}" data-component="cart-line">
       ${
         line.image === undefined
           ? html`<span class="thumb"></span>`
@@ -73,7 +69,7 @@ function lineTemplate(line: CartLine, csrf: string, i: LineIntents) {
             : html`<p class="issue" id="issue-${id}">${lineIssueMessage(line.issue)}</p>`
         }
       </div>
-      <div class="quantity" data-component="quantity" part="quantity">
+      <div class="quantity" data-component="quantity">
         ${stepForm(line, line.quantity - 1, `Decrease quantity of ${line.productName}`, '−', line.quantity <= 1, csrf, i.SetQuantity)}
         <form method="post" action="/cart/update" data-intent=${i.SetQuantity} class="set">
           ${csrfField(csrf)}
@@ -94,7 +90,7 @@ function lineTemplate(line: CartLine, csrf: string, i: LineIntents) {
         </form>
         ${stepForm(line, line.quantity + 1, `Increase quantity of ${line.productName}`, '+', line.quantity >= line.maxQuantity, csrf, i.SetQuantity)}
       </div>
-      <p class="line-total" data-component="price" part="line-total">${format(line.lineTotal)}</p>
+      <p class="line-total" data-component="price">${format(line.lineTotal)}</p>
       <form method="post" action="/cart/remove" data-intent=${i.Remove} class="remove">
         ${csrfField(csrf)}
         <input type="hidden" name="sku" value=${line.sku} />
@@ -105,7 +101,7 @@ function lineTemplate(line: CartLine, csrf: string, i: LineIntents) {
 }
 
 export const cartLines = (lines: readonly CartLine[], csrf: string, i: LineIntents) => html`
-  <ul class="cart-lines" part="lines">
+  <ul data-component="cart-lines" class="cart-lines">
     ${repeat(
       lines,
       (l) => l.sku,

@@ -2,7 +2,6 @@ import { define, form, html, type IntentRejected } from '@gyral/core';
 import { MAX_NAME_LENGTH, MIN_PASSWORD_LENGTH } from '../../domain/accounts.js';
 import { goTo } from '../drivers/location.js';
 import {
-  authStyles,
   failed,
   fieldView,
   formError,
@@ -64,7 +63,8 @@ export const RegisterFormElement = define<AuthState, RegisterMsg, AuthProps>('sh
       <button ?disabled=${s.pending}>${s.pending ? 'Creating account…' : 'Create account'}</button>
     </form>
   `,
-  styles: authStyles,
+  // Light DOM (ADR 0006 rule 5): styled by document CSS (authCss).
+  shadow: false,
 });
 
 declare global {

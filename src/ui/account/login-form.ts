@@ -1,7 +1,6 @@
 import { define, form, html, type IntentRejected } from '@gyral/core';
 import { goTo } from '../drivers/location.js';
 import {
-  authStyles,
   failed,
   fieldView,
   formError,
@@ -49,7 +48,8 @@ export const LoginFormElement = define<AuthState, LoginMsg, AuthProps>('shop-log
       <button ?disabled=${s.pending}>${s.pending ? 'Signing in…' : 'Sign in'}</button>
     </form>
   `,
-  styles: authStyles,
+  // Light DOM (ADR 0006 rule 5): styled by document CSS (authCss).
+  shadow: false,
 });
 
 declare global {
