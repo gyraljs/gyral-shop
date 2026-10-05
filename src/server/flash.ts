@@ -2,7 +2,7 @@
 // read and cleared by the next page that renders it (e.g. the cart page). Hono URL-encodes
 // cookie values, so the JSON is stored as is.
 import type { Context } from 'hono';
-import { generateCookie, getCookie, setCookie } from 'hono/cookie';
+import { generateCookie, getCookie } from 'hono/cookie';
 import * as v from 'valibot';
 import { isHttps } from './security/request.js';
 import { queueCookie } from './security/sessions.js';
@@ -16,13 +16,18 @@ const Flash = v.object({
 export type Flash = v.InferOutput<typeof Flash>;
 
 export function setFlash(c: Context, flash: Flash): void {
-  setCookie(c, FLASH_COOKIE, JSON.stringify(flash), {
-    httpOnly: true,
-    sameSite: 'Lax',
-    path: '/',
-    secure: isHttps(c),
-    maxAge: 60,
-  });
+  // Queued, not setCookie(c, …): routes such as formAction() return their own Response,
+  // which would drop cookies set on the context.
+  queueCookie(
+    c,
+    generateCookie(FLASH_COOKIE, JSON.stringify(flash), {
+      httpOnly: true,
+      sameSite: 'Lax',
+      path: '/',
+      secure: isHttps(c),
+      maxAge: 60,
+    }),
+  );
 }
 
 /** The pending flash message, if any; clears it so it shows once. */

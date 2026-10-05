@@ -8,7 +8,7 @@ import type { Db } from '../../db/client.js';
 import { registerErrorMessage, registerMember } from '../../services/accounts.js';
 import { authenticate, loginErrorMessage, normalizeEmail } from '../../services/auth.js';
 import { LoginForm, RegisterForm, SECRET_FIELDS } from '../../ui/account/schemas.js';
-import { accountPage, loginPage, registerPage } from '../../ui/pages/account.js';
+import { loginPage, registerPage } from '../../ui/pages/account.js';
 import type { RenderPage } from '../document.js';
 import {
   csrfTokenFor,
@@ -16,7 +16,6 @@ import {
   ip,
   limit,
   LIMITS,
-  requireUser,
   safeNext,
   SlidingWindowLimiter,
   startMemberSession,
@@ -141,18 +140,6 @@ export function accountRoutes({ db, render, now = Date.now }: AccountRouteOption
   app.post('/account/logout', async (c) => {
     await endSession(c);
     return wantsJson(c) ? c.json({ _tag: 'SignedOut' }) : c.redirect('/', 303);
-  });
-
-  app.get('/account', requireUser(), async (c) => {
-    const user = c.get('user');
-    if (user === undefined) return c.notFound(); // requireUser() already redirected guests
-    return noStore(
-      await render({
-        title: 'Your account',
-        noindex: true,
-        main: accountPage({ ...user, csrfToken: await csrfTokenFor(c) }),
-      }),
-    );
   });
 
   return app;
