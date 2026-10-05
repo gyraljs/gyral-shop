@@ -26,6 +26,8 @@ import { placeholderSvg } from './placeholder-image.js';
 import { productLabel } from '../db/repos/catalog.js';
 import { devMailRoutes } from './routes/dev-mail.js';
 import { seoRoutes } from './routes/seo.js';
+import { consentRoutes } from './routes/consent.js';
+import { analyticsMiddleware } from './analytics.js';
 import { organizationJsonLd, twitterCard, websiteJsonLd } from './seo.js';
 
 export interface AppOptions {
@@ -104,6 +106,7 @@ export function createApp({
       }),
   });
 
+  app.use('*', analyticsMiddleware(db)); // consented page views and add-to-cart only
   app.get(
     '/favicon.svg',
     () => new Response(FAVICON, { headers: { 'content-type': 'image/svg+xml' } }),
@@ -145,6 +148,7 @@ export function createApp({
   });
 
   app.route('/', seoRoutes({ db }));
+  app.route('/', consentRoutes({ render: page }));
   app.route('/', catalogRoutes({ db, render: page }));
   const millis = () => services.now().getTime();
   app.route('/', accountRoutes({ db, render: page, now: millis }));

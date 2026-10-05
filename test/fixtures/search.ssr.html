@@ -51,11 +51,16 @@
     color: var(--ink);
     min-block-size: 100dvb;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    /* header, consent banner (only for undecided visitors; empty otherwise), main, footer */
+    grid-template-rows: auto auto 1fr auto;
     /* One column no wider than the viewport: an auto column would grow to the widest
        unwrapped content (the department nav) and overflow phones. */
     grid-template-columns: minmax(0, 1fr);
   }
+  body > shop-header { grid-row: 1; }
+  body > shop-consent { grid-row: 2; }
+  body > main { grid-row: 3; }
+  body > .site-footer { grid-row: 4; }
   a { color: inherit; }
   /* Form controls take the page font (shadow roots get this from shadow-base.ts). */
   button, input, select, textarea { font: inherit; }
@@ -600,6 +605,43 @@ shop-checkout {
     shop-search [role='option'] { grid-template-columns: 1fr; }
   }
 }
+</style><style>
+@layer components {
+  shop-consent { display: block; }
+  /* In the page flow under the header: visible on arrival, never covering content. */
+  .consent-banner {
+    padding: var(--space-3);
+    background: var(--surface-raised);
+    color: var(--ink);
+    border-block-end: 1px solid var(--line-strong);
+  }
+  .consent-banner > * { max-inline-size: var(--page-max); margin-inline: auto; }
+  .consent h2 { margin-block: 0 var(--space-2); font-size: 1.1rem; }
+  .consent p { margin-block: 0 var(--space-2); }
+  .consent-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .consent button {
+    font: inherit;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--brand);
+    background: var(--brand);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  .consent button[value='reject'],
+  .consent button[value='save'] { background: var(--surface-raised); color: var(--ink); }
+  .consent button:disabled { opacity: 0.6; cursor: progress; }
+  .consent-custom { margin-block-start: var(--space-2); }
+  .consent-custom summary { cursor: pointer; inline-size: fit-content; }
+  .consent-custom fieldset {
+    display: grid;
+    gap: var(--space-2);
+    margin-block: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .consent-custom small { color: var(--ink-muted); }
+}
 </style><!--lit-part eVKfaNMXC80=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part--><!--/lit-part-->
     <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
@@ -609,7 +651,7 @@ shop-checkout {
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part wzhhret//Mc=-->
+    <!--lit-part c1TASRG0OaM=-->
         <a class="skip-link" href="#main">Skip to content</a>
         <!--lit-node 1--><shop-header
           
@@ -979,6 +1021,53 @@ shop-checkout {
       </details>
     <!--/lit-part--></template></shop-mini-cart
         ></shop-header>
+        <!--lit-part 4beU1UUCQrU=--><!--lit-node 0--><shop-consent   mode="banner" return-to="/search?q=quokka" data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part cld6gESxFdA=-->
+      <!--gyral:lit-node 0--><section
+        class="consent consent-banner"
+        data-region="consent"
+        aria-labelledby="consent-title"
+      >
+        <h2 id="consent-title"><!--gyral:lit-part-->Cookies on Gyral Goods<!--gyral:/lit-part--></h2>
+        <p>
+          We use strictly necessary cookies to run the store (your session, cart and security). With
+          your permission we also count page views and add-to-cart clicks to improve the store.
+          Nothing is shared with anyone.
+        </p>
+        <!--gyral:lit-node 4--><form method="post" action="/consent" data-intent="Choose">
+          <!--gyral:lit-node 5--><input type="hidden" name="return" value="/search?q=quokka" />
+          <div class="consent-actions" data-component="consent-actions">
+            <!--gyral:lit-node 7--><button type="submit" name="choice" value="accept" >
+              Accept all
+            </button>
+            <!--gyral:lit-node 8--><button type="submit" name="choice" value="reject" >
+              Reject non-essential
+            </button>
+          </div>
+          <!--gyral:lit-node 9--><details class="consent-custom" data-component="consent-custom" >
+            <summary>Customize</summary>
+            <fieldset>
+              <legend>Cookie categories</legend>
+              <label>
+                <input type="checkbox" checked disabled />
+                Strictly necessary <small>(always on)</small>
+              </label>
+              <label>
+                <!--gyral:lit-node 17--><input
+                  type="checkbox"
+                  name="analytics"
+                  
+                />
+                Analytics <small>(page views and add-to-cart clicks)</small>
+              </label>
+            </fieldset>
+            <!--gyral:lit-node 19--><button type="submit" name="choice" value="save" >
+              Save choices
+            </button>
+          </details>
+        </form>
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
+      </section>
+    <!--gyral:/lit-part--></shop-consent><!--/lit-part-->
         <main id="main" class="page" tabindex="-1"><!--lit-part 2DpPLunvXm0=--><!--lit-node 0--><shop-listing  data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;basePath&quot;:&quot;/search&quot;,&quot;api&quot;:&quot;/api/listing/search&quot;,&quot;fixedQuery&quot;:&quot;q=quokka&quot;,&quot;heading&quot;:&quot;Results for “quokka”&quot;,&quot;context&quot;:&quot;&quot;,&quot;relevanceLabel&quot;:&quot;Best match&quot;,&quot;state&quot;:{&quot;page&quot;:1,&quot;sort&quot;:&quot;relevance&quot;,&quot;minPrice&quot;:null,&quot;maxPrice&quot;:null,&quot;brands&quot;:[],&quot;rating&quot;:null,&quot;inStock&quot;:false,&quot;onSale&quot;:false},&quot;cards&quot;:[{&quot;slug&quot;:&quot;quokka-lamp&quot;,&quot;name&quot;:&quot;Quokka Lamp&quot;,&quot;brand&quot;:&quot;Ampere &amp; Co&quot;,&quot;priceCents&quot;:3000,&quot;salePriceCents&quot;:null,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false},{&quot;slug&quot;:&quot;desk-fan&quot;,&quot;name&quot;:&quot;Zircon Desk Fan&quot;,&quot;brand&quot;:&quot;Quokka Works&quot;,&quot;priceCents&quot;:1000,&quot;salePriceCents&quot;:null,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false},{&quot;slug&quot;:&quot;plain-stool&quot;,&quot;name&quot;:&quot;Zircon Plain Stool&quot;,&quot;brand&quot;:&quot;Ampere &amp; Co&quot;,&quot;priceCents&quot;:2000,&quot;salePriceCents&quot;:1500,&quot;rating&quot;:3.6,&quot;ratingCount&quot;:5,&quot;image&quot;:null,&quot;inStock&quot;:false}],&quot;total&quot;:3,&quot;pageCount&quot;:1,&quot;brands&quot;:[{&quot;slug&quot;:&quot;ampere-co&quot;,&quot;name&quot;:&quot;Ampere &amp; Co&quot;,&quot;count&quot;:2},{&quot;slug&quot;:&quot;quokka-works&quot;,&quot;name&quot;:&quot;Quokka Works&quot;,&quot;count&quot;:1}]}}}" data-gyral-light><!--gyral:lit-part +Bv5CD3mOGM=-->
       <section class="listing-results" data-region="listing" aria-labelledby="listing-title">
         <header class="listing-header">
@@ -1251,7 +1340,7 @@ shop-checkout {
         <!--gyral:lit-part--><!--gyral:/lit-part-->
       </section>
     <!--gyral:/lit-part--></shop-listing><!--/lit-part--></main>
-        <!--lit-part STG64S/HenM=-->
+        <!--lit-part 72kieget6kI=-->
   <footer class="site-footer">
     <div class="page">
       <nav aria-label="Site">
@@ -1261,6 +1350,7 @@ shop-checkout {
           <li><a href="/contact">Contact</a></li>
           <li><a href="/terms">Terms</a></li>
           <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/consent">Cookie settings</a></li>
         </ul>
       </nav>
       <p>

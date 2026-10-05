@@ -31,8 +31,25 @@ function crossSite(request: Request): boolean {
   return origin !== null && origin !== 'null' && origin !== new URL(request.url).origin;
 }
 
+/**
+ * Paths verified by origin alone (no session token): the consent form is shown to every
+ * first-time visitor, and requiring a token would start a session for each of them. These
+ * requests must prove they come from this site with `Origin` or `Sec-Fetch-Site` (OWASP's
+ * standard-header verification); a request with neither is refused. ADR 0002 addendum.
+ */
+export const ORIGIN_VERIFIED_PATHS: ReadonlySet<string> = new Set(['/consent']);
+
+function provenSameOrigin(request: Request): boolean {
+  const origin = request.headers.get('origin');
+  if (origin !== null) return origin === new URL(request.url).origin;
+  return request.headers.get('sec-fetch-site') === 'same-origin';
+}
+
 export const csrfMiddleware = (): MiddlewareHandler<AppEnv> => async (c, next) => {
   if (SAFE_METHODS.has(c.req.method)) return next();
+  if (ORIGIN_VERIFIED_PATHS.has(c.req.path)) {
+    return provenSameOrigin(c.req.raw) ? next() : reject(c, 'csrf');
+  }
   const session = c.get('session');
   const token = await submittedToken(c.req.raw);
   if (crossSite(c.req.raw) || session === undefined || token === undefined) {

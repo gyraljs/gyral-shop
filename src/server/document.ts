@@ -7,6 +7,9 @@ import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
 import '../ui/cart/mini-cart.js'; // registers <shop-mini-cart>
 import '../ui/layout/search-box.js'; // registers <shop-search>
+import '../ui/consent/consent.js'; // registers <shop-consent>
+import { consentCss } from '../ui/styles/consent.js';
+import { currentConsent, currentPath } from './consent.js';
 import { searchCss } from '../ui/styles/search.js';
 import { CSRF_META } from '../ui/forms/csrf.js';
 import { baseCss } from '../ui/styles/base.js';
@@ -67,6 +70,7 @@ const footer = html`
           <li><a href="/contact">Contact</a></li>
           <li><a href="/terms">Terms</a></li>
           <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/consent">Cookie settings</a></li>
         </ul>
       </nav>
       <p>
@@ -89,7 +93,16 @@ const DOCUMENT_STYLES = [
   contentCss,
   checkoutCss,
   searchCss,
+  consentCss,
 ];
+
+/** The consent banner for undecided visitors (never on the settings page itself). */
+function consentBanner() {
+  const { decided } = currentConsent();
+  const path = currentPath();
+  if (decided || path.startsWith('/consent')) return nothing;
+  return html`<shop-consent mode="banner" return-to=${path}></shop-consent>`;
+}
 
 export function shell(options: ShellOptions): Response {
   const structured = (options.jsonLd ?? [])
@@ -125,6 +138,7 @@ export function shell(options: ShellOptions): Response {
           ><shop-search slot="search" query=${options.query ?? ''}></shop-search
           ><shop-mini-cart slot="cart" data-region="cart"></shop-mini-cart
         ></shop-header>
+        ${consentBanner()}
         <main id="main" class="page" tabindex="-1">${options.main}</main>
         ${footer}
       `,
