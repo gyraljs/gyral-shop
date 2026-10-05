@@ -43,18 +43,19 @@ const pageFailed = (p) => Boolean(p.error) || p.shots.some((s) => shotFailures(s
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 const OUT = '.ui-check';
-// Declared below once options are parsed: baselines are kept per theme.
+const BASELINE_ROOT = join(OUT, 'baseline');
 const SCENARIOS = 'ui-scenarios';
 const DB_FILE = join(OUT, 'db', 'shop.db');
 const DATABASE_URL = `file:${DB_FILE}`;
 
 const { options, errors, usage } = parseArgs(process.argv.slice(2), process.env);
-const BASELINE = join(OUT, options.theme === undefined ? 'baseline' : `baseline-${options.theme}`);
 if (errors.length > 0) {
   if (!errors.includes('help')) console.error(errors.join('\n'));
   console.error(usage);
   process.exit(errors.includes('help') ? 0 : 2);
 }
+// Each theme keeps its own baseline: the default theme's screenshots stay where they were.
+const BASELINE = options.theme === '' ? BASELINE_ROOT : join(BASELINE_ROOT, options.theme);
 
 const allNames = readdirSync(SCENARIOS)
   .filter((f) => f.endsWith('.mjs'))
@@ -270,8 +271,9 @@ async function checkPage(browser, p, base, runDir) {
         colorScheme: scheme,
         reducedMotion: 'reduce',
       });
-      // Visit with the requested theme (ADR 0006 rule 8: the theme cookie picks the stylesheet).
-      if (options.theme !== undefined)
+      // Theme runs set the cookie the server reads (ADR 0006 switching); every page in the
+      // context then renders with that theme's stylesheet.
+      if (options.theme !== '')
         await context.addCookies([{ name: 'theme', value: options.theme, url: base }]);
       const page = await context.newPage();
       const entries = [];
@@ -357,7 +359,9 @@ try {
   server.stop();
 }
 
-const mode = options.baseline ? 'baseline saved' : options.compare ? 'compared with baseline' : '';
+const run = options.baseline ? 'baseline saved' : options.compare ? 'compared with baseline' : '';
+const mode =
+  options.theme === '' ? run : [`theme ${options.theme}`, run].filter(Boolean).join(', ');
 writeFileSync(join(runDir, 'report.md'), renderReport({ startedAt, mode, pages }));
 const failed = pages.filter(pageFailed);
 console.log(`\nReport: ${join(runDir, 'report.md')}`);

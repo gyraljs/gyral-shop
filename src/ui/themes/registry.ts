@@ -2,9 +2,16 @@
 // never imports theme CSS; it receives names, labels and stylesheet URLs as props.
 import { boutiqueTheme } from './boutique.css.js';
 import { defaultTheme } from './default.css.js';
+import { marketplaceTheme } from './marketplace.css.js';
+import { supercenterTheme } from './supercenter.css.js';
 import type { ThemeDefinition } from './theme.js';
 
-export const THEMES: readonly ThemeDefinition[] = [defaultTheme, boutiqueTheme];
+export const THEMES: readonly ThemeDefinition[] = [
+  defaultTheme,
+  marketplaceTheme,
+  supercenterTheme,
+  boutiqueTheme,
+];
 
 export const DEFAULT_THEME = defaultTheme.name;
 

@@ -42,7 +42,11 @@ export async function swapThemeLink(swap: ThemeSwap, doc: Document = document): 
   }
   const run = () => loadNext(current, swap);
   if ('startViewTransition' in doc && !prefersReducedMotion()) {
-    await doc.startViewTransition(run).finished;
+    const transition = doc.startViewTransition(run);
+    // A newer transition skips this one and rejects its `ready` promise ("Transition was
+    // skipped"); the swap itself still runs, so that rejection is expected, not an error.
+    transition.ready.catch(() => undefined);
+    await transition.finished;
   } else {
     await run();
   }

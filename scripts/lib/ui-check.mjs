@@ -14,13 +14,14 @@ export const PRIMARY = { viewport: 'desktop', scheme: 'light' };
 /** Console messages that are expected in development and never fail a run. */
 export const IGNORED_CONSOLE = [/Lit is in dev mode/, /^\[vite\]/];
 
-const USAGE = `Usage: pnpm ui:check [page…] [--baseline] [--compare] [--threshold=0.1] [--max-diff=0.001] [--port=5800] [--theme=<name>]
+const USAGE = `Usage: pnpm ui:check [page…] [--baseline] [--compare] [--threshold=0.1] [--max-diff=0.001] [--port=5800]
   --baseline     save this run's screenshots as the baseline (.ui-check/baseline/)
   --compare      pixel-diff screenshots against the baseline; fail above --max-diff
   --threshold    per-pixel colour threshold for the diff, 0..1 (default 0.1)
   --max-diff     allowed ratio of differing pixels per screenshot (default 0.001)
   --port         port for the shop dev server (default 5800, or UI_CHECK_PORT); HMR uses port+1
-  --theme        visit every page with this theme cookie (or UI_CHECK_THEME); baselines are per theme`;
+  --theme        run every page under this theme (sets the theme cookie, or UI_THEME); its
+                 baseline lives in .ui-check/baseline/<theme>/`;
 
 export function parseArgs(argv, env = {}) {
   const options = {
@@ -30,7 +31,7 @@ export function parseArgs(argv, env = {}) {
     threshold: 0.1,
     maxDiff: 0.001,
     port: Number(env['UI_CHECK_PORT'] ?? 5800),
-    theme: env['UI_CHECK_THEME'] ?? undefined,
+    theme: env['UI_THEME'] ?? '',
   };
   const errors = [];
   for (const arg of argv) {
