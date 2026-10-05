@@ -83,9 +83,10 @@ describe('saving a promo code', () => {
       usageLimit: 100,
       active: true,
     });
-    expect(row?.startsAt?.toISOString()).toBe('2026-11-27T00:00:00.000Z');
-    // The last day counts in full: the code stops when Dec 1 starts.
-    expect(row?.endsAt?.toISOString()).toBe('2026-12-01T00:00:00.000Z');
+    // Days are the store's (America/New_York, EST in late November): local midnight is 05:00Z.
+    expect(row?.startsAt?.toISOString()).toBe('2026-11-27T05:00:00.000Z');
+    // The last day counts in full: the code stops when Dec 1 starts in New York.
+    expect(row?.endsAt?.toISOString()).toBe('2026-12-01T05:00:00.000Z');
     const edit = v.parse(
       PromoEditSchema,
       (await getJson(admin, `/api/admin/promos/${String(id)}`)).body,

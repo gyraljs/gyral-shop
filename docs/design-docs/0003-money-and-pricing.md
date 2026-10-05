@@ -26,3 +26,12 @@ Status: **accepted** (2026-10-04)
 - Cancelling a paid order moves straight to `cancelled`, with a full refund as an effect.
 - An invalid promo code never fails pricing: the breakdown carries `promoError` instead.
 - The mock provider charges any Luhn-valid card except the documented failure cards.
+
+## Addendum: promo dates and store days (2026-10-05)
+
+- Promo windows are entered as calendar days in the store's time zone (config
+  `STORE_TIME_ZONE`, IANA, default `America/New_York`). The first day starts at its local
+  midnight; the last day counts in full, so `endsAt` is the next day's local midnight.
+- The admin dashboard's "today", 7-day and 30-day windows start at local midnights in the same
+  zone (`src/domain/time-zone.ts`), so a window across a daylight-saving change is an hour shorter
+  or longer. Instants are stored in UTC throughout.

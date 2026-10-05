@@ -6,13 +6,8 @@ import { formAction } from '@gyral/ssr';
 import * as v from 'valibot';
 import { REVIEW_FILTERS, TAXON_KINDS } from '../../domain/admin-manage.js';
 import type { Services } from '../../services/container.js';
-import {
-  adminPromos,
-  deletePromo,
-  editablePromo,
-  savePromo,
-  type DayStart,
-} from '../../services/admin-promos.js';
+import { adminPromos, deletePromo, editablePromo, savePromo } from '../../services/admin-promos.js';
+import { dayOfIn, dayStartIn } from '../../domain/time-zone.js';
 import { adminReviews, moderateReview } from '../../services/admin-reviews.js';
 import { adminTaxonomy, archiveTaxon, createTaxon } from '../../services/admin-taxonomy.js';
 import { adminUsers, changeUser } from '../../services/admin-users.js';
@@ -41,24 +36,25 @@ const searchOf = (c: C) => {
 
 export interface AdminManageOptions {
   readonly services: Services;
-  /** How promo form dates become instants (the store's time zone). */
-  readonly dayStart?: DayStart;
 }
 
-export function adminManageRoutes({ services, dayStart }: AdminManageOptions): Hono<AppEnv> {
+export function adminManageRoutes({ services }: AdminManageOptions): Hono<AppEnv> {
   const routes = new Hono<AppEnv>();
   const { db } = services;
+  // Promo dates are calendar days in the store's time zone.
+  const dayStart = (day: string) => dayStartIn(day, services.timeZone);
+  const dayOf = (instant: Date) => dayOfIn(instant, services.timeZone);
   routes.use('/api/admin/*', requireAdmin());
   const notFound = (c: C) => adminFailure(c, { _tag: 'NotFound' });
 
   // ── Promo codes ──
   routes.get('/api/admin/promos', async (c) => {
-    const result = await adminPromos(db, c.get('user'), services.now());
+    const result = await adminPromos(db, c.get('user'), services.now(), dayOf);
     return result.ok ? c.json(result.value, 200, NO_STORE) : adminFailure(c, result.error);
   });
 
   const promoForm = async (c: C, id: number | undefined) => {
-    const result = await editablePromo(db, c.get('user'), id, services.now());
+    const result = await editablePromo(db, c.get('user'), id, services.now(), dayOf);
     return result.ok ? c.json(result.value, 200, NO_STORE) : adminFailure(c, result.error);
   };
   routes.get('/api/admin/promos/new', (c) => promoForm(c, undefined));

@@ -46,7 +46,12 @@ export function adminRoutes({ services, render }: AdminRoutesOptions): Hono<AppE
   routes.get('/admin/*', shell);
 
   routes.get('/api/admin/dashboard', async (c) => {
-    const result = await adminDashboard(services.db, c.get('user'), services.now());
+    const result = await adminDashboard(
+      services.db,
+      c.get('user'),
+      services.now(),
+      services.timeZone,
+    );
     return result.ok ? c.json(result.value, 200, NO_STORE) : forbidden(c);
   });
 

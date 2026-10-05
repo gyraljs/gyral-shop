@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { isTimeZone } from '../domain/time-zone.js';
 
 /** Settings parsed once at startup (parse, don't validate: docs/design-docs/core-beliefs.md). */
 const Env = v.object({
@@ -20,6 +21,11 @@ const Env = v.object({
       v.transform((u) => new URL(u).origin),
     ),
     'http://localhost:5200',
+  ),
+  /** The store's IANA time zone: dashboard days and promo dates use its calendar. */
+  STORE_TIME_ZONE: v.optional(
+    v.pipe(v.string(), v.check(isTimeZone, 'Use an IANA time zone such as America/New_York.')),
+    'America/New_York',
   ),
   /** Signs values such as order-confirmation access cookies. Required in production. */
   APP_SECRET: v.optional(v.pipe(v.string(), v.minLength(32))),

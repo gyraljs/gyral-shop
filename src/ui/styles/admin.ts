@@ -201,7 +201,10 @@ export const adminCss = `
   .admin-review p { margin: 0; }
   .admin-review[data-hidden='yes'] { border-style: dashed; }
   .admin-review[data-hidden='yes'] > :not(form) { color: var(--ink-muted); }
-  .admin-page [data-component='result-count'] { margin: 0; color: var(--ink-muted); }
+  .admin-page :is([data-component='result-count'], [data-component='time-zone']) {
+    margin: 0;
+    color: var(--ink-muted);
+  }
   .admin-taxa { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
   .admin-taxa .admin-taxa { padding-inline-start: var(--space-4); border-inline-start: 2px solid var(--line); }
   .admin-taxa > li { display: grid; gap: var(--space-1); padding-block: var(--space-2); border-block-end: 1px solid var(--line); }

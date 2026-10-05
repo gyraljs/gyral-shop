@@ -21,6 +21,8 @@ export interface Services {
   readonly now: () => Date;
   /** Key for signed values such as order-confirmation access cookies. */
   readonly secret: string;
+  /** The store's IANA time zone (config STORE_TIME_ZONE). */
+  readonly timeZone: string;
 }
 
 export interface ServiceOptions {
@@ -30,6 +32,8 @@ export interface ServiceOptions {
   readonly paymentLatencyMs?: number;
   /** Config APP_SECRET. Without one, a random per-process key (signed values die on restart). */
   readonly secret?: string;
+  /** Config STORE_TIME_ZONE (default America/New_York, the config default). */
+  readonly timeZone?: string;
   readonly mailer?: Mailer;
   readonly payments?: PaymentProvider;
 }
@@ -48,6 +52,7 @@ export function createServices(options: ServiceOptions): Services {
       },
     },
     secret: options.secret ?? randomBytes(32).toString('hex'),
+    timeZone: options.timeZone ?? 'America/New_York',
     mailer: options.mailer ?? createMailer(db),
     payments:
       options.payments ??

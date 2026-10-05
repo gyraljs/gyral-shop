@@ -121,4 +121,17 @@ describe('dashboard', () => {
     expect(d.byStatus).toEqual([]);
     expect(d.topProducts).toEqual([]);
   });
+
+  it('counts "today" from midnight in the store time zone, not UTC', async () => {
+    const number = await placeOrder(customer, { sku: SKU.lego, qty: 1 });
+    // 02:00Z on Oct 4 is 22:00 on Oct 3 in New York: today in UTC, yesterday for the store.
+    await test.db
+      .update(orders)
+      .set({ createdAt: new Date('2026-10-04T02:00:00Z') })
+      .where(eq(orders.number, number));
+    const body = v.parse(DashboardSchema, (await getJson(admin, '/api/admin/dashboard')).body);
+    expect(body.timeZone).toBe('America/New_York');
+    expect(body.sales.today.orders).toBe(0);
+    expect(body.sales.week.orders).toBe(1);
+  });
 });

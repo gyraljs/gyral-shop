@@ -21,10 +21,11 @@ export async function adminDashboard(
   db: Db,
   actor: Actor,
   now: Date,
+  timeZone = 'UTC',
 ): Promise<Result<Dashboard, AuthzError>> {
   const allowed = requireRole(actor, 'admin');
   if (!allowed.ok) return err(allowed.error);
-  const windows = salesWindows(now);
+  const windows = salesWindows(now, timeZone);
   const [today, week, month, byStatus, low, top, viewsWeek, viewsMonth, cartWeek, cartMonth] =
     await Promise.all([
       salesSince(db, windows.today),
@@ -40,6 +41,7 @@ export async function adminDashboard(
     ]);
   return ok({
     asOf: now.toISOString(),
+    timeZone,
     sales: { today, week, month },
     byStatus,
     lowStock: low.map(({ options, ...row }) => ({ ...row, label: optionsLabel(options) })),

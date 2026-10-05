@@ -41,6 +41,9 @@ function body(d: Dashboard) {
   return html`
     <section aria-labelledby="sales-heading" data-region="admin-sales">
       <h2 id="sales-heading">Sales</h2>
+      <p class="hint" data-component="time-zone">
+        Days start at midnight, ${d.timeZone.replaceAll('_', ' ')} time.
+      </p>
       <dl class="admin-stats">
         ${salesTile('Today', d.sales.today)} ${salesTile('Last 7 days', d.sales.week)}
         ${salesTile('Last 30 days', d.sales.month)}

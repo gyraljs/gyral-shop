@@ -23,6 +23,7 @@ import {
   type PromoRow,
 } from '../domain/admin-manage.js';
 import { err, ok, type Result } from '../domain/result.js';
+import { addDays } from '../domain/time-zone.js';
 import type { AdminError } from './admin-products.js';
 import { requireRole, type Actor } from './authz.js';
 
@@ -45,9 +46,7 @@ export type DayStart = (date: string) => Date;
 /** The calendar day (YYYY-MM-DD) an instant falls on. */
 export type DayOf = (instant: Date) => string;
 
-const DAY_MS = 86_400_000;
-
-/** Days in UTC, until the store time zone is configured (see storeDayStart). */
+/** Days in UTC (routes pass the store time zone's versions). */
 export const utcDayStart: DayStart = (date) => new Date(`${date}T00:00:00.000Z`);
 export const utcDayOf: DayOf = (instant) => instant.toISOString().slice(0, 10);
 
@@ -102,10 +101,7 @@ function fieldsOf(input: PromoInput, dayStart: DayStart): PromoFields | undefine
   if (amount === undefined) return undefined;
   const startsAt = input.startsOn === '' ? null : dayStart(input.startsOn);
   // The last day counts in full: the code stops working when the next day starts.
-  const endsAt =
-    input.endsOn === ''
-      ? null
-      : dayStart(new Date(Date.parse(input.endsOn) + DAY_MS).toISOString().slice(0, 10));
+  const endsAt = input.endsOn === '' ? null : dayStart(addDays(input.endsOn, 1));
   return {
     code: input.code,
     kind: input.kind,

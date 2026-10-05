@@ -14,7 +14,8 @@ export interface ProdOptions {
   /** The build output: `client/` (Vite) and `static/` (prerendered pages). */
   readonly distDir: string;
   readonly db: Db;
-  readonly config: Pick<Config, 'PAYMENT_LATENCY_MS' | 'APP_SECRET'>;
+  readonly config: Pick<Config, 'PAYMENT_LATENCY_MS' | 'APP_SECRET'> &
+    Partial<Pick<Config, 'STORE_TIME_ZONE'>>;
 }
 
 /** The app as production runs it, shared by `pnpm start` and the prerender step. */
@@ -26,6 +27,9 @@ export const productionApp = (options: Omit<ProdOptions, 'distDir'>, clientEntry
     security: { dev: false },
     services: {
       paymentLatencyMs: options.config.PAYMENT_LATENCY_MS,
+      ...(options.config.STORE_TIME_ZONE === undefined
+        ? {}
+        : { timeZone: options.config.STORE_TIME_ZONE }),
       ...(options.config.APP_SECRET === undefined ? {} : { secret: options.config.APP_SECRET }),
     },
   });

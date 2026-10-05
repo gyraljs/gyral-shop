@@ -1,6 +1,7 @@
 // Wire shapes of the admin JSON API (docs/product-specs/admin.md). The server builds these
 // values; the browser decodes every response with the same schemas (parse at the boundary).
 import * as v from 'valibot';
+import { addDays, dayOfIn, dayStartIn } from './time-zone.js';
 
 const cents = v.pipe(v.number(), v.integer());
 const count = v.pipe(v.number(), v.integer(), v.minValue(0));
@@ -23,6 +24,8 @@ const Sales = v.object({ orders: count, cents });
 export const DashboardSchema = v.object({
   /** When the numbers were computed (server clock). */
   asOf: isoDate,
+  /** The store's time zone: "today", 7 and 30 days start at its local midnights. */
+  timeZone: v.string(),
   sales: v.object({ today: Sales, week: Sales, month: Sales }),
   byStatus: v.array(v.object({ status: OrderStatusSchema, count })),
   lowStock: v.array(
@@ -50,11 +53,14 @@ export const optionsLabel = (options: Readonly<Record<string, string>>): string 
     .map(([name, value]) => `${name}: ${value}`)
     .join(' · ');
 
-/** Start of the UTC day containing `now`, and the starts of the 7- and 30-day windows. */
-export function salesWindows(now: Date): { today: Date; week: Date; month: Date } {
-  const day = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-  const daysAgo = (n: number) => new Date(day.getTime() - n * 86_400_000);
-  return { today: day, week: daysAgo(6), month: daysAgo(29) };
+/**
+ * Start of the store's day containing `now`, and the starts of the 7- and 30-day windows: local
+ * midnights in `zone`, so a window across a DST change is an hour shorter or longer.
+ */
+export function salesWindows(now: Date, zone = 'UTC'): { today: Date; week: Date; month: Date } {
+  const today = dayOfIn(now, zone);
+  const start = (daysAgo: number) => dayStartIn(addDays(today, -daysAgo), zone);
+  return { today: start(0), week: start(6), month: start(29) };
 }
 
 // ── Products (docs/product-specs/admin.md, "Products" and "Inventory") ──

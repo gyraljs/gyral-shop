@@ -6,6 +6,7 @@ import { fakeAdmin, mountAdmin, restoreAdmin } from '../support/admin-browser.js
 
 const dashboard: Dashboard = {
   asOf: '2026-10-04T12:00:00.000Z',
+  timeZone: 'America/New_York',
   sales: {
     today: { orders: 2, cents: 12_345 },
     week: { orders: 5, cents: 54_321 },
