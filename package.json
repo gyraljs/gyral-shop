@@ -24,7 +24,8 @@
     "db:reset": "rm -rf data && pnpm db:migrate && pnpm db:seed",
     "ci:local": "gh act workflow_dispatch -W .github/workflows/ci.yml -s GITHUB_TOKEN=\"$(gh auth token)\"",
     "build": "vite build && tsx src/server/prerender.ts",
-    "start": "NODE_ENV=production tsx src/server/prod.ts"
+    "start": "NODE_ENV=production tsx src/server/prod.ts",
+    "ui:check": "node scripts/ui-check.mjs"
   },
   "dependencies": {
     "@gyral/core": "link:../cyclejs-web-framework/packages/core",
@@ -53,7 +54,9 @@
     "eslint": "10.12.0",
     "eslint-plugin-compat": "7.0.2",
     "globals": "17.13.0",
+    "pixelmatch": "7.2.0",
     "playwright": "1.63.0",
+    "pngjs": "7.0.0",
     "prettier": "3.9.9",
     "tsx": "4.23.15",
     "typescript": "6.0.3",

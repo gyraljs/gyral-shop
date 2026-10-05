@@ -1,7 +1,8 @@
 // Search results (search spec). Plain data, so it can seed components and travel as JSON.
 import type { Db } from '../db/client.js';
 import { brandFacets, countProducts, listDepartments, productCards } from '../db/repos/catalog.js';
-import { ftsMatch } from '../db/repos/search.js';
+import { ftsMatch, suggestCategories } from '../db/repos/search.js';
+import { format, usd } from '../domain/money.js';
 import {
   isRefined,
   pageCount,
@@ -9,7 +10,7 @@ import {
   PAGE_SIZE,
   type ListingState,
 } from '../domain/listing.js';
-import { searchTerms } from '../domain/search.js';
+import { normalizeQuery, searchTerms } from '../domain/search.js';
 import { toCard, type Card } from './catalog.js';
 import {
   listingFilter,
@@ -98,5 +99,50 @@ export async function searchPage(
       refined,
       ...(unmatched ? { suggestions: await suggestions(db) } : {}),
     },
+  };
+}
+
+/** Header suggestions (the browser parses them with ui/layout/suggestions.ts). */
+export interface Suggestions {
+  readonly query: string;
+  readonly products: readonly {
+    readonly name: string;
+    readonly brand: string;
+    readonly href: string;
+    readonly price: string;
+  }[];
+  readonly categories: readonly {
+    readonly name: string;
+    readonly department: string;
+    readonly href: string;
+  }[];
+}
+
+const SUGGESTED_PRODUCTS = 6;
+const SUGGESTED_CATEGORIES = 3;
+
+/** Header suggestions: the best product matches and categories named like the query. */
+export async function searchSuggestions(db: Db, raw: string): Promise<Suggestions> {
+  const query = normalizeQuery(raw);
+  const terms = searchTerms(query);
+  const match = ftsMatch(terms);
+  if (match === undefined) return { query, products: [], categories: [] };
+  const [rows, cats] = await Promise.all([
+    productCards(db, { match, order: 'relevance', limit: SUGGESTED_PRODUCTS }),
+    suggestCategories(db, terms, SUGGESTED_CATEGORIES),
+  ]);
+  return {
+    query,
+    products: rows.map((r) => ({
+      name: r.name,
+      brand: r.brand,
+      href: `/p/${r.slug}`,
+      price: format(usd(r.salePriceCents ?? r.priceCents)),
+    })),
+    categories: cats.map((c) => ({
+      name: c.name,
+      department: c.departmentName,
+      href: `/c/${c.department}/${c.slug}`,
+    })),
   };
 }

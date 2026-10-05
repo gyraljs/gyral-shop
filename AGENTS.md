@@ -12,16 +12,17 @@ system of record.
 
 ## Commands
 
-| Command            | What it does                                                              |
-| ------------------ | ------------------------------------------------------------------------- |
-| `pnpm install`     | Install (Gyral is linked from `../cyclejs-web-framework`)                 |
-| `pnpm check`       | **The gate**: typecheck, lint, format, invariants, tests                  |
-| `pnpm dev`         | Dev server with SSR + HMR: http://localhost:5200                          |
-| `pnpm build`       | Production client build + prerender static pages (needs a seeded DB)      |
-| `pnpm start`       | Production server (`APP_SECRET` required; `SITE_ORIGIN` for static pages) |
-| `pnpm db:reset`    | Recreate `data/shop.db`, migrate, seed                                    |
-| `pnpm db:generate` | Generate a migration after editing `src/db/schema.ts`                     |
-| `pnpm ci:local`    | Run CI locally in Docker via `gh act`                                     |
+| Command                 | What it does                                                                                                                 |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm install`          | Install (Gyral is linked from `../cyclejs-web-framework`)                                                                    |
+| `pnpm check`            | **The gate**: typecheck, lint, format, invariants, tests                                                                     |
+| `pnpm dev`              | Dev server with SSR + HMR: http://localhost:5200                                                                             |
+| `pnpm build`            | Production client build + prerender static pages (needs a seeded DB)                                                         |
+| `pnpm start`            | Production server (`APP_SECRET` required; `SITE_ORIGIN` for static pages)                                                    |
+| `pnpm db:reset`         | Recreate `data/shop.db`, migrate, seed                                                                                       |
+| `pnpm db:generate`      | Generate a migration after editing `src/db/schema.ts`                                                                        |
+| `pnpm ui:check [page…]` | Screenshots + console/overflow/axe per page template, light/dark × desktop/phone (`ui-scenarios/`); `--baseline`/`--compare` |
+| `pnpm ci:local`         | Run CI locally in Docker via `gh act`                                                                                        |
 
 ## Where things are
 

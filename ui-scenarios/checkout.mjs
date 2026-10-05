@@ -1,0 +1,26 @@
+// Guest checkout through every step to the review, paying with the test card.
+export default {
+  path: '/p/{product}',
+  steps: [
+    { click: { role: 'button', name: 'Add to cart' } },
+    { wait: 800 },
+    { goto: '/checkout' },
+    { fill: { label: 'Email for order updates' }, value: 'guest@example.com' },
+    { click: { role: 'button', name: 'Continue to shipping address' } },
+    { waitFor: { label: 'Full name' } },
+    { fill: { label: 'Full name' }, value: 'Grace Hopper' },
+    { fill: { label: 'Street address' }, value: '1 Navy Way' },
+    { fill: { label: 'City' }, value: 'Arlington' },
+    { select: { label: 'State' }, value: 'VA' },
+    { fill: { label: 'ZIP code' }, value: '22202' },
+    { click: { role: 'button', name: 'Continue to shipping method' } },
+    { waitFor: { role: 'button', name: 'Continue to payment' } },
+    { click: { role: 'button', name: 'Continue to payment' } },
+    { waitFor: { label: 'Card number' } },
+    { fill: { label: 'Card number' }, value: '4242 4242 4242 4242' },
+    { fill: { label: 'Expiry (MM/YY)' }, value: '12/30' },
+    { fill: { label: 'Security code' }, value: '123' },
+    { click: { role: 'button', name: 'Continue to review' } },
+    { waitFor: { role: 'button', name: 'Place order' } },
+  ],
+};

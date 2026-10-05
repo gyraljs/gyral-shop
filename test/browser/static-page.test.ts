@@ -24,7 +24,10 @@ beforeAll(async () => {
     const url = input instanceof Request ? input.url : String(input);
     requests.push(new URL(url, location.href).pathname); // the cart driver fetches a relative path
     const body = url.endsWith('/api/me')
-      ? JSON.stringify({ account: { firstName: 'Grace', csrfToken: 'token-from-api' } })
+      ? JSON.stringify({
+          account: { firstName: 'Grace', csrfToken: 'token-from-api' },
+          consentDecided: true,
+        })
       : cartJson;
     return Promise.resolve(new Response(body, { headers: { 'content-type': 'application/json' } }));
   });
@@ -47,7 +50,11 @@ describe('a prerendered page', () => {
       },
       { timeout: 3000 },
     );
-    expect(requests.sort()).toEqual(['/api/cart', '/api/me']);
+    // The header and the deferred consent banner both ask /api/me; Grace already chose.
+    expect([...new Set(requests)].sort()).toEqual(['/api/cart', '/api/me']);
+    expect(
+      page.root.querySelector('shop-consent')?.querySelector('[data-region="consent"]'),
+    ).toBeNull();
     // The sign-out form carries the token the API returned, not one baked into the page.
     expect(header().querySelector<HTMLInputElement>('input[name="_csrf"]')?.value).toBe(
       'token-from-api',

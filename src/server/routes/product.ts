@@ -6,7 +6,7 @@ import { ADD_TO_CART_PATH } from '../../ui/product/buy-box.js';
 import { productCrumbs, productPage as productView, productPath } from '../../ui/pages/product.js';
 import type { RenderPage } from '../document.js';
 import { csrfTokenFor, type AppEnv } from '../security/index.js';
-import { breadcrumbJsonLd, productJsonLd } from '../seo.js';
+import { breadcrumbJsonLd, productJsonLd, twitterCard } from '../seo.js';
 import { takeFlash } from '../flash.js';
 import { productReviews, reviewJsonLd } from './reviews.js';
 
@@ -64,6 +64,7 @@ export function productRoutes({ db, render }: ProductRouteOptions): Hono<AppEnv>
               ['og:image:alt', image.alt],
             ] as const)),
       ],
+      metaNames: twitterCard(image?.url),
       main: productView(data, {
         csrf,
         action: ADD_TO_CART_PATH,

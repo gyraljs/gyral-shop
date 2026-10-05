@@ -3,7 +3,8 @@ import { Hono } from 'hono';
 import type { Db } from '../../db/client.js';
 import { parseListing } from '../../domain/listing.js';
 import { parseSearchQuery } from '../../domain/search.js';
-import { searchPage } from '../../services/search.js';
+import { searchPage, searchSuggestions } from '../../services/search.js';
+import { SUGGEST_API } from '../../ui/layout/suggestions.js';
 import { listingTitle } from '../../ui/catalog/listing-view.js';
 import {
   noResults,
@@ -80,6 +81,15 @@ export function searchRoutes({ db, render }: SearchRouteOptions): Hono {
     if (result._tag !== 'Found') return c.json({ error: 'not_found' }, 404);
     c.header('cache-control', 'no-store');
     return c.json(searchListing(result.data));
+  });
+
+  // Header suggestions (search spec): short-lived cache, no session, never indexed.
+  routes.get(SUGGEST_API, async (c) => {
+    const q = c.req.query('q') ?? '';
+    return c.json(await searchSuggestions(db, q), 200, {
+      'cache-control': 'public, max-age=60',
+      'x-robots-tag': 'noindex',
+    });
   });
 
   return routes;

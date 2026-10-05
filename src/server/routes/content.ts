@@ -25,7 +25,8 @@ export interface ContentRouteOptions {
 
 type C = Context<AppEnv>;
 
-const STATIC_PAGES = [
+/** Indexable content pages (also listed in the sitemap). */
+export const STATIC_PAGES = [
   ['/about', 'About us', 'Who we are and why this store exists.', aboutPage],
   ['/faq', 'Frequently asked questions', 'Shipping, tax, payments, accounts and orders.', faqPage],
   ['/terms', 'Terms of use', 'The terms for using this demonstration store.', termsPage],
@@ -39,6 +40,9 @@ const STATIC_PAGES = [
 
 /** Paths rendered once at build time (`ssg`); every other route renders per request. */
 export const STATIC_PATHS: readonly string[] = STATIC_PAGES.map(([path]) => path);
+
+/** Every indexable content path, for the sitemap. */
+export const CONTENT_PATHS: readonly string[] = [...STATIC_PAGES.map(([path]) => path), '/contact'];
 
 export function contentRoutes({
   render,

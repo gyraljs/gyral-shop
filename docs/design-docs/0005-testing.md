@@ -29,3 +29,26 @@ hydrates the new markup. Review fixture diffs like code.
 - Logging in: `test/support/auth.ts`: `loginAs(test, email)` or `guest(test)` returns a
   session with `get`, `postForm` (adds the CSRF field) and `postJson` (adds `x-csrf-token`).
   Pass `testApp({ now })` to control the clock for sessions and rate limits.
+
+## Addendum: `pnpm ui:check` (shop-v0x, 2026-10-05)
+
+A port of Gyral's UI check for agents and humans to _see_ changes. `pnpm ui:check [page…]`
+seeds a fresh file database (`.ui-check/db/shop.db`), starts the dev server on it (port 5800,
+or `--port` / `UI_CHECK_PORT`; HMR on the next port), and drives each page template through
+`ui-scenarios/<name>.mjs` in headless Chromium at desktop 1280 and phone 390, in light and
+dark. It records full-page screenshots, console errors and warnings, horizontal overflow
+(shadow roots included) and axe violations into `.ui-check/<run>/report.md`, and exits 1 on
+any problem. `--baseline` saves screenshots; `--compare` pixel-diffs against them.
+
+- Scenarios are plain data: `{ path, steps, once?, allowConsole? }` with steps `goto`,
+  `click`, `fill`, `check`, `select`, `press`, `waitFor`, `wait`; targets by role, label, text
+  or CSS. `{product}`, `{variantProduct}`, `{category}`, `{customer}` and `{password}` resolve
+  from the seeded catalog, so scenarios survive seed changes.
+- Every shot gets a fresh browser context, so member scenarios sign in each time.
+- axe is evaluated through the DevTools protocol, not injected as a `<script>`: the shop's CSP
+  blocks inline scripts, and bypassing CSP would hide real CSP violations.
+- It is too slow for `pnpm check`; run it after UI changes and before merging them. The
+  pure parts (`scripts/lib/ui-check.mjs`) are unit-tested in `scripts/test/`.
+- First run found and fixed: the skip link outside any landmark (now in a "Skip links" nav),
+  two search landmarks with the same name on the 404 page, and a heading-order gap on the
+  wishlist page.

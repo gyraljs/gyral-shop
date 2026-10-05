@@ -19,6 +19,8 @@ import { cartPageRoutes } from './routes/cart-page.js';
 import { checkoutRoutes } from './routes/checkout.js';
 import { orderRoutes } from './routes/orders.js';
 import { cartStoreFor } from './cart-seed.js';
+import { wishlistStoreFor } from './wishlist-seed.js';
+import { wishlistRoutes } from './routes/wishlist.js';
 import { searchRoutes } from './routes/search.js';
 import { reviewRoutes } from './routes/reviews.js';
 import { meRoutes } from './routes/me.js';
@@ -27,6 +29,10 @@ import { installSecurity, type AppEnv, type SecurityOptions } from './security/i
 import { placeholderSvg } from './placeholder-image.js';
 import { productLabel } from '../db/repos/catalog.js';
 import { devMailRoutes } from './routes/dev-mail.js';
+import { seoRoutes } from './routes/seo.js';
+import { consentRoutes } from './routes/consent.js';
+import { analyticsMiddleware } from './analytics.js';
+import { organizationJsonLd, twitterCard, websiteJsonLd } from './seo.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
@@ -77,9 +83,10 @@ export function createApp({
     const account = accountSummary();
     const c = tryGetContext<AppEnv>();
     // The cart store is read by the header on every page (and by cart and product pages).
-    const [departmentList, cart] = await Promise.all([
+    const [departmentList, cart, wishlist] = await Promise.all([
       nav(),
       c === undefined ? undefined : cartStoreFor(db, c),
+      c === undefined ? undefined : wishlistStoreFor(db, c),
     ]);
     // Browser code reads the token from <meta> for JSON requests (e.g. the cart store).
     const csrfToken = o.csrfToken ?? (c === undefined ? undefined : c.get('session')?.csrfToken);
@@ -89,7 +96,7 @@ export function createApp({
       departments: departmentList,
       ...(account === undefined ? {} : { account }),
       ...(csrfToken === undefined ? {} : { csrfToken }),
-      ...(cart === undefined ? {} : { stores: [cart] }),
+      ...(cart === undefined || wishlist === undefined ? {} : { stores: [cart, wishlist] }),
     });
   };
   // Lets page() see the request's member without threading the context through every route.
@@ -106,6 +113,7 @@ export function createApp({
       }),
   });
 
+  app.use('*', analyticsMiddleware(db)); // consented page views and add-to-cart only
   app.get(
     '/favicon.svg',
     () => new Response(FAVICON, { headers: { 'content-type': 'image/svg+xml' } }),
@@ -124,15 +132,30 @@ export function createApp({
     });
   });
 
-  app.get('/', async () => {
+  app.get('/', async (c) => {
     const data = await homeData(db);
+    const { origin } = new URL(c.req.url);
+    const canonical = new URL('/', origin).href;
+    const description = 'Electronics, home, clothing, toys, groceries and more, in one store.';
     return page({
       title: SITE_NAME,
-      description: 'Electronics, home, clothing, toys, groceries and more, in one store.',
+      description,
+      canonical,
+      jsonLd: [organizationJsonLd(origin, SITE_NAME), websiteJsonLd(origin, SITE_NAME)],
+      meta: [
+        ['og:type', 'website'],
+        ['og:site_name', SITE_NAME],
+        ['og:title', SITE_NAME],
+        ['og:description', description],
+        ['og:url', canonical],
+      ],
+      metaNames: twitterCard(undefined),
       main: homePage(data),
     });
   });
 
+  app.route('/', seoRoutes({ db }));
+  app.route('/', consentRoutes({ render: page }));
   app.route('/', catalogRoutes({ db, render: page }));
   const millis = () => services.now().getTime();
   app.route('/', accountRoutes({ db, render: page, now: millis }));
@@ -147,6 +170,7 @@ export function createApp({
   app.route('/', cartPageRoutes({ render: page }));
   app.route('/', checkoutRoutes({ db, render: page, services }));
   app.route('/', orderRoutes({ services, render: page }));
+  app.route('/', wishlistRoutes({ db, render: page }));
   if (mode !== 'production') app.route('/dev/mail', devMailRoutes(services.mailer, page));
 
   app.notFound(async (c) =>

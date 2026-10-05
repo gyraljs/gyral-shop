@@ -29,6 +29,8 @@ describe('static (ssg) content pages', () => {
       expect(html, path).not.toContain('name="csrf-token"');
       expect(html, path).not.toContain('data-gyral-stores');
       expect(html, path).toMatch(/<shop-header[^>]*\spersonalize/);
+      // The banner can't be decided at build time: it asks /api/me once hydrated.
+      expect(html, path).toMatch(/<shop-consent[^>]*\sdeferred/);
     }
     writeFileSync(
       new URL('../fixtures/static-about.ssr.html', import.meta.url),
@@ -51,6 +53,7 @@ describe('static (ssg) content pages', () => {
     const res = await member.get('/api/me');
     expect(await res.json()).toEqual({
       account: { firstName: 'Grace', csrfToken: member.session.csrfToken },
+      consentDecided: false,
     });
   });
 });

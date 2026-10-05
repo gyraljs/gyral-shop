@@ -51,11 +51,16 @@
     color: var(--ink);
     min-block-size: 100dvb;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    /* header, consent banner (only for undecided visitors; empty otherwise), main, footer */
+    grid-template-rows: auto auto 1fr auto;
     /* One column no wider than the viewport: an auto column would grow to the widest
        unwrapped content (the department nav) and overflow phones. */
     grid-template-columns: minmax(0, 1fr);
   }
+  body > shop-header { grid-row: 1; }
+  body > shop-consent { grid-row: 2; }
+  body > main { grid-row: 3; }
+  body > .site-footer { grid-row: 4; }
   a { color: inherit; }
   /* Form controls take the page font (shadow roots get this from shadow-base.ts). */
   button, input, select, textarea { font: inherit; }
@@ -134,7 +139,9 @@
   .product-card {
     container-type: inline-size;
     display: grid; align-content: start; gap: var(--space-1);
-    content-visibility: auto; contain-intrinsic-size: auto 22rem;
+    /* No content-visibility here: card height depends on the column width, so any
+       contain-intrinsic-size estimate is wrong somewhere, and skipped cards then overlap their
+       neighbours (axe target-size). Listings show at most 24 cards. */
   }
   .product-card > a { text-decoration: none; }
   .product-card > a:hover h3 { text-decoration: underline; }
@@ -626,23 +633,181 @@ shop-checkout {
   }
 }
 }
-</style><!--lit-part kzktHFP7Xvk=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part TWCHfggzWRs=--><!--lit-node 0--><link rel="canonical" href="http://localhost/p/lego" /><!--/lit-part-->
+</style><style>
+@layer components {
+  .wish-toggle { margin: 0; }
+  .wish-toggle button,
+  a.wish-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    /* WCAG 2.5.8: at least 24px, even inside skipped (content-visibility) cards. */
+    min-block-size: 2rem;
+    min-inline-size: 2rem;
+    justify-self: start;
+  }
+  .wish-toggle button[aria-pressed='true'] .heart { color: var(--sale); }
+  .wish-toggle button:focus-visible,
+  a.wish-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .product-wish { display: block; margin-block-start: var(--space-3); }
+
+  [data-region='wishlist'] .count { color: var(--ink-muted); font-size: 1rem; font-weight: 400; }
+  .wishlist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  }
+  .wishlist > li { display: grid; gap: var(--space-2); align-content: start; }
+  .wishlist-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .wishlist-actions form { margin: 0; }
+  .wishlist-actions button {
+    font: inherit;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--line-strong);
+    background: var(--surface-raised);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .wishlist-actions .primary button {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-ink);
+  }
+}
+</style><style>
+@layer components {
+  shop-search { display: block; flex: 1 1 18rem; min-inline-size: 0; }
+  shop-search form { display: flex; position: relative; }
+  shop-search .combo { flex: 1; position: relative; display: flex; min-inline-size: 0; }
+  shop-search .keys { display: flex; flex: 1; min-inline-size: 0; }
+  shop-search input {
+    flex: 1;
+    min-inline-size: 0;
+    font: inherit;
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    border-start-start-radius: var(--radius);
+    border-end-start-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+  }
+  shop-search button {
+    font: inherit;
+    font-weight: 600;
+    padding-inline: var(--space-3);
+    border: 0;
+    border-start-end-radius: var(--radius);
+    border-end-end-radius: var(--radius);
+    background: oklch(from var(--brand) calc(l - 0.15) c h);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  shop-search [role='listbox'] {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    z-index: 20;
+    margin: var(--space-1) 0 0;
+    padding: var(--space-1);
+    list-style: none;
+    background: var(--surface-raised);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-popover);
+    max-block-size: min(24rem, 60dvb);
+    overflow-y: auto;
+    container: search-suggestions / inline-size;
+  }
+  shop-search [role='listbox'][hidden] { display: none; }
+  shop-search [role='option'] {
+    display: grid;
+    gap: 0 var(--space-2);
+    grid-template-columns: 1fr auto;
+    padding: var(--space-2);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  shop-search [role='option'] .detail { color: var(--ink-muted); font-size: 0.875rem; }
+  shop-search [role='option'][data-kind='category'] .label { font-weight: 600; }
+  shop-search [role='option']:hover,
+  shop-search [role='option'][aria-selected='true'] { background: var(--surface-sunken); }
+  shop-search [role='option'][aria-selected='true'] { outline: 2px solid var(--focus); }
+
+  @container search-suggestions (inline-size < 26rem) {
+    shop-search [role='option'] { grid-template-columns: 1fr; }
+  }
+}
+</style><style>
+@layer components {
+  shop-consent { display: block; }
+  /* In the page flow under the header: visible on arrival, never covering content. */
+  .consent-banner {
+    padding: var(--space-3);
+    background: var(--surface-raised);
+    color: var(--ink);
+    border-block-end: 1px solid var(--line-strong);
+  }
+  .consent-banner > * { max-inline-size: var(--page-max); margin-inline: auto; }
+  .consent h2 { margin-block: 0 var(--space-2); font-size: 1.1rem; }
+  .consent p { margin-block: 0 var(--space-2); }
+  .consent-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .consent button {
+    font: inherit;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--brand);
+    background: var(--brand);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  .consent button[value='reject'],
+  .consent button[value='save'] { background: var(--surface-raised); color: var(--ink); }
+  .consent button:disabled { opacity: 0.6; cursor: progress; }
+  .consent-custom { margin-block-start: var(--space-2); }
+  .consent-custom summary { cursor: pointer; inline-size: fit-content; }
+  .consent-custom fieldset {
+    display: grid;
+    gap: var(--space-2);
+    margin-block: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .consent-custom small { color: var(--ink-muted); }
+}
+</style><!--lit-part eVKfaNMXC80=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part TWCHfggzWRs=--><!--lit-node 0--><link rel="canonical" href="http://localhost/p/lego" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
-    <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="-fivtCL6euN0nkcnbKSikpVmj0mREOfYhlRJo5l_4Mk" /><!--/lit-part-->
+    <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="ptqFTbBVZpcZ2Tdwl5-pU7RG77g9-ahLLeJSSB-eres" /><!--/lit-part-->
     <!--lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:type" content="product" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:title" content="LEGO" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:description" content="" /><!--/lit-part--><!--lit-part WHJDsUYaSZA=--><!--lit-node 0--><meta property="og:url" content="http://localhost/p/lego" /><!--/lit-part--><!--/lit-part-->
-    <!--lit-part sLtQu7rwJRw=--><script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"LEGO","description":"","url":"http://localhost/p/lego","image":[],"brand":{"@type":"Brand","name":"Acme"},"sku":"LEGO-1","offers":{"@type":"Offer","url":"http://localhost/p/lego","sku":"LEGO-1","price":"50.00","priceCurrency":"USD","availability":"https://schema.org/InStock","itemCondition":"https://schema.org/NewCondition"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.0","reviewCount":1,"bestRating":"5","worstRating":"1"},"review":[{"@type":"Review","name":"Solid","reviewBody":"Sturdy and fun to build.","datePublished":"2026-10-05","author":{"@type":"Person","name":"Alan T."},"reviewRating":{"@type":"Rating","ratingValue":"4","bestRating":"5","worstRating":"1"}}]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"http://localhost/"},{"@type":"ListItem","position":2,"name":"Toys & Games","item":"http://localhost/d/toys-games"},{"@type":"ListItem","position":3,"name":"lego","item":"http://localhost/c/toys-games/lego"},{"@type":"ListItem","position":4,"name":"LEGO","item":"http://localhost/p/lego"}]}</script><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[],"itemCount":0,"canCheckout":false,"totals":{"subtotal":{"cents":0,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":0,"currency":"USD"}}},"inFlight":0}}</script>
+    <!--lit-part--><!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="twitter:card" content="summary" /><!--/lit-part--><!--/lit-part-->
+    <!--lit-part sLtQu7rwJRw=--><script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"LEGO","description":"","url":"http://localhost/p/lego","image":[],"brand":{"@type":"Brand","name":"Acme"},"sku":"LEGO-1","offers":{"@type":"Offer","url":"http://localhost/p/lego","sku":"LEGO-1","price":"50.00","priceCurrency":"USD","availability":"https://schema.org/InStock","itemCondition":"https://schema.org/NewCondition"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.0","reviewCount":1,"bestRating":"5","worstRating":"1"},"review":[{"@type":"Review","name":"Solid","reviewBody":"Sturdy and fun to build.","datePublished":"2026-10-05","author":{"@type":"Person","name":"Alan T."},"reviewRating":{"@type":"Rating","ratingValue":"4","bestRating":"5","worstRating":"1"}}]}</script><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"http://localhost/"},{"@type":"ListItem","position":2,"name":"Toys & Games","item":"http://localhost/d/toys-games"},{"@type":"ListItem","position":3,"name":"lego","item":"http://localhost/c/toys-games/lego"},{"@type":"ListItem","position":4,"name":"LEGO","item":"http://localhost/p/lego"}]}</script><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[],"itemCount":0,"canCheckout":false,"totals":{"subtotal":{"cents":0,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":0,"currency":"USD"}}},"inFlight":0},"wishlist":{"member":true,"slugs":[],"csrf":"ptqFTbBVZpcZ2Tdwl5-pU7RG77g9-ahLLeJSSB-eres","inFlight":0}}</script>
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part 0bUpexpWWc8=-->
-        <a class="skip-link" href="#main">Skip to content</a>
-        <!--lit-node 1--><shop-header
+    <!--lit-part 9F7SK2yT2mY=-->
+        <nav class="skip-links" aria-label="Skip links">
+          <a class="skip-link" href="#main">Skip to content</a>
+        </nav>
+        <!--lit-node 2--><shop-header
           
           
           
           
           
-           query current="toys-games" data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}],&quot;account&quot;:{&quot;firstName&quot;:&quot;Grace&quot;,&quot;csrfToken&quot;:&quot;-fivtCL6euN0nkcnbKSikpVmj0mREOfYhlRJo5l_4Mk&quot;}}}"><template shadowroot="open" shadowrootmode="open"><style>
+           query current="toys-games" data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}],&quot;account&quot;:{&quot;firstName&quot;:&quot;Grace&quot;,&quot;csrfToken&quot;:&quot;ptqFTbBVZpcZ2Tdwl5-pU7RG77g9-ahLLeJSSB-eres&quot;}}}"><template shadowroot="open" shadowrootmode="open"><style>
     @layer components {
       :host {
         display: block;
@@ -791,24 +956,28 @@ shop-checkout {
         white-space: nowrap;
       }
     }
-  </style><!--lit-part NV46e2OdDB0=-->
+  </style><!--lit-part jJOlMGfqhkY=-->
     <header>
       <div class="bar">
         <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
-        <search>
-          <form action="/search" method="get" role="search">
-            <label for="q" class="visually-hidden">Search products</label>
-            <!--lit-node 7--><input
-              id="q"
-              name="q"
-              type="search"
-              placeholder="Search everything"
-              autocomplete="off"
-              value=""
-            />
-            <button type="submit">Search</button>
-          </form>
-        </search>
+        <!-- The document shell slots <shop-search> (light DOM, with suggestions) here; the plain
+             form is the fallback when nothing is slotted. -->
+        <slot name="search">
+          <search>
+            <form action="/search" method="get" role="search">
+              <label for="q" class="visually-hidden">Search products</label>
+              <!--lit-node 9--><input
+                id="q"
+                name="q"
+                type="search"
+                placeholder="Search everything"
+                autocomplete="off"
+                value=""
+              />
+              <button type="submit">Search</button>
+            </form>
+          </search>
+        </slot>
         <nav class="utility" aria-label="Account and cart">
           <!--lit-part dSU5RAQw+eU=--><details class="account-menu">
         <summary>Hi, <!--lit-part-->Grace<!--/lit-part--></summary>
@@ -817,7 +986,7 @@ shop-checkout {
           <li><a href="/account/orders">Your orders</a></li>
           <li>
             <form method="post" action="/account/logout">
-              <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="-fivtCL6euN0nkcnbKSikpVmj0mREOfYhlRJo5l_4Mk" /><!--/lit-part-->
+              <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="ptqFTbBVZpcZ2Tdwl5-pU7RG77g9-ahLLeJSSB-eres" /><!--/lit-part-->
               <button type="submit">Sign out</button>
             </form>
           </li>
@@ -847,7 +1016,36 @@ shop-checkout {
         </ul>
       </nav>
     </header>
-  <!--/lit-part--></template><shop-mini-cart   slot="cart" data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
+  <!--/lit-part--></template><!--lit-node 3--><shop-search   slot="search" query data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part zkDyF4njGhg=-->
+    <search data-region="search">
+      <!--gyral:lit-node 1--><form action="/search" method="get" role="search" data-intent="Submit">
+        <label for="q" class="visually-hidden">Search products</label>
+        <!--gyral:lit-node 3--><span class="combo" data-intent="Blurred" data-intent-on="focusout">
+          <!--gyral:lit-node 4--><span class="keys" data-intent="Key" data-intent-on="keydown">
+            <!--gyral:lit-node 5--><input
+              id="q"
+              name="q"
+              type="search"
+              placeholder="Search everything"
+              autocomplete="off"
+              
+              
+              
+              
+              
+              value=""
+              value=""
+              data-intent="Typed"
+            />
+          </span>
+          <!--gyral:lit-part--><!--gyral:/lit-part-->
+        </span>
+        <button type="submit">Search</button>
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
+      </form>
+    </search>
+  <!--gyral:/lit-part--></shop-search
+          ><shop-mini-cart   slot="cart" data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
     @layer reset, tokens, base, components, theme;
     @layer components {
       :host {
@@ -964,7 +1162,54 @@ shop-checkout {
       </details>
     <!--/lit-part--></template></shop-mini-cart
         ></shop-header>
-        <main id="main" class="page" tabindex="-1"><!--lit-part +c3cggPSP+k=-->
+        <!--lit-part 4beU1UUCQrU=--><!--lit-node 0--><shop-consent   mode="banner" return-to="/p/lego" data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part cld6gESxFdA=-->
+      <!--gyral:lit-node 0--><section
+        class="consent consent-banner"
+        data-region="consent"
+        aria-labelledby="consent-title"
+      >
+        <h2 id="consent-title"><!--gyral:lit-part-->Cookies on Gyral Goods<!--gyral:/lit-part--></h2>
+        <p>
+          We use strictly necessary cookies to run the store (your session, cart and security). With
+          your permission we also count page views and add-to-cart clicks to improve the store.
+          Nothing is shared with anyone.
+        </p>
+        <!--gyral:lit-node 4--><form method="post" action="/consent" data-intent="Choose">
+          <!--gyral:lit-node 5--><input type="hidden" name="return" value="/p/lego" />
+          <div class="consent-actions" data-component="consent-actions">
+            <!--gyral:lit-node 7--><button type="submit" name="choice" value="accept" >
+              Accept all
+            </button>
+            <!--gyral:lit-node 8--><button type="submit" name="choice" value="reject" >
+              Reject non-essential
+            </button>
+          </div>
+          <!--gyral:lit-node 9--><details class="consent-custom" data-component="consent-custom" >
+            <summary>Customize</summary>
+            <fieldset>
+              <legend>Cookie categories</legend>
+              <label>
+                <input type="checkbox" checked disabled />
+                Strictly necessary <small>(always on)</small>
+              </label>
+              <label>
+                <!--gyral:lit-node 17--><input
+                  type="checkbox"
+                  name="analytics"
+                  
+                />
+                Analytics <small>(page views and add-to-cart clicks)</small>
+              </label>
+            </fieldset>
+            <!--gyral:lit-node 19--><button type="submit" name="choice" value="save" >
+              Save choices
+            </button>
+          </details>
+        </form>
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
+      </section>
+    <!--gyral:/lit-part--></shop-consent><!--/lit-part-->
+        <main id="main" class="page" tabindex="-1"><!--lit-part gNALB/UCcJQ=-->
   <!--lit-part 65Yp3GYlcSg=-->
   <nav class="breadcrumbs" aria-label="Breadcrumb">
     <ol>
@@ -1073,7 +1318,7 @@ shop-checkout {
         
         
         
-       action="/cart/add" csrf="-fivtCL6euN0nkcnbKSikpVmj0mREOfYhlRJo5l_4Mk" data-gyral-seed="{&quot;props&quot;:{&quot;variants&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;options&quot;:{},&quot;priceCents&quot;:5000,&quot;salePriceCents&quot;:null,&quot;stock&quot;:18}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+       action="/cart/add" csrf="ptqFTbBVZpcZ2Tdwl5-pU7RG77g9-ahLLeJSSB-eres" data-gyral-seed="{&quot;props&quot;:{&quot;variants&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;options&quot;:{},&quot;priceCents&quot;:5000,&quot;salePriceCents&quot;:null,&quot;stock&quot;:18}]}}"><template shadowroot="open" shadowrootmode="open"><style>
 @layer components {
 :host { display: grid; gap: var(--space-3); }
 p { margin: 0; }
@@ -1138,7 +1383,7 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
         <!--lit-part--><!--/lit-part--><!--lit-part-->In stock<!--/lit-part-->
       </p>
       <!--lit-node 4--><form method="post" action="/cart/add" data-intent="Add">
-        <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="-fivtCL6euN0nkcnbKSikpVmj0mREOfYhlRJo5l_4Mk" /><!--/lit-part-->
+        <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="ptqFTbBVZpcZ2Tdwl5-pU7RG77g9-ahLLeJSSB-eres" /><!--/lit-part-->
         <!--lit-part cbBRSgQDB18=--><!--lit-node 0--><input type="hidden" name="sku" value="LEGO-1" /><!--/lit-part-->
         <p class="quantity">
           <label for="quantity">Quantity</label>
@@ -1167,6 +1412,28 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
         <!--lit-part--><!--/lit-part--><!--lit-part--><!--/lit-part-->
       </p>
     <!--/lit-part--></template></shop-buy-box>
+      <!--lit-node 10--><shop-wish-toggle
+        
+        
+        
+        
+       class="product-wish" slug="lego" name="LEGO" next="/p/lego" data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part ion7bN9Dquo=--><!--gyral:lit-node 0--><form
+      class="wish-toggle"
+      data-component="wishlist-toggle"
+      method="post"
+      action="/wishlist/add"
+      data-intent="Toggle"
+    >
+      <!--gyral:lit-part TIYrCHR1D68=--><!--gyral:lit-node 0--><input type="hidden" name="_csrf" value="ptqFTbBVZpcZ2Tdwl5-pU7RG77g9-ahLLeJSSB-eres" /><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><input type="hidden" name="product" value="lego" />
+      <!--gyral:lit-part v69jqIBpfFM=--><!--gyral:lit-node 0--><input type="hidden" name="next" value="/p/lego" /><!--gyral:/lit-part-->
+      <!--gyral:lit-node 4--><button type="submit" aria-pressed="false">
+        <!--gyral:lit-part fOismX31sdU=--><span class="heart" aria-hidden="true"><!--gyral:lit-part-->♡<!--gyral:/lit-part--></span><!--gyral:/lit-part--> Save<span class="visually-hidden"> <!--gyral:lit-part-->LEGO<!--gyral:/lit-part--> to your wishlist</span>
+      </button>
+      <span class="visually-hidden" role="status"
+        ><!--gyral:lit-part--><!--gyral:/lit-part--></span
+      >
+    </form><!--gyral:/lit-part--></shop-wish-toggle>
     </div>
   </div>
   <section aria-labelledby="description-title" class="product-section">
@@ -1180,7 +1447,7 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
     
     
     
-   list-path="/p/lego/reviews" csrf-token="-fivtCL6euN0nkcnbKSikpVmj0mREOfYhlRJo5l_4Mk" data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;slug&quot;:&quot;lego&quot;,&quot;productName&quot;:&quot;LEGO&quot;,&quot;summary&quot;:{&quot;average&quot;:4,&quot;count&quot;:1,&quot;distribution&quot;:[{&quot;stars&quot;:5,&quot;count&quot;:0},{&quot;stars&quot;:4,&quot;count&quot;:1},{&quot;stars&quot;:3,&quot;count&quot;:0},{&quot;stars&quot;:2,&quot;count&quot;:0},{&quot;stars&quot;:1,&quot;count&quot;:0}]},&quot;items&quot;:[{&quot;id&quot;:1,&quot;rating&quot;:4,&quot;title&quot;:&quot;Solid&quot;,&quot;body&quot;:&quot;Sturdy and fun to build.&quot;,&quot;author&quot;:&quot;Alan T.&quot;,&quot;date&quot;:&quot;2026-10-05&quot;,&quot;helpfulCount&quot;:0,&quot;own&quot;:false,&quot;voted&quot;:false}],&quot;sort&quot;:&quot;helpful&quot;,&quot;page&quot;:1,&quot;pages&quot;:1,&quot;total&quot;:1,&quot;eligibility&quot;:{&quot;_tag&quot;:&quot;CanReview&quot;}}}}" data-gyral-light defer-hydration data-gyral-hydrate="visible"><!--gyral:lit-part J17xgKhgqVM=--><section
+   list-path="/p/lego/reviews" csrf-token="ptqFTbBVZpcZ2Tdwl5-pU7RG77g9-ahLLeJSSB-eres" data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;slug&quot;:&quot;lego&quot;,&quot;productName&quot;:&quot;LEGO&quot;,&quot;summary&quot;:{&quot;average&quot;:4,&quot;count&quot;:1,&quot;distribution&quot;:[{&quot;stars&quot;:5,&quot;count&quot;:0},{&quot;stars&quot;:4,&quot;count&quot;:1},{&quot;stars&quot;:3,&quot;count&quot;:0},{&quot;stars&quot;:2,&quot;count&quot;:0},{&quot;stars&quot;:1,&quot;count&quot;:0}]},&quot;items&quot;:[{&quot;id&quot;:1,&quot;rating&quot;:4,&quot;title&quot;:&quot;Solid&quot;,&quot;body&quot;:&quot;Sturdy and fun to build.&quot;,&quot;author&quot;:&quot;Alan T.&quot;,&quot;date&quot;:&quot;2026-10-05&quot;,&quot;helpfulCount&quot;:0,&quot;own&quot;:false,&quot;voted&quot;:false}],&quot;sort&quot;:&quot;helpful&quot;,&quot;page&quot;:1,&quot;pages&quot;:1,&quot;total&quot;:1,&quot;eligibility&quot;:{&quot;_tag&quot;:&quot;CanReview&quot;}}}}" data-gyral-light defer-hydration data-gyral-hydrate="visible"><!--gyral:lit-part J17xgKhgqVM=--><section
     id="reviews"
     data-region="reviews"
     aria-labelledby="reviews-title"
@@ -1301,7 +1568,7 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
       <!--gyral:lit-part jTNzEv4bDT4=--><footer data-component="review-helpful">
     <!--gyral:lit-part--><!--gyral:/lit-part-->
     <!--gyral:lit-part TjOGrRgLXug=--><!--gyral:lit-node 0--><form method="post" action="/reviews/1/helpful" data-intent="Vote">
-            <!--gyral:lit-node 1--><input type="hidden" name="_csrf" value="-fivtCL6euN0nkcnbKSikpVmj0mREOfYhlRJo5l_4Mk" />
+            <!--gyral:lit-node 1--><input type="hidden" name="_csrf" value="ptqFTbBVZpcZ2Tdwl5-pU7RG77g9-ahLLeJSSB-eres" />
             <!--gyral:lit-node 2--><input type="hidden" name="reviewId" value="1" />
             <!--gyral:lit-node 3--><button class="link-button" >Helpful</button>
           </form><!--gyral:/lit-part-->
@@ -1315,7 +1582,7 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
   </section><!--gyral:/lit-part--></shop-reviews><!--/lit-part-->
   <!--lit-part--><!--/lit-part-->
 <!--/lit-part--></main>
-        <!--lit-part STG64S/HenM=-->
+        <!--lit-part 72kieget6kI=-->
   <footer class="site-footer">
     <div class="page">
       <nav aria-label="Site">
@@ -1325,6 +1592,7 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <li><a href="/contact">Contact</a></li>
           <li><a href="/terms">Terms</a></li>
           <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/consent">Cookie settings</a></li>
         </ul>
       </nav>
       <p>

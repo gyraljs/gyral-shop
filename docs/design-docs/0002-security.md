@@ -63,6 +63,17 @@ session middleware now queues session cookies and appends them to whatever respo
 route produced (`flushCookies` in `src/server/security/sessions.ts`). Covered by the product
 page route test (`Set-Cookie: sid=…`) and the no-JS add-to-cart test.
 
+## Addendum: origin-verified consent form (shop-gcn.4, 2026-10-04)
+
+The cookie-consent banner is shown to every first-time visitor. A CSRF token would require a
+session for each of them, breaking "browsing alone creates no session". So `POST /consent`
+(and only the paths in `ORIGIN_VERIFIED_PATHS`, `src/server/security/csrf.ts`) skips the token
+and instead **requires proof of same origin**: an `Origin` header equal to this site's, or
+`Sec-Fetch-Site: same-origin` when `Origin` is absent. A request with neither is refused (403),
+as is a cross-site one. This is OWASP's standard-header verification. The worst a forged
+request could do is change a consent choice, and browsers send these headers on every POST.
+Tested in `test/node/consent.test.ts`.
+
 ## Addendum: production serving (shop-2gz, 2026-10-04)
 
 `pnpm start` serves prerendered pages and hashed assets from disk without passing through the
