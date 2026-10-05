@@ -10,6 +10,7 @@ import '../../ui/admin/app.js'; // registers <shop-admin> for the server render
 import type { RenderPage } from '../document.js';
 import { csrfTokenFor, requireAdmin, type AppEnv } from '../security/index.js';
 import { adminOrderRoutes } from './admin-orders.js';
+import { adminManageRoutes } from './admin-manage.js';
 import { adminProductRoutes } from './admin-products.js';
 import { forbidden, NO_STORE } from './admin-http.js';
 
@@ -50,5 +51,6 @@ export function adminRoutes({ services, render }: AdminRoutesOptions): Hono<AppE
 
   routes.route('/', adminProductRoutes(services));
   routes.route('/', adminOrderRoutes(services));
+  routes.route('/', adminManageRoutes({ services }));
   return routes;
 }

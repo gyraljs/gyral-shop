@@ -10,6 +10,11 @@ export const adminRoutes = routes({
   product: '/admin/products/:id',
   orders: '/admin/orders',
   order: '/admin/orders/:number',
+  promos: '/admin/promos',
+  newPromo: '/admin/promos/new',
+  promo: '/admin/promos/:id',
+  users: '/admin/users',
+  reviews: '/admin/reviews',
 });
 
 export type AdminView =
@@ -19,6 +24,11 @@ export type AdminView =
   | { readonly name: 'product'; readonly id: number }
   | { readonly name: 'orders'; readonly search: string }
   | { readonly name: 'order'; readonly number: string }
+  | { readonly name: 'promos' }
+  | { readonly name: 'newPromo' }
+  | { readonly name: 'promo'; readonly id: number }
+  | { readonly name: 'users'; readonly search: string }
+  | { readonly name: 'reviews'; readonly search: string }
   | { readonly name: 'notFound' };
 
 /** What an admin URL (path + query) shows. */
@@ -28,13 +38,18 @@ export function adminView(url: string): AdminView {
   switch (match?.name) {
     case 'dashboard':
     case 'newProduct':
+    case 'promos':
+    case 'newPromo':
       return { name: match.name };
     case 'products':
     case 'orders':
+    case 'users':
+    case 'reviews':
       return { name: match.name, search: parsed.search };
-    case 'product': {
+    case 'product':
+    case 'promo': {
       const id = Number(match.params.id);
-      return Number.isSafeInteger(id) && id > 0 ? { name: 'product', id } : { name: 'notFound' };
+      return Number.isSafeInteger(id) && id > 0 ? { name: match.name, id } : { name: 'notFound' };
     }
     case 'order':
       return { name: 'order', number: match.params.number };
@@ -50,6 +65,11 @@ const LABELS: Readonly<Record<AdminView['name'], string>> = {
   product: 'Edit product',
   orders: 'Orders',
   order: 'Order',
+  promos: 'Promo codes',
+  newPromo: 'New promo code',
+  promo: 'Edit promo code',
+  users: 'Users',
+  reviews: 'Reviews',
   notFound: 'Not found',
 };
 
@@ -66,7 +86,9 @@ export const adminPageTitle = (url: string): string => `${adminLabel(url)} — A
 export const adminTitle = (url: string): string => documentTitle(adminPageTitle(url));
 
 /** Which nav section an admin view belongs to. */
-export function adminSection(view: AdminView): 'dashboard' | 'products' | 'orders' | undefined {
+export type AdminSection = 'dashboard' | 'products' | 'orders' | 'promos' | 'users' | 'reviews';
+
+export function adminSection(view: AdminView): AdminSection | undefined {
   switch (view.name) {
     case 'dashboard':
       return 'dashboard';
@@ -77,6 +99,13 @@ export function adminSection(view: AdminView): 'dashboard' | 'products' | 'order
     case 'orders':
     case 'order':
       return 'orders';
+    case 'promos':
+    case 'newPromo':
+    case 'promo':
+      return 'promos';
+    case 'users':
+    case 'reviews':
+      return view.name;
     case 'notFound':
       return undefined;
   }

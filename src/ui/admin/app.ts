@@ -13,6 +13,10 @@ import './products.js';
 import './product-edit.js';
 import './orders.js';
 import './order-detail.js';
+import './promos.js';
+import './promo-edit.js';
+import './users.js';
+import './reviews.js';
 
 export interface AdminProps {
   /** Path and query of the admin URL the server rendered (the browser seeds it back). */
@@ -31,6 +35,9 @@ const NAV = [
   ['dashboard', '/admin', 'Dashboard'],
   ['products', '/admin/products', 'Products'],
   ['orders', '/admin/orders', 'Orders'],
+  ['promos', '/admin/promos', 'Promo codes'],
+  ['users', '/admin/users', 'Users'],
+  ['reviews', '/admin/reviews', 'Reviews'],
 ] as const;
 
 function section(view: AdminView) {
@@ -52,6 +59,16 @@ function section(view: AdminView) {
       return html`<shop-admin-orders .search=${view.search}></shop-admin-orders>`;
     case 'order':
       return html`<shop-admin-order .number=${view.number}></shop-admin-order>`;
+    case 'promos':
+      return html`<shop-admin-promos></shop-admin-promos>`;
+    case 'newPromo':
+      return html`<shop-admin-promo .promoId=${0}></shop-admin-promo>`;
+    case 'promo':
+      return html`<shop-admin-promo .promoId=${view.id}></shop-admin-promo>`;
+    case 'users':
+      return html`<shop-admin-users .search=${view.search}></shop-admin-users>`;
+    case 'reviews':
+      return html`<shop-admin-reviews .search=${view.search}></shop-admin-reviews>`;
   }
 }
 
@@ -85,7 +102,9 @@ export const AdminApp = define<AdminState, AdminMsg, AdminProps>('shop-admin', {
         ? `p${String(view.id)}`
         : view.name === 'order'
           ? `o${view.number}`
-          : view.name;
+          : view.name === 'promo'
+            ? `c${String(view.id)}`
+            : view.name;
     return html`<div class="admin" data-region="admin">
       <nav class="admin-nav" aria-label="Admin" data-region="admin-nav">
         <p class="admin-brand">Store admin</p>

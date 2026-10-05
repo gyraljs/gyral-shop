@@ -42,7 +42,7 @@ function frame(c: Common, control: unknown) {
 export function textField(
   c: Common & {
     readonly value: string;
-    readonly type?: 'text' | 'url' | 'number';
+    readonly type?: 'text' | 'url' | 'number' | 'date';
     readonly inputmode?: 'decimal' | 'numeric';
     readonly autocomplete?: string;
   },
@@ -96,7 +96,12 @@ export interface Choice {
 }
 
 export function selectField(
-  c: Common & { readonly value: string; readonly choices: readonly Choice[] },
+  c: Common & {
+    readonly value: string;
+    readonly choices: readonly Choice[];
+    /** The label of the empty choice; omit it to leave no empty choice. Default "Choose…". */
+    readonly emptyLabel?: string | null;
+  },
 ) {
   const { id, described } = ids(c);
   const errors = c.errors[c.name];
@@ -116,7 +121,13 @@ export function selectField(
         aria-invalid=${errors === undefined ? nothing : 'true'}
         ${invalid(errors)}
       >
-        <option value="" ?selected=${liveBoolean(c.value === '')}>Choose…</option>
+        ${
+          c.emptyLabel === null
+            ? nothing
+            : html`<option value="" ?selected=${liveBoolean(c.value === '')}>
+                ${c.emptyLabel ?? 'Choose…'}
+              </option>`
+        }
         ${groups.map((group) =>
           group === undefined
             ? c.choices.filter((o) => o.group === undefined).map(option)

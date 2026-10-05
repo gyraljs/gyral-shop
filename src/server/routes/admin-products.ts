@@ -2,11 +2,9 @@
 // formActions over the same schemas the browser validates with; the admin answers JSON:
 // `{ _tag: 'Saved', id }`, `{ _tag: 'Adjusted', stock }`, or 422 with an IntentRejected.
 import { Hono, type Context } from 'hono';
-import { formAction, rejectWith, type FormReject } from '@gyral/ssr';
-import type { IntentRejected } from '@gyral/core';
+import { formAction } from '@gyral/ssr';
 import * as v from 'valibot';
 import { parseDollars, parseImages, parseOptions, PRODUCT_SORTS } from '../../domain/admin.js';
-import type { Result } from '../../domain/result.js';
 import type { ProductFields } from '../../db/repos/admin-products.js';
 import type { TaxonKind } from '../../db/repos/admin-taxonomy.js';
 import type { Services } from '../../services/container.js';
@@ -19,7 +17,6 @@ import {
   renameTaxonomy,
   saveProduct,
   saveVariant,
-  type AdminError,
 } from '../../services/admin-products.js';
 import {
   AdjustForm,
@@ -29,7 +26,7 @@ import {
   VariantForm,
 } from '../../ui/admin/schemas.js';
 import { requireAdmin, type AppEnv } from '../security/index.js';
-import { NO_STORE } from './admin-http.js';
+import { adminFailure, answer, asJson, NO_STORE, positiveId } from './admin-http.js';
 
 type C = Context<AppEnv>;
 
@@ -40,44 +37,6 @@ const ListQuery = v.object({
   archived: v.optional(v.picklist(['yes', 'no']), 'no'),
   page: v.optional(v.pipe(v.string(), v.transform(Number), v.integer(), v.minValue(1)), '1'),
 });
-
-/** An admin service failure as an HTTP answer. */
-export function adminFailure(c: C, error: AdminError): Response {
-  switch (error._tag) {
-    case 'Unauthenticated':
-      return c.json({ error: 'unauthenticated' }, 401, NO_STORE);
-    case 'Forbidden':
-      return c.json({ error: 'forbidden' }, 403, NO_STORE);
-    case 'NotFound':
-      return c.json({ error: 'not-found' }, 404, NO_STORE);
-    case 'Invalid':
-      return c.json({ error: 'invalid', issues: error.issues }, 422, NO_STORE);
-  }
-}
-
-/** A service result for a formAction: success JSON, a field rejection, or an error answer. */
-function answer<T>(
-  c: C,
-  result: Result<T, AdminError>,
-  body: (value: T) => object,
-): Response | FormReject {
-  if (result.ok) return c.json(body(result.value), 200, NO_STORE);
-  return result.error._tag === 'Invalid'
-    ? rejectWith(result.error.issues)
-    : adminFailure(c, result.error);
-}
-
-/** The admin requires JavaScript, so a rejected submission is always answered as JSON. */
-const asJson = (rejected: IntentRejected) =>
-  Response.json(
-    { _tag: rejected._tag, intent: rejected.intent, issues: rejected.issues },
-    { status: 422, headers: NO_STORE },
-  );
-
-const positiveId = (text: string): number | undefined => {
-  const n = Number(text);
-  return Number.isSafeInteger(n) && n > 0 ? n : undefined;
-};
 
 type ProductData = v.InferOutput<(typeof ProductForm)['schema']>;
 

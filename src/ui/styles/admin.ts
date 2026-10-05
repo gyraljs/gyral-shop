@@ -171,6 +171,37 @@ export const adminCss = `
   .admin-page .admin-table th button, .admin-page .pager button { padding: 0; border: 0; background: none; color: inherit; }
   .admin-page .pager { display: flex; gap: var(--space-3); align-items: center; justify-content: space-between; }
   .admin-page .pager a[aria-disabled='true'] { color: var(--ink-muted); pointer-events: none; }
+  .admin-page .visually-hidden {
+    position: absolute; inline-size: 1px; block-size: 1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .admin-table th[scope='row'] { font-weight: 600; }
+  .admin-table form.inline { display: inline-flex; margin-inline-end: var(--space-1); }
+  .admin-table form.inline button { padding: var(--space-1) var(--space-2); font-size: 0.9rem; }
+  .admin-confirm {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 1px var(--brand);
+  }
+  .admin-confirm h2:focus { outline: none; }
+  .admin-confirm h2:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  [data-component='promo-status'] { font-weight: 600; }
+  [data-component='promo-status'][data-status='active'] { color: var(--ok); }
+  [data-component='promo-status']:is([data-status='expired'], [data-status='used-up'], [data-status='inactive']) {
+    color: var(--ink-muted);
+  }
+  .admin-review {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+  }
+  .admin-review h2 { font-size: 1.1rem; }
+  .admin-review p { margin: 0; }
+  .admin-review[data-hidden='yes'] { border-style: dashed; }
+  .admin-review[data-hidden='yes'] > :not(form) { color: var(--ink-muted); }
+  .admin-page [data-component='result-count'] { margin: 0; color: var(--ink-muted); }
 }
 @layer base {
   /* The admin needs JavaScript; without it only the <noscript> explanation shows. */
