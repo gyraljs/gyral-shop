@@ -7,10 +7,12 @@ import { define, focus, html, keyed, nothing, type Next } from '@gyral/core';
 import { listen, setTitle, type RouteLocation } from '@gyral/router';
 import { goTo } from '../drivers/location.js';
 import { adminDrivers } from './drivers.js';
-import { adminLabel, adminSection, adminTitle, adminView, type AdminView } from './routes.js';
+import { adminSection, adminTitle, adminView, type AdminView } from './routes.js';
 import './dashboard.js';
 import './products.js';
 import './product-edit.js';
+import './orders.js';
+import './order-detail.js';
 
 export interface AdminProps {
   /** Path and query of the admin URL the server rendered (the browser seeds it back). */
@@ -46,11 +48,10 @@ function section(view: AdminView) {
         <h1 tabindex="-1">Not found</h1>
         <p>There is no admin page at this address. <a href="/admin">Go to the dashboard</a>.</p>
       </section>`;
-    default:
-      return html`<section data-region="admin-pending">
-        <h1 tabindex="-1">${adminLabel(`/admin/${view.name}`)}</h1>
-        <p>This section is not available yet.</p>
-      </section>`;
+    case 'orders':
+      return html`<shop-admin-orders .search=${view.search}></shop-admin-orders>`;
+    case 'order':
+      return html`<shop-admin-order .number=${view.number}></shop-admin-order>`;
   }
 }
 
@@ -79,7 +80,12 @@ export const AdminApp = define<AdminState, AdminMsg, AdminProps>('shop-admin', {
     const view = adminView(s.url);
     const current = adminSection(view);
     // A product or order view starts fresh when its id changes (new data, new form state).
-    const key = view.name === 'product' ? `p${String(view.id)}` : view.name;
+    const key =
+      view.name === 'product'
+        ? `p${String(view.id)}`
+        : view.name === 'order'
+          ? `o${view.number}`
+          : view.name;
     return html`<div class="admin" data-region="admin">
       <nav class="admin-nav" aria-label="Admin" data-region="admin-nav">
         <p class="admin-brand">Store admin</p>

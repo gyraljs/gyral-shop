@@ -46,7 +46,10 @@ describe('<shop-admin>', () => {
   });
 
   it('navigates in-page between sections and moves focus to the new heading', async () => {
-    const { router } = fakeAdmin('/admin', () => dashboard);
+    const empty = { rows: [], page: 1, pages: 1, total: 0 };
+    const { router } = fakeAdmin('/admin', (req) =>
+      req.url === '/api/admin/dashboard' ? dashboard : empty,
+    );
     const el = await mountAdmin('/admin');
     await vi.waitFor(() => {
       expect(el.querySelector('[data-region="admin-sales"]')).not.toBeNull();

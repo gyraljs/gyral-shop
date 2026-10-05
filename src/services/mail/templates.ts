@@ -228,3 +228,52 @@ ${button(input.orderUrl, 'View your order')}`,
     ),
   };
 }
+
+export interface OrderUpdateInput {
+  readonly to: string;
+  readonly name: string;
+  readonly orderNumber: string;
+  readonly orderUrl: string;
+}
+
+export function orderShippedMail(input: OrderUpdateInput): MailMessage {
+  const subject = `Order ${input.orderNumber} has shipped`;
+  return {
+    to: input.to,
+    subject,
+    text: [
+      `Hi ${input.name},`,
+      '',
+      `Good news: your order ${input.orderNumber} is on its way.`,
+      '',
+      `Track your order: ${safeUrl(input.orderUrl)}`,
+    ].join('\n'),
+    html: layout(
+      subject,
+      `<h1>Your order has shipped</h1>
+<p>Hi ${escapeHtml(input.name)}, order <strong>${escapeHtml(input.orderNumber)}</strong> is on its way.</p>
+${button(input.orderUrl, 'Track your order')}`,
+    ),
+  };
+}
+
+export function orderRefundedMail(
+  input: OrderUpdateInput & { readonly amount: Money },
+): MailMessage {
+  const subject = `Refund for order ${input.orderNumber}`;
+  const line = `We refunded ${format(input.amount)} to your card. It can take 5–10 business days to appear.`;
+  return {
+    to: input.to,
+    subject,
+    text: [`Hi ${input.name},`, '', line, '', `View your order: ${safeUrl(input.orderUrl)}`].join(
+      '\n',
+    ),
+    html: layout(
+      subject,
+      `<h1>We refunded your order</h1>
+<p>Hi ${escapeHtml(input.name)}, about order <strong>${escapeHtml(input.orderNumber)}</strong>:</p>
+<p>${escapeHtml(line)}</p>
+${button(input.orderUrl, 'View your order')}`,
+    ),
+  };
+}

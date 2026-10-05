@@ -2,8 +2,9 @@
 // Tokens only and layered: docs/design-docs/0006-theming.md.
 export const adminCss = `
 @layer components {
+  /* The host is the size container: an element can't query its own size. */
+  shop-admin { display: block; container: admin / inline-size; }
   .admin {
-    container: admin / inline-size;
     display: grid;
     gap: var(--space-4);
     grid-template-columns: minmax(10rem, 13rem) minmax(0, 1fr);
@@ -93,6 +94,13 @@ export const adminCss = `
   .admin-variant [data-component='stock'] { color: var(--ink-muted); font-weight: 400; }
   .admin-variant [data-stock='out'] { color: var(--danger); }
   .admin-page .crumbs { margin: 0; font-size: 0.9rem; }
+  .admin-page h1 code { font-size: 0.85em; }
+  .admin-page .totals { display: grid; gap: var(--space-1); margin: 0; max-inline-size: 24rem; margin-inline-start: auto; }
+  .admin-page .totals .row { display: flex; justify-content: space-between; gap: var(--space-3); }
+  .admin-page .totals dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .admin-page address { font-style: normal; }
+  .admin-page [data-region='admin-order-actions'] form { display: inline; }
+  .admin-page [data-region='admin-order-actions'] form.admin-form { display: grid; }
   .admin-table { inline-size: 100%; border-collapse: collapse; }
   .admin-table caption { text-align: start; color: var(--ink-muted); padding-block-end: var(--space-1); }
   .admin-table :is(th, td) {

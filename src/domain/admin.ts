@@ -192,3 +192,77 @@ export const AdjustedSchema = v.object({
   _tag: v.literal('Adjusted'),
   stock: v.pipe(v.number(), v.integer()),
 });
+
+// ── Orders (docs/product-specs/admin.md, "Orders") ──
+
+export const ORDERS_PER_ADMIN_PAGE = 25;
+
+/** What an admin can do to an order, mapped onto the domain state machine's events. */
+export const ORDER_ACTIONS = ['Fulfil', 'Deliver', 'Cancel', 'Refund'] as const;
+export type OrderAction = (typeof ORDER_ACTIONS)[number];
+
+export const AdminOrderListSchema = v.object({
+  rows: v.array(
+    v.object({
+      number: v.string(),
+      status: OrderStatusSchema,
+      email: v.string(),
+      name: v.string(),
+      placedAt: isoDate,
+      totalCents: cents,
+      refundedCents: cents,
+      items: count,
+    }),
+  ),
+  page: count,
+  pages: count,
+  total: count,
+});
+export type AdminOrderList = v.InferOutput<typeof AdminOrderListSchema>;
+
+export const AdminOrderSchema = v.object({
+  number: v.string(),
+  status: OrderStatusSchema,
+  email: v.string(),
+  placedAt: isoDate,
+  lines: v.array(
+    v.object({
+      name: v.string(),
+      variant: v.string(),
+      quantity: count,
+      unitCents: cents,
+      totalCents: cents,
+    }),
+  ),
+  totals: v.object({
+    subtotal: cents,
+    discount: cents,
+    shipping: cents,
+    tax: cents,
+    total: cents,
+  }),
+  refundedCents: cents,
+  refundableCents: cents,
+  promoCode: v.nullable(v.string()),
+  address: v.object({
+    name: v.string(),
+    line1: v.string(),
+    line2: v.optional(v.string()),
+    city: v.string(),
+    state: v.string(),
+    postalCode: v.string(),
+  }),
+  shipping: v.string(),
+  payment: v.nullable(v.object({ brand: v.string(), last4: v.string() })),
+  events: v.array(
+    v.object({ status: OrderStatusSchema, note: v.nullable(v.string()), at: isoDate }),
+  ),
+  actions: v.array(v.picklist(ORDER_ACTIONS)),
+});
+export type AdminOrder = v.InferOutput<typeof AdminOrderSchema>;
+
+export const TransitionedSchema = v.object({
+  _tag: v.literal('Transitioned'),
+  status: OrderStatusSchema,
+  notice: v.string(),
+});

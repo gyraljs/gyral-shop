@@ -125,3 +125,19 @@ export const ArchiveForm = defineForm(
 export const RenameForm = defineForm(
   v.object({ name: v.pipe(v.string(), v.trim(), v.nonEmpty('Enter a name.'), v.maxLength(120)) }),
 );
+
+export const TransitionForm = defineForm(
+  v.pipe(
+    v.object({
+      action: v.picklist(['Fulfil', 'Deliver', 'Cancel', 'Refund'], 'Choose an action.'),
+      amount: optionalDollars('a refund amount'),
+    }),
+    v.forward(
+      v.check(
+        (form) => form.action !== 'Refund' || (parseDollars(form.amount) ?? 0) > 0,
+        'Enter the amount to refund.',
+      ),
+      ['amount'],
+    ),
+  ),
+);
