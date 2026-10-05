@@ -70,6 +70,8 @@ markup stays semantic and stable and every visual decision lives in CSS that a t
 | `data-region="checkout"`                                                                                                                                                        | `<shop-checkout>` (light DOM; `src/server/routes/checkout.ts`)                                                                |
 | `data-component="checkout-step" / "step-summary" / "step-edit" / "address-form" / "shipping-option" / "card-form" / "place-order" / "order-summary" / "summary-line" / "price"` | checkout steps and summary (`src/ui/checkout/steps.ts`, `summary.ts`)                                                         |
 | `data-region="order-confirmation" / "delivery" / "order-lines" / "order-totals"`, `data-component="order-number" / "order-line" / "price"`                                      | order confirmation, light DOM (`src/ui/pages/order-confirmation.ts`); container `confirmation`                                |
+| `data-component="wishlist-toggle"` (`.wish-toggle`, button `aria-pressed`)                                                                                                      | `<shop-wish-toggle>`, light DOM, on product cards and product pages (`src/ui/wishlist/toggle.ts`)                             |
+| `data-region="wishlist"`, `data-component="wishlist-items" / "wishlist-item" / "wishlist-actions" / "wishlist-empty"`                                                           | `/account/wishlist` (`src/ui/pages/wishlist.ts`)                                                                              |
 
 ## Parts (keep current)
 

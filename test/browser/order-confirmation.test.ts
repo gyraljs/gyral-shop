@@ -29,6 +29,7 @@ describe('order confirmation (fixture from test/node/place-order.test.ts)', () =
   });
 
   it('hydrates the page shell without errors and has no axe violations', async () => {
+    await import('../../src/client/entry.js'); // every server-rendered element must upgrade
     await hydrated(page);
     expect(errors).not.toHaveBeenCalled();
     expect(await a11yViolations(page.root)).toEqual([]);
