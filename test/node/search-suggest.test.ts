@@ -12,11 +12,13 @@ describe('GET /api/search/suggest', () => {
     expect(response.headers.get('cache-control')).toMatch(/max-age=60/);
     const body = v.parse(SuggestionsSchema, await response.json());
     expect(body.query).toBe('kitch');
-    expect(body.categories.length + body.products.length).toBeGreaterThan(0);
+    // "kitch" names no category in the seed, but it does name a department (Home & Kitchen).
+    expect(body.departments).toContainEqual({ name: 'Home & Kitchen', href: '/d/home-kitchen' });
     for (const c of body.categories) expect(c.name.toLowerCase()).toContain('kitch');
     for (const p of body.products) expect(p.href).toMatch(/^\/p\//);
     expect(body.products.length).toBeLessThanOrEqual(6);
     expect(body.categories.length).toBeLessThanOrEqual(3);
+    expect(body.departments.length).toBeLessThanOrEqual(2);
   });
 
   it('treats search syntax and markup as plain text, and empty queries as no suggestions', async () => {
@@ -25,7 +27,8 @@ describe('GET /api/search/suggest', () => {
       const response = await test.get(`/api/search/suggest?q=${encodeURIComponent(q)}`);
       expect(response.status, q).toBe(200);
       const body = v.parse(SuggestionsSchema, await response.json());
-      if (!/[a-z]/i.test(q)) expect(body).toMatchObject({ products: [], categories: [] });
+      if (!/[a-z]/i.test(q))
+        expect(body).toMatchObject({ products: [], departments: [], categories: [] });
     }
   });
 

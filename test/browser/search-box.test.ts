@@ -8,6 +8,7 @@ import { a11yViolations } from '../support/axe.js';
 
 const answer: Suggestions = {
   query: 'kit',
+  departments: [{ name: 'Home & Kitchen', href: '/d/home-kitchen' }],
   categories: [{ name: 'Kitchen', department: 'Home & Kitchen', href: '/c/home-kitchen/kitchen' }],
   products: [
     { name: 'Kettle', brand: 'Oak & Iron', href: '/p/kettle-1', price: '$24.00' },
@@ -76,12 +77,13 @@ describe('<shop-search>', () => {
     expect(list.hidden).toBe(true);
   });
 
-  it('shows categories then products from one request for the typed query', async () => {
+  it('shows departments, categories, then products from one request for the typed query', async () => {
     const { http, input, type, options } = await mount();
     await type('kit');
     expect(http.inputs.map((r) => r.url)).toEqual(['/api/search/suggest?q=kit']);
     expect(input.getAttribute('aria-expanded')).toBe('true');
     expect(options().map((o) => o.querySelector('.label')?.textContent)).toEqual([
+      'Home & Kitchen',
       'Kitchen',
       'Kettle',
       'Kitchen scale',
@@ -105,7 +107,7 @@ describe('<shop-search>', () => {
     expect(input.getAttribute('aria-activedescendant')).toBe('search-option-1');
     await key('ArrowUp');
     await key('ArrowUp'); // wraps to the last option
-    expect(el.state.highlighted).toBe(2);
+    expect(el.state.highlighted).toBe(3);
     el.querySelector('form')?.requestSubmit();
     await vi.waitFor(() => {
       expect(location.inputs).toEqual(['/p/scale-2']);
@@ -124,7 +126,7 @@ describe('<shop-search>', () => {
   it('opens a suggestion on click', async () => {
     const { location, type, options } = await mount();
     await type('kit');
-    (options()[0] as HTMLElement).click();
+    (options()[1] as HTMLElement).click();
     await vi.waitFor(() => {
       expect(location.inputs).toEqual(['/c/home-kitchen/kitchen']);
     });

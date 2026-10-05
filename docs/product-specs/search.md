@@ -21,3 +21,5 @@
 - `/search?q=` is one URL per search: whitespace and listing parameters are canonicalized by
   a single 301. All search pages are `noindex`. Results reuse `<shop-listing>` through the
   listing's `fixedQuery` (`q=…`) and `relevanceLabel` ("Best match").
+
+- Suggestions list matching departments (up to 2) before categories (up to 3) and products (up to 6): "kitch" names no category but leads to Home & Kitchen.
