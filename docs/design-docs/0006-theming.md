@@ -130,6 +130,10 @@ document shell. Sibling themes define the same palette tokens and may re-lay out
 through the hooks above. Visual compare (shop `pnpm ui:check --compare`) shows the default
 theme pixel-identical to the pre-theme look on all 13 scenario pages.
 
-**Known issue (Gyral, reported to the coordinator).** In production builds, light-DOM
-components currently hydrate into two copies of their content (header, listing, cart page,
-consent); dev builds and tests are clean. A Gyral fix is in progress.
+**Known issue (Gyral, reported to the coordinator).** Production builds of light-DOM
+components misbehave at hydration; dev builds and tests are clean. Measured 2026-10-05 on a
+production build (`pnpm build && pnpm start`), counting regions after hydration on home,
+department, category, product, cart, sign-in and about: with this branch before merging main,
+every light-DOM region rendered twice; after merging main (same linked Gyral), nothing is
+duplicated but each page logs one "Hydration value mismatch" (the light-DOM header), where main
+alone logs one on the category page (the listing). A Gyral fix is in progress.
