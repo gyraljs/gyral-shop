@@ -3,12 +3,14 @@
 import { html, nothing } from '@gyral/core';
 import { renderPage } from '@gyral/ssr';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import type { DepartmentLink } from '../ui/layout/site-header.js';
+import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
 import { CSRF_META } from '../ui/forms/csrf.js';
 import { baseCss } from '../ui/styles/base.js';
 import { catalogCss } from '../ui/styles/catalog.js';
 import { listingCss } from '../ui/styles/listing.js';
+import { accountCss } from '../ui/styles/account.js';
+import { productCss } from '../ui/styles/product.js';
 
 import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
 
@@ -34,6 +36,10 @@ export interface ShellOptions {
   readonly jsonLd?: readonly object[];
   /** Slug of the department this page belongs to, marked current in the header nav. */
   readonly currentDepartment?: string;
+  /** The signed-in member, for the header's account menu (set by createApp's page()). */
+  readonly account?: AccountSummary;
+  /** Open Graph / Twitter `<meta property>` pairs (SEO spec), e.g. `['og:type', 'product']`. */
+  readonly meta?: readonly (readonly [property: string, content: string])[];
 }
 
 /** JSON for a <script> body: `<` is escaped so content can never close the element. */
@@ -62,7 +68,7 @@ export function shell(options: ShellOptions): Response {
   const structured = (options.jsonLd ?? [])
     .map((data) => `<script type="application/ld+json">${scriptJson(data)}</script>`)
     .join('');
-  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}${listingCss}</style>`)}
+  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}${listingCss}${productCss}${accountCss}</style>`)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     ${
       options.canonical === undefined
@@ -75,6 +81,7 @@ export function shell(options: ShellOptions): Response {
         ? nothing
         : html`<meta name=${CSRF_META} content=${options.csrfToken} />`
     }
+    ${(options.meta ?? []).map(([property, content]) => html`<meta property=${property} content=${content} />`)}
     ${structured === '' ? nothing : unsafeHTML(structured)}`;
   return renderPage(
     {
@@ -87,6 +94,7 @@ export function shell(options: ShellOptions): Response {
           .departments=${options.departments}
           query=${options.query ?? ''}
           current=${options.currentDepartment ?? ''}
+          .account=${options.account}
         ></shop-header>
         <main id="main" class="page" tabindex="-1">${options.main}</main>
         ${footer}

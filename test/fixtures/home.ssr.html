@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gyral Goods</title>
     <meta name="description" content="Electronics, home, clothing, toys, groceries and more, in one store.">
-    <!--lit-part kw2vULl7gTE=--><!--lit-part cRpCEc46RN0=--><style>
+    <!--lit-part eabATTlSz5c=--><!--lit-part hz9fDTEaMVo=--><style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -26,6 +26,8 @@
     --ink: light-dark(oklch(22% 0.02 250), oklch(93% 0.01 250));
     --ink-muted: light-dark(oklch(45% 0.02 250), oklch(72% 0.015 250));
     --line: light-dark(oklch(88% 0.01 250), oklch(32% 0.015 250));
+    --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
+    --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
     --focus: oklch(60% 0.18 250);
     --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
     --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
@@ -199,8 +201,51 @@
     background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
   }
 }
+
+@layer components {
+  .product {
+    display: grid; gap: var(--space-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    align-items: start;
+  }
+  .product-info { display: grid; gap: var(--space-3); align-content: start; }
+  .product-info h1 { margin: 0; font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem); line-height: 1.2; text-wrap: balance; }
+  .product-info .brand { margin: 0; }
+  .rating-summary { display: flex; align-items: center; gap: var(--space-2); margin: 0; }
+  .product-section { margin-block: var(--space-5); max-inline-size: 70ch; }
+  .product-section p { text-wrap: pretty; }
+  .specs { border-collapse: collapse; inline-size: 100%; }
+  .specs th, .specs td { text-align: start; padding: var(--space-2) var(--space-3); border-block-end: 1px solid var(--line); }
+  .specs th { font-weight: 600; inline-size: 40%; }
+  .reviews-summary { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; }
+  .average { display: grid; justify-items: start; gap: var(--space-1); margin: 0; }
+  .average .big { font-size: 2.5rem; font-weight: 800; line-height: 1; }
+  .distribution { display: grid; gap: var(--space-1); margin: 0; min-inline-size: min(100%, 18rem); }
+  .distribution div { display: grid; grid-template-columns: 4.5rem 1fr 2.5rem; align-items: center; gap: var(--space-2); }
+  .distribution dt { font-size: 0.9rem; }
+  .distribution dd { display: contents; }
+  .distribution meter { inline-size: 100%; block-size: 0.75rem; }
+  .distribution .count { text-align: end; font-variant-numeric: tabular-nums; color: var(--ink-muted); }
+  .review-list { list-style: none; padding: 0; display: grid; gap: var(--space-4); }
+  .review-list article { border-block-start: 1px solid var(--line); padding-block-start: var(--space-3); }
+  .review-list h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
+  .byline { color: var(--ink-muted); font-size: 0.9rem; margin-block: var(--space-1); }
+}
+
+@layer components {
+  .auth, .account { max-inline-size: 32rem; display: grid; gap: var(--space-3); }
+  .auth h1, .account h1 { margin-block: 0; }
+  .auth > p { margin-block: 0; }
+  .account-details {
+    display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3);
+    margin: 0;
+  }
+  .account-details dt { font-weight: 600; }
+  .account-details dd { margin: 0; overflow-wrap: anywhere; }
+}
 </style><!--/lit-part-->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
@@ -208,9 +253,10 @@
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part MKg+G2FQvRw=-->
+    <!--lit-part ma8unLBnXLY=-->
         <a class="skip-link" href="#main">Skip to content</a>
         <!--lit-node 1--><shop-header
+          
           
           
           
@@ -303,6 +349,52 @@
       font-weight: 700;
       text-underline-offset: 0.3em;
     }
+    .account-menu {
+      position: relative;
+    }
+    .account-menu summary {
+      cursor: pointer;
+      list-style-position: inside;
+    }
+    .account-menu ul {
+      position: absolute;
+      inset-inline-end: 0;
+      inset-block-start: calc(100% + var(--space-1));
+      z-index: 10;
+      min-inline-size: 12rem;
+      margin: 0;
+      padding: var(--space-2);
+      list-style: none;
+      display: grid;
+      gap: var(--space-1);
+      background: var(--surface-raised);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.15);
+    }
+    .account-menu ul a,
+    .account-menu ul button {
+      display: block;
+      inline-size: 100%;
+      padding: var(--space-1) var(--space-2);
+      text-align: start;
+      color: inherit;
+      border-radius: calc(var(--radius) / 2);
+    }
+    .account-menu ul button {
+      font: inherit;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+    .account-menu ul a:hover,
+    .account-menu ul button:hover {
+      background: var(--surface-sunken);
+    }
+    .account-menu ul :focus-visible {
+      outline-color: var(--focus);
+    }
     :focus-visible {
       outline: 2px solid var(--brand-ink);
       outline-offset: 2px;
@@ -315,7 +407,7 @@
       clip-path: inset(50%);
       white-space: nowrap;
     }
-  </style><!--lit-part s9KBkN9Wsus=-->
+  </style><!--lit-part MvQZgyN4DFg=-->
     <header>
       <div class="bar">
         <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
@@ -334,7 +426,7 @@
           </form>
         </search>
         <nav class="utility" aria-label="Account and cart">
-          <a href="/account/login">Sign in</a>
+          <!--lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--/lit-part-->
           <a href="/cart">Cart</a>
         </nav>
       </div>

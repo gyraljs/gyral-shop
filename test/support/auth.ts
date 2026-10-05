@@ -3,6 +3,7 @@
 import { eq } from 'drizzle-orm';
 import { users } from '../../src/db/schema/accounts.js';
 import { SESSION_COOKIE } from '../../src/server/security/index.js';
+import { registerMember } from '../../src/services/accounts.js';
 import { createSession, type Session } from '../../src/services/sessions.js';
 import { CSRF_FIELD, CSRF_HEADER } from '../../src/ui/forms/csrf.js';
 import type { TestApp } from './app.js';
@@ -67,4 +68,20 @@ export async function anyCustomerEmail(test: TestApp): Promise<string> {
   const [row] = await test.db.select().from(users).where(eq(users.role, 'customer')).limit(1);
   if (row === undefined) throw new Error('no seeded customer');
   return row.email;
+}
+
+/** Creates a member with a real password hash, for tests that sign in through the forms. */
+export async function createMember(
+  test: TestApp,
+  member: { readonly name: string; readonly email: string; readonly password: string },
+): Promise<void> {
+  const created = await registerMember(test.db, member);
+  if (!created.ok) throw new Error(`createMember: ${created.error._tag}`);
+}
+
+/** The session id a response set (login rotates it), or undefined. */
+export function sessionCookie(response: Response): string | undefined {
+  const header = response.headers.get('set-cookie') ?? '';
+  const id = new RegExp(`${SESSION_COOKIE}=([^;]*)`).exec(header)?.[1];
+  return id === undefined || id === '' ? undefined : id;
 }

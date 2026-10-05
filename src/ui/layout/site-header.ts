@@ -1,4 +1,12 @@
 import { css, define, html, nothing, repeat, type Stateless } from '@gyral/core';
+import { csrfField } from '../forms/csrf.js';
+
+/** The signed-in member, as far as the header needs to know. */
+export interface AccountSummary {
+  readonly firstName: string;
+  /** For the sign-out form. */
+  readonly csrfToken: string;
+}
 
 export interface DepartmentLink {
   readonly slug: string;
@@ -13,18 +21,39 @@ export interface HeaderProps {
   readonly query?: string;
   /** Slug of the department being browsed, marked as the current link. */
   readonly current?: string;
+  /** Set when a member is signed in. */
+  readonly account?: AccountSummary;
 }
 
 /**
  * The site header: brand, search, account and cart entry points, department navigation.
- * Every part works without JavaScript (links and a GET form). Account and cart slots are
- * placeholders until the accounts and cart epics land.
+ * Every part works without JavaScript (links, a GET form, a <details> account menu and a POST
+ * sign-out form). The cart slot is a placeholder until the cart epic lands.
  */
+// A disclosure, not a popover: it opens and closes without JavaScript, and Baseline has
+// supported <details> for years (ADR 0003 in Gyral; popover is only newly widely available).
+const accountLinks = (account: AccountSummary | undefined) =>
+  account === undefined
+    ? html`<a href="/account/login">Sign in</a> <a href="/account/register">Register</a>`
+    : html`<details class="account-menu">
+        <summary>Hi, ${account.firstName}</summary>
+        <ul>
+          <li><a href="/account">Your account</a></li>
+          <li>
+            <form method="post" action="/account/logout">
+              ${csrfField(account.csrfToken)}
+              <button type="submit">Sign out</button>
+            </form>
+          </li>
+        </ul>
+      </details>`;
+
 export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
   props: {
     departments: { attribute: false },
     query: { type: String },
     current: { type: String },
+    account: { attribute: false },
   },
   intent: {},
   update: {},
@@ -47,7 +76,7 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
           </form>
         </search>
         <nav class="utility" aria-label="Account and cart">
-          <a href="/account/login">Sign in</a>
+          ${accountLinks(props.account)}
           <a href="/cart">Cart</a>
         </nav>
       </div>
@@ -155,6 +184,52 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
     .departments a[aria-current] {
       font-weight: 700;
       text-underline-offset: 0.3em;
+    }
+    .account-menu {
+      position: relative;
+    }
+    .account-menu summary {
+      cursor: pointer;
+      list-style-position: inside;
+    }
+    .account-menu ul {
+      position: absolute;
+      inset-inline-end: 0;
+      inset-block-start: calc(100% + var(--space-1));
+      z-index: 10;
+      min-inline-size: 12rem;
+      margin: 0;
+      padding: var(--space-2);
+      list-style: none;
+      display: grid;
+      gap: var(--space-1);
+      background: var(--surface-raised);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.15);
+    }
+    .account-menu ul a,
+    .account-menu ul button {
+      display: block;
+      inline-size: 100%;
+      padding: var(--space-1) var(--space-2);
+      text-align: start;
+      color: inherit;
+      border-radius: calc(var(--radius) / 2);
+    }
+    .account-menu ul button {
+      font: inherit;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+    .account-menu ul a:hover,
+    .account-menu ul button:hover {
+      background: var(--surface-sunken);
+    }
+    .account-menu ul :focus-visible {
+      outline-color: var(--focus);
     }
     :focus-visible {
       outline: 2px solid var(--brand-ink);

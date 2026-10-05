@@ -3,3 +3,7 @@
 import '@gyral/ssr/hydrate';
 import '../ui/layout/site-header.js';
 import '../ui/catalog/listing.js';
+import '../ui/account/login-form.js';
+import '../ui/account/register-form.js';
+import '../ui/product/buy-box.js';
+import '../ui/product/gallery.js';

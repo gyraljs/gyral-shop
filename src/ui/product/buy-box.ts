@@ -1,0 +1,203 @@
+import { define, html, nothing, unsafeCSS } from '@gyral/core';
+import { delay } from '@gyral/time';
+import { maxQuantity } from '../../domain/inventory.js';
+import { format, usd } from '../../domain/money.js';
+import {
+  choiceReason,
+  choiceState,
+  choose,
+  defaultSelection,
+  optionAxes,
+  resolveVariant,
+  variantAvailability,
+  variantLabel,
+  type Selection,
+} from '../../domain/variants.js';
+import { csrfField } from '../forms/csrf.js';
+import { buyBoxCss } from '../styles/buy-box.js';
+
+/** One SKU (matches services/product.ts VariantView). */
+export interface BuyBoxVariant {
+  readonly sku: string;
+  readonly options: Readonly<Record<string, string>>;
+  readonly priceCents: number;
+  readonly salePriceCents: number | null;
+  readonly stock: number;
+}
+
+export interface BuyBoxProps {
+  readonly variants?: readonly BuyBoxVariant[];
+  /** Where the form posts. The cart epic owns the endpoint. */
+  readonly action?: string;
+  readonly csrf?: string;
+}
+
+export interface BuyBoxState {
+  readonly selection: Selection;
+  /** False on the server and during hydration: the no-JS SKU list. True once interactive. */
+  readonly enhanced: boolean;
+}
+
+export type BuyBoxMsg =
+  | { readonly _tag: 'Enhanced' }
+  | { readonly _tag: 'Choose'; readonly axis: string; readonly value: string };
+
+export const ADD_TO_CART_PATH = '/cart/add';
+
+const priceView = (v: BuyBoxVariant) =>
+  v.salePriceCents === null || v.salePriceCents >= v.priceCents
+    ? html`<p class="price">${format(usd(v.priceCents))}</p>`
+    : html`<p class="price sale">
+        <ins><span class="visually-hidden">Sale price </span>${format(usd(v.salePriceCents))}</ins>
+        <del><span class="visually-hidden">Was </span>${format(usd(v.priceCents))}</del>
+      </p>`;
+
+const stockText = (v: BuyBoxVariant): string => {
+  const state = variantAvailability(v);
+  switch (state._tag) {
+    case 'InStock':
+      return 'In stock';
+    case 'LowStock':
+      return `Only ${String(state.left)} left`;
+    case 'OutOfStock':
+      return 'Out of stock';
+  }
+};
+
+const unitCents = (v: BuyBoxVariant) =>
+  v.salePriceCents !== null && v.salePriceCents < v.priceCents ? v.salePriceCents : v.priceCents;
+
+/** Without JavaScript: every SKU as one radio list (sold-out SKUs disabled). */
+const skuList = (variants: readonly BuyBoxVariant[], selected: string | undefined) => html`
+  <fieldset class="choices">
+    <legend>Choose an option</legend>
+    ${variants.map(
+      (v) => html`
+        <label class="sku">
+          <input
+            type="radio"
+            name="sku"
+            value=${v.sku}
+            required
+            ?checked=${v.sku === selected}
+            ?disabled=${v.stock <= 0}
+          />
+          <span>${variantLabel(v)}</span>
+          <span class="meta">${format(usd(unitCents(v)))} · ${stockText(v)}</span>
+        </label>
+      `,
+    )}
+  </fieldset>
+`;
+
+/** With JavaScript: one radio group per option axis; impossible combinations disabled. */
+const axisPickers = (variants: readonly BuyBoxVariant[], selection: Selection, intent: string) =>
+  optionAxes(variants).map(
+    (axis) => html`
+      <fieldset class="choices axis">
+        <legend>${axis.name}: <strong>${selection[axis.name] ?? ''}</strong></legend>
+        ${axis.values.map((value) => {
+          const state = choiceState(variants, selection, axis.name, value);
+          const reason = choiceReason(state, axis.name, selection);
+          const id = `opt-${axis.name}-${value}`.replace(/[^\w-]/g, '_');
+          return html`
+            <label class="option">
+              <input
+                type="radio"
+                name=${`option-${axis.name}`}
+                value=${value}
+                data-axis=${axis.name}
+                data-intent=${intent}
+                ?checked=${selection[axis.name] === value}
+                ?disabled=${state._tag !== 'Available' && selection[axis.name] !== value}
+                aria-describedby=${reason === '' ? nothing : id}
+              />
+              <span>${value}</span>
+              ${reason === '' ? nothing : html`<small id=${id}>${reason}</small>`}
+            </label>
+          `;
+        })}
+      </fieldset>
+    `,
+  );
+
+/**
+ * Price, availability, options and the add-to-cart form. The form posts the SKU and quantity
+ * with or without JavaScript; with it, options are chosen per axis instead of from a SKU list.
+ */
+export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box', {
+  props: {
+    variants: { attribute: false },
+    action: { type: String },
+    csrf: { type: String },
+  },
+  // `Enhanced` runs on the client only: servers drop commands, and hydration starts init's
+  // commands after the first (matching) render (Gyral ADR 0012).
+  init: (props) => [
+    { selection: defaultSelection(props.variants ?? []), enhanced: false },
+    [delay<BuyBoxMsg>(0, { _tag: 'Enhanced' }, { key: 'buy-box-enhance' })],
+  ],
+  intent: {
+    Choose: ({ target, value }) => {
+      const axis = target.getAttribute('data-axis');
+      return axis === null || value === undefined ? undefined : { _tag: 'Choose', axis, value };
+    },
+  },
+  update: {
+    Enhanced: (s) => ({ ...s, enhanced: true }),
+    Choose: (s, m, { props }) => ({
+      ...s,
+      selection: choose(props.variants ?? [], s.selection, m.axis, m.value),
+    }),
+  },
+  view: (s, i, { props }) => {
+    const variants = props.variants ?? [];
+    const current = resolveVariant(variants, s.selection) ?? variants[0];
+    if (current === undefined) return html`<p>This product is not available.</p>`;
+    const max = maxQuantity(current.stock);
+    const multiple = variants.length > 1;
+    return html`
+      ${priceView(current)}
+      <p class="stock ${current.stock <= 0 ? 'out' : ''}" role="status">
+        ${multiple ? html`<span class="label">${variantLabel(current)}: </span>` : nothing}${stockText(
+          current,
+        )}
+      </p>
+      <form method="post" action=${props.action ?? ADD_TO_CART_PATH}>
+        ${props.csrf === undefined || props.csrf === '' ? nothing : csrfField(props.csrf)}
+        ${
+          !multiple
+            ? html`<input type="hidden" name="sku" value=${current.sku} />`
+            : s.enhanced
+              ? html`${axisPickers(variants, s.selection, i.Choose)}
+                  <input type="hidden" name="sku" value=${current.sku} />`
+              : skuList(variants, current.sku)
+        }
+        <p class="quantity">
+          <label for="quantity">Quantity</label>
+          <input
+            id="quantity"
+            name="quantity"
+            type="number"
+            inputmode="numeric"
+            min="1"
+            max=${Math.max(1, s.enhanced ? max : 10)}
+            value="1"
+            required
+            ?disabled=${s.enhanced && max === 0}
+          />
+        </p>
+        <button type="submit" ?disabled=${s.enhanced && max === 0}>
+          ${s.enhanced && max === 0 ? 'Out of stock' : 'Add to cart'}
+        </button>
+      </form>
+    `;
+  },
+  styles: unsafeCSS(buyBoxCss),
+});
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'shop-buy-box': InstanceType<typeof BuyBox>;
+  }
+}
