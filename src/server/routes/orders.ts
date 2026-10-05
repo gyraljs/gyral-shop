@@ -28,6 +28,7 @@ import {
   SlidingWindowLimiter,
   type AppEnv,
 } from '../security/index.js';
+import { publicOrigin } from '../origin.js';
 
 export interface OrderRoutesOptions {
   readonly services: Services;
@@ -144,7 +145,7 @@ export function orderRoutes({ services, render }: OrderRoutesOptions): Hono<AppE
     const result = await cancelMemberOrder(services, {
       userId: user.id,
       number,
-      origin: new URL(c.req.url).origin,
+      origin: publicOrigin(c),
     });
     if (!result.ok) {
       if (result.error._tag === 'NotFound') return c.notFound();

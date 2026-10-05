@@ -60,6 +60,28 @@ describe('category listing with filters', () => {
     expect(errors).not.toHaveBeenCalled();
   });
 
+  it('collapses the filters on a narrow listing and shows them expanded on a wide one', async () => {
+    const panel = listing().querySelector('details.filters-panel');
+    const summary = panel?.querySelector('summary');
+    const firstField = panel?.querySelector('fieldset');
+    if (!(panel instanceof HTMLDetailsElement) || !summary || !firstField)
+      throw new Error('no panel');
+    expect(panel.open).toBe(false); // no filters applied in the fixture
+    const host = listing() as HTMLElement;
+    try {
+      host.style.inlineSize = '320px';
+      await new Promise((r) => requestAnimationFrame(r));
+      expect(summary.checkVisibility()).toBe(true);
+      expect(firstField.checkVisibility()).toBe(false);
+      host.style.inlineSize = '960px';
+      await new Promise((r) => requestAnimationFrame(r));
+      expect(summary.checkVisibility()).toBe(false); // no toggle on wide containers
+      expect(firstField.checkVisibility()).toBe(true);
+    } finally {
+      host.style.inlineSize = '';
+    }
+  });
+
   it('applies a filter without a page load, keeping the URL in sync', async () => {
     const marker = Symbol('same document');
     (window as unknown as Record<symbol, boolean>)[marker] = true;

@@ -13,6 +13,7 @@ import {
 import { departmentCrumbs, departmentPage as departmentView } from '../../ui/pages/department.js';
 import type { RenderPage } from '../document.js';
 import { breadcrumbJsonLd } from '../seo.js';
+import { publicOrigin } from '../origin.js';
 
 export interface CatalogRouteOptions {
   readonly db: Db;
@@ -25,7 +26,7 @@ export function catalogRoutes({ db, render }: CatalogRouteOptions): Hono {
   routes.get('/d/:department', async (c) => {
     const data = await departmentPage(db, c.req.param('department'));
     if (data === undefined) return c.notFound();
-    const { origin } = new URL(c.req.url);
+    const origin = publicOrigin(c);
     const path = `/d/${data.department.slug}`;
     return render({
       title: data.department.name,
@@ -53,7 +54,7 @@ export function catalogRoutes({ db, render }: CatalogRouteOptions): Hono {
     if (result._tag !== 'Found') return c.notFound(); // unknown slug or page past the end
     const { data } = result;
     const view = categoryListing(data);
-    const { origin } = new URL(c.req.url);
+    const origin = publicOrigin(c);
     // Pages of the plain listing are their own canonical URLs (Google's guidance). Sorted or
     // filtered states point to the plain listing and stay out of the index (SEO spec).
     const base = categoryPath(data.department.slug, data.category.slug);

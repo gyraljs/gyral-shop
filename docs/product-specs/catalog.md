@@ -12,3 +12,5 @@ Outdoors, Books. Each has 3–6 categories. Seed: about 700 products, determinis
 - With JS, changing a filter updates results without a full reload (router + http driver) and
   keeps focus and scroll sensible; an `aria-live` region announces the result count.
 - Empty states for no results; out-of-stock items are shown but marked.
+
+- Listing sorts "Top rated" and "Featured" use the Bayesian average (domain/ratings.ts); unrated products stay last. The minimum-rating filter still uses the plain average shown on cards.

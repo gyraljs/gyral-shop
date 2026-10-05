@@ -1,7 +1,7 @@
 // Search results (search spec). Plain data, so it can seed components and travel as JSON.
 import type { Db } from '../db/client.js';
 import { brandFacets, countProducts, listDepartments, productCards } from '../db/repos/catalog.js';
-import { ftsMatch, suggestCategories } from '../db/repos/search.js';
+import { ftsMatch, suggestCategories, suggestDepartments } from '../db/repos/search.js';
 import { format, usd } from '../domain/money.js';
 import {
   isRefined,
@@ -111,6 +111,7 @@ export interface Suggestions {
     readonly href: string;
     readonly price: string;
   }[];
+  readonly departments: readonly { readonly name: string; readonly href: string }[];
   readonly categories: readonly {
     readonly name: string;
     readonly department: string;
@@ -120,19 +121,22 @@ export interface Suggestions {
 
 const SUGGESTED_PRODUCTS = 6;
 const SUGGESTED_CATEGORIES = 3;
+const SUGGESTED_DEPARTMENTS = 2;
 
-/** Header suggestions: the best product matches and categories named like the query. */
+/** Header suggestions: departments and categories named like the query, then products. */
 export async function searchSuggestions(db: Db, raw: string): Promise<Suggestions> {
   const query = normalizeQuery(raw);
   const terms = searchTerms(query);
   const match = ftsMatch(terms);
-  if (match === undefined) return { query, products: [], categories: [] };
-  const [rows, cats] = await Promise.all([
+  if (match === undefined) return { query, products: [], departments: [], categories: [] };
+  const [rows, depts, cats] = await Promise.all([
     productCards(db, { match, order: 'relevance', limit: SUGGESTED_PRODUCTS }),
+    suggestDepartments(db, terms, SUGGESTED_DEPARTMENTS),
     suggestCategories(db, terms, SUGGESTED_CATEGORIES),
   ]);
   return {
     query,
+    departments: depts.map((d) => ({ name: d.name, href: `/d/${d.slug}` })),
     products: rows.map((r) => ({
       name: r.name,
       brand: r.brand,

@@ -17,6 +17,31 @@ describe('config', () => {
     expect(() => loadConfig({ NODE_ENV: 'production' })).toThrow(/APP_SECRET/);
     expect(() => loadConfig({ APP_SECRET: 'short' })).toThrow(/APP_SECRET/);
     const secret = 'x'.repeat(32);
-    expect(loadConfig({ NODE_ENV: 'production', APP_SECRET: secret }).APP_SECRET).toBe(secret);
+    expect(
+      loadConfig({
+        NODE_ENV: 'production',
+        APP_SECRET: secret,
+        SITE_ORIGIN: 'https://shop.example',
+      }).APP_SECRET,
+    ).toBe(secret);
+  });
+
+  it('normalizes SITE_ORIGIN, rejects paths, and requires it in production', () => {
+    expect(loadConfig({}).SITE_ORIGIN).toBeUndefined();
+    expect(loadConfig({ SITE_ORIGIN: 'https://Shop.Example/' }).SITE_ORIGIN).toBe(
+      'https://shop.example',
+    );
+    expect(() => loadConfig({ SITE_ORIGIN: 'https://shop.example/store' })).toThrow(/SITE_ORIGIN/);
+    expect(() => loadConfig({ SITE_ORIGIN: 'ftp://shop.example' })).toThrow(/SITE_ORIGIN/);
+    expect(() => loadConfig({ SITE_ORIGIN: 'not a url' })).toThrow(/SITE_ORIGIN/);
+    const secret = 'x'.repeat(32);
+    expect(() => loadConfig({ NODE_ENV: 'production', APP_SECRET: secret })).toThrow(/SITE_ORIGIN/);
+    expect(
+      loadConfig({
+        NODE_ENV: 'production',
+        APP_SECRET: secret,
+        SITE_ORIGIN: 'https://shop.example',
+      }).SITE_ORIGIN,
+    ).toBe('https://shop.example');
   });
 });

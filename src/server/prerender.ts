@@ -8,6 +8,9 @@ import { openDb, type Db } from '../db/client.js';
 import { CLIENT_ENTRY_SOURCE, productionApp } from './prod-app.js';
 import { STATIC_PATHS } from './routes/content.js';
 
+/** Used only when SITE_ORIGIN is unset (a local build); production requires SITE_ORIGIN. */
+const DEV_ORIGIN = 'http://localhost:5200';
+
 export async function prerenderSite(
   distDir: string,
   db: Db,
@@ -21,13 +24,16 @@ export async function prerenderSite(
     app: productionApp({ db, config }, clientEntry),
     paths: STATIC_PATHS,
     outDir: join(distDir, 'static'),
-    origin: config.SITE_ORIGIN,
+    origin: config.SITE_ORIGIN ?? DEV_ORIGIN,
   });
   return pages.map((p) => p.path);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const config = loadConfig();
+  if (config.SITE_ORIGIN === undefined) {
+    console.warn(`SITE_ORIGIN is not set: prerendered pages will use ${DEV_ORIGIN} in their URLs.`);
+  }
   const dist = fileURLToPath(new URL('../../dist', import.meta.url));
   const paths = await prerenderSite(dist, await openDb(config.DATABASE_URL), config);
   console.log(`prerendered: ${paths.join(', ')}`);

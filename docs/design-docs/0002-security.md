@@ -117,3 +117,11 @@ Keep this table current: a new security rule lands with a test and a row here.
 | Production secrets required                                     | `src/config/env.test.ts`; `prod.test.ts`                                                                                                                                                                                                                                                                            |
 | Path traversal refused (production files)                       | `prod.test.ts`                                                                                                                                                                                                                                                                                                      |
 | Concurrent writes safe (write lock)                             | `test/node/write-lock.test.ts`                                                                                                                                                                                                                                                                                      |
+
+## Addendum: purging stale sessions (2026-10-04)
+
+`startPurgeSchedule()` (`src/services/maintenance.ts`) runs in the dev and production servers:
+at start and then hourly it deletes expired sessions and the guest carts they orphan (a cart
+with neither a session nor a member can never be reached again; its lines and checkout draft
+cascade). Writes go through the write lock; a slow run never overlaps the next. `pnpm db:purge`
+runs it once by hand.

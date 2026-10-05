@@ -38,6 +38,7 @@ import { setFlash, takeFlash } from '../flash.js';
 import { grantOrderAccess } from '../order-access.js';
 import { csrfTokenFor, type AppEnv } from '../security/index.js';
 import { now } from '../security/runtime.js';
+import { publicOrigin } from '../origin.js';
 
 export interface CheckoutRoutesOptions {
   readonly db: Db;
@@ -235,7 +236,7 @@ export function checkoutRoutes({ db, render, services }: CheckoutRoutesOptions):
         const placed = await placeOrder(services, shopper, {
           key: data.key,
           ...(data.expectedTotal === undefined ? {} : { expectedTotalCents: data.expectedTotal }),
-          origin: new URL(c.req.url).origin,
+          origin: publicOrigin(c),
         });
         if (!placed.ok) {
           setFlash(c, { kind: 'error', message: placeErrorMessage(placed.error) });

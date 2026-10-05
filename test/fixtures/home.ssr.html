@@ -234,6 +234,20 @@
     background: var(--surface-sunken);
     border-radius: var(--radius);
   }
+  /* Collapsible on narrow containers; always expanded (no toggle) on wide ones. */
+  .filters { container: filters / inline-size; }
+  .filters-panel > summary {
+    cursor: pointer; font-weight: 600;
+    padding-block: var(--space-1);
+  }
+  .filters-panel > summary .count { color: var(--ink-muted); font-weight: 400; }
+  .filters-panel[open] > summary { margin-block-end: var(--space-3); }
+  @supports selector(::details-content) {
+    @container filters (inline-size >= 36rem) {
+      .filters-panel > summary { display: none; }
+      .filters-panel::details-content { content-visibility: visible; block-size: auto; }
+    }
+  }
   .filter-fields {
     display: grid; gap: var(--space-3);
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));

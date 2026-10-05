@@ -34,6 +34,7 @@ import { seoRoutes } from './routes/seo.js';
 import { consentRoutes } from './routes/consent.js';
 import { analyticsMiddleware } from './analytics.js';
 import { organizationJsonLd, twitterCard, websiteJsonLd } from './seo.js';
+import { publicOrigin } from './origin.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
@@ -45,6 +46,8 @@ export interface AppOptions {
   readonly security?: Omit<SecurityOptions, 'db' | 'render'>;
   /** Service settings and replacements (payment latency, secret, fakes in tests). */
   readonly services?: Omit<ServiceOptions, 'db' | 'now'>;
+  /** Public origin for absolute URLs (SITE_ORIGIN). Default: each request's own origin. */
+  readonly siteOrigin?: string;
 }
 
 const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#c8102e"/><text x="16" y="22" font-family="system-ui,sans-serif" font-size="17" font-weight="800" text-anchor="middle" fill="#fff">G</text></svg>`;
@@ -67,6 +70,7 @@ export function createApp({
   mode = 'development',
   security,
   services: serviceOptions,
+  siteOrigin,
 }: AppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   const clock = security?.now;
@@ -102,6 +106,10 @@ export function createApp({
   };
   // Lets page() see the request's member without threading the context through every route.
   app.use('*', contextStorage());
+  app.use('*', async (c, next) => {
+    c.set('siteOrigin', siteOrigin);
+    await next();
+  });
   installSecurity(app, {
     ...security,
     db,
@@ -135,7 +143,7 @@ export function createApp({
 
   app.get('/', async (c) => {
     const data = await homeData(db);
-    const { origin } = new URL(c.req.url);
+    const origin = publicOrigin(c);
     const canonical = new URL('/', origin).href;
     const description = 'Electronics, home, clothing, toys, groceries and more, in one store.';
     return page({

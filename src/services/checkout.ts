@@ -2,14 +2,8 @@
 // save each step. Placing the order (charge, reserve stock, create the order, email) is the next
 // step's job; this module ends at a draft that is ready to place.
 import { cartLineRows, findPromo, findSessionCart, findUserCart } from '../db/repos/cart.js';
-import {
-  findCheckout,
-  findMemberAddress,
-  insertMemberAddress,
-  memberAddresses,
-  saveCheckout,
-  type CheckoutRow,
-} from '../db/repos/checkout.js';
+import { addAddress, findAddress, listAddresses } from '../db/repos/addresses.js';
+import { findCheckout, saveCheckout, type CheckoutRow } from '../db/repos/checkout.js';
 import type { Db } from '../db/client.js';
 import { validateCard, type CardBrand, type CardInput } from '../domain/cards.js';
 import {
@@ -116,7 +110,7 @@ export async function loadCheckout(
     cartLineRows(db, cart.id),
     cart.promoCode === null ? undefined : findPromo(db, cart.promoCode),
     findCheckout(db, cart.id),
-    shopper.member === undefined ? [] : memberAddresses(db, shopper.member.id),
+    shopper.member === undefined ? [] : listAddresses(db, shopper.member.id),
   ]);
   if (rows.length === 0) return err({ _tag: 'EmptyCart' });
   const promo = promoFromRow(promoRow);
@@ -179,7 +173,7 @@ export async function saveAddress(
     const found =
       shopper.member === undefined
         ? undefined
-        : asAddress((await findMemberAddress(db, shopper.member.id, input.choice.savedId)) ?? null);
+        : asAddress((await findAddress(db, shopper.member.id, input.choice.savedId)) ?? null);
     if (found === undefined) return reject('Choose one of your saved addresses.', 'addressId');
     address = found;
   } else {
@@ -187,7 +181,7 @@ export async function saveAddress(
     if (postalCode === undefined) return reject('Enter a 5-digit ZIP code.', 'postalCode');
     address = { ...input.choice.address, postalCode };
     if (input.save && shopper.member !== undefined) {
-      await insertMemberAddress(db, shopper.member.id, address);
+      await addAddress(db, shopper.member.id, address, false);
     }
   }
   await saveCheckout(db, state.cartId, { shippingAddress: address }, now);

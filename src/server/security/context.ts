@@ -7,6 +7,8 @@ export interface SecurityVariables {
   session: Session | undefined;
   /** The signed-in member, if any. */
   user: SessionUser | undefined;
+  /** Configured public origin (SITE_ORIGIN); undefined means "use the request's". */
+  siteOrigin: string | undefined;
 }
 
 export interface AppEnv {

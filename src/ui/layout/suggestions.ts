@@ -6,6 +6,7 @@ export const SuggestionsSchema = v.object({
   products: v.array(
     v.object({ name: v.string(), brand: v.string(), href: v.string(), price: v.string() }),
   ),
+  departments: v.array(v.object({ name: v.string(), href: v.string() })),
   categories: v.array(v.object({ name: v.string(), department: v.string(), href: v.string() })),
 });
 
