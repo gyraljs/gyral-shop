@@ -18,3 +18,13 @@
   control page with a missing `alt` proves the run reports violations. Not covered there:
   `/admin` (client-rendered; its own suite) and `/dev/mail` (development tool). Hydrated
   states are covered by the browser tests, which also run axe, and by `pnpm ui:check`.
+- **No-JS end to end:** one journey suite with JavaScript disabled, split in two files for
+  size. `test/node/nojs-shopping.test.ts` (seeded catalog): browse, search with refine and no
+  results, filter and sort a listing, choose a variant, edit the cart; register, sign out,
+  sign in with a wrong then right password, save and move a wishlist item, edit profile and
+  addresses; password reset through the outbox; contact form; consent reject then opt in.
+  `test/node/nojs-orders.test.ts` (exact cart fixture): product to cart through every
+  checkout step (with a rejected step) to confirmation and the confirmation email, guest
+  lookup in another browser; a member cancels from history; a buyer reviews, another
+  member votes helpful, reviews sort by link. These replace the earlier per-feature
+  `*-nojs.test.ts` files.
