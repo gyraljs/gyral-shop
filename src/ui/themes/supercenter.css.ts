@@ -37,6 +37,9 @@ export const supercenterThemeCss = `
     --header-ink: oklch(99% 0 0);
     --nav-bg: light-dark(oklch(41% 0.15 255), oklch(23% 0.07 255));
     --nav-ink: oklch(99% 0 0);
+    --search-button-bg: light-dark(oklch(33% 0.17 255), oklch(85% 0.15 95));
+    --search-button-ink: light-dark(oklch(99% 0 0), oklch(20% 0.04 255));
+    --hero-glow: light-dark(oklch(48% 0.17 255 / 0.25), oklch(72% 0.13 250 / 0.25));
     /* Theme tokens: the yellow call to action, pills and card elevation. */
     --cta: oklch(86% 0.17 90);
     --cta-hover: oklch(81% 0.17 85);

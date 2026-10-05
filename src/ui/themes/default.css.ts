@@ -27,7 +27,10 @@ export const defaultThemeCss = `
     --brand-size: 1.4rem;
     --header-bg: var(--brand);
     --header-ink: var(--brand-ink);
-    --nav-bg: oklch(from var(--brand) calc(l - 0.08) c h);
+    --nav-bg: oklch(42% 0.2 25);
+    --search-button-bg: oklch(35% 0.2 25);
+    --search-button-ink: oklch(99% 0 0);
+    --hero-glow: oklch(50% 0.2 25 / 0.25);
   }
 }
 `;

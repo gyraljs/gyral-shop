@@ -1,6 +1,11 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { isExempt, styleViolations, unlayeredStyles } from './lib/styles.mjs';
+import {
+  isExempt,
+  relativeColourFromTokens,
+  styleViolations,
+  unlayeredStyles,
+} from './lib/styles.mjs';
 
 function files(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
@@ -12,15 +17,16 @@ function files(dir) {
   );
 }
 
-const errors = files('src/ui')
-  .filter((f) => !isExempt(f))
-  .flatMap((f) => {
-    const text = readFileSync(f, 'utf8');
-    return [...styleViolations(f, text), ...unlayeredStyles(f, text)];
-  });
+const errors = files('src/ui').flatMap((f) => {
+  const text = readFileSync(f, 'utf8');
+  // Token definitions (base.ts) may hold literals, but no file outside the themes may derive
+  // colours from tokens.
+  const contract = isExempt(f) ? [] : [...styleViolations(f, text), ...unlayeredStyles(f, text)];
+  return [...contract, ...relativeColourFromTokens(f, text)];
+});
 
 if (errors.length > 0) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
-console.log('styles: tokens only, every stylesheet in a cascade layer');
+console.log('styles: tokens only, layered, no relative colour from tokens outside themes');

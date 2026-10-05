@@ -57,7 +57,12 @@
     /* Component tokens, derived from the palette unless a theme sets them. */
     --header-bg: var(--brand);
     --header-ink: var(--brand-ink);
-    --nav-bg: oklch(from var(--header-bg) calc(l - 0.08) c h);
+    --nav-bg: var(--header-bg);
+    /* Explicit tokens instead of relative colour: a theme may define --brand with
+       light-dark(), which oklch(from …) can't resolve (ADR 0006 addendum). */
+    --search-button-bg: var(--brand);
+    --search-button-ink: var(--brand-ink);
+    --hero-glow: transparent;
     --nav-ink: var(--header-ink);
   }
 }
@@ -203,7 +208,7 @@
     padding: var(--space-5) var(--space-4);
     border-radius: calc(var(--radius) * 2);
     background:
-      radial-gradient(circle at 85% 20%, oklch(from var(--brand) l c h / 0.25), transparent 50%),
+      radial-gradient(circle at 85% 20%, var(--hero-glow), transparent 50%),
       var(--surface-sunken);
   }
   .hero h1 { font-size: clamp(1.8rem, 1rem + 3vw, 3rem); margin-block: 0 var(--space-2); }
@@ -1219,8 +1224,8 @@ shop-checkout {
     border: 0;
     border-start-end-radius: var(--radius);
     border-end-end-radius: var(--radius);
-    background: oklch(from var(--brand) calc(l - 0.15) c h);
-    color: var(--brand-ink);
+    background: var(--search-button-bg);
+    color: var(--search-button-ink);
     cursor: pointer;
   }
   shop-search [role='listbox'] {

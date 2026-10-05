@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { isExempt, styleViolations, unlayeredStyles } from '../lib/styles.mjs';
+import {
+  isExempt,
+  relativeColourFromTokens,
+  styleViolations,
+  unlayeredStyles,
+} from '../lib/styles.mjs';
 
 const check = (css) => styleViolations('x.ts', css);
 
@@ -44,5 +49,21 @@ describe('unlayeredStyles', () => {
       unlayeredStyles('x.ts', 'styles: css`\n  /* note */\n  @layer components { :host {} }`'),
     ).toEqual([]);
     expect(unlayeredStyles('x.ts', 'export const barCss = `${baseCss}${fooCss}`;')).toEqual([]);
+  });
+});
+
+describe('relativeColourFromTokens', () => {
+  it('flags relative colour from a token outside theme files', () => {
+    const css = 'background: oklch(from var(--brand) calc(l - 0.15) c h);';
+    expect(relativeColourFromTokens('src/ui/styles/search.ts', css)).toHaveLength(1);
+    expect(relativeColourFromTokens('src/ui/styles/base.ts', css)).toHaveLength(1);
+  });
+
+  it('allows it inside theme files and allows plain tokens', () => {
+    const css = 'background: oklch(from var(--brand) l c h / 0.25);';
+    expect(relativeColourFromTokens('src/ui/themes/default.css.ts', css)).toEqual([]);
+    expect(relativeColourFromTokens('src/ui/styles/search.ts', 'background: var(--x);')).toEqual(
+      [],
+    );
   });
 });

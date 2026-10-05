@@ -14,7 +14,7 @@ export const catalogCss = `
     padding: var(--space-5) var(--space-4);
     border-radius: calc(var(--radius) * 2);
     background:
-      radial-gradient(circle at 85% 20%, oklch(from var(--brand) l c h / 0.25), transparent 50%),
+      radial-gradient(circle at 85% 20%, var(--hero-glow), transparent 50%),
       var(--surface-sunken);
   }
   .hero h1 { font-size: clamp(1.8rem, 1rem + 3vw, 3rem); margin-block: 0 var(--space-2); }

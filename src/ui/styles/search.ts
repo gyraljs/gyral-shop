@@ -25,8 +25,8 @@ export const searchCss = `
     border: 0;
     border-start-end-radius: var(--radius);
     border-end-end-radius: var(--radius);
-    background: oklch(from var(--brand) calc(l - 0.15) c h);
-    color: var(--brand-ink);
+    background: var(--search-button-bg);
+    color: var(--search-button-ink);
     cursor: pointer;
   }
   shop-search [role='listbox'] {

@@ -49,6 +49,9 @@ export const marketplaceThemeCss = `
     --header-ink: oklch(98% 0 0);
     --nav-bg: oklch(31% 0.05 255);
     --nav-ink: oklch(98% 0 0);
+    --search-button-bg: oklch(77% 0.16 65);
+    --search-button-ink: oklch(18% 0.03 250);
+    --hero-glow: oklch(77% 0.16 65 / 0.25);
   }
 
   body { font-size: var(--step-0); line-height: 1.4; }

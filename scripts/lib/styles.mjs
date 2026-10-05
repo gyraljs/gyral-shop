@@ -54,3 +54,23 @@ export function unlayeredStyles(file, text) {
   }
   return findings;
 }
+
+/**
+ * Relative colour from a token (`oklch(from var(--x) …)`) breaks when a theme defines that
+ * token with light-dark(). Outside theme files, use a dedicated token that each theme sets
+ * per scheme (docs/design-docs/0006-theming.md, "Relative colour" addendum).
+ */
+export function relativeColourFromTokens(file, text) {
+  if (file.includes('src/ui/themes/')) return [];
+  const findings = [];
+  text.split('\n').forEach((line, index) => {
+    if (/\bfrom\s+var\(--/.test(line)) {
+      findings.push(
+        `${file}:${String(index + 1)}: relative colour from a token. Themes may define tokens ` +
+          `with light-dark(), which relative colour can't resolve; add a dedicated token in ` +
+          `@layer tokens and set it in every theme (ADR 0006).`,
+      );
+    }
+  });
+  return findings;
+}

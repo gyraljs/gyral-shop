@@ -38,6 +38,9 @@ export const boutiqueThemeCss = `
     --header-ink: var(--ink);
     --nav-bg: var(--surface);
     --nav-ink: var(--ink);
+    --search-button-bg: var(--ink);
+    --search-button-ink: var(--surface);
+    --hero-glow: transparent;
     --hairline: 1px solid var(--line);
     --tracking-wide: 0.18em;
   }
@@ -86,9 +89,7 @@ export const boutiqueThemeCss = `
     [data-region="account"] { justify-self: center; }
     [data-region="nav"] ul { justify-content: start; gap: var(--space-3); }
   }
-  /* The search button is solid ink: a relative colour derived from a light-dark() --brand
-     is not reliable, and a quiet ink button suits this theme anyway. */
-  [data-region="search"] button { background: var(--ink); color: var(--surface); }
+  /* The search button colours come from --search-button-bg/-ink (set above). */
   [data-region="search"] input { border: var(--hairline); }
   shop-mini-cart::part(badge) { background: var(--brand); color: var(--brand-ink); }
   shop-mini-cart::part(panel) { border-radius: 0; }

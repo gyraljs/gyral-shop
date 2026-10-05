@@ -170,3 +170,13 @@ alone logs one on the category page (the listing). A Gyral fix is in progress.
   `reduce`; the choice is saved with `submitForm` to the same `/theme` endpoint. The Apply
   button hides after hydration. If saving fails, the page keeps the new look and says so.
 - The admin shell is not themed (it keeps the token fallbacks); themes are storefront-only.
+
+## Addendum: no relative colour from tokens outside themes (2026-10-05)
+
+Shared component styles used `oklch(from var(--brand) …)` (the header search button, the home
+hero glow, the nav strip fallback). When a theme defines `--brand` with `light-dark()`,
+relative colour syntax can't resolve it and the colour is lost (Boutique failed contrast on
+13 pages because of it). Rule: outside `src/ui/themes/`, never derive a colour from a token.
+Add a dedicated token in `@layer tokens` with a plain fallback and set it in every theme, per
+scheme where needed. New tokens: `--search-button-bg`, `--search-button-ink`, `--hero-glow`
+(`--nav-bg` now falls back to `--header-bg`). `scripts/check-styles.mjs` enforces the rule.

@@ -53,7 +53,12 @@ export const baseCss = `
     /* Component tokens, derived from the palette unless a theme sets them. */
     --header-bg: var(--brand);
     --header-ink: var(--brand-ink);
-    --nav-bg: oklch(from var(--header-bg) calc(l - 0.08) c h);
+    --nav-bg: var(--header-bg);
+    /* Explicit tokens instead of relative colour: a theme may define --brand with
+       light-dark(), which oklch(from …) can't resolve (ADR 0006 addendum). */
+    --search-button-bg: var(--brand);
+    --search-button-ink: var(--brand-ink);
+    --hero-glow: transparent;
     --nav-ink: var(--header-ink);
   }
 }
