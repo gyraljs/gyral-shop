@@ -81,3 +81,11 @@ app, so `src/server/prod-app.ts` adds the same headers (`securityHeaderValues` i
 `src/server/security/headers.ts`) to those responses. Prerendered pages contain no session,
 CSRF token or account: `/api/me` (never cached, never starts a session) personalizes them after
 hydration. `pnpm start` refuses to run unless `NODE_ENV=production` and `APP_SECRET` is set.
+
+## Addendum: purging stale sessions (2026-10-04)
+
+`startPurgeSchedule()` (`src/services/maintenance.ts`) runs in the dev and production servers:
+at start and then hourly it deletes expired sessions and the guest carts they orphan (a cart
+with neither a session nor a member can never be reached again; its lines and checkout draft
+cascade). Writes go through the write lock; a slow run never overlaps the next. `pnpm db:purge`
+runs it once by hand.

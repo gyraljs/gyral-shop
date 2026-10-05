@@ -5,10 +5,12 @@ import { getRequestListener } from '@hono/node-server';
 import { createServer as createViteServer } from 'vite';
 import { loadConfig } from '../config/env.js';
 import { openDb } from '../db/client.js';
+import { startPurgeSchedule } from '../services/maintenance.js';
 
 // One connection for the dev server's lifetime; run `pnpm db:reset` first.
 const config = loadConfig();
 const db = await openDb(config.DATABASE_URL);
+startPurgeSchedule(db); // expired sessions and orphaned guest carts, hourly
 
 const port = Number(process.env['PORT'] ?? 5200);
 const hmrPort = Number(process.env['HMR_PORT'] ?? 24690);
