@@ -98,4 +98,6 @@ export const LIMITS = {
   /** Password reset requests: 5 per IP and 3 per account per hour. */
   resetPerIp: { limit: 5, windowMs: 60 * 60_000 },
   resetPerAccount: { limit: 3, windowMs: 60 * 60_000 },
+  /** Contact form: 5 messages per IP per hour. */
+  contactPerIp: { limit: 5, windowMs: 60 * 60_000 },
 } as const satisfies Record<string, { limit: number; windowMs: number }>;

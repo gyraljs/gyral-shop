@@ -11,3 +11,4 @@ import '../ui/cart/mini-cart.js';
 import '../ui/cart/cart-page.js';
 import '../ui/checkout/checkout-page.js';
 import '../ui/account/settings-forms.js';
+import '../ui/content/contact.js';

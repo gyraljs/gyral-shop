@@ -24,6 +24,7 @@ import {
   type Failed,
   type SignedIn,
 } from '../account/auth-form.js';
+import { html as staticHtml, unsafeStatic } from 'lit/static-html.js';
 import { goTo } from '../drivers/location.js';
 import { CSRF_FIELD } from './csrf.js';
 
@@ -76,6 +77,9 @@ export interface MemberFormSpec {
 type Msg =
   { readonly _tag: 'Submit'; readonly form: FormData } | SignedIn | Failed | IntentRejected;
 
+const escapeText = (text: string): string =>
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
 const valueOf = (values: FormFields, name: string): string => {
   const value = values[name];
   return typeof value === 'string' ? value : '';
@@ -95,7 +99,9 @@ function fieldView(s: AuthState, f: MemberField, id: (name: string) => string) {
   const control = (() => {
     switch (f.kind) {
       case 'textarea':
-        return html`<textarea
+        // Lit can't bind inside <textarea> (raw text), so the initial text is a static,
+        // escaped part of the template: the server render and the first client render match.
+        return staticHtml`<textarea
           id=${common.id}
           name=${f.name}
           rows=${f.rows ?? 5}
@@ -103,10 +109,8 @@ function fieldView(s: AuthState, f: MemberField, id: (name: string) => string) {
           ?required=${f.required ?? true}
           aria-describedby=${common.describedBy}
           aria-invalid=${common.invalidAttr}
-          .value=${value}
           ${invalid(errors)}
-        >
-${value}</textarea>`;
+        >${unsafeStatic(escapeText(value))}</textarea>`;
       case 'select':
         return html`<select
           id=${common.id}
