@@ -4,6 +4,7 @@ import { cardGrid, type ProductCard } from '../catalog/product-card.js';
 import type { BuyBoxVariant } from '../product/buy-box.js';
 import type { GalleryImage } from '../product/gallery.js';
 import '../product/buy-box.js'; // registers <shop-buy-box> for server rendering
+import '../wishlist/toggle.js'; // registers <shop-wish-toggle> for server rendering
 import '../product/gallery.js'; // registers <shop-gallery> for server rendering
 
 /** What the page shows. Matches services/product.ts ProductPageData. */
@@ -152,6 +153,12 @@ export const productPage = (view: ProductView, options: ProductPageOptions = {})
         action=${options.action ?? nothing}
         csrf=${options.csrf ?? nothing}
       ></shop-buy-box>
+      <shop-wish-toggle
+        class="product-wish"
+        slug=${view.slug}
+        name=${view.name}
+        next=${productPath(view.slug)}
+      ></shop-wish-toggle>
     </div>
   </div>
   <section aria-labelledby="description-title" class="product-section">

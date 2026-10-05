@@ -1,5 +1,6 @@
 import { html, nothing } from '@gyral/core';
 import { format, usd } from '../../domain/money.js';
+import '../wishlist/toggle.js'; // registers <shop-wish-toggle> for server rendering
 
 /** What a product card shows. Matches the server's card data (services/catalog.ts). */
 export interface ProductCard {
@@ -39,8 +40,13 @@ const rating = (card: ProductCard) =>
         >
       </p>`;
 
+export interface CardOptions {
+  /** Show the "Save to wishlist" toggle (default true; the wishlist page has its own actions). */
+  readonly wishlist?: boolean;
+}
+
 /** A product card: plain markup (no component), styled by the catalog stylesheet. */
-export const productCard = (card: ProductCard, eager = false) => html`
+export const productCard = (card: ProductCard, eager = false, options: CardOptions = {}) => html`
   <article class="product-card" data-component="product-card">
     <a href="/p/${card.slug}">
       ${
@@ -60,6 +66,11 @@ export const productCard = (card: ProductCard, eager = false) => html`
     <p class="brand">${card.brand}</p>
     ${price(card)} ${rating(card)}
     ${card.inStock ? nothing : html`<p class="stock out">Out of stock</p>`}
+    ${
+      options.wishlist === false
+        ? nothing
+        : html`<shop-wish-toggle slug=${card.slug} name=${card.name}></shop-wish-toggle>`
+    }
   </article>
 `;
 

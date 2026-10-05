@@ -47,7 +47,9 @@ export const catalogCss = `
   .product-card {
     container-type: inline-size;
     display: grid; align-content: start; gap: var(--space-1);
-    content-visibility: auto; contain-intrinsic-size: auto 22rem;
+    /* No content-visibility here: card height depends on the column width, so any
+       contain-intrinsic-size estimate is wrong somewhere, and skipped cards then overlap their
+       neighbours (axe target-size). Listings show at most 24 cards. */
   }
   .product-card > a { text-decoration: none; }
   .product-card > a:hover h3 { text-decoration: underline; }

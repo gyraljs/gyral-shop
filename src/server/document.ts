@@ -22,6 +22,7 @@ import { contentCss } from '../ui/styles/content.js';
 import { productCss } from '../ui/styles/product.js';
 import { ordersCss } from '../ui/styles/orders.js';
 import { checkoutCss } from '../ui/styles/checkout.js';
+import { wishlistCss } from '../ui/styles/wishlist.js';
 
 import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
 
@@ -92,6 +93,7 @@ const DOCUMENT_STYLES = [
   memberFormCss,
   contentCss,
   checkoutCss,
+  wishlistCss,
   searchCss,
   consentCss,
 ];
@@ -129,7 +131,9 @@ export function shell(options: ShellOptions): Response {
       ...(options.description === undefined ? {} : { description: options.description }),
       head,
       body: html`
-        <a class="skip-link" href="#main">Skip to content</a>
+        <nav class="skip-links" aria-label="Skip links">
+          <a class="skip-link" href="#main">Skip to content</a>
+        </nav>
         <shop-header
           .departments=${options.departments}
           query=${options.query ?? ''}

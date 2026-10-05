@@ -11,6 +11,7 @@ import {
   type SessionUser,
 } from '../../services/sessions.js';
 import { mergeGuestCart } from '../../services/cart.js';
+import { saveToWishlist } from '../../services/wishlist.js';
 import type { AppEnv } from './context.js';
 import { isHttps } from './request.js';
 import { now, runtime } from './runtime.js';
@@ -113,9 +114,26 @@ export async function startMemberSession(c: Context<AppEnv>, user: SessionUser):
   });
   // The guest cart moved to the new session with the rotation; fold it into the member's cart.
   await mergeGuestCart(runtime(c).db, session.id, user.id);
+  await applyPendingWishlistSave(c, user.id);
   use(c, session);
   sendCookie(c, session);
   return session;
+}
+
+/**
+ * A guest who pressed "Save" is sent to sign in with the product remembered in this cookie
+ * (routes/wishlist.ts); signing in or registering saves it (wishlist-reviews spec).
+ */
+export const WISHLIST_SAVE_COOKIE = 'wish_save';
+
+const SLUG = /^[a-z0-9][a-z0-9-]{0,199}$/;
+
+async function applyPendingWishlistSave(c: Context<AppEnv>, userId: number): Promise<void> {
+  const slug = getCookie(c, WISHLIST_SAVE_COOKIE);
+  if (slug === undefined) return;
+  queueCookie(c, generateCookie(WISHLIST_SAVE_COOKIE, '', { path: '/', maxAge: 0 }));
+  // Only a product slug is ever stored; anything else (or a vanished product) is dropped.
+  if (SLUG.test(slug)) await saveToWishlist(runtime(c).db, userId, slug);
 }
 
 /** Logout: the session is destroyed and the cookie cleared. */
