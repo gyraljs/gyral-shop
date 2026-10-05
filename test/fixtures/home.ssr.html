@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gyral Goods</title>
     <meta name="description" content="Electronics, home, clothing, toys, groceries and more, in one store.">
-    <!--lit-part eabATTlSz5c=--><!--lit-part sdFfatTNAXo=--><style>
+    <!--lit-part eabATTlSz5c=--><!--lit-part 1BiWxnWGwTU=--><style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -201,6 +201,48 @@
   .pager a:hover { border-color: var(--brand); }
   .pager a[aria-current="page"] {
     background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
+  }
+}
+
+@layer components {
+  .filters {
+    margin-block-start: var(--space-3);
+    padding: var(--space-3);
+    background: var(--surface-sunken);
+    border-radius: var(--radius);
+  }
+  .filter-fields {
+    display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    align-items: start;
+  }
+  .filters fieldset { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
+  .filters legend, .sort-field label { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
+  .sort-field { margin: 0; display: grid; }
+  .sort-field select { padding: var(--space-1) var(--space-2); border-radius: var(--radius); }
+  .options { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.15rem; }
+  .options label { display: flex; align-items: center; gap: var(--space-1); cursor: pointer; }
+  .options .count { color: var(--ink-muted); font-size: 0.9rem; }
+  .price-range { display: flex; gap: var(--space-2); }
+  .price-field { display: grid; gap: 0.15rem; font-size: 0.9rem; min-inline-size: 0; }
+  .money-input { display: flex; align-items: center; gap: 0.2rem; }
+  .money-input input { inline-size: 100%; min-inline-size: 4rem; padding: var(--space-1); }
+  .filter-actions {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+    margin-block: var(--space-3) 0;
+  }
+  .filter-actions button {
+    padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius);
+    background: var(--brand); color: var(--brand-ink); font-weight: 600; cursor: pointer;
+  }
+  .results { transition: opacity 150ms; }
+  shop-listing { display: block; min-inline-size: 0; }
+  shop-listing:state(loading) .results { opacity: 0.55; }
+  /* Focus moves to the heading after paging (focusOn): only show a ring for keyboard focus. */
+  .listing-header h1:focus:not(:focus-visible) { outline: none; }
+  .load-error {
+    padding: var(--space-3); border-radius: var(--radius);
+    border: 1px solid var(--sale); color: var(--sale);
   }
 }
 
@@ -607,8 +649,8 @@
   <!--lit-part MEsLYm9f520=-->
   <!--lit-node 0--><section aria-labelledby="deals-title" class="card-section">
     <!--lit-node 1--><h2 id="deals-title"><!--lit-part-->Today&#39;s deals<!--/lit-part--></h2>
-    <div class="card-grid"><!--lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+    <div class="card-grid"><!--lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/hearthly-gorgeous-pillow-18">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/hearthly-gorgeous-pillow-18/1.svg"
@@ -621,12 +663,12 @@
       <h3><!--lit-part-->Hearthly Gorgeous Pillow<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Hearthly<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$167.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$231.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 5">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
           class="visually-hidden"
@@ -639,8 +681,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/summit-gear-recycled-bike-light-set-64">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/summit-gear-recycled-bike-light-set-64/1.svg"
@@ -653,12 +695,12 @@
       <h3><!--lit-part-->Summit Gear Recycled Bike Light Set<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Summit Gear<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$145.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$198.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 5">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
           class="visually-hidden"
@@ -671,8 +713,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/trailcraft-elegant-baseball-glove-66">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/trailcraft-elegant-baseball-glove-66/1.svg"
@@ -685,12 +727,12 @@
       <h3><!--lit-part-->Trailcraft Elegant Baseball Glove<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Trailcraft<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$100.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$115.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 4.8">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.8">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->4.8<!--/lit-part--><span
           class="visually-hidden"
@@ -703,8 +745,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/hearthly-handcrafted-desk-19">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/hearthly-handcrafted-desk-19/1.svg"
@@ -717,12 +759,12 @@
       <h3><!--lit-part-->Hearthly Handcrafted Desk<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Hearthly<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$176.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$256.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 4.6">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.6">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->4.6<!--/lit-part--><span
           class="visually-hidden"
@@ -735,8 +777,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/oak-iron-handmade-weighted-blanket-17">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/oak-iron-handmade-weighted-blanket-17/1.svg"
@@ -749,12 +791,12 @@
       <h3><!--lit-part-->Oak &amp; Iron Handmade Weighted Blanket<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Oak &amp; Iron<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$102.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$121.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 4.4">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.4">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->4.4<!--/lit-part--><span
           class="visually-hidden"
@@ -767,8 +809,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/playwise-bespoke-action-figure-41">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/playwise-bespoke-action-figure-41/1.svg"
@@ -781,12 +823,12 @@
       <h3><!--lit-part-->Playwise Bespoke Action Figure<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Playwise<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$60.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$73.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 4.2">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.2">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->4.2<!--/lit-part--><span
           class="visually-hidden"
@@ -799,8 +841,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/voltra-refined-mirrorless-camera-10">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/voltra-refined-mirrorless-camera-10/1.svg"
@@ -813,12 +855,12 @@
       <h3><!--lit-part-->Voltra Refined Mirrorless Camera<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Voltra<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$1,412.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$1,690.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 4">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->4.0<!--/lit-part--><span
           class="visually-hidden"
@@ -831,8 +873,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/bean-leaf-handmade-basmati-rice-47">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/bean-leaf-handmade-basmati-rice-47/1.svg"
@@ -845,12 +887,12 @@
       <h3><!--lit-part-->Bean &amp; Leaf Handmade Basmati Rice<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Bean &amp; Leaf<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$8.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$12.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 4">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->4.0<!--/lit-part--><span
           class="visually-hidden"
@@ -869,8 +911,8 @@
   <!--lit-part MEsLYm9f520=-->
   <!--lit-node 0--><section aria-labelledby="top-rated-title" class="card-section">
     <!--lit-node 1--><h2 id="top-rated-title"><!--lit-part-->Top rated<!--/lit-part--></h2>
-    <div class="card-grid"><!--lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+    <div class="card-grid"><!--lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/northwave-gorgeous-noise-cancelling-headphones-6">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/northwave-gorgeous-noise-cancelling-headphones-6/1.svg"
@@ -883,7 +925,7 @@
       <h3><!--lit-part-->Northwave Gorgeous Noise-Cancelling Headphones<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Northwave<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$179.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 5">
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$179.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
           class="visually-hidden"
@@ -896,8 +938,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/hearthly-gorgeous-pillow-18">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/hearthly-gorgeous-pillow-18/1.svg"
@@ -910,12 +952,12 @@
       <h3><!--lit-part-->Hearthly Gorgeous Pillow<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Hearthly<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$167.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$231.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 5">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
           class="visually-hidden"
@@ -928,8 +970,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/tumble-toys-licensed-water-blaster-39">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/tumble-toys-licensed-water-blaster-39/1.svg"
@@ -942,7 +984,7 @@
       <h3><!--lit-part-->Tumble Toys Licensed Water Blaster<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Tumble Toys<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$290.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 5">
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$290.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
           class="visually-hidden"
@@ -955,8 +997,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/good-field-fantastic-dark-chocolate-44">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/good-field-fantastic-dark-chocolate-44/1.svg"
@@ -969,7 +1011,7 @@
       <h3><!--lit-part-->Good Field Fantastic Dark Chocolate<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Good Field<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$11.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 5">
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$11.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
           class="visually-hidden"
@@ -982,8 +1024,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/summit-gear-recycled-bike-light-set-64">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/summit-gear-recycled-bike-light-set-64/1.svg"
@@ -996,12 +1038,12 @@
       <h3><!--lit-part-->Summit Gear Recycled Bike Light Set<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Summit Gear<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$145.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$198.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 5">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
           class="visually-hidden"
@@ -1014,8 +1056,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/trailcraft-elegant-baseball-glove-66">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/trailcraft-elegant-baseball-glove-66/1.svg"
@@ -1028,12 +1070,12 @@
       <h3><!--lit-part-->Trailcraft Elegant Baseball Glove<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Trailcraft<!--/lit-part--></p>
-    <!--lit-part fOX8Xw/U4QM=--><p class="price sale">
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span><!--lit-part-->$100.99<!--/lit-part--></ins
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$115.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 4.8">
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.8">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->4.8<!--/lit-part--><span
           class="visually-hidden"
@@ -1046,8 +1088,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/stride-fresh-joggers-28">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/stride-fresh-joggers-28/1.svg"
@@ -1060,7 +1102,7 @@
       <h3><!--lit-part-->Stride Fresh Joggers<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Stride<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$30.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 4.7">
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$30.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.7">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->4.7<!--/lit-part--><span
           class="visually-hidden"
@@ -1073,8 +1115,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/little-sprout-luxurious-fleece-jacket-32">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/little-sprout-luxurious-fleece-jacket-32/1.svg"
@@ -1087,7 +1129,7 @@
       <h3><!--lit-part-->Little Sprout Luxurious Fleece Jacket<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Little Sprout<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$120.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 4.7">
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$120.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.7">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->4.7<!--/lit-part--><span
           class="visually-hidden"
@@ -1106,8 +1148,8 @@
   <!--lit-part MEsLYm9f520=-->
   <!--lit-node 0--><section aria-labelledby="new-title" class="card-section">
     <!--lit-node 1--><h2 id="new-title"><!--lit-part-->New arrivals<!--/lit-part--></h2>
-    <div class="card-grid"><!--lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+    <div class="card-grid"><!--lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/inkwell-house-bespoke-weeknight-cookbook-73">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/inkwell-house-bespoke-weeknight-cookbook-73/1.svg"
@@ -1120,11 +1162,11 @@
       <h3><!--lit-part-->Inkwell House Bespoke Weeknight Cookbook<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Inkwell House<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$30.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part--><!--/lit-part-->
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$30.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/summit-gear-ergonomic-baseball-glove-65">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/summit-gear-ergonomic-baseball-glove-65/1.svg"
@@ -1137,11 +1179,11 @@
       <h3><!--lit-part-->Summit Gear Ergonomic Baseball Glove<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Summit Gear<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$86.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part--><!--/lit-part-->
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$86.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/pulse-fitness-unbranded-bike-lock-63">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/pulse-fitness-unbranded-bike-lock-63/1.svg"
@@ -1154,11 +1196,11 @@
       <h3><!--lit-part-->Pulse Fitness Unbranded Bike Lock<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Pulse Fitness<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$1,038.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part--><!--/lit-part-->
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$1,038.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part--><!--/lit-part-->
     <!--lit-part 3BzIbwmErGQ=--><p class="stock out">Out of stock</p><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/lumenix-luxurious-over-ear-headphones-5">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/lumenix-luxurious-over-ear-headphones-5/1.svg"
@@ -1171,11 +1213,11 @@
       <h3><!--lit-part-->Lumenix Luxurious Over-Ear Headphones<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Lumenix<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$334.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part--><!--/lit-part-->
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$334.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/northwave-unbranded-instant-camera-9">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/northwave-unbranded-instant-camera-9/1.svg"
@@ -1188,7 +1230,7 @@
       <h3><!--lit-part-->Northwave Unbranded Instant Camera<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Northwave<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$1,841.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 3.5">
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$1,841.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 3.5">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->3.5<!--/lit-part--><span
           class="visually-hidden"
@@ -1201,8 +1243,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/lumenix-modern-power-bank-11">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/lumenix-modern-power-bank-11/1.svg"
@@ -1215,11 +1257,11 @@
       <h3><!--lit-part-->Lumenix Modern Power Bank<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Lumenix<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$33.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part--><!--/lit-part-->
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$33.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/good-field-fantastic-dark-chocolate-44">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/good-field-fantastic-dark-chocolate-44/1.svg"
@@ -1232,7 +1274,7 @@
       <h3><!--lit-part-->Good Field Fantastic Dark Chocolate<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Good Field<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$11.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 5">
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$11.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
           class="visually-hidden"
@@ -1245,8 +1287,8 @@
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
-<!--/lit-part--><!--lit-part Yl/9nh9mmrU=-->
-  <article class="product-card">
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/tidewater-books-small-mystery-67">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/tidewater-books-small-mystery-67/1.svg"
@@ -1259,7 +1301,7 @@
       <h3><!--lit-part-->Tidewater Books Small Mystery<!--/lit-part--></h3>
     </a>
     <p class="brand"><!--lit-part-->Tidewater Books<!--/lit-part--></p>
-    <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$15.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part smRsSqs2pms=--><!--lit-node 0--><p class="rating" style="--rating: 3">
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$15.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 3">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->3.0<!--/lit-part--><span
           class="visually-hidden"

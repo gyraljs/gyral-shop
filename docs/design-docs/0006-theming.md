@@ -58,14 +58,15 @@ markup stays semantic and stable and every visual decision lives in CSS that a t
 
 ## Hooks (keep current)
 
-| Hook                                                               | Where                                                                                                                     |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `data-region="header" / "nav" / "search" / "account" / "cart"`     | site header (to be added by the epic's light-DOM task)                                                                    |
-| `data-component="product-card" / "price" / "rating"`               | `src/ui/catalog/product-card.ts` (to be added)                                                                            |
-| `data-region="cart"`                                               | `<shop-mini-cart>` (header cart slot, `src/server/document.ts`) and `<shop-cart-page>` (`src/server/routes/cart-page.ts`) |
-| `data-region="cart-lines" / "cart-summary"`                        | cart page sections (`src/ui/cart/cart-page.ts`, `cart-summary.ts`)                                                        |
-| `data-component="cart-line" / "price" / "quantity" / "promo-code"` | cart lines and summary (`src/ui/cart/cart-lines.ts`, `cart-summary.ts`, `mini-cart.ts`)                                   |
-| `data-component="cart-notice"`                                     | buy box add-to-cart status (`src/ui/product/buy-box.ts`)                                                                  |
+| Hook                                                                      | Where                                                                                                                         |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `data-region="header" / "nav" / "search" / "account" / "cart"`            | site header (to be added by the epic's light-DOM task)                                                                        |
+| `data-component="product-card" / "price" / "rating"`                      | product cards (`src/ui/catalog/product-card.ts`)                                                                              |
+| `data-region="listing" / "filters" / "results"`, `data-component="pager"` | `<shop-listing>`, light DOM (`src/ui/catalog/listing.ts`, `filters.ts`, `pager.ts`); state hook `shop-listing:state(loading)` |
+| `data-region="cart"`                                                      | `<shop-mini-cart>` (header cart slot, `src/server/document.ts`) and `<shop-cart-page>` (`src/server/routes/cart-page.ts`)     |
+| `data-region="cart-lines" / "cart-summary"`                               | cart page sections (`src/ui/cart/cart-page.ts`, `cart-summary.ts`)                                                            |
+| `data-component="cart-line" / "price" / "quantity" / "promo-code"`        | cart lines and summary (`src/ui/cart/cart-lines.ts`, `cart-summary.ts`, `mini-cart.ts`)                                       |
+| `data-component="cart-notice"`                                            | buy box add-to-cart status (`src/ui/product/buy-box.ts`)                                                                      |
 
 ## Parts (keep current)
 

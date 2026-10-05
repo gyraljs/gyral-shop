@@ -1,24 +1,5 @@
-// Styles for the <shop-listing> shadow root. Document styles don't cross the shadow boundary
-// (tokens do: they are inherited custom properties), so the element-level base rules the
-// listing relies on are repeated here, then the catalog/listing component layers are reused.
-export const shadowBaseCss = `
-@layer reset, base, components;
-@layer reset {
-  *, *::before, *::after { box-sizing: border-box; }
-  img, svg { display: block; max-inline-size: 100%; }
-}
-@layer base {
-  :host { display: block; min-inline-size: 0; }
-  a { color: inherit; }
-  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-  h1, h2 { line-height: 1.2; text-wrap: balance; }
-  h1:focus { outline: none; }
-  h1:focus-visible { outline: 2px solid var(--focus); }
-  p { text-wrap: pretty; }
-  button, input, select { font: inherit; }
-}
-`;
-
+// Styles for the listing's filter/sort form and results. The listing renders in light DOM
+// (Gyral ADR 0014), so these are document styles, loaded by src/server/document.ts.
 export const filtersCss = `
 @layer components {
   .filters {
@@ -52,7 +33,10 @@ export const filtersCss = `
     background: var(--brand); color: var(--brand-ink); font-weight: 600; cursor: pointer;
   }
   .results { transition: opacity 150ms; }
-  :host(:state(loading)) .results { opacity: 0.55; }
+  shop-listing { display: block; min-inline-size: 0; }
+  shop-listing:state(loading) .results { opacity: 0.55; }
+  /* Focus moves to the heading after paging (focusOn): only show a ring for keyboard focus. */
+  .listing-header h1:focus:not(:focus-visible) { outline: none; }
   .load-error {
     padding: var(--space-3); border-radius: var(--radius);
     border: 1px solid var(--sale); color: var(--sale);

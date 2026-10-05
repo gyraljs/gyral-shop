@@ -15,7 +15,7 @@ export function pager({ page, pageCount, href, intent }: PagerView) {
   const di = intent ?? nothing;
   if (pageCount <= 1) return nothing;
   return html`
-    <nav class="pager" aria-label="Pagination">
+    <nav class="pager" data-component="pager" aria-label="Pagination">
       <ul>
         ${page > 1 ? html`<li><a href=${href(page - 1)} rel="prev" data-intent=${di}>Previous</a></li>` : nothing}
         ${pageWindow(page, pageCount).map((link) =>

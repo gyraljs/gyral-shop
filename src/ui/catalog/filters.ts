@@ -106,6 +106,7 @@ export const filtersForm = (view: ListingView, intents: FilterIntents) => {
   return html`
     <form
       class="filters"
+      data-region="filters"
       method="get"
       action=${view.basePath}
       aria-label="Filter and sort"

@@ -14,8 +14,9 @@ let originalUrl: string;
 
 const listing = () => {
   const el = page.root.querySelector('shop-listing');
-  if (el === null || el.shadowRoot === null) throw new Error('no listing');
-  return el.shadowRoot;
+  // Light DOM (Gyral ADR 0014): the listing's content is the element's own children.
+  if (el === null) throw new Error('no listing');
+  return el;
 };
 const count = () => listing().querySelector('.result-count')?.textContent.trim();
 const saleBox = () => {

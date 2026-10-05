@@ -16,8 +16,8 @@ export interface ProductCard {
 
 const price = (card: ProductCard) =>
   card.salePriceCents === null
-    ? html`<p class="price">${format(usd(card.priceCents))}</p>`
-    : html`<p class="price sale">
+    ? html`<p class="price" data-component="price">${format(usd(card.priceCents))}</p>`
+    : html`<p class="price sale" data-component="price">
         <ins
           ><span class="visually-hidden">Sale price </span>${format(usd(card.salePriceCents))}</ins
         >
@@ -27,7 +27,7 @@ const price = (card: ProductCard) =>
 const rating = (card: ProductCard) =>
   card.rating === null
     ? nothing
-    : html`<p class="rating" style="--rating: ${card.rating}">
+    : html`<p class="rating" data-component="rating" style="--rating: ${card.rating}">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span>${card.rating.toFixed(1)}<span
           class="visually-hidden"
@@ -41,7 +41,7 @@ const rating = (card: ProductCard) =>
 
 /** A product card: plain markup (no component), styled by the catalog stylesheet. */
 export const productCard = (card: ProductCard, eager = false) => html`
-  <article class="product-card">
+  <article class="product-card" data-component="product-card">
     <a href="/p/${card.slug}">
       ${
         card.image === null
