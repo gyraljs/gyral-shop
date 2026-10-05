@@ -1,18 +1,12 @@
 import { defineConfig } from 'vite';
+import { LIT_PACKAGES, optimizedDeps } from './vite.deps.js';
 
 // Gyral is linked from ../cyclejs-web-framework, which has its own node_modules. Exactly one
 // copy of Lit must run (ADR 0001): dedupe resolves these from this project's node_modules.
-export const LIT_PACKAGES = [
-  'lit',
-  'lit-html',
-  'lit-element',
-  '@lit/reactive-element',
-  '@lit-labs/ssr',
-  '@lit-labs/ssr-client',
-];
-
+// optimizeDeps lists every browser import up front so Vite never re-optimizes mid-run.
 export default defineConfig({
-  resolve: { dedupe: LIT_PACKAGES },
+  resolve: { dedupe: [...LIT_PACKAGES] },
+  optimizeDeps: { include: optimizedDeps() },
   server: { port: 5200 },
   // Production client build (`pnpm build`, Gyral ADR 0016): only the browser entry is bundled;
   // the manifest maps it to its content-hashed file for the server and the prerender step.

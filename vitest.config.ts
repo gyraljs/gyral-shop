@@ -1,10 +1,10 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 
-import { LIT_PACKAGES } from './vite.config.js';
+import { LIT_PACKAGES, optimizedDeps } from './vite.deps.js';
 
 // Lit must be a single copy even though Gyral is linked from another repo (ADR 0001).
-const dedupe = LIT_PACKAGES;
+const dedupe = [...LIT_PACKAGES];
 
 export default defineConfig({
   resolve: { dedupe },
@@ -12,21 +12,9 @@ export default defineConfig({
     projects: [
       {
         resolve: { dedupe },
-        // Pre-bundle Lit directive modules and axe so the first run doesn't reload mid-test.
-        optimizeDeps: {
-          include: [
-            'lit',
-            'lit/directive.js',
-            'lit/static-html.js',
-            'lit/directives/class-map.js',
-            'lit/directives/keyed.js',
-            'lit/directives/live.js',
-            'lit/directives/repeat.js',
-            'lit/directives/style-map.js',
-            '@lit-labs/ssr-client/lit-element-hydrate-support.js',
-            'axe-core',
-          ],
-        },
+        // Every browser import, derived from shop and linked Gyral source (vite.deps.ts), plus axe:
+        // a new import changes this list, so Vite re-optimizes at startup instead of mid-run.
+        optimizeDeps: { include: [...optimizedDeps(), 'axe-core'] },
         test: {
           name: 'browser',
           include: ['src/ui/**/*.test.ts', 'test/browser/**/*.test.ts'],
