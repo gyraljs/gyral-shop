@@ -9,6 +9,8 @@ import { adminPageTitle } from '../../ui/admin/routes.js';
 import '../../ui/admin/app.js'; // registers <shop-admin> for the server render
 import type { RenderPage } from '../document.js';
 import { csrfTokenFor, requireAdmin, type AppEnv } from '../security/index.js';
+import { adminProductRoutes } from './admin-products.js';
+import { forbidden, NO_STORE } from './admin-http.js';
 
 export interface AdminRoutesOptions {
   readonly services: Services;
@@ -16,12 +18,6 @@ export interface AdminRoutesOptions {
 }
 
 type C = Context<AppEnv>;
-
-/** API answers are per-user and change constantly: never cache them. */
-export const NO_STORE = { 'cache-control': 'no-store' } as const;
-
-/** 403 for an authenticated non-admin (the route guard normally stops them first). */
-export const forbidden = (c: C) => c.json({ error: 'forbidden' }, 403, NO_STORE);
 
 export function adminRoutes({ services, render }: AdminRoutesOptions): Hono<AppEnv> {
   const routes = new Hono<AppEnv>();
@@ -51,5 +47,6 @@ export function adminRoutes({ services, render }: AdminRoutesOptions): Hono<AppE
     return result.ok ? c.json(result.value, 200, NO_STORE) : forbidden(c);
   });
 
+  routes.route('/', adminProductRoutes(services));
   return routes;
 }

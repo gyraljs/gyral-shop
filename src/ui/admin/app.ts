@@ -9,6 +9,8 @@ import { goTo } from '../drivers/location.js';
 import { adminDrivers } from './drivers.js';
 import { adminLabel, adminSection, adminTitle, adminView, type AdminView } from './routes.js';
 import './dashboard.js';
+import './products.js';
+import './product-edit.js';
 
 export interface AdminProps {
   /** Path and query of the admin URL the server rendered (the browser seeds it back). */
@@ -33,6 +35,12 @@ function section(view: AdminView) {
   switch (view.name) {
     case 'dashboard':
       return html`<shop-admin-dashboard></shop-admin-dashboard>`;
+    case 'products':
+      return html`<shop-admin-products .search=${view.search}></shop-admin-products>`;
+    case 'newProduct':
+      return html`<shop-admin-product .productId=${0}></shop-admin-product>`;
+    case 'product':
+      return html`<shop-admin-product .productId=${view.id}></shop-admin-product>`;
     case 'notFound':
       return html`<section data-region="admin-not-found">
         <h1 tabindex="-1">Not found</h1>

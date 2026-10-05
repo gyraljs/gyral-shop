@@ -43,6 +43,13 @@
       "when": 1791167659928,
       "tag": "0005_order_events",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1791171056571,
+      "tag": "0006_taxonomy_reindex",
+      "breakpoints": true
     }
   ]
 }

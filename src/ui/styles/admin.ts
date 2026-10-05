@@ -87,6 +87,12 @@ export const adminCss = `
   }
   .admin-top-list span, .admin-status-list data { color: var(--ink-muted); font-variant-numeric: tabular-nums; }
   .admin-table-wrap { overflow-x: auto; }
+  .admin-table-wrap:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .admin-variant { display: grid; gap: var(--space-2); padding-block: var(--space-2); border-block-start: 1px solid var(--line); }
+  .admin-variant h3 { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: baseline; }
+  .admin-variant [data-component='stock'] { color: var(--ink-muted); font-weight: 400; }
+  .admin-variant [data-stock='out'] { color: var(--danger); }
+  .admin-page .crumbs { margin: 0; font-size: 0.9rem; }
   .admin-table { inline-size: 100%; border-collapse: collapse; }
   .admin-table caption { text-align: start; color: var(--ink-muted); padding-block-end: var(--space-1); }
   .admin-table :is(th, td) {
