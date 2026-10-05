@@ -4,6 +4,8 @@ export {
   escapeHtml,
   orderCancelledMail,
   orderConfirmationMail,
+  orderRefundedMail,
+  orderShippedMail,
   passwordResetMail,
   SUPPORT_ADDRESS,
   type ContactFormInput,
@@ -11,5 +13,6 @@ export {
   type OrderCancelledInput,
   type OrderConfirmationInput,
   type OrderConfirmationLine,
+  type OrderUpdateInput,
   type PasswordResetInput,
 } from './mail/templates.js';

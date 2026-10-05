@@ -18,6 +18,7 @@ import { productRoutes } from './routes/product.js';
 import { cartPageRoutes } from './routes/cart-page.js';
 import { checkoutRoutes } from './routes/checkout.js';
 import { orderRoutes } from './routes/orders.js';
+import { adminRoutes } from './routes/admin.js';
 import { cartStoreFor } from './cart-seed.js';
 import { wishlistStoreFor } from './wishlist-seed.js';
 import { wishlistRoutes } from './routes/wishlist.js';
@@ -179,6 +180,7 @@ export function createApp({
   app.route('/', checkoutRoutes({ db, render: page, services }));
   app.route('/', orderRoutes({ services, render: page }));
   app.route('/', wishlistRoutes({ db, render: page }));
+  app.route('/', adminRoutes({ services, render: page }));
   if (mode !== 'production') app.route('/dev/mail', devMailRoutes(services.mailer, page));
 
   app.notFound(async (c) =>
