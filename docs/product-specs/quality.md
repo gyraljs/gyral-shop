@@ -28,3 +28,19 @@
   lookup in another browser; a member cancels from history; a buyer reviews, another
   member votes helpful, reviews sort by link. These replace the earlier per-feature
   `*-nojs.test.ts` files.
+- **Performance budgets:** `pnpm perf` (`scripts/perf.mjs`, about 45 s, so not part of
+  `pnpm check`) seeds a throwaway database, builds, starts the production server and loads
+  home, a category and a product page cold in Chromium with 4x CPU and 1.6 Mbps / 150 ms
+  network throttling, three runs each. It fails on median LCP ≥ 2.5 s, CLS ≥ 0.1, or JS gzip
+  above the recorded baseline + 10% (`scripts/perf-baseline.json`; refresh with
+  `pnpm perf --update` after an intended change).
+
+  Baseline (2026-10-05, production build):
+
+  | Page     | LCP (median) |   CLS |  JS gzip |    JS raw | CSS (inline + files) |
+  | -------- | -----------: | ----: | -------: | --------: | -------------------: |
+  | home     |       588 ms | 0.000 | 91.3 KiB | 293.0 KiB |             34.5 KiB |
+  | category |       416 ms | 0.012 | 91.3 KiB | 293.0 KiB |             34.5 KiB |
+  | product  |       444 ms | 0.003 | 91.3 KiB | 293.0 KiB |             34.5 KiB |
+
+  Every page loads the same single client bundle: there is no per-route code splitting yet.

@@ -25,7 +25,8 @@
     "ci:local": "gh act workflow_dispatch -W .github/workflows/ci.yml -s GITHUB_TOKEN=\"$(gh auth token)\"",
     "build": "vite build && tsx src/server/prerender.ts",
     "start": "NODE_ENV=production tsx src/server/prod.ts",
-    "ui:check": "node scripts/ui-check.mjs"
+    "ui:check": "node scripts/ui-check.mjs",
+    "perf": "node scripts/perf.mjs"
   },
   "dependencies": {
     "@gyral/core": "link:../cyclejs-web-framework/packages/core",
