@@ -9,3 +9,12 @@
   session rotation, rate limit, reset token single use).
 - **No-JS:** catalog, search, product page, cart, checkout, account forms pass with
   JavaScript disabled (Playwright tests with `javaScriptEnabled: false`).
+
+## Implementation notes
+
+- **Accessibility, every template:** `test/node/a11y-templates.test.ts` serves the real app
+  and runs axe (WCAG 2.2 AA tags) in Chromium on the server-rendered markup of 40 page
+  templates, as a guest, a member with a placed order, and guests at each checkout step. A
+  control page with a missing `alt` proves the run reports violations. Not covered there:
+  `/admin` (client-rendered; its own suite) and `/dev/mail` (development tool). Hydrated
+  states are covered by the browser tests, which also run axe, and by `pnpm ui:check`.
