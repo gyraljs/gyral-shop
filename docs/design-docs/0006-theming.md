@@ -58,28 +58,27 @@ markup stays semantic and stable and every visual decision lives in CSS that a t
 
 ## Hooks (keep current)
 
-| Hook                                                                                                                                       | Where                                                                                                                         |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| `data-region="header" / "nav" / "search" / "account" / "cart"`                                                                             | site header (to be added by the epic's light-DOM task)                                                                        |
-| `data-component="product-card" / "price" / "rating"`                                                                                       | product cards (`src/ui/catalog/product-card.ts`)                                                                              |
-| `data-region="listing" / "filters" / "results"`, `data-component="pager"`                                                                  | `<shop-listing>`, light DOM (`src/ui/catalog/listing.ts`, `filters.ts`, `pager.ts`); state hook `shop-listing:state(loading)` |
-| `data-region="cart"`                                                                                                                       | `<shop-mini-cart>` (header cart slot, `src/server/document.ts`) and `<shop-cart-page>` (`src/server/routes/cart-page.ts`)     |
-| `data-region="cart-lines" / "cart-summary"`                                                                                                | cart page sections (`src/ui/cart/cart-page.ts`, `cart-summary.ts`)                                                            |
-| `data-component="cart-line" / "price" / "quantity" / "promo-code"`                                                                         | cart lines and summary (`src/ui/cart/cart-lines.ts`, `cart-summary.ts`, `mini-cart.ts`)                                       |
-| `data-component="cart-notice"`                                                                                                             | buy box add-to-cart status (`src/ui/product/buy-box.ts`)                                                                      |
-| `data-region="checkout"`                                                                                                                   | `<shop-checkout>` (`src/server/routes/checkout.ts`)                                                                           |
-| `data-component="checkout-step" / "address-form" / "shipping-option" / "card-form" / "order-summary" / "summary-line" / "price"`           | checkout steps and summary (`src/ui/checkout/steps.ts`, `summary.ts`)                                                         |
-| `data-region="order-confirmation" / "delivery" / "order-lines" / "order-totals"`, `data-component="order-number" / "order-line" / "price"` | order confirmation, light DOM (`src/ui/pages/order-confirmation.ts`); container `confirmation`                                |
+| Hook                                                                                                                                                                            | Where                                                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `data-region="header" / "nav" / "search" / "account" / "cart"`                                                                                                                  | site header (to be added by the epic's light-DOM task)                                                                        |
+| `data-component="product-card" / "price" / "rating"`                                                                                                                            | product cards (`src/ui/catalog/product-card.ts`)                                                                              |
+| `data-region="listing" / "filters" / "results"`, `data-component="pager"`                                                                                                       | `<shop-listing>`, light DOM (`src/ui/catalog/listing.ts`, `filters.ts`, `pager.ts`); state hook `shop-listing:state(loading)` |
+| `data-region="cart"`                                                                                                                                                            | `<shop-mini-cart>` (header cart slot, `src/server/document.ts`) and `<shop-cart-page>` (`src/server/routes/cart-page.ts`)     |
+| `data-region="cart-lines" / "cart-summary"`                                                                                                                                     | cart page sections (`src/ui/cart/cart-page.ts`, `cart-summary.ts`)                                                            |
+| `data-component="cart-line" / "price" / "quantity" / "promo-code"`                                                                                                              | cart lines and summary (`src/ui/cart/cart-lines.ts`, `cart-summary.ts`, `mini-cart.ts`)                                       |
+| `data-component="cart-notice"`                                                                                                                                                  | buy box add-to-cart status (`src/ui/product/buy-box.ts`)                                                                      |
+| `data-region="checkout"`                                                                                                                                                        | `<shop-checkout>` (light DOM; `src/server/routes/checkout.ts`)                                                                |
+| `data-component="checkout-step" / "step-summary" / "step-edit" / "address-form" / "shipping-option" / "card-form" / "place-order" / "order-summary" / "summary-line" / "price"` | checkout steps and summary (`src/ui/checkout/steps.ts`, `summary.ts`)                                                         |
+| `data-region="order-confirmation" / "delivery" / "order-lines" / "order-totals"`, `data-component="order-number" / "order-line" / "price"`                                      | order confirmation, light DOM (`src/ui/pages/order-confirmation.ts`); container `confirmation`                                |
 
 ## Parts (keep current)
 
-| Widget                                             | Parts                                                                                                          |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `shop-mini-cart`                                   | `link` (no cart known), `disclosure`, `summary`, `badge`, `panel`, `line`, `subtotal`, `actions`               |
-| `shop-cart-page`                                   | `notice`, `empty`, `lines`, `line`, `quantity`, `line-total`, `summary`, `promo`, `checkout`                   |
-| `shop-buy-box`                                     | `added` (add-to-cart status)                                                                                   |
-| `shop-checkout`                                    | `step`, `step-summary`, `edit`, `address-form`, `shipping-option`, `card-form`, `place-order`, `order-summary` |
-| _(more to be added by the light-DOM / parts task)_ |                                                                                                                |
+| Widget                                             | Parts                                                                                            |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `shop-mini-cart`                                   | `link` (no cart known), `disclosure`, `summary`, `badge`, `panel`, `line`, `subtotal`, `actions` |
+| `shop-cart-page`                                   | `notice`, `empty`, `lines`, `line`, `quantity`, `line-total`, `summary`, `promo`, `checkout`     |
+| `shop-buy-box`                                     | `added` (add-to-cart status)                                                                     |
+| _(more to be added by the light-DOM / parts task)_ |                                                                                                  |
 
 ## Consequences
 

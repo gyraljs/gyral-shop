@@ -42,9 +42,10 @@ function stubCheckoutPosts(): () => void {
   };
 }
 
-const root = (): ShadowRoot => {
-  const found = page.root.querySelector('shop-checkout')?.shadowRoot;
-  if (found == null) throw new Error('no shop-checkout');
+// <shop-checkout> renders in light DOM (ADR 0006 rule 5).
+const root = (): HTMLElement => {
+  const found = page.root.querySelector<HTMLElement>('shop-checkout');
+  if (found === null) throw new Error('no shop-checkout');
   return found;
 };
 const openStep = () => root().querySelector('[aria-current="step"]')?.getAttribute('data-step');
@@ -95,12 +96,17 @@ describe('checkout', () => {
     );
   });
 
-  it('hydrates in place without a mismatch or a request', async () => {
+  it('hydrates in place without a mismatch or a request, keeping input typed before', async () => {
+    expect(root().shadowRoot).toBeNull();
     const form = root().querySelector('[aria-current="step"] form');
+    const name = input('name');
+    name.value = 'Typed before the script loaded';
     await import('../../src/client/entry.js');
     await hydrated(page.root);
     expect(customElements.get('shop-checkout')).toBeDefined();
     expect(root().querySelector('[aria-current="step"] form')).toBe(form);
+    expect(input('name')).toBe(name);
+    expect(input('name').value).toBe('Typed before the script loaded');
     expect(posts).toHaveLength(0);
     expect(errors).not.toHaveBeenCalled();
   });
@@ -149,7 +155,7 @@ describe('checkout', () => {
 
   it('shows card errors from the browser check and from the server', async () => {
     // Back to the server's open step (shipping), submit it, get the payment step.
-    const host = root().host as HTMLElementTagNameMap['shop-checkout'];
+    const host = root() as HTMLElementTagNameMap['shop-checkout'];
     host.send({ _tag: 'Edit', step: 'shipping' });
     await vi.waitFor(() => {
       expect(openStep()).toBe('shipping');

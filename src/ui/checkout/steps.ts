@@ -104,7 +104,6 @@ function addressForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string)
   return html`<form
     data-intent=${i.Address}
     data-component="address-form"
-    part="address-form"
     action="/checkout/address"
     method="post"
     novalidate
@@ -185,7 +184,7 @@ function shippingForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string
       <legend>Delivery speed</legend>
       ${view.shippingOptions.map(
         (o) =>
-          html`<label class="choice" data-component="shipping-option" part="shipping-option">
+          html`<label class="choice" data-component="shipping-option">
             <input
               type="radio"
               name="method"
@@ -206,7 +205,6 @@ function paymentForm(s: CheckoutState, i: I, csrf: string) {
   return html`<form
     data-intent=${i.Payment}
     data-component="card-form"
-    part="card-form"
     action="/checkout/payment"
     method="post"
     novalidate
@@ -230,7 +228,7 @@ function reviewForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string) 
     action="/checkout/place"
     method="post"
     class="place-order"
-    part="place-order"
+    data-component="place-order"
     data-intent=${i.PlaceOrder}
   >
     ${csrfField(csrf)}
@@ -282,9 +280,13 @@ export function stepBody(
 ) {
   if (status === 'locked') return html`<p class="locked">Complete the steps above first.</p>`;
   if (status === 'done') {
-    return html`<div class="step-summary" part="step-summary">
+    return html`<div class="step-summary" data-component="step-summary">
       ${stepSummary(step, view)}
-      <a href=${`/checkout?edit=${step}`} data-intent=${i.Edit} data-step=${step} part="edit"
+      <a
+        href=${`/checkout?edit=${step}`}
+        data-intent=${i.Edit}
+        data-step=${step}
+        data-component="step-edit"
         >Edit <span class="visually-hidden">${STEP_TITLES[step]}</span></a
       >
     </div>`;
