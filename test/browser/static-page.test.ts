@@ -13,8 +13,8 @@ let page: MountedSsr;
 
 const header = () => {
   const el = page.root.querySelector('shop-header');
-  if (el === null || el.shadowRoot === null) throw new Error('no header');
-  return el.shadowRoot;
+  if (el === null) throw new Error('no header');
+  return el; // light DOM (ADR 0006 rule 5)
 };
 const badge = () =>
   page.root.querySelector('shop-mini-cart')?.shadowRoot?.querySelector('.badge')?.textContent;

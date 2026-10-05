@@ -6,6 +6,7 @@ import { makeRouter } from '@gyral/router';
 import { adminDrivers } from '../../src/ui/admin/drivers.js';
 import { adminCss } from '../../src/ui/styles/admin.js';
 import { baseCss } from '../../src/ui/styles/base.js';
+import { defaultThemeCss } from '../../src/ui/themes/default.css.js';
 
 export interface FakeRequest {
   readonly url: string;
@@ -36,7 +37,7 @@ export function fakeAdmin(initial: string, respond: Responder) {
   if (document.getElementById('admin-test-styles') === null) {
     const style = document.createElement('style');
     style.id = 'admin-test-styles';
-    style.textContent = baseCss + adminCss;
+    style.textContent = baseCss + adminCss + defaultThemeCss;
     document.head.append(style);
   }
   return { http, router, location };

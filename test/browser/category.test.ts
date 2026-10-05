@@ -18,7 +18,7 @@ const listing = () => {
 
 const header = () => {
   const el = page.root.querySelector('shop-header');
-  if (el === null || el.shadowRoot === null) throw new Error('no header');
+  if (el === null) throw new Error('no header');
   return el;
 };
 
@@ -40,11 +40,11 @@ describe('category page (page 2 of a 32-product listing)', () => {
   });
 
   it('hydrates the header in place and marks the department as current', async () => {
-    const link = header().shadowRoot?.querySelector('nav.departments a[aria-current]');
+    const link = header().querySelector('nav.departments a[aria-current]');
     expect(link?.textContent.trim()).toBe('Electronics');
     await import('../../src/client/entry.js');
     await hydrated(page);
-    expect(header().shadowRoot?.querySelector('nav.departments a[aria-current]')).toBe(link);
+    expect(header().querySelector('nav.departments a[aria-current]')).toBe(link);
     const card = listing().querySelector('.product-card');
     await hydrated(page);
     expect(listing().querySelector('.product-card')).toBe(card); // hydrated in place

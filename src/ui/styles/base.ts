@@ -1,8 +1,8 @@
-// Global document styles (the page shell outside components). Component styles live in each
-// component's `static styles`. Tokens are inherited custom properties, so components use
-// them through the shadow boundary.
+// Global document styles: the layer order, reset, system tokens and the page shell. Component
+// styles are document sheets in src/ui/styles/ (light DOM) or a widget's own styles (shadow
+// DOM, through tokens and ::parts). The look is a theme (src/ui/themes/, ADR 0006).
 export const baseCss = `
-@layer reset, tokens, base, components;
+@layer reset, tokens, base, components, theme;
 
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }
@@ -11,31 +11,50 @@ export const baseCss = `
 }
 
 @layer tokens {
+  /* System tokens and neutral fallbacks (ADR 0006 rule 4). The look itself — palette, fonts,
+     radii, component colours — comes from the active theme in @layer theme
+     (src/ui/themes/*.css.ts). Without a theme the page falls back to the browser's system
+     colours: plain but fully usable, the Zen Garden baseline. */
   :root {
     color-scheme: light dark;
-    --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --brand: oklch(50% 0.2 25);
-    --brand-ink: oklch(99% 0 0);
-    --surface: light-dark(oklch(99% 0.003 250), oklch(18% 0.01 250));
-    --surface-raised: light-dark(oklch(100% 0 0), oklch(23% 0.012 250));
-    --surface-sunken: light-dark(oklch(96% 0.005 250), oklch(15% 0.01 250));
-    --ink: light-dark(oklch(22% 0.02 250), oklch(93% 0.01 250));
-    --ink-muted: light-dark(oklch(45% 0.02 250), oklch(72% 0.015 250));
-    --line: light-dark(oklch(88% 0.01 250), oklch(32% 0.015 250));
-    --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
-    --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
-    --focus: oklch(60% 0.18 250);
-    --rating-fill: light-dark(oklch(75% 0.16 80), oklch(80% 0.15 80));
-    --shadow-popover: 0 0.5rem 1.5rem light-dark(oklch(0% 0 0 / 0.15), oklch(0% 0 0 / 0.5));
-    --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
-    --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
-    --radius: 0.5rem;
+    --font-sans: system-ui, sans-serif;
+    --font-display: var(--font-sans);
+    --brand: LinkText;
+    --brand-ink: Canvas;
+    --surface: Canvas;
+    --surface-raised: Field;
+    --surface-sunken: Canvas;
+    --ink: CanvasText;
+    /* GrayText fails contrast on ButtonFace (3.4:1); muted text falls back to full ink. */
+    --ink-muted: CanvasText;
+    --line: GrayText;
+    --line-strong: CanvasText;
+    --danger: CanvasText;
+    --focus: Highlight;
+    --rating-fill: Highlight;
+    --shadow-popover: none;
+    --sale: CanvasText;
+    --ok: CanvasText;
+    --radius: 0.25rem;
+    /* Spacing and layout scale (themes may change density by overriding these). */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 1rem;
     --space-4: 1.5rem;
     --space-5: 2.5rem;
     --page-max: 80rem;
+    /* Type scale. */
+    --step--1: 0.875rem;
+    --step-0: 1rem;
+    --step-1: 1.25rem;
+    --step-2: 1.5rem;
+    --step-3: 2rem;
+    --brand-size: 1.4rem;
+    /* Component tokens, derived from the palette unless a theme sets them. */
+    --header-bg: var(--brand);
+    --header-ink: var(--brand-ink);
+    --nav-bg: oklch(from var(--header-bg) calc(l - 0.08) c h);
+    --nav-ink: var(--header-ink);
   }
 }
 

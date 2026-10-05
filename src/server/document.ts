@@ -5,14 +5,14 @@ import { renderPage } from '@gyral/ssr';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
-import '../ui/cart/mini-cart.js'; // registers <shop-mini-cart>
-import '../ui/layout/search-box.js'; // registers <shop-search>
 import '../ui/consent/consent.js'; // registers <shop-consent>
 import { consentCss } from '../ui/styles/consent.js';
 import { currentConsent, currentPath } from './consent.js';
 import { searchCss } from '../ui/styles/search.js';
 import { CSRF_META } from '../ui/forms/csrf.js';
 import { baseCss } from '../ui/styles/base.js';
+import { headerCss } from '../ui/styles/header.js';
+import { defaultThemeCss } from '../ui/themes/default.css.js';
 import { catalogCss } from '../ui/styles/catalog.js';
 import { filtersCss } from '../ui/styles/filters.js';
 import { listingCss } from '../ui/styles/listing.js';
@@ -90,6 +90,7 @@ const footer = html`
 /** Document CSS, in cascade order (each sheet declares its layers; ADR 0006 rule 3). */
 const DOCUMENT_STYLES = [
   baseCss,
+  headerCss,
   catalogCss,
   listingCss,
   filtersCss,
@@ -103,6 +104,8 @@ const DOCUMENT_STYLES = [
   adminCss,
   searchCss,
   consentCss,
+  // The theme last: it only writes to @layer theme, which wins by layer order.
+  defaultThemeCss,
 ];
 
 /**
@@ -155,8 +158,6 @@ export function shell(options: ShellOptions): Response {
           current=${options.currentDepartment ?? ''}
           .account=${options.account}
           ?personalize=${options.static === true}
-          ><shop-search slot="search" query=${options.query ?? ''}></shop-search
-          ><shop-mini-cart slot="cart" data-region="cart"></shop-mini-cart
         ></shop-header>
         ${consentBanner(options.static === true)}
         <main id="main" class="page" tabindex="-1">${options.main}</main>

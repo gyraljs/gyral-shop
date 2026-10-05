@@ -6,7 +6,7 @@
     <title>Your cart — Gyral Goods</title>
     
     <style>
-@layer reset, tokens, base, components;
+@layer reset, tokens, base, components, theme;
 
 @layer reset {
   *, *::before, *::after { box-sizing: border-box; }
@@ -15,31 +15,50 @@
 }
 
 @layer tokens {
+  /* System tokens and neutral fallbacks (ADR 0006 rule 4). The look itself — palette, fonts,
+     radii, component colours — comes from the active theme in @layer theme
+     (src/ui/themes/*.css.ts). Without a theme the page falls back to the browser's system
+     colours: plain but fully usable, the Zen Garden baseline. */
   :root {
     color-scheme: light dark;
-    --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --brand: oklch(50% 0.2 25);
-    --brand-ink: oklch(99% 0 0);
-    --surface: light-dark(oklch(99% 0.003 250), oklch(18% 0.01 250));
-    --surface-raised: light-dark(oklch(100% 0 0), oklch(23% 0.012 250));
-    --surface-sunken: light-dark(oklch(96% 0.005 250), oklch(15% 0.01 250));
-    --ink: light-dark(oklch(22% 0.02 250), oklch(93% 0.01 250));
-    --ink-muted: light-dark(oklch(45% 0.02 250), oklch(72% 0.015 250));
-    --line: light-dark(oklch(88% 0.01 250), oklch(32% 0.015 250));
-    --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
-    --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
-    --focus: oklch(60% 0.18 250);
-    --rating-fill: light-dark(oklch(75% 0.16 80), oklch(80% 0.15 80));
-    --shadow-popover: 0 0.5rem 1.5rem light-dark(oklch(0% 0 0 / 0.15), oklch(0% 0 0 / 0.5));
-    --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
-    --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
-    --radius: 0.5rem;
+    --font-sans: system-ui, sans-serif;
+    --font-display: var(--font-sans);
+    --brand: LinkText;
+    --brand-ink: Canvas;
+    --surface: Canvas;
+    --surface-raised: Field;
+    --surface-sunken: Canvas;
+    --ink: CanvasText;
+    /* GrayText fails contrast on ButtonFace (3.4:1); muted text falls back to full ink. */
+    --ink-muted: CanvasText;
+    --line: GrayText;
+    --line-strong: CanvasText;
+    --danger: CanvasText;
+    --focus: Highlight;
+    --rating-fill: Highlight;
+    --shadow-popover: none;
+    --sale: CanvasText;
+    --ok: CanvasText;
+    --radius: 0.25rem;
+    /* Spacing and layout scale (themes may change density by overriding these). */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 1rem;
     --space-4: 1.5rem;
     --space-5: 2.5rem;
     --page-max: 80rem;
+    /* Type scale. */
+    --step--1: 0.875rem;
+    --step-0: 1rem;
+    --step-1: 1.25rem;
+    --step-2: 1.5rem;
+    --step-3: 2rem;
+    --brand-size: 1.4rem;
+    /* Component tokens, derived from the palette unless a theme sets them. */
+    --header-bg: var(--brand);
+    --header-ink: var(--brand-ink);
+    --nav-bg: oklch(from var(--header-bg) calc(l - 0.08) c h);
+    --nav-ink: var(--header-ink);
   }
 }
 
@@ -89,6 +108,84 @@
   .site-footer nav ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+</style><style>
+@layer components {
+  shop-header {
+    display: block;
+    container: header / inline-size;
+    background: var(--header-bg);
+    color: var(--header-ink);
+  }
+  shop-header :is(.bar, .departments ul) {
+    inline-size: min(100% - 2 * var(--space-3), var(--page-max));
+    margin-inline: auto;
+  }
+  shop-header .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+  }
+  shop-header .brand {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--brand-size);
+    text-decoration: none;
+    color: inherit;
+    letter-spacing: -0.02em;
+  }
+  shop-header .brand span { font-weight: 400; }
+  shop-header .utility { display: flex; gap: var(--space-3); }
+  shop-header .departments { background: var(--nav-bg); color: var(--nav-ink); }
+  shop-header .departments ul {
+    list-style: none;
+    display: flex;
+    gap: var(--space-3);
+    overflow-x: auto;
+    padding-block: var(--space-2);
+    padding-inline: 0;
+    margin-block: 0;
+    scrollbar-width: thin;
+  }
+  shop-header .departments a { white-space: nowrap; text-decoration: none; font-weight: 500; }
+  shop-header .departments a:is(:hover, [aria-current]) { text-decoration: underline; }
+  shop-header .departments a[aria-current] { font-weight: 700; text-underline-offset: 0.3em; }
+  shop-header .account-menu { position: relative; }
+  shop-header .account-menu summary { cursor: pointer; list-style-position: inside; }
+  shop-header .account-menu ul {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: calc(100% + var(--space-1));
+    z-index: 10;
+    min-inline-size: 12rem;
+    margin: 0;
+    padding: var(--space-2);
+    list-style: none;
+    display: grid;
+    gap: var(--space-1);
+    background: var(--surface-raised);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-popover);
+  }
+  shop-header .account-menu ul :is(a, button) {
+    display: block;
+    inline-size: 100%;
+    padding: var(--space-1) var(--space-2);
+    text-align: start;
+    color: inherit;
+    border-radius: calc(var(--radius) / 2);
+  }
+  shop-header .account-menu ul button { font: inherit; background: none; border: 0; cursor: pointer; }
+  shop-header .account-menu ul :is(a, button):hover { background: var(--surface-sunken); }
+  /* Focus rings on the header colour; the open menu sits on a surface, so it keeps --focus. */
+  shop-header :is(.brand, .utility > a, .account-menu > summary, .departments a):focus-visible {
+    outline: 2px solid var(--header-ink);
+    outline-offset: 2px;
   }
 }
 </style><style>
@@ -980,6 +1077,33 @@ shop-checkout {
   }
   .consent-custom small { color: var(--ink-muted); }
 }
+</style><style>
+@layer theme {
+  :root {
+    --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-display: var(--font-sans);
+    --brand: oklch(50% 0.2 25);
+    --brand-ink: oklch(99% 0 0);
+    --surface: light-dark(oklch(99% 0.003 250), oklch(18% 0.01 250));
+    --surface-raised: light-dark(oklch(100% 0 0), oklch(23% 0.012 250));
+    --surface-sunken: light-dark(oklch(96% 0.005 250), oklch(15% 0.01 250));
+    --ink: light-dark(oklch(22% 0.02 250), oklch(93% 0.01 250));
+    --ink-muted: light-dark(oklch(45% 0.02 250), oklch(72% 0.015 250));
+    --line: light-dark(oklch(88% 0.01 250), oklch(32% 0.015 250));
+    --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
+    --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
+    --focus: oklch(60% 0.18 250);
+    --rating-fill: light-dark(oklch(75% 0.16 80), oklch(80% 0.15 80));
+    --shadow-popover: 0 0.5rem 1.5rem light-dark(oklch(0% 0 0 / 0.15), oklch(0% 0 0 / 0.5));
+    --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
+    --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
+    --radius: 0.5rem;
+    --brand-size: 1.4rem;
+    --header-bg: var(--brand);
+    --header-ink: var(--brand-ink);
+    --nav-bg: oklch(from var(--brand) calc(l - 0.08) c h);
+  }
+}
 </style><!--lit-part eVKfaNMXC80=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part--><!--/lit-part-->
     <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
     <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
@@ -989,7 +1113,7 @@ shop-checkout {
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part 9F7SK2yT2mY=-->
+    <!--lit-part 9MNyuu1lguQ=-->
         <nav class="skip-links" aria-label="Skip links">
           <a class="skip-link" href="#main">Skip to content</a>
         </nav>
@@ -999,204 +1123,13 @@ shop-checkout {
           
           
           
-           query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
-    @layer components {
-      :host {
-        display: block;
-        background: var(--brand);
-        color: var(--brand-ink);
-      }
-      .bar,
-      .departments ul {
-        inline-size: min(100% - 2 * var(--space-3), var(--page-max));
-        margin-inline: auto;
-      }
-      .bar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: var(--space-3);
-        padding-block: var(--space-2);
-      }
-      .brand {
-        font-weight: 800;
-        font-size: 1.4rem;
-        text-decoration: none;
-        color: inherit;
-        letter-spacing: -0.02em;
-      }
-      .brand span {
-        font-weight: 400;
-      }
-      search {
-        flex: 1 1 18rem;
-      }
-      form {
-        display: flex;
-      }
-      input {
-        flex: 1;
-        min-inline-size: 0;
-        font: inherit;
-        padding: var(--space-2) var(--space-3);
-        border: 0;
-        border-start-start-radius: var(--radius);
-        border-end-start-radius: var(--radius);
-        background: var(--surface-raised);
-        color: var(--ink);
-      }
-      button {
-        font: inherit;
-        font-weight: 600;
-        padding-inline: var(--space-3);
-        border: 0;
-        border-start-end-radius: var(--radius);
-        border-end-end-radius: var(--radius);
-        background: oklch(from var(--brand) calc(l - 0.15) c h);
-        color: inherit;
-        cursor: pointer;
-      }
-      .utility {
-        display: flex;
-        gap: var(--space-3);
-      }
-      a {
-        color: inherit;
-      }
-      .departments {
-        background: oklch(from var(--brand) calc(l - 0.08) c h);
-      }
-      .departments ul {
-        list-style: none;
-        display: flex;
-        gap: var(--space-3);
-        overflow-x: auto;
-        padding-block: var(--space-2);
-        padding-inline: 0;
-        margin-block: 0;
-        scrollbar-width: thin;
-      }
-      .departments a {
-        white-space: nowrap;
-        text-decoration: none;
-        font-weight: 500;
-      }
-      .departments a:hover,
-      .departments a[aria-current] {
-        text-decoration: underline;
-      }
-      .departments a[aria-current] {
-        font-weight: 700;
-        text-underline-offset: 0.3em;
-      }
-      .account-menu {
-        position: relative;
-      }
-      .account-menu summary {
-        cursor: pointer;
-        list-style-position: inside;
-      }
-      .account-menu ul {
-        position: absolute;
-        inset-inline-end: 0;
-        inset-block-start: calc(100% + var(--space-1));
-        z-index: 10;
-        min-inline-size: 12rem;
-        margin: 0;
-        padding: var(--space-2);
-        list-style: none;
-        display: grid;
-        gap: var(--space-1);
-        background: var(--surface-raised);
-        color: var(--ink);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow-popover);
-      }
-      .account-menu ul a,
-      .account-menu ul button {
-        display: block;
-        inline-size: 100%;
-        padding: var(--space-1) var(--space-2);
-        text-align: start;
-        color: inherit;
-        border-radius: calc(var(--radius) / 2);
-      }
-      .account-menu ul button {
-        font: inherit;
-        background: none;
-        border: 0;
-        cursor: pointer;
-      }
-      .account-menu ul a:hover,
-      .account-menu ul button:hover {
-        background: var(--surface-sunken);
-      }
-      .account-menu ul :focus-visible {
-        outline-color: var(--focus);
-      }
-      :focus-visible {
-        outline: 2px solid var(--brand-ink);
-        outline-offset: 2px;
-      }
-      .visually-hidden {
-        position: absolute;
-        inline-size: 1px;
-        block-size: 1px;
-        overflow: hidden;
-        clip-path: inset(50%);
-        white-space: nowrap;
-      }
-    }
-  </style><!--lit-part jJOlMGfqhkY=-->
-    <header>
-      <div class="bar">
-        <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
-        <!-- The document shell slots <shop-search> (light DOM, with suggestions) here; the plain
-             form is the fallback when nothing is slotted. -->
-        <slot name="search">
-          <search>
-            <form action="/search" method="get" role="search">
-              <label for="q" class="visually-hidden">Search products</label>
-              <!--lit-node 9--><input
-                id="q"
-                name="q"
-                type="search"
-                placeholder="Search everything"
-                autocomplete="off"
-                value=""
-              />
-              <button type="submit">Search</button>
-            </form>
-          </search>
-        </slot>
-        <nav class="utility" aria-label="Account and cart">
-          <!--lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--/lit-part-->
-          <!-- The document shell slots <shop-mini-cart> here. It must stay in the light DOM:
-               Gyral components nested in another component's server-rendered shadow root get
-               defer-hydration, and Gyral then never wires their intents (Gyral bug, reported). -->
-          <slot name="cart"><a href="/cart">Cart</a></slot>
-        </nav>
-      </div>
-      <nav class="departments" aria-label="Departments">
-        <ul>
-          <!--lit-part--><!--lit-part 33IYYt1IJ00=--><li>
-                <!--lit-node 1--><a href="/d/electronics" 
-                  ><!--lit-part-->Electronics<!--/lit-part--></a
-                >
-              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
-                <!--lit-node 1--><a href="/d/grocery" 
-                  ><!--lit-part-->Grocery<!--/lit-part--></a
-                >
-              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
-                <!--lit-node 1--><a href="/d/toys-games" 
-                  ><!--lit-part-->Toys &amp; Games<!--/lit-part--></a
-                >
-              </li><!--/lit-part--><!--/lit-part-->
-        </ul>
-      </nav>
-    </header>
-  <!--/lit-part--></template><!--lit-node 3--><shop-search   slot="search" query data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part zkDyF4njGhg=-->
+         query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}]}}" data-gyral-light><!--gyral:lit-part +vyj1iPOXZI=-->
+    <header data-region="header">
+      <div class="bar" data-region="masthead">
+        <a class="brand" href="/" aria-label="Gyral Goods home" data-component="brand"
+          >Gyral <span>Goods</span></a
+        >
+        <!--gyral:lit-node 4--><shop-search  query data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light defer-hydration><!--gyral:lit-part zkDyF4njGhg=-->
     <search data-region="search">
       <!--gyral:lit-node 1--><form action="/search" method="get" role="search" data-intent="Submit">
         <label for="q" class="visually-hidden">Search products</label>
@@ -1224,8 +1157,10 @@ shop-checkout {
         <!--gyral:lit-part--><!--gyral:/lit-part-->
       </form>
     </search>
-  <!--gyral:/lit-part--></shop-search
-          ><shop-mini-cart   slot="cart" data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
+  <!--gyral:/lit-part--></shop-search>
+        <nav class="utility" aria-label="Account and cart" data-region="account">
+          <!--gyral:lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--gyral:/lit-part-->
+          <!--gyral:lit-node 7--><shop-mini-cart  data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>
     @layer reset, tokens, base, components, theme;
     @layer components {
       :host {
@@ -1360,8 +1295,28 @@ shop-checkout {
         </p>
       <!--/lit-part--></div>
       </details>
-    <!--/lit-part--></template></shop-mini-cart
-        ></shop-header>
+    <!--/lit-part--></template></shop-mini-cart>
+        </nav>
+      </div>
+      <nav class="departments" aria-label="Departments" data-region="nav">
+        <ul>
+          <!--gyral:lit-part--><!--gyral:lit-part 33IYYt1IJ00=--><li>
+                <!--gyral:lit-node 1--><a href="/d/electronics" 
+                  ><!--gyral:lit-part-->Electronics<!--gyral:/lit-part--></a
+                >
+              </li><!--gyral:/lit-part--><!--gyral:lit-part 33IYYt1IJ00=--><li>
+                <!--gyral:lit-node 1--><a href="/d/grocery" 
+                  ><!--gyral:lit-part-->Grocery<!--gyral:/lit-part--></a
+                >
+              </li><!--gyral:/lit-part--><!--gyral:lit-part 33IYYt1IJ00=--><li>
+                <!--gyral:lit-node 1--><a href="/d/toys-games" 
+                  ><!--gyral:lit-part-->Toys &amp; Games<!--gyral:/lit-part--></a
+                >
+              </li><!--gyral:/lit-part--><!--gyral:/lit-part-->
+        </ul>
+      </nav>
+    </header>
+  <!--gyral:/lit-part--></shop-header>
         <!--lit-part 4beU1UUCQrU=--><!--lit-node 0--><shop-consent   mode="banner" return-to="/cart" data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part cld6gESxFdA=-->
       <!--gyral:lit-node 0--><section
         class="consent consent-banner"

@@ -35,7 +35,8 @@ describe('GET /api/search/suggest', () => {
   it('server-renders the header search as a plain GET form with the current query', async () => {
     const test = await testApp();
     const html = await test.html('/search?q=kettle');
-    expect(html).toMatch(/<shop-search[^>]*slot="search"/);
+    // Rendered by the light-DOM header itself (ADR 0006 rule 5), not slotted.
+    expect(html).toMatch(/<shop-header[\s\S]*<shop-search[\s\S]*<\/shop-header>/);
     expect(html).toMatch(/<form action="\/search" method="get" role="search"/);
     expect(html).toMatch(/<input[^>]*name="q"[^>]*value="kettle"/s);
     // Without JavaScript it is a plain search box: no combobox semantics, no suggestion list.

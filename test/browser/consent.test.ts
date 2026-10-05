@@ -4,12 +4,13 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fakeDriver } from '@gyral/testing';
 import { ConsentBox } from '../../src/ui/consent/consent.js';
 import { baseCss } from '../../src/ui/styles/base.js';
+import { defaultThemeCss } from '../../src/ui/themes/default.css.js';
 import { consentCss } from '../../src/ui/styles/consent.js';
 import { a11yViolations } from '../support/axe.js';
 
 // Light DOM: the component is styled by document CSS, as on a real page.
 const style = document.createElement('style');
-style.textContent = `${baseCss}${consentCss}`;
+style.textContent = `${baseCss}${consentCss}${defaultThemeCss}`;
 document.head.append(style);
 
 interface Sent {

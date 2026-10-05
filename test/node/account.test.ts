@@ -165,7 +165,7 @@ describe('register', () => {
     const page = await (await test.get('/account', asCookie(sessionCookie(res) ?? ''))).text();
     expect(page).toContain('grace@example.com');
     const home = await (await test.get('/', asCookie(sessionCookie(res) ?? ''))).text();
-    expect(home).toContain('Hi, <!--lit-part-->Grace');
+    expect(home).toMatch(/Hi, <!--(?:gyral:)?lit-part-->Grace/);
   });
 
   it('re-renders validation errors, keeping the name and email but never passwords', async () => {
@@ -233,7 +233,7 @@ describe('sign out and the account page', () => {
     const test = await withAda();
     const member = await loginAs(test, ADA.email);
     const html = await (await member.get('/')).text();
-    expect(html).toContain('<details class="account-menu">');
+    expect(html).toContain('<details class="account-menu"');
     expect(html).toContain('action="/account/logout"');
     expect(html).toContain(member.session.csrfToken);
   });

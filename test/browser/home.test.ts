@@ -11,7 +11,7 @@ let page: MountedSsr;
 
 const header = () => {
   const el = page.root.querySelector('shop-header');
-  if (el === null || el.shadowRoot === null) throw new Error('no header');
+  if (el === null) throw new Error('no header');
   return el;
 };
 
@@ -26,15 +26,15 @@ afterAll(() => {
 describe('home page', () => {
   it('paints the server markup before any component code loads', () => {
     expect(customElements.get('shop-header')).toBeUndefined();
-    expect(header().shadowRoot?.querySelectorAll('nav.departments a')).toHaveLength(8);
+    expect(header().querySelectorAll('nav.departments a')).toHaveLength(8);
     expect(page.root.querySelectorAll('.product-card').length).toBeGreaterThan(8);
   });
 
   it('hydrates in place with no mismatch', async () => {
-    const link = header().shadowRoot?.querySelector('nav.departments a');
+    const link = header().querySelector('nav.departments a');
     await import('../../src/client/entry.js');
     await hydrated(page);
-    expect(header().shadowRoot?.querySelector('nav.departments a')).toBe(link);
+    expect(header().querySelector('nav.departments a')).toBe(link);
     expect(header().hasAttribute('data-gyral-seed')).toBe(false);
     expect(errors).not.toHaveBeenCalled();
     expect(warnings).not.toHaveBeenCalled();

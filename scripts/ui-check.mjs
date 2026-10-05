@@ -285,6 +285,12 @@ async function checkPage(browser, p, base, runDir) {
         await page.waitForTimeout(250);
         shot.overflow = overflowFinding(await page.evaluate(measureOverflow));
         shot.axe = await runAxe(page);
+        // Sticky elements depend on the scroll position the steps left: reset it so full-page
+        // screenshots compare deterministically.
+        await page.evaluate(() => {
+          globalThis.scrollTo(0, 0);
+        });
+        await page.waitForTimeout(100);
         await page.screenshot({ path: join(runDir, p.name, name), fullPage: true });
         if (options.compare)
           shot.diff = compareShot(
