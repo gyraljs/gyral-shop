@@ -79,7 +79,11 @@ function routed(s: ListingModel, location: RouteLocation): Next<ListingModel, Li
   if (view === null || location.pathname !== view.basePath) return s;
   const want = stateOf(new URLSearchParams(location.search));
   if (sameListing(want, view.state)) return { ...s, want, status: 'idle' };
-  const request = get<ListingView, ListingMsg>(listingHref({ basePath: view.api }, want), {
+  const api = {
+    basePath: view.api,
+    ...(view.fixedQuery === undefined ? {} : { fixedQuery: view.fixedQuery }),
+  };
+  const request = get<ListingView, ListingMsg>(listingHref(api, want), {
     schema: ListingViewSchema,
     key: 'listing',
     concurrency: 'switch',

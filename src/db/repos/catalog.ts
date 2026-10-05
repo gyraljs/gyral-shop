@@ -2,6 +2,7 @@
 import { and, asc, count, desc, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import type { Db } from '../client.js';
 import { brands, categories, departments, productImages, products, variants } from '../schema.js';
+import { matchesSearch, searchRank } from './search.js';
 
 export interface DepartmentRow {
   readonly id: number;
@@ -103,12 +104,14 @@ export interface ProductFilter {
   readonly minRating?: number;
   /** Only products with stock in at least one variant. */
   readonly inStock?: boolean;
+  /** An FTS5 expression from `ftsMatch()` (search.ts): only products matching it. */
+  readonly match?: string;
 }
 
 export type CardOrder = 'newest' | 'rating' | 'price-asc' | 'price-desc' | 'relevance';
 
 export interface CardQuery extends ProductFilter {
-  /** `relevance` ranks by rating for browsing; search ranks its own way. */
+  /** `relevance` ranks by rating when browsing, and by search rank when `match` is set. */
   readonly order?: CardOrder;
   readonly limit: number;
   readonly offset?: number;
@@ -134,6 +137,7 @@ function where(filter: ProductFilter): SQL | undefined {
     filters.push(sql`${products.ratingCount} > 0 and ${averageRating} >= ${filter.minRating}`);
   }
   if (filter.inStock === true) filters.push(sql`${totalStock} > 0`);
+  if (filter.match !== undefined) filters.push(matchesSearch(filter.match));
   return and(...filters);
 }
 
@@ -153,7 +157,10 @@ export async function categoryCounts(db: Db, departmentId: number): Promise<Map<
   return new Map(rows.map((r) => [r.categoryId, r.n]));
 }
 
-function orderBy(order: CardOrder | undefined): SQL[] {
+function orderBy(order: CardOrder | undefined, match: string | undefined): SQL[] {
+  if (order === 'relevance' && match !== undefined) {
+    return [asc(searchRank(match)), desc(averageRating), asc(products.id)];
+  }
   switch (order) {
     case 'rating':
     case 'relevance':
@@ -187,7 +194,7 @@ export function brandFacets(db: Db, filter: ProductFilter): Promise<BrandFacetRo
 }
 
 export function productCards(db: Db, query: CardQuery): Promise<ProductCardRow[]> {
-  const order = orderBy(query.order);
+  const order = orderBy(query.order, query.match);
   return db
     .select({
       id: products.id,
