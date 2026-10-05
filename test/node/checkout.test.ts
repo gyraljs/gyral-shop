@@ -8,7 +8,7 @@ import { parseCheckout } from '../../src/ui/checkout/model.js';
 import { CSRF_FIELD, CSRF_HEADER } from '../../src/ui/forms/csrf.js';
 import { testApp, type TestApp } from '../support/app.js';
 import { guest, loginAs, type TestSession } from '../support/auth.js';
-import { pinTokens } from '../support/fixtures.js';
+import { pinTokens, stableHtml } from '../support/fixtures.js';
 import { insertCartFixture, SKU, T0 } from '../support/cart-fixture.js';
 
 let test: TestApp;
@@ -206,9 +206,9 @@ describe('fixtures for the browser test', () => {
     await visitor.postForm('/checkout/contact', { email: 'ada@example.com' });
     const page = await (await visitor.get('/checkout')).text();
     expect(openStep(page)).toBe('address');
-    await expect(page.replaceAll(visitor.session.csrfToken, 'test-csrf-token')).toMatchFileSnapshot(
-      '../fixtures/checkout.ssr.html',
-    );
+    await expect(
+      stableHtml(page.replaceAll(visitor.session.csrfToken, 'test-csrf-token')),
+    ).toMatchFileSnapshot('../fixtures/checkout.ssr.html');
     const afterAddress: unknown = await (
       await postJsonForm(visitor, '/checkout/address', ADDRESS)
     ).json();

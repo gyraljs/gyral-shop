@@ -5,6 +5,7 @@ import { products } from '../../src/db/schema.js';
 import { DEFAULT_LISTING, type ListingState } from '../../src/domain/listing.js';
 import { categoryPage } from '../../src/services/departments.js';
 import { testApp } from '../support/app.js';
+import { stableHtml } from '../support/fixtures.js';
 import { fixtureCategory, names } from '../support/listing.js';
 
 const text = (html: string) => html.replace(/<!--[^>]*-->/g, '');
@@ -182,7 +183,7 @@ describe('listing routes', () => {
     // Golden files for test/browser/listing.test.ts. Regenerate with `pnpm test -u`.
     const { db, html, get } = await testApp();
     const { path } = await fixtureCategory(db);
-    await expect(await html(path)).toMatchFileSnapshot('../fixtures/listing.ssr.html');
+    await expect(stableHtml(await html(path))).toMatchFileSnapshot('../fixtures/listing.ssr.html');
     const sale = await (await get(`/api/listing${path}?sale=1`)).text();
     await expect(sale).toMatchFileSnapshot('../fixtures/listing-sale.json');
     const base = await (await get(`/api/listing${path}`)).text();

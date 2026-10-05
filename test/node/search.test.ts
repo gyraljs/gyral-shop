@@ -6,6 +6,7 @@ import { brands, products } from '../../src/db/schema.js';
 import { DEFAULT_LISTING, type ListingState } from '../../src/domain/listing.js';
 import { searchPage } from '../../src/services/search.js';
 import { testApp } from '../support/app.js';
+import { stableHtml } from '../support/fixtures.js';
 import { firstCategory } from '../support/catalog.js';
 
 const text = (html: string) => html.replace(/<!--[^>]*-->/g, '');
@@ -227,7 +228,7 @@ describe('search routes', () => {
   it('produces the markup and JSON the browser search test uses', async () => {
     // Golden files for test/browser/search.test.ts. Regenerate with `pnpm test -u`.
     const t = await app();
-    await expect(await t.html('/search?q=quokka')).toMatchFileSnapshot(
+    await expect(stableHtml(await t.html('/search?q=quokka'))).toMatchFileSnapshot(
       '../fixtures/search.ssr.html',
     );
     const sale = await (await t.get('/api/listing/search?q=quokka&sale=1')).text();

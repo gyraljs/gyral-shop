@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { outbox } from '../../src/db/schema.js';
 import { SUPPORT_ADDRESS } from '../../src/services/mail.js';
 import { testApp } from '../support/app.js';
+import { stableHtml } from '../support/fixtures.js';
 import { guest } from '../support/auth.js';
 
 const MESSAGE = {
@@ -62,7 +63,7 @@ describe('contact form', () => {
     expect(html).not.toContain('<script>alert(1)</script>');
     // Golden file for the browser test (CSRF token pinned).
     const token = /csrf-token="([^"]+)"/.exec(html)?.[1] ?? '';
-    await expect(html.replaceAll(token, 'test-csrf-token')).toMatchFileSnapshot(
+    await expect(stableHtml(html.replaceAll(token, 'test-csrf-token'))).toMatchFileSnapshot(
       '../fixtures/contact-rejected.ssr.html',
     );
   });

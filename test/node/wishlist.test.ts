@@ -9,6 +9,7 @@ import { users } from '../../src/db/schema/accounts.js';
 import { SESSION_COOKIE, WISHLIST_SAVE_COOKIE } from '../../src/server/security/index.js';
 import { CSRF_FIELD, CSRF_HEADER } from '../../src/ui/forms/csrf.js';
 import { testApp, type TestApp } from '../support/app.js';
+import { stableHtml } from '../support/fixtures.js';
 import { createMember, guest, loginAs, sessionCookie, type TestSession } from '../support/auth.js';
 
 const ADA = { name: 'Ada Lovelace', email: 'ada@example.com', password: 'analytical-engine' };
@@ -201,14 +202,14 @@ describe('wishlist', () => {
       await s.postForm('/wishlist/add', { product: single.slug });
       await s.get('/account/wishlist'); // consumes the flash, so the fixture has none
       const html = pinToken(await (await s.get('/account/wishlist')).text());
-      await expect(html).toMatchFileSnapshot('../fixtures/wishlist.ssr.html');
+      await expect(stableHtml(html)).toMatchFileSnapshot('../fixtures/wishlist.ssr.html');
     });
 
     it('product page for a member with nothing saved', async () => {
       const { test, s } = await ada();
       const { single } = await products2(test);
       const html = pinToken(await (await s.get(`/p/${single.slug}`)).text());
-      await expect(html).toMatchFileSnapshot('../fixtures/wishlist-product.ssr.html');
+      await expect(stableHtml(html)).toMatchFileSnapshot('../fixtures/wishlist-product.ssr.html');
     });
   });
 });

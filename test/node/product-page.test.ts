@@ -5,6 +5,7 @@ import { findProduct, ratingDistribution, topReviews } from '../../src/db/repos/
 import { products, variants } from '../../src/db/schema.js';
 import { metaDescription } from '../../src/server/routes/product.js';
 import { productPage, reviewerName } from '../../src/services/product.js';
+import { stableHtml } from '../support/fixtures.js';
 import { testApp } from '../support/app.js';
 
 /** Collapses Lit's comment markers so assertions can read rendered text. */
@@ -149,7 +150,7 @@ describe('product page route', () => {
     // The CSRF token is random per session: pin it so the fixture is stable.
     const token = /name="_csrf" value="([^"]+)"/.exec(page)?.[1] ?? '';
     expect(token).not.toBe('');
-    await expect(page.replaceAll(token, 'test-csrf-token')).toMatchFileSnapshot(
+    await expect(stableHtml(page.replaceAll(token, 'test-csrf-token'))).toMatchFileSnapshot(
       '../fixtures/product.ssr.html',
     );
   });

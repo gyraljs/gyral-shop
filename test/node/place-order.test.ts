@@ -9,6 +9,7 @@ import { orders, payments } from '../../src/db/schema/commerce.js';
 import { createMailer } from '../../src/services/mail.js';
 import { testApp, type TestApp } from '../support/app.js';
 import { guest, loginAs, createMember, type TestSession } from '../support/auth.js';
+import { stableHtml } from '../support/fixtures.js';
 import { insertCartFixture, SKU, T0 } from '../support/cart-fixture.js';
 
 let test: TestApp;
@@ -243,6 +244,6 @@ describe('golden markup for the browser tests', () => {
     const html = (await page.text())
       .replaceAll(number, 'GG-20261004-FXTURE')
       .replaceAll(visitor.session.csrfToken, 'test-csrf-token');
-    await expect(html).toMatchFileSnapshot('../fixtures/order-confirmation.ssr.html');
+    await expect(stableHtml(html)).toMatchFileSnapshot('../fixtures/order-confirmation.ssr.html');
   });
 });

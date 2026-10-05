@@ -7,6 +7,7 @@ import {
 } from '../../src/db/repos/catalog.js';
 import { PAGE_SIZE } from '../../src/domain/listing.js';
 import { testApp } from '../support/app.js';
+import { stableHtml } from '../support/fixtures.js';
 import { addProducts, archiveOne, firstCategory } from '../support/catalog.js';
 
 /** Collapses Lit's comment markers so assertions can read rendered text. */
@@ -146,6 +147,6 @@ describe('category page', () => {
     const category = await firstCategory(db, 'electronics');
     await addProducts(db, category.id, 30);
     const page = await html(`/c/electronics/${category.slug}?page=2`);
-    await expect(page).toMatchFileSnapshot('../fixtures/category.ssr.html');
+    await expect(stableHtml(page)).toMatchFileSnapshot('../fixtures/category.ssr.html');
   });
 });

@@ -6,6 +6,7 @@ import { FLASH_COOKIE } from '../../src/server/flash.js';
 import { parseServerCart } from '../../src/ui/cart/model.js';
 import { testApp, type TestApp } from '../support/app.js';
 import { guest, loginAs, type TestSession } from '../support/auth.js';
+import { stableHtml } from '../support/fixtures.js';
 import { insertCartFixture, SKU, T0 } from '../support/cart-fixture.js';
 
 let test: TestApp;
@@ -109,8 +110,8 @@ describe('/cart', () => {
     await visitor.postForm('/cart/add', { sku: SKU.tv, quantity: '2' });
     await visitor.postForm('/cart/add', { sku: SKU.lego, quantity: '3' });
     const page = await (await visitor.get('/cart')).text();
-    await expect(page.replaceAll(visitor.session.csrfToken, 'test-csrf-token')).toMatchFileSnapshot(
-      '../fixtures/cart.ssr.html',
-    );
+    await expect(
+      stableHtml(page.replaceAll(visitor.session.csrfToken, 'test-csrf-token')),
+    ).toMatchFileSnapshot('../fixtures/cart.ssr.html');
   });
 });

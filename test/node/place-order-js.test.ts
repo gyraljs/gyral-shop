@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { testApp, type TestApp } from '../support/app.js';
 import { guest, type TestSession } from '../support/auth.js';
 import { insertCartFixture, SKU, T0 } from '../support/cart-fixture.js';
+import { stableHtml } from '../support/fixtures.js';
 import { ADDRESS } from '../support/orders.js';
 
 let test: TestApp;
@@ -39,7 +40,9 @@ describe('fixtures for placing an order with JavaScript', () => {
       s
         .replaceAll(visitor.session.csrfToken, 'test-csrf-token')
         .replaceAll(paid.key, 'test-place-key');
-    await expect(stable(paid.page)).toMatchFileSnapshot('../fixtures/checkout-review.ssr.html');
+    await expect(stableHtml(stable(paid.page))).toMatchFileSnapshot(
+      '../fixtures/checkout-review.ssr.html',
+    );
     const answer = await visitor.submitForm('/checkout/place', {
       terms: 'on',
       key: paid.key,

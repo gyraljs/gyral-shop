@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { stableHtml } from '../support/fixtures.js';
 import { testApp } from '../support/app.js';
 
 describe('pages', () => {
@@ -20,7 +21,7 @@ describe('pages', () => {
   it('produces the markup the browser tests hydrate', async () => {
     // Golden file consumed by test/browser/home.test.ts. Regenerate with `pnpm test -u`.
     const { html } = await testApp();
-    await expect(await html('/')).toMatchFileSnapshot('../fixtures/home.ssr.html');
+    await expect(stableHtml(await html('/'))).toMatchFileSnapshot('../fixtures/home.ssr.html');
   });
 
   it('answers unknown paths with a 404 page that is not indexed', async () => {

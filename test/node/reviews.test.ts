@@ -11,7 +11,7 @@ import * as v from 'valibot';
 import { testApp, type TestApp } from '../support/app.js';
 import { createMember, guest, loginAs, type TestSession } from '../support/auth.js';
 import { insertCartFixture, SKU, T0 } from '../support/cart-fixture.js';
-import { pinTokens } from '../support/fixtures.js';
+import { stableHtml } from '../support/fixtures.js';
 import { placeOrder } from '../support/orders.js';
 
 let test: TestApp;
@@ -72,7 +72,7 @@ describe('product page reviews section', () => {
     ]);
     writeFileSync(
       new URL('../fixtures/product-reviews.ssr.html', import.meta.url),
-      pinTokens(html),
+      stableHtml(html),
     );
   });
 

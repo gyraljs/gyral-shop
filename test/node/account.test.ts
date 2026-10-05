@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import { sessions } from '../../src/db/schema/accounts.js';
 import { SESSION_COOKIE } from '../../src/server/security/index.js';
 import { testApp, type TestApp } from '../support/app.js';
+import { stableHtml } from '../support/fixtures.js';
 import { anyCustomerEmail, createMember, guest, loginAs, sessionCookie } from '../support/auth.js';
 
 const ADA = { name: 'Ada Lovelace', email: 'ada@example.com', password: 'analytical-engine' };
@@ -268,7 +269,7 @@ describe('golden markup for the browser tests', () => {
   it('sign-in page', async () => {
     const test = await testApp();
     const html = pinToken(await (await test.get('/account/login')).text());
-    await expect(html).toMatchFileSnapshot('../fixtures/login.ssr.html');
+    await expect(stableHtml(html)).toMatchFileSnapshot('../fixtures/login.ssr.html');
   });
 
   it('sign-in page after a wrong password (seeded errors)', async () => {
@@ -279,7 +280,7 @@ describe('golden markup for the browser tests', () => {
       email: ADA.email,
       password: 'not-the-password',
     });
-    await expect(pinToken(await res.text())).toMatchFileSnapshot(
+    await expect(stableHtml(pinToken(await res.text()))).toMatchFileSnapshot(
       '../fixtures/login-rejected.ssr.html',
     );
   });
@@ -287,6 +288,6 @@ describe('golden markup for the browser tests', () => {
   it('registration page', async () => {
     const test = await testApp();
     const html = pinToken(await (await test.get('/account/register')).text());
-    await expect(html).toMatchFileSnapshot('../fixtures/register.ssr.html');
+    await expect(stableHtml(html)).toMatchFileSnapshot('../fixtures/register.ssr.html');
   });
 });

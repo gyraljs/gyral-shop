@@ -4,6 +4,7 @@ import { writeFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { testApp, type TestApp } from '../support/app.js';
 import { createMember, loginAs, type TestSession } from '../support/auth.js';
+import { stableHtml } from '../support/fixtures.js';
 import { insertCartFixture, SKU, T0 } from '../support/cart-fixture.js';
 
 let test: TestApp;
@@ -34,7 +35,7 @@ describe('static (ssg) content pages', () => {
     }
     writeFileSync(
       new URL('../fixtures/static-about.ssr.html', import.meta.url),
-      await (await test.get('/about')).text(),
+      stableHtml(await (await test.get('/about')).text()),
     );
   });
 

@@ -6,6 +6,7 @@ import { addresses, sessions, users } from '../../src/db/schema/accounts.js';
 import { authenticate } from '../../src/services/auth.js';
 import { createSession } from '../../src/services/sessions.js';
 import { testApp, type TestApp } from '../support/app.js';
+import { stableHtml } from '../support/fixtures.js';
 import { createMember, loginAs, sessionCookie, type TestSession } from '../support/auth.js';
 
 const ADA = { name: 'Ada Lovelace', email: 'ada@example.com', password: 'analytical-engine' };
@@ -295,6 +296,6 @@ describe('golden markup for the browser tests', () => {
     const { ada } = await signedIn();
     await ada.postForm('/account/addresses', ADDRESS);
     const html = pinToken(await (await ada.get('/account/addresses')).text());
-    await expect(html).toMatchFileSnapshot('../fixtures/addresses.ssr.html');
+    await expect(stableHtml(html)).toMatchFileSnapshot('../fixtures/addresses.ssr.html');
   });
 });
