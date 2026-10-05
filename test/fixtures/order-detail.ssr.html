@@ -286,10 +286,35 @@
   .distribution dd { display: contents; }
   .distribution meter { inline-size: 100%; block-size: 0.75rem; }
   .distribution .count { text-align: end; font-variant-numeric: tabular-nums; color: var(--ink-muted); }
-  .review-list { list-style: none; padding: 0; display: grid; gap: var(--space-4); }
-  .review-list article { border-block-start: 1px solid var(--line); padding-block-start: var(--space-3); }
-  .review-list h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
+  [data-component="review-list"] { list-style: none; padding: 0; display: grid; gap: var(--space-4); }
+  [data-component="review-list"][aria-busy="true"] { opacity: 0.6; }
+  [data-component="review"] { border-block-start: 1px solid var(--line); padding-block-start: var(--space-3); }
+  [data-component="review"] h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
   .byline { color: var(--ink-muted); font-size: 0.9rem; margin-block: var(--space-1); }
+  [data-component="review-helpful"] {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+    color: var(--ink-muted); font-size: 0.9rem;
+  }
+  [data-component="review-helpful"] form { margin: 0; }
+  [data-component="review-helpful"] button {
+    font: inherit; padding: var(--space-1) var(--space-3); cursor: pointer;
+    border: 1px solid var(--line-strong); border-radius: var(--radius);
+    background: var(--surface-raised); color: var(--ink);
+  }
+  [data-component="review-helpful"] button:disabled { opacity: 0.6; cursor: progress; }
+  [data-component="review-cta"] { margin-block: var(--space-3); }
+  [data-component="review-notice"]:empty { display: none; }
+  [data-component="review-notice"] {
+    padding: var(--space-2) var(--space-3); border-inline-start: 4px solid var(--ok);
+    background: var(--surface-sunken);
+  }
+  [data-component="review-notice"].error { border-inline-start-color: var(--danger); }
+  [data-component="review-sort"] ul {
+    list-style: none; padding: 0; margin: var(--space-3) 0; display: flex; gap: var(--space-3);
+  }
+  [data-component="review-sort"] a[aria-current] { font-weight: 700; text-decoration-thickness: 2px; }
+  #reviews-title:focus:not(:focus-visible) { outline: none; }
+  .review-pager { display: flex; gap: var(--space-3); align-items: center; margin-block: var(--space-4); }
 }
 </style><style>
 @layer components {
@@ -616,7 +641,7 @@ shop-checkout {
           
           
           
-           query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}],&quot;account&quot;:{&quot;firstName&quot;:&quot;Grace&quot;,&quot;csrfToken&quot;:&quot;S1wSO6bq9PgbisQwCjSuJGotrrx3oWb1_VM1ecXGrMQ&quot;}}}"><template shadowroot="open" shadowrootmode="open"><style>
+           query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}],&quot;account&quot;:{&quot;firstName&quot;:&quot;Grace&quot;,&quot;csrfToken&quot;:&quot;cHUpgoLZeQm6WsdALhcjruMDEyo8bb1Ege-288oHO74&quot;}}}"><template shadowroot="open" shadowrootmode="open"><style>
     @layer components {
       :host {
         display: block;

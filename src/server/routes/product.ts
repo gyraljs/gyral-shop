@@ -7,6 +7,8 @@ import { productCrumbs, productPage as productView, productPath } from '../../ui
 import type { RenderPage } from '../document.js';
 import { csrfTokenFor, type AppEnv } from '../security/index.js';
 import { breadcrumbJsonLd, productJsonLd } from '../seo.js';
+import { takeFlash } from '../flash.js';
+import { productReviews, reviewJsonLd } from './reviews.js';
 
 export interface ProductRouteOptions {
   readonly db: Db;
@@ -34,13 +36,20 @@ export function productRoutes({ db, render }: ProductRouteOptions): Hono<AppEnv>
     const [image] = data.images;
     // The add-to-cart form needs a CSRF token, so a product page starts a (guest) session.
     const csrf = await csrfTokenFor(c);
+    const reviews = await productReviews(db, data.slug, c);
+    const notice = takeFlash(c);
     return render({
       title: `${data.name} — ${data.brand}`,
       description,
       canonical,
       currentDepartment: data.department.slug,
       jsonLd: [
-        productJsonLd(origin, data, path),
+        {
+          ...productJsonLd(origin, data, path),
+          ...(reviews === undefined || reviews.items.length === 0
+            ? {}
+            : { review: reviewJsonLd(reviews) }),
+        },
         breadcrumbJsonLd(origin, productCrumbs(data), path),
       ],
       meta: [
@@ -55,7 +64,12 @@ export function productRoutes({ db, render }: ProductRouteOptions): Hono<AppEnv>
               ['og:image:alt', image.alt],
             ] as const)),
       ],
-      main: productView(data, { csrf, action: ADD_TO_CART_PATH }),
+      main: productView(data, {
+        csrf,
+        action: ADD_TO_CART_PATH,
+        ...(reviews === undefined ? {} : { reviews }),
+        ...(notice === undefined ? {} : { notice }),
+      }),
     });
   });
 

@@ -20,6 +20,7 @@ import { checkoutRoutes } from './routes/checkout.js';
 import { orderRoutes } from './routes/orders.js';
 import { cartStoreFor } from './cart-seed.js';
 import { searchRoutes } from './routes/search.js';
+import { reviewRoutes } from './routes/reviews.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
 import { placeholderSvg } from './placeholder-image.js';
@@ -136,6 +137,7 @@ export function createApp({
   app.route('/', passwordResetRoutes({ db, render: page, mailer: services.mailer, now: millis }));
   app.route('/', contentRoutes({ render: page, mailer: services.mailer, now: millis }));
   app.route('/', productRoutes({ db, render: page }));
+  app.route('/', reviewRoutes({ db, render: page }));
   app.route('/', searchRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));
   app.route('/', cartPageRoutes({ render: page }));
