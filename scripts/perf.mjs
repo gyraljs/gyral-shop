@@ -7,46 +7,15 @@
 //   pnpm perf                 build + measure + check
 //   pnpm perf --no-build      reuse dist/
 //   pnpm perf --update        record the current JS sizes as the new baseline
-import { spawn, spawnSync } from 'node:child_process';
-import { randomBytes } from 'node:crypto';
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { createServer } from 'node:net';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { chromium } from 'playwright';
 import { budgetFailures, median, report } from './lib/perf.mjs';
+import { discoverPaths, startProduction } from './lib/prod-server.mjs';
 
 const RUNS = 3;
 const BASELINE_FILE = 'scripts/perf-baseline.json';
 const args = new Set(process.argv.slice(2));
-
-const freePort = () =>
-  new Promise((resolve) => {
-    const server = createServer();
-    server.listen(0, () => {
-      const { port } = server.address();
-      server.close(() => resolve(port));
-    });
-  });
-
-function run(cmd, cmdArgs, env) {
-  const result = spawnSync(cmd, cmdArgs, { stdio: 'inherit', env: { ...process.env, ...env } });
-  if (result.status !== 0) throw new Error(`${cmd} ${cmdArgs.join(' ')} failed`);
-}
-
-async function waitFor(url, timeoutMs = 30_000) {
-  const until = Date.now() + timeoutMs;
-  while (Date.now() < until) {
-    try {
-      if ((await fetch(url)).ok) return;
-    } catch {
-      // not up yet
-    }
-    await new Promise((r) => setTimeout(r, 250));
-  }
-  throw new Error(`server did not start: ${url}`);
-}
 
 /** One cold, throttled page load: LCP, CLS and the JS/CSS it needed. */
 async function measure(browser, url) {
@@ -99,35 +68,9 @@ async function measure(browser, url) {
   return { lcpMs: vitals.lcp, cls: vitals.cls, jsRaw, jsGzip, css: vitals.inline + cssFiles };
 }
 
-const work = mkdtempSync(join(tmpdir(), 'shop-perf-'));
-let server;
+const { base, stop } = await startProduction({ build: !args.has('--no-build') });
 try {
-  const env = {
-    NODE_ENV: 'production',
-    APP_SECRET: randomBytes(32).toString('hex'),
-    DATABASE_URL: `file:${join(work, 'shop.db')}`,
-  };
-  const dev = { ...env, NODE_ENV: 'development' };
-  run('pnpm', ['exec', 'tsx', 'src/db/migrate.ts'], dev);
-  run('pnpm', ['exec', 'tsx', 'scripts/seed.ts'], dev);
-  // Prerendering reads the catalog, so the build runs against the seeded database.
-  if (!args.has('--no-build') || !existsSync('dist/client')) run('pnpm', ['build'], dev);
-  const port = await freePort();
-  const base = `http://localhost:${String(port)}`;
-  server = spawn('pnpm', ['exec', 'tsx', 'src/server/prod.ts'], {
-    env: { ...process.env, ...env, PORT: String(port), SITE_ORIGIN: base },
-    stdio: 'ignore',
-    detached: true, // its own process group, so the whole tree stops with it
-  });
-  await waitFor(`${base}/`);
-
-  const home = await (await fetch(`${base}/`)).text();
-  const department = /href="(\/d\/[^"]+)"/.exec(home)?.[1];
-  const deptHtml = await (await fetch(`${base}${department ?? '/d/electronics'}`)).text();
-  const category = /href="(\/c\/[^"?#]+)"/.exec(deptHtml)?.[1];
-  const catHtml = await (await fetch(`${base}${category ?? ''}`)).text();
-  const product = /href="(\/p\/[^"?#/]+)"/.exec(catHtml)?.[1];
-  if (category === undefined || product === undefined) throw new Error('no category/product link');
+  const { category, product } = await discoverPaths(base);
   const pages = [
     ['home', '/'],
     ['category', category],
@@ -164,12 +107,5 @@ try {
     process.exitCode = 1;
   } else console.log('perf: all pages within budget');
 } finally {
-  if (server?.pid !== undefined) {
-    try {
-      process.kill(-server.pid, 'SIGTERM');
-    } catch {
-      // already gone
-    }
-  }
-  rmSync(work, { recursive: true, force: true });
+  stop();
 }

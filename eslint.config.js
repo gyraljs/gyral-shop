@@ -15,6 +15,27 @@ const NO_DIRECT_LIT_INTERNALS = {
   message: 'Import Gyral packages by their public entry point (@gyral/core, …), never src/ paths.',
 };
 
+// Lit is used only through Gyral (@gyral/core re-exports html, css, directives). Raw LitElement
+// components are unsafe in production builds: the client entry's top-level await lets Rolldown
+// evaluate Lit before '@gyral/ssr/hydrate', so Lit's hydrate support never patches LitElement.
+// Gyral's define() hydrates by itself; raw Lit would render a second copy (gyral-czi.41).
+const RAW_LIT_MESSAGE =
+  "Build components with @gyral/core define() and import html/css/directives through it. Raw LitElement components break hydration in production builds (docs/design-docs/0005-testing.md, 'Production builds').";
+/** The bare 'lit' module exports LitElement; matched by exact name (patterns are gitignore-style). */
+const NO_RAW_LIT_PATH = { name: 'lit', message: RAW_LIT_MESSAGE };
+const NO_RAW_LIT = {
+  // Modules that export LitElement/ReactiveElement or decorators; directives such as
+  // lit/directives/* and lit/static-html.js are fine.
+  group: [
+    'lit/decorators*',
+    'lit-element',
+    'lit-element/*',
+    '@lit/reactive-element',
+    '@lit/reactive-element/*',
+  ],
+  message: RAW_LIT_MESSAGE,
+};
+
 /** Layer rule: files in `layer` may not import from the listed layers. */
 const layer = (name, forbidden, why) => ({
   files: [`src/${name}/**/*.ts`],
@@ -22,9 +43,11 @@ const layer = (name, forbidden, why) => ({
     'no-restricted-imports': [
       'error',
       {
+        paths: [NO_RAW_LIT_PATH],
         patterns: [
           NO_EFFECT,
           NO_DIRECT_LIT_INTERNALS,
+          NO_RAW_LIT,
           ...forbidden.map((f) => ({
             // Relative paths only, so npm packages that happen to share a layer name
             // (e.g. `@libsql/client`) are not caught.
@@ -69,7 +92,10 @@ export default tseslint.config(
       ],
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
-      'no-restricted-imports': ['error', { patterns: [NO_EFFECT, NO_DIRECT_LIT_INTERNALS] }],
+      'no-restricted-imports': [
+        'error',
+        { paths: [NO_RAW_LIT_PATH], patterns: [NO_EFFECT, NO_DIRECT_LIT_INTERNALS, NO_RAW_LIT] },
+      ],
     },
   },
   layer(
