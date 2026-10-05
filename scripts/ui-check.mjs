@@ -43,12 +43,13 @@ const pageFailed = (p) => Boolean(p.error) || p.shots.some((s) => shotFailures(s
 const require = createRequire(import.meta.url);
 const AXE_SOURCE = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 const OUT = '.ui-check';
-const BASELINE = join(OUT, 'baseline');
+// Declared below once options are parsed: baselines are kept per theme.
 const SCENARIOS = 'ui-scenarios';
 const DB_FILE = join(OUT, 'db', 'shop.db');
 const DATABASE_URL = `file:${DB_FILE}`;
 
 const { options, errors, usage } = parseArgs(process.argv.slice(2), process.env);
+const BASELINE = join(OUT, options.theme === undefined ? 'baseline' : `baseline-${options.theme}`);
 if (errors.length > 0) {
   if (!errors.includes('help')) console.error(errors.join('\n'));
   console.error(usage);
@@ -269,6 +270,9 @@ async function checkPage(browser, p, base, runDir) {
         colorScheme: scheme,
         reducedMotion: 'reduce',
       });
+      // Visit with the requested theme (ADR 0006 rule 8: the theme cookie picks the stylesheet).
+      if (options.theme !== undefined)
+        await context.addCookies([{ name: 'theme', value: options.theme, url: base }]);
       const page = await context.newPage();
       const entries = [];
       page.on('console', (m) => entries.push({ type: m.type(), text: m.text() }));

@@ -14,6 +14,13 @@ import {
 } from '../lib/ui-check.mjs';
 
 describe('parseArgs', () => {
+  it('reads a theme from --theme or UI_CHECK_THEME and rejects bad names', () => {
+    expect(parseArgs(['--theme=boutique'], {}).options.theme).toBe('boutique');
+    expect(parseArgs([], { UI_CHECK_THEME: 'boutique' }).options.theme).toBe('boutique');
+    expect(parseArgs([], {}).options.theme).toBeUndefined();
+    expect(parseArgs(['--theme=../x'], {}).errors).toEqual(['--theme=../x: expects a theme name']);
+  });
+
   it('reads pages, modes and numeric options', () => {
     const { options, errors } = parseArgs(['cart', 'home', '--compare', '--port=5900'], {});
     expect(errors).toEqual([]);
