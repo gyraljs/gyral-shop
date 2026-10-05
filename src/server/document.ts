@@ -43,8 +43,10 @@ export interface ShellOptions {
   readonly currentDepartment?: string;
   /** The signed-in member, for the header's account menu (set by createApp's page()). */
   readonly account?: AccountSummary;
-  /** Open Graph / Twitter `<meta property>` pairs (SEO spec), e.g. `['og:type', 'product']`. */
+  /** Open Graph `<meta property>` pairs (SEO spec), e.g. `['og:type', 'product']`. */
   readonly meta?: readonly (readonly [property: string, content: string])[];
+  /** `<meta name>` pairs, e.g. Twitter cards: `['twitter:card', 'summary_large_image']`. */
+  readonly metaNames?: readonly (readonly [name: string, content: string])[];
   /** Per-request store instances, read during the render and seeded for hydration. */
   readonly stores?: readonly AnyStoreInstance[];
 }
@@ -89,6 +91,7 @@ export function shell(options: ShellOptions): Response {
         : html`<meta name=${CSRF_META} content=${options.csrfToken} />`
     }
     ${(options.meta ?? []).map(([property, content]) => html`<meta property=${property} content=${content} />`)}
+    ${(options.metaNames ?? []).map(([name, content]) => html`<meta name=${name} content=${content} />`)}
     ${structured === '' ? nothing : unsafeHTML(structured)}`;
   return renderPage(
     {
