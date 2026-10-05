@@ -9,6 +9,8 @@ const Env = v.object({
     v.pipe(v.string(), v.transform(Number), v.integer(), v.minValue(0), v.maxValue(10_000)),
     '0',
   ),
+  /** Signs values such as order-confirmation access cookies. Required in production. */
+  APP_SECRET: v.optional(v.pipe(v.string(), v.minLength(32))),
 });
 
 export type Config = v.InferOutput<typeof Env>;
@@ -20,6 +22,9 @@ export function loadConfig(
   if (!result.success) {
     const issues = result.issues.map((i) => `${v.getDotPath(i) ?? '?'}: ${i.message}`).join('; ');
     throw new Error(`Invalid environment: ${issues}`);
+  }
+  if (result.output.NODE_ENV === 'production' && result.output.APP_SECRET === undefined) {
+    throw new Error('Invalid environment: APP_SECRET is required in production (32+ characters)');
   }
   return result.output;
 }

@@ -21,7 +21,8 @@ import {
   type Shopper,
   type StepRejection,
 } from '../../services/checkout.js';
-import type { PaymentProvider } from '../../services/payments.js';
+import type { Services } from '../../services/container.js';
+import { placeErrorMessage, placeKey, placeOrder, type PlaceError } from '../../services/orders.js';
 import type { Result } from '../../domain/result.js';
 import '../../ui/checkout/checkout-page.js'; // registers <shop-checkout> for server rendering
 import {
@@ -33,14 +34,15 @@ import {
 } from '../../ui/checkout/schemas.js';
 import { toCheckoutClient } from '../checkout-view.js';
 import type { RenderPage } from '../document.js';
-import { setFlash } from '../flash.js';
+import { setFlash, takeFlash } from '../flash.js';
+import { grantOrderAccess } from '../order-access.js';
 import { csrfTokenFor, type AppEnv } from '../security/index.js';
 import { now } from '../security/runtime.js';
 
 export interface CheckoutRoutesOptions {
   readonly db: Db;
   readonly render: RenderPage;
-  readonly payments: PaymentProvider;
+  readonly services: Services;
 }
 
 /** The request's shopper. Guests without a session have no cart, so no checkout either. */
@@ -67,7 +69,21 @@ const jsonWanted = (request: Request): boolean => {
   return accept.includes('application/json') && !accept.includes('text/html');
 };
 
-export function checkoutRoutes({ db, render, payments }: CheckoutRoutesOptions): Hono<AppEnv> {
+/** Where each place-order failure sends the customer, with its message as a flash. */
+const PLACE_TARGET: Readonly<Record<PlaceError['_tag'], string>> = {
+  CartBlocked: '/cart',
+  OutOfStock: '/cart',
+  NotReady: '/checkout',
+  Stale: '/checkout?edit=review',
+  TotalChanged: '/checkout?edit=review',
+  PromoExhausted: '/checkout?edit=review',
+  PaymentDeclined: '/checkout?edit=payment',
+  PaymentRetry: '/checkout?edit=payment',
+  PaymentFailed: '/checkout?edit=payment',
+};
+
+export function checkoutRoutes({ db, render, services }: CheckoutRoutesOptions): Hono<AppEnv> {
+  const { payments, secret } = services;
   const routes = new Hono<AppEnv>();
 
   /** Loads the checkout, or answers with the way back to the cart. */
@@ -98,7 +114,9 @@ export function checkoutRoutes({ db, render, payments }: CheckoutRoutesOptions):
     } = {},
   ): Promise<Response> {
     const csrf = await csrfTokenFor(c);
-    const view = toCheckoutClient(state, options.edit);
+    const card = state.draft.card;
+    const key = card === undefined ? undefined : placeKey(secret, state.cartId, card.paymentRef);
+    const view = toCheckoutClient(state, options.edit, key);
     return render({
       title: 'Checkout',
       noindex: true,
@@ -117,7 +135,20 @@ export function checkoutRoutes({ db, render, payments }: CheckoutRoutesOptions):
     const loaded = await load(c);
     if (loaded instanceof Response) return loaded;
     const edit = c.req.query('edit') ?? '';
-    return page(c, loaded.state, isCheckoutStep(edit) ? { edit } : {});
+    // A failed place-order redirects here with its message: show it on the step it concerns.
+    const flash = takeFlash(c);
+    const rejected: IntentRejected | undefined =
+      flash?.kind === 'error'
+        ? {
+            _tag: 'IntentRejected',
+            intent: edit === 'payment' ? 'Payment' : 'PlaceOrder',
+            issues: [{ path: '', message: flash.message }],
+          }
+        : undefined;
+    return page(c, loaded.state, {
+      ...(isCheckoutStep(edit) ? { edit } : {}),
+      ...(rejected === undefined ? {} : { rejected }),
+    });
   });
 
   /** One step: validate with the shared schema, save, then answer per path. */
@@ -142,8 +173,17 @@ export function checkoutRoutes({ db, render, payments }: CheckoutRoutesOptions):
           if (!saved.ok) return rejectWith(saved.error.issues);
           if (!jsonWanted(request)) return seeOther('/checkout');
           const fresh = await loadCheckout(db, loaded.shopper, now(c));
+          const card = fresh.ok ? fresh.value.draft.card : undefined;
           return fresh.ok
-            ? Response.json(toCheckoutClient(fresh.value))
+            ? Response.json(
+                toCheckoutClient(
+                  fresh.value,
+                  undefined,
+                  card === undefined
+                    ? undefined
+                    : placeKey(secret, fresh.value.cartId, card.paymentRef),
+                ),
+              )
             : Response.json({ _tag: 'Redirected', location: '/cart' });
         },
         invalid: (rejected) => page(c, loaded.state, { edit: stepName, rejected, status: 422 }),
@@ -183,21 +223,32 @@ export function checkoutRoutes({ db, render, payments }: CheckoutRoutesOptions):
     savePayment(db, state, data, payments, now(c)),
   );
 
-  // Placing the order is the next bead (shop-935.3): validate the review form, then 501.
+  // Place order: Post/Redirect/Get on both paths. Success → the confirmation page; a failure
+  // → the step it concerns (or the cart) with a flash message. Only schema errors (terms) are
+  // a 422 re-render. The cart may already be gone on a repeated submit, so no load() first.
   routes.post('/checkout/place', async (c) => {
-    const loaded = await load(c);
-    if (loaded instanceof Response) return loaded;
+    const shopper = shopperOf(c);
     return formAction(PlaceOrderForm, {
       intent: 'PlaceOrder',
-      valid: () =>
-        render({
-          title: 'Placing orders is coming soon',
-          noindex: true,
-          status: 501,
-          main: html`<h1>Placing orders is coming soon</h1>
-            <p>Your checkout is saved. <a href="/checkout">Back to checkout</a></p>`,
-        }),
-      invalid: (rejected) => page(c, loaded.state, { edit: 'review', rejected, status: 422 }),
+      valid: async (data) => {
+        if (shopper === undefined) return seeOther('/cart');
+        const placed = await placeOrder(services, shopper, {
+          key: data.key,
+          ...(data.expectedTotal === undefined ? {} : { expectedTotalCents: data.expectedTotal }),
+          origin: new URL(c.req.url).origin,
+        });
+        if (!placed.ok) {
+          setFlash(c, { kind: 'error', message: placeErrorMessage(placed.error) });
+          return seeOther(PLACE_TARGET[placed.error._tag]);
+        }
+        grantOrderAccess(c, secret, placed.value.number);
+        return seeOther(`/order/${placed.value.number}/confirmation`);
+      },
+      invalid: async (rejected) => {
+        const loaded = await load(c);
+        if (loaded instanceof Response) return loaded;
+        return page(c, loaded.state, { edit: 'review', rejected, status: 422 });
+      },
     })(c.req.raw);
   });
 

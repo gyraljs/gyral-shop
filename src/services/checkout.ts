@@ -30,7 +30,8 @@ import {
 } from '../domain/shipping.js';
 import { isStateCode } from '../domain/tax.js';
 import type { CartOwner } from './cart.js';
-import { buildCartView, priceLines, promoFromRow, type CartView } from './cart-view.js';
+import { promoFromRow } from '../db/mapping.js';
+import { buildCartView, priceLines, type CartView } from './cart-view.js';
 import type { PaymentProvider } from './payments.js';
 
 /** Who is checking out. Members pay with their account email and may use saved addresses. */

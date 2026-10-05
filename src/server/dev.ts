@@ -25,6 +25,10 @@ const ssr = getRequestListener(async (request) => {
       db,
       mode: config.NODE_ENV,
       security: { dev: config.NODE_ENV === 'development' },
+      services: {
+        paymentLatencyMs: config.PAYMENT_LATENCY_MS,
+        ...(config.APP_SECRET === undefined ? {} : { secret: config.APP_SECRET }),
+      },
     })
     .fetch(request);
 });

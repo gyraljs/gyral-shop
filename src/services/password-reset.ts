@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { and, eq, gt, isNull } from 'drizzle-orm';
 import type { Db } from '../db/client.js';
 import { passwordResets, users } from '../db/schema/accounts.js';
+import { lockedWrite, writeTransaction } from '../db/tx.js';
 import { err, ok, type Result } from '../domain/result.js';
 import { normalizeEmail } from './auth.js';
 import { setPassword } from './profile.js';
@@ -35,7 +36,7 @@ export async function issueReset(
     .where(eq(users.email, normalizeEmail(email)));
   const token = newToken(); // generated either way, so both branches do similar work
   if (user === undefined || user.disabled) return undefined;
-  await db.transaction(async (tx) => {
+  await writeTransaction(db, async (tx) => {
     await tx
       .update(passwordResets)
       .set({ usedAt: now })
@@ -81,11 +82,13 @@ export async function completeReset(
   now: Date = new Date(),
 ): Promise<Result<SessionUser, ResetError>> {
   // Marking it used first, in one statement, means two concurrent submits can't both win.
-  const [claimed] = await db
-    .update(passwordResets)
-    .set({ usedAt: now })
-    .where(live(token, now))
-    .returning({ userId: passwordResets.userId });
+  const [claimed] = await lockedWrite(db, () =>
+    db
+      .update(passwordResets)
+      .set({ usedAt: now })
+      .where(live(token, now))
+      .returning({ userId: passwordResets.userId }),
+  );
   if (claimed === undefined) return err({ _tag: 'InvalidToken' });
   await setPassword(db, claimed.userId, password);
   const [user] = await db.select().from(users).where(eq(users.id, claimed.userId));

@@ -4,7 +4,11 @@ import { readyToPlace, stepStatuses, type CheckoutStep } from '../domain/checkou
 import type { CheckoutState } from '../services/checkout.js';
 import { parseCheckout, type CheckoutClient } from '../ui/checkout/model.js';
 
-export function toCheckoutClient(state: CheckoutState, edit?: CheckoutStep): CheckoutClient {
+export function toCheckoutClient(
+  state: CheckoutState,
+  edit?: CheckoutStep,
+  placeKey?: string,
+): CheckoutClient {
   const { draft, breakdown } = state;
   const steps = stepStatuses(draft, edit);
   const open = steps.find((s) => s.status === 'open')?.step ?? 'contact';
@@ -45,6 +49,7 @@ export function toCheckoutClient(state: CheckoutState, edit?: CheckoutStep): Che
       ...(breakdown.promo === undefined ? {} : { promoCode: breakdown.promo.code }),
     },
     ready: readyToPlace(draft),
+    ...(placeKey === undefined || !readyToPlace(draft) ? {} : { placeKey }),
   };
   // Through JSON and the browser's parser: proves the seed is JSON-safe and well formed.
   const parsed = parseCheckout(JSON.parse(JSON.stringify(view)));

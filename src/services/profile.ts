@@ -4,6 +4,7 @@
 import { eq } from 'drizzle-orm';
 import type { Db } from '../db/client.js';
 import { users } from '../db/schema/accounts.js';
+import { lockedWrite } from '../db/tx.js';
 import { err, ok, type Result } from '../domain/result.js';
 import { normalizeEmail } from './auth.js';
 import { hashPassword, verifyPassword } from './passwords.js';
@@ -22,7 +23,9 @@ const MESSAGES: Readonly<Record<ProfileError['_tag'], string>> = {
 export const profileErrorMessage = (error: ProfileError): string => MESSAGES[error._tag];
 
 export async function updateName(db: Db, userId: number, name: string): Promise<void> {
-  await db.update(users).set({ name: name.trim() }).where(eq(users.id, userId));
+  await lockedWrite(db, () =>
+    db.update(users).set({ name: name.trim() }).where(eq(users.id, userId)),
+  );
 }
 
 /** Checks the member's current password (always runs scrypt, so timing is uniform). */
@@ -58,7 +61,7 @@ export async function changeEmail(
   const [taken] = await db.select({ id: users.id }).from(users).where(eq(users.email, email));
   if (taken !== undefined && taken.id !== userId) return err({ _tag: 'EmailTaken' });
   try {
-    await db.update(users).set({ email }).where(eq(users.id, userId));
+    await lockedWrite(db, () => db.update(users).set({ email }).where(eq(users.id, userId)));
   } catch (error) {
     if (isUniqueViolation(error)) return err({ _tag: 'EmailTaken' });
     throw error;
@@ -80,8 +83,6 @@ export async function changePassword(
 
 /** Stores a new password hash (also used by password reset). */
 export async function setPassword(db: Db, userId: number, password: string): Promise<void> {
-  await db
-    .update(users)
-    .set({ passwordHash: await hashPassword(password) })
-    .where(eq(users.id, userId));
+  const passwordHash = await hashPassword(password);
+  await lockedWrite(db, () => db.update(users).set({ passwordHash }).where(eq(users.id, userId)));
 }

@@ -65,6 +65,8 @@ export const CheckoutClientSchema = v.object({
     promoCode: v.optional(v.string()),
   }),
   ready: v.boolean(),
+  /** Present once ready: identifies this placement, so a repeated submit finds its order. */
+  placeKey: v.optional(v.string()),
 });
 
 export type CheckoutClient = v.InferOutput<typeof CheckoutClientSchema>;

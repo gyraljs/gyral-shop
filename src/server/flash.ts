@@ -15,9 +15,11 @@ const Flash = v.object({
 });
 export type Flash = v.InferOutput<typeof Flash>;
 
+/**
+ * Queued (not Hono's setCookie): routes such as formAction return their own Response, which
+ * would drop a cookie set on the context; the session middleware appends queued cookies.
+ */
 export function setFlash(c: Context, flash: Flash): void {
-  // Queued, not setCookie(c, …): routes such as formAction() return their own Response,
-  // which would drop cookies set on the context.
   queueCookie(
     c,
     generateCookie(FLASH_COOKIE, JSON.stringify(flash), {

@@ -24,12 +24,19 @@ import { CSRF_META } from '../forms/csrf.js';
 import { checkoutCss } from '../styles/checkout.js';
 import { shadowBaseCss } from '../styles/shadow-base.js';
 import { parseCheckout, type CheckoutClient } from './model.js';
-import { AddressForm, ContactForm, PaymentForm, SECRET_FIELDS, ShippingForm } from './schemas.js';
+import {
+  AddressForm,
+  ContactForm,
+  PaymentForm,
+  PlaceOrderForm,
+  SECRET_FIELDS,
+  ShippingForm,
+} from './schemas.js';
 import { STEP_TITLES, stepBody } from './steps.js';
 import { orderSummary } from './summary.js';
 
-/** Steps the customer submits (review places the order with a plain form post). */
-type FormStep = 'Contact' | 'Address' | 'Shipping' | 'Payment';
+/** Forms the customer submits; PlaceOrder answers with a redirect (confirmation or a step). */
+type FormStep = 'Contact' | 'Address' | 'Shipping' | 'Payment' | 'PlaceOrder';
 
 /** One message per step, so each step's form() intent produces its own variant. */
 type StepMsg = {
@@ -67,6 +74,7 @@ const URLS: Readonly<Record<FormStep, string>> = {
   Address: '/checkout/address',
   Shipping: '/checkout/shipping',
   Payment: '/checkout/payment',
+  PlaceOrder: '/checkout/place',
 };
 
 const refill = (values: FormFields = {}): FormFields =>
@@ -121,6 +129,7 @@ export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>('shop-
     Address: form(AddressForm, toForm('Address')),
     Shipping: form(ShippingForm, toForm('Shipping')),
     Payment: form(PaymentForm, toForm('Payment')),
+    PlaceOrder: form(PlaceOrderForm, toForm('PlaceOrder')),
     // Edit links work as plain links without JS; with it, the step opens in place.
     Edit: ({ target, event }) => {
       const step = target.getAttribute('data-step') ?? '';
@@ -134,6 +143,7 @@ export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>('shop-
     Address: (s, m) => post(s, 'Address', m.form),
     Shipping: (s, m) => post(s, 'Shipping', m.form),
     Payment: (s, m) => post(s, 'Payment', m.form),
+    PlaceOrder: (s, m) => post(s, 'PlaceOrder', m.form),
     Saved: (s, m) => ({
       ...s,
       view: m.view,

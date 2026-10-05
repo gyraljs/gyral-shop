@@ -3,7 +3,7 @@ import { contextStorage, tryGetContext } from 'hono/context-storage';
 import { firstName } from '../domain/accounts.js';
 import type { Db } from '../db/client.js';
 import { departmentLinks, homeData } from '../services/catalog.js';
-import { createMailer } from '../services/mail.js';
+import { createServices, type ServiceOptions, type Services } from '../services/container.js';
 import { homePage } from '../ui/pages/home.js';
 import { notFoundPage, serverErrorPage } from '../ui/pages/errors.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
@@ -17,7 +17,7 @@ import { catalogRoutes } from './routes/catalog.js';
 import { productRoutes } from './routes/product.js';
 import { cartPageRoutes } from './routes/cart-page.js';
 import { checkoutRoutes } from './routes/checkout.js';
-import { createPaymentProvider } from '../services/payments.js';
+import { orderRoutes } from './routes/orders.js';
 import { cartStoreFor } from './cart-seed.js';
 import { searchRoutes } from './routes/search.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
@@ -34,6 +34,8 @@ export interface AppOptions {
   readonly mode?: 'development' | 'test' | 'production';
   /** Security settings other than the database (dev CSP, clock, proxy trust). */
   readonly security?: Omit<SecurityOptions, 'db' | 'render'>;
+  /** Service settings and replacements (payment latency, secret, fakes in tests). */
+  readonly services?: Omit<ServiceOptions, 'db' | 'now'>;
 }
 
 const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#c8102e"/><text x="16" y="22" font-family="system-ui,sans-serif" font-size="17" font-weight="800" text-anchor="middle" fill="#fff">G</text></svg>`;
@@ -55,8 +57,15 @@ export function createApp({
   db,
   mode = 'development',
   security,
+  services: serviceOptions,
 }: AppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
+  const clock = security?.now;
+  const services: Services = createServices({
+    ...serviceOptions,
+    db,
+    now: () => clock?.() ?? new Date(),
+  });
   // Departments appear in every page's header; they change rarely, so load once per app.
   let departments: Promise<readonly DepartmentLink[]> | undefined;
   const nav = () => (departments ??= departmentLinks(db));
@@ -121,21 +130,18 @@ export function createApp({
   });
 
   app.route('/', catalogRoutes({ db, render: page }));
-  const clock = security?.now;
-  const millis = () => (clock?.() ?? new Date()).getTime();
+  const millis = () => services.now().getTime();
   app.route('/', accountRoutes({ db, render: page, now: millis }));
   app.route('/', accountSettingsRoutes({ db, render: page, now: millis }));
-  const mailer = createMailer(db);
-  app.route('/', passwordResetRoutes({ db, render: page, mailer, now: millis }));
-  app.route('/', contentRoutes({ render: page, mailer, now: millis }));
+  app.route('/', passwordResetRoutes({ db, render: page, mailer: services.mailer, now: millis }));
+  app.route('/', contentRoutes({ render: page, mailer: services.mailer, now: millis }));
   app.route('/', productRoutes({ db, render: page }));
   app.route('/', searchRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));
   app.route('/', cartPageRoutes({ render: page }));
-  // Latency config is wired by the services-container bead (shop-6p6).
-  const payments = createPaymentProvider(db, { now: () => clock?.() ?? new Date() });
-  app.route('/', checkoutRoutes({ db, render: page, payments }));
-  if (mode !== 'production') app.route('/dev/mail', devMailRoutes(createMailer(db), page));
+  app.route('/', checkoutRoutes({ db, render: page, services }));
+  app.route('/', orderRoutes({ services, render: page }));
+  if (mode !== 'production') app.route('/dev/mail', devMailRoutes(services.mailer, page));
 
   app.notFound(async (c) =>
     page({

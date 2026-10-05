@@ -9,6 +9,7 @@ import {
   outcomeOf,
   refund,
   refundableAmount,
+  updateAmount,
   type PaymentState,
 } from './payments.js';
 
@@ -96,5 +97,16 @@ describe('payment state machine', () => {
         expect(state.refunded.cents).toBeLessThanOrEqual(total);
       }
     }
+  });
+
+  it('changes the amount only before confirmation, and only to a positive amount', () => {
+    const fresh = newPayment(usd(1000), 'succeed');
+    expect(value(updateAmount(fresh, usd(1250))).amount).toEqual(usd(1250));
+    expect(updateAmount(fresh, usd(0))).toEqual({ ok: false, error: { _tag: 'InvalidAmount' } });
+    const authorized = value(confirm(fresh));
+    expect(updateAmount(authorized, usd(1250))).toEqual({
+      ok: false,
+      error: { _tag: 'InvalidState', action: 'update', status: 'requires_capture' },
+    });
   });
 });

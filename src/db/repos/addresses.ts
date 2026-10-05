@@ -3,6 +3,7 @@
 import { and, asc, desc, eq, ne } from 'drizzle-orm';
 import type { Db } from '../client.js';
 import { addresses, type ShippingAddress } from '../schema.js';
+import { writeTransaction } from '../tx.js';
 
 export interface SavedAddress extends ShippingAddress {
   readonly id: number;
@@ -49,7 +50,7 @@ export async function addAddress(
   address: ShippingAddress,
   makeDefault: boolean,
 ): Promise<number> {
-  return db.transaction(async (tx) => {
+  return writeTransaction(db, async (tx) => {
     const others = await tx
       .select({ id: addresses.id })
       .from(addresses)
@@ -76,7 +77,7 @@ export async function updateAddress(
   makeDefault: boolean,
 ): Promise<boolean> {
   if ((await findAddress(db, userId, id)) === undefined) return false;
-  await db.transaction(async (tx) => {
+  await writeTransaction(db, async (tx) => {
     await tx.update(addresses).set(address).where(owned(userId, id));
     if (makeDefault) {
       await tx
@@ -99,7 +100,7 @@ export async function setDefaultAddress(db: Db, userId: number, id: number): Pro
 export async function deleteAddress(db: Db, userId: number, id: number): Promise<boolean> {
   const address = await findAddress(db, userId, id);
   if (address === undefined) return false;
-  await db.transaction(async (tx) => {
+  await writeTransaction(db, async (tx) => {
     await tx.delete(addresses).where(owned(userId, id));
     if (!address.isDefault) return;
     const [next] = await tx

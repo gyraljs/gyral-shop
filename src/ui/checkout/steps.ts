@@ -224,10 +224,18 @@ function paymentForm(s: CheckoutState, i: I, csrf: string) {
   </form>`;
 }
 
-function reviewForm(s: CheckoutState, view: CheckoutClient, csrf: string) {
+function reviewForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string) {
   const errors = errorsOf(s, 'PlaceOrder', 'terms');
-  return html`<form action="/checkout/place" method="post" class="place-order" part="place-order">
+  return html`<form
+    action="/checkout/place"
+    method="post"
+    class="place-order"
+    part="place-order"
+    data-intent=${i.PlaceOrder}
+  >
     ${csrfField(csrf)}
+    <input type="hidden" name="key" value=${view.placeKey ?? ''} />
+    <input type="hidden" name="expectedTotal" value=${String(view.totals.total.cents)} />
     <p>Total to pay: <strong data-component="price">${format(view.totals.total)}</strong></p>
     <label class="choice"
       ><input
@@ -240,8 +248,7 @@ function reviewForm(s: CheckoutState, view: CheckoutClient, csrf: string) {
       <span>I accept the <a href="/terms">terms of sale</a>.</span></label
     >
     <span id="PlaceOrder-terms-error" class="error">${errors?.join(' ') ?? nothing}</span>
-    ${formError(s, 'PlaceOrder')}
-    <button class="primary">Place order</button>
+    ${formError(s, 'PlaceOrder')} ${submit(s, 'Place order')}
   </form>`;
 }
 
@@ -292,6 +299,6 @@ export function stepBody(
     case 'payment':
       return paymentForm(s, i, csrf);
     case 'review':
-      return reviewForm(s, view, csrf);
+      return reviewForm(s, view, i, csrf);
   }
 }
