@@ -211,11 +211,15 @@ describe('golden markup for the browser tests', () => {
     const detail = await (await member.get(`/account/orders/${number}`)).text();
     const lookup = await (await test.get(`/order/lookup?number=${number}`)).text();
     // Stable across runs: the order number and CSRF token vary.
-    const stable = (html: string) =>
-      html
-        .replaceAll(number, 'GG-20261004-TEST')
-        .replace(/name="_csrf" value="[^"]+"/g, 'name="_csrf" value="token"')
-        .replace(/content="[A-Za-z0-9_-]{43}"/g, 'content="token"');
+    // The CSRF token is random per session and appears in fields, the <meta> and the header's
+    // hydration seed: replace every occurrence of the actual token so fixtures are stable.
+    const stable = (html: string) => {
+      const token =
+        /name="_csrf" value="([^"]+)"/.exec(html)?.[1] ??
+        /content="([A-Za-z0-9_-]{43})"/.exec(html)?.[1];
+      const pinned = token === undefined ? html : html.replaceAll(token, 'token');
+      return pinned.replaceAll(number, 'GG-20261004-TEST');
+    };
     writeFileSync('test/fixtures/order-history.ssr.html', stable(history));
     writeFileSync('test/fixtures/order-detail.ssr.html', stable(detail));
     writeFileSync('test/fixtures/order-lookup.ssr.html', stable(lookup));
