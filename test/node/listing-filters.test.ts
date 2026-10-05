@@ -32,6 +32,23 @@ describe('listing queries', () => {
     ]);
   });
 
+  it('ranks one 5-star review below many 4.6-star reviews (Bayesian average)', async () => {
+    const { db } = await testApp();
+    const { slug } = await fixtureCategory(db);
+    const rate = (name: string, sum: number, n: number) =>
+      db.update(products).set({ ratingSum: sum, ratingCount: n }).where(eq(products.name, name));
+    await rate('Delta', 5, 1); // a single 5-star review
+    await rate('Alpha', 230, 50); // fifty reviews averaging 4.6
+    const result = await categoryPage(db, 'electronics', slug, {
+      ...DEFAULT_LISTING,
+      sort: 'rating',
+    });
+    if (result._tag !== 'Found') throw new Error(result._tag);
+    const cards = names(result.data.cards);
+    expect(cards.indexOf('Alpha')).toBeLessThan(cards.indexOf('Delta'));
+    expect(cards.at(-1)).toBe('Charlie'); // unrated stays last
+  });
+
   it('sorts by the price a shopper pays (sale price when on sale), both ways', async () => {
     const ascending = ['Foxtrot', 'Alpha', 'Bravo', 'Hotel', 'Charlie', 'Delta', 'Echo', 'Golf'];
     expect(names((await listing({ sort: 'price-asc' })).cards)).toEqual(ascending);

@@ -90,6 +90,7 @@ const totalStock = sql<number>`(select coalesce(sum(${variants.stock}), 0) from 
 /** The price a shopper pays: the sale price when there is one. */
 const paidPrice = sql<number>`coalesce(${products.salePriceCents}, ${products.priceCents})`;
 const averageRating = sql<number>`${products.ratingSum} * 1.0 / max(${products.ratingCount}, 1)`;
+const isRated = sql<number>`${products.ratingCount} > 0`;
 /** domain/ratings.ts bayesianRating(), in SQL. */
 const bayesian = sql<number>`(${products.ratingSum} + ${PRIOR_MEAN * PRIOR_COUNT}) * 1.0 / (${products.ratingCount} + ${PRIOR_COUNT})`;
 
@@ -176,14 +177,17 @@ export async function categoryCounts(db: Db, departmentId: number): Promise<Map<
 
 function orderBy(order: CardOrder | undefined, match: string | undefined): SQL[] {
   if (order === 'relevance' && match !== undefined) {
-    return [asc(searchRank(match)), desc(averageRating), asc(products.id)];
+    return [asc(searchRank(match)), desc(isRated), desc(bayesian), asc(products.id)];
   }
   switch (order) {
+    // Rating orders use the Bayesian average (domain/ratings.ts): one 5-star review never
+    // outranks hundreds of 4.6s. The rating *filter* (minRating) still uses the plain average,
+    // since it matches the stars shown on each card.
     case 'rating':
     case 'relevance':
-      return [desc(averageRating), asc(products.id)];
     case 'top-rated':
-      return [desc(bayesian), desc(products.ratingCount), asc(products.id)];
+      // Unrated products go last: the prior alone would rank them above poorly rated ones.
+      return [desc(isRated), desc(bayesian), desc(products.ratingCount), asc(products.id)];
     case 'popular':
       return [desc(products.ratingCount), desc(bayesian), asc(products.id)];
     case 'price-asc':
