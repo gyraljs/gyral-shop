@@ -23,6 +23,7 @@ system of record.
 | `pnpm db:purge`         | Delete expired sessions and orphaned guest carts (servers also do it hourly)                                                 |
 | `pnpm db:generate`      | Generate a migration after editing `src/db/schema.ts`                                                                        |
 | `pnpm ui:check [page…]` | Screenshots + console/overflow/axe per page template, light/dark × desktop/phone (`ui-scenarios/`); `--baseline`/`--compare` |
+| `pnpm smoke:prod`       | Production build hydrates in place (part of `pnpm check`, ~20 s)                                                             |
 | `pnpm perf`             | Production-build performance budgets (LCP, CLS, JS size), ~45 s                                                              |
 | `pnpm ci:local`         | Run CI locally in Docker via `gh act`                                                                                        |
 

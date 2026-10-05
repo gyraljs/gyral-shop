@@ -35,12 +35,18 @@
   above the recorded baseline + 10% (`scripts/perf-baseline.json`; refresh with
   `pnpm perf --update` after an intended change).
 
-  Baseline (2026-10-05, production build):
+  Baseline (2026-10-05, production build, after per-route code splitting and the Gyral fix for
+  production-only hydration duplicates, gyral-czi.41):
 
   | Page     | LCP (median) |   CLS |  JS gzip |    JS raw | CSS (inline + files) |
   | -------- | -----------: | ----: | -------: | --------: | -------------------: |
-  | home     |       588 ms | 0.000 | 91.3 KiB | 293.0 KiB |             34.5 KiB |
-  | category |       416 ms | 0.012 | 91.3 KiB | 293.0 KiB |             34.5 KiB |
-  | product  |       444 ms | 0.003 | 91.3 KiB | 293.0 KiB |             34.5 KiB |
+  | home     |       792 ms | 0.000 | 75.1 KiB | 220.2 KiB |             55.4 KiB |
+  | category |       572 ms | 0.000 | 81.6 KiB | 237.0 KiB |             55.4 KiB |
+  | product  |       524 ms | 0.000 | 82.9 KiB | 240.2 KiB |             55.4 KiB |
 
-  Every page loads the same single client bundle: there is no per-route code splitting yet.
+  Before the fix, the duplicated consent banner pushed CLS to about 0.26 and product LCP to
+  about 2.3 s. Home LCP varies between runs (532–792 ms observed) on a loaded machine.
+
+- **Production hydration:** `pnpm smoke:prod` (part of `pnpm check`, about 20 s) builds and
+  serves the production bundle and checks that key pages hydrate in place (see ADR 0005,
+  "Production builds").

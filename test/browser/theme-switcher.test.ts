@@ -123,7 +123,11 @@ describe('<shop-theme-switcher>', () => {
     await vi.waitFor(() => {
       expect(el.querySelector('[role="status"]')?.textContent).toContain('could not be saved');
     });
-    expect(brand()).toBe('rgb(0, 0, 200)');
+    // Applying and saving run concurrently: the failed save can report before the new
+    // stylesheet has finished loading, so wait for the look rather than reading it once.
+    await vi.waitFor(() => {
+      expect(brand()).toBe('rgb(0, 0, 200)');
+    });
   });
 });
 
