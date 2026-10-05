@@ -20,7 +20,8 @@ import { skuCode, type SkuCode } from '../domain/catalog.js';
 import { clampQuantity, mergeCarts, type MergeAdjustment } from '../domain/inventory.js';
 import { normalizeCode, promoErrorMessage } from '../domain/promos.js';
 import { err, ok, type Result } from '../domain/result.js';
-import { buildCartView, emptyCartView, promoFromRow, type CartView } from './cart-view.js';
+import { promoFromRow } from '../db/mapping.js';
+import { buildCartView, emptyCartView, type CartView } from './cart-view.js';
 
 /** Who the cart belongs to: a member (by user) or a guest (by session). */
 export type CartOwner =
