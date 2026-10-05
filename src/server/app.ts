@@ -34,6 +34,7 @@ import { productLabel } from '../db/repos/catalog.js';
 import { devMailRoutes } from './routes/dev-mail.js';
 import { seoRoutes } from './routes/seo.js';
 import { consentRoutes } from './routes/consent.js';
+import { themeRoutes } from './routes/themes.js';
 import { analyticsMiddleware } from './analytics.js';
 import { organizationJsonLd, twitterCard, websiteJsonLd } from './seo.js';
 import { publicOrigin } from './origin.js';
@@ -172,6 +173,7 @@ export function createApp({
 
   app.route('/', seoRoutes({ db }));
   app.route('/', consentRoutes({ render: page }));
+  app.route('/', themeRoutes({ render: page }));
   app.route('/', catalogRoutes({ db, render: page }));
   const millis = () => services.now().getTime();
   app.route('/', accountRoutes({ db, render: page, now: millis }));

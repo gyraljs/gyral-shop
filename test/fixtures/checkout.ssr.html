@@ -1297,33 +1297,41 @@ shop-checkout {
   .consent-custom small { color: var(--ink-muted); }
 }
 </style><style>
-@layer theme {
-  :root {
-    --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    --font-display: var(--font-sans);
-    --brand: oklch(50% 0.2 25);
-    --brand-ink: oklch(99% 0 0);
-    --surface: light-dark(oklch(99% 0.003 250), oklch(18% 0.01 250));
-    --surface-raised: light-dark(oklch(100% 0 0), oklch(23% 0.012 250));
-    --surface-sunken: light-dark(oklch(96% 0.005 250), oklch(15% 0.01 250));
-    --ink: light-dark(oklch(22% 0.02 250), oklch(93% 0.01 250));
-    --ink-muted: light-dark(oklch(45% 0.02 250), oklch(72% 0.015 250));
-    --line: light-dark(oklch(88% 0.01 250), oklch(32% 0.015 250));
-    --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
-    --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
-    --focus: oklch(60% 0.18 250);
-    --rating-fill: light-dark(oklch(75% 0.16 80), oklch(80% 0.15 80));
-    --shadow-popover: 0 0.5rem 1.5rem light-dark(oklch(0% 0 0 / 0.15), oklch(0% 0 0 / 0.5));
-    --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
-    --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
-    --radius: 0.5rem;
-    --brand-size: 1.4rem;
-    --header-bg: var(--brand);
-    --header-ink: var(--brand-ink);
-    --nav-bg: oklch(from var(--brand) calc(l - 0.08) c h);
+@layer components {
+  shop-theme-switcher { display: block; margin-block: var(--space-3); }
+  .theme-switcher { display: flex; flex-wrap: wrap; align-items: end; gap: var(--space-2); }
+  .theme-switcher fieldset {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
   }
+  .theme-switcher legend { padding-inline: var(--space-1); font-weight: 600; }
+  .theme-switcher label { display: inline-flex; align-items: center; gap: var(--space-1); cursor: pointer; }
+  .theme-switcher input { accent-color: var(--brand); }
+  .theme-switcher button {
+    font: inherit;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--line-strong);
+    background: var(--surface-raised);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .theme-status:empty { display: none; }
+  .theme-status { margin: 0; color: var(--ink-muted); }
 }
-</style><!--lit-part eVKfaNMXC80=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part--><!--/lit-part-->
+</style><!--lit-part uWSG59Owlgk=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!--lit-part ktzex/F8npc=--><!--lit-node 0--><link
+    rel="stylesheet"
+    id="theme-css"
+    href="/themes/default.FBc2c78--I.css"
+    data-theme="default"
+  /><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
     <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
     <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
@@ -1836,7 +1844,7 @@ shop-checkout {
     <p><a href="/cart">Edit cart</a></p>
   </aside><!--gyral:/lit-part-->
       </div><!--gyral:/lit-part--></shop-checkout><!--/lit-part--></main>
-        <!--lit-part 72kieget6kI=-->
+        <!--lit-part aojUFGjPFgY=-->
   <footer class="site-footer">
     <div class="page">
       <nav aria-label="Site">
@@ -1849,6 +1857,36 @@ shop-checkout {
           <li><a href="/consent">Cookie settings</a></li>
         </ul>
       </nav>
+      <!--lit-node 16--><shop-theme-switcher
+        
+        
+        
+        
+       current="default" return-to="/checkout" data-gyral-seed="{&quot;props&quot;:{&quot;themes&quot;:[{&quot;name&quot;:&quot;default&quot;,&quot;label&quot;:&quot;Gyral Goods&quot;,&quot;href&quot;:&quot;/themes/default.FBc2c78--I.css&quot;}]}}" data-gyral-light><!--gyral:lit-part nuVZicIW+mc=-->
+      <!--gyral:lit-node 0--><form
+        method="post"
+        action="/theme"
+        class="theme-switcher"
+        data-region="theme-switcher"
+        data-intent="Choose"
+      >
+        <!--gyral:lit-node 1--><fieldset data-intent="Picked" data-intent-on="change">
+          <legend>Theme</legend>
+          <!--gyral:lit-part--><!--gyral:lit-part lgslO16Al6I=--><label data-component="theme-option">
+                <!--gyral:lit-node 1--><input
+                  type="radio"
+                  name="theme"
+                  value="default"
+                  checked
+                />
+                <!--gyral:lit-part-->Gyral Goods<!--gyral:/lit-part-->
+              </label><!--gyral:/lit-part--><!--gyral:/lit-part-->
+        </fieldset>
+        <!--gyral:lit-node 4--><input type="hidden" name="return" value="/checkout" />
+        <!--gyral:lit-node 5--><button type="submit" >Apply theme</button>
+        <p class="theme-status" role="status"><!--gyral:lit-part--><!--gyral:/lit-part--></p>
+      </form>
+    <!--gyral:/lit-part--></shop-theme-switcher>
       <p>
         <small>© 2026 <!--lit-part-->Gyral Goods<!--/lit-part-->. A demo store built with Gyral; nothing here is for sale.</small>
       </p>

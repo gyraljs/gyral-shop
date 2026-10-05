@@ -14,6 +14,8 @@ export const MeSchema = v.object({
   consentDecided: v.boolean(),
   /** The visitor accepted analytics (consent.md); checked again on the server. */
   analytics: v.boolean(),
+  /** The visitor's theme (ADR 0006 rule 8), for the switcher on prerendered pages. */
+  theme: v.optional(v.string()),
 });
 
 export type Me = v.InferOutput<typeof MeSchema>;
