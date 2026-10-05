@@ -108,11 +108,11 @@ export function createApp({
   });
 
   app.get('/', async () => {
-    const [data, departmentList] = await Promise.all([homeData(db), nav()]);
+    const data = await homeData(db);
     return page({
       title: SITE_NAME,
       description: 'Electronics, home, clothing, toys, groceries and more, in one store.',
-      main: homePage({ departments: departmentList, ...data }),
+      main: homePage(data),
     });
   });
 

@@ -16,6 +16,7 @@ import {
   PAGE_SIZE,
   type ListingState,
 } from '../domain/listing.js';
+import { MIN_REVIEWS_FOR_TOP_RATED } from '../domain/ratings.js';
 import { toCard, type Card } from './catalog.js';
 
 export interface CategoryLink {
@@ -59,8 +60,13 @@ export async function departmentPage(
   if (found === undefined) return undefined;
   const { department, categories } = found;
   const [topRated, deals] = await Promise.all([
-    productCards(db, { departmentId: department.id, order: 'rating', limit: 8 }),
-    productCards(db, { departmentId: department.id, onSale: true, order: 'rating', limit: 4 }),
+    productCards(db, {
+      departmentId: department.id,
+      order: 'top-rated',
+      minReviews: MIN_REVIEWS_FOR_TOP_RATED,
+      limit: 8,
+    }),
+    productCards(db, { departmentId: department.id, onSale: true, order: 'top-rated', limit: 4 }),
   ]);
   return {
     department: {

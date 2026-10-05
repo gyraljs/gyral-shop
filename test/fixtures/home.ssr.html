@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gyral Goods</title>
     <meta name="description" content="Electronics, home, clothing, toys, groceries and more, in one store.">
-    <!--lit-part eabATTlSz5c=--><!--lit-part d9twttO7NUY=--><style>
+    <!--lit-part eabATTlSz5c=--><!--lit-part 1TRtpsdrd1s=--><style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -115,6 +115,16 @@
     text-decoration: none;
   }
   .department-grid a:hover { border-color: var(--brand); }
+  [data-component="department-tile"] { display: grid; gap: var(--space-1); align-content: start; }
+  [data-component="department-tile"] a { display: grid; gap: var(--space-2); padding: var(--space-2); }
+  [data-component="department-tile"] img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover;
+    border-radius: var(--radius);
+  }
+  [data-component="department-tile"] h3 { margin: 0; font-size: 1rem; }
+  [data-component="department-tile"] p {
+    margin: 0; color: var(--ink-muted); font-size: 0.9rem; text-align: center;
+  }
   .card-grid {
     display: grid; gap: var(--space-4);
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
@@ -707,86 +717,86 @@
       </details>
     <!--/lit-part--></template></shop-mini-cart
         ></shop-header>
-        <main id="main" class="page" tabindex="-1"><!--lit-part dTYwLXVPg3A=-->
-  <section class="hero" aria-labelledby="hero-title">
+        <main id="main" class="page" tabindex="-1"><!--lit-part HYcyPyE59/M=-->
+  <section class="hero" aria-labelledby="hero-title" data-region="hero">
     <h1 id="hero-title">Everything you need, all in one place</h1>
     <p>Electronics, home, clothing, toys, groceries and more, with free shipping over $35.</p>
     <p><a class="button" href="#deals-title">Shop today's deals</a></p>
   </section>
-  <section aria-labelledby="departments-title" class="card-section">
+  <section aria-labelledby="departments-title" class="card-section" data-region="departments">
     <h2 id="departments-title">Shop by department</h2>
     <ul class="department-grid">
-      <!--lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/electronics"><!--lit-part-->Electronics<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/home-kitchen"><!--lit-part-->Home &amp; Kitchen<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/clothing"><!--lit-part-->Clothing<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/toys-games"><!--lit-part-->Toys &amp; Games<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/grocery"><!--lit-part-->Grocery<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/beauty"><!--lit-part-->Beauty<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/sports-outdoors"><!--lit-part-->Sports &amp; Outdoors<!--/lit-part--></a></li><!--/lit-part--><!--lit-part rzhJbI+eKAE=--><li><!--lit-node 1--><a href="/d/books"><!--lit-part-->Books<!--/lit-part--></a></li><!--/lit-part--><!--/lit-part-->
+      <!--lit-part--><!--lit-part 4lyPErBcxuU=-->
+  <li data-component="department-tile">
+    <!--lit-node 1--><a href="/d/electronics">
+      <!--lit-part EJlDegkQRZ4=--><!--lit-node 0--><img src="/img/p/northwave-gorgeous-noise-cancelling-headphones-6/1.svg" alt="" width="400" height="400" loading="lazy" /><!--/lit-part-->
+      <h3><!--lit-part-->Electronics<!--/lit-part--></h3>
+    </a>
+    <p><!--lit-part-->TVs, laptops, audio and smart home.<!--/lit-part--></p>
+  </li>
+<!--/lit-part--><!--lit-part 4lyPErBcxuU=-->
+  <li data-component="department-tile">
+    <!--lit-node 1--><a href="/d/home-kitchen">
+      <!--lit-part EJlDegkQRZ4=--><!--lit-node 0--><img src="/img/p/hearthly-handcrafted-desk-19/1.svg" alt="" width="400" height="400" loading="lazy" /><!--/lit-part-->
+      <h3><!--lit-part-->Home &amp; Kitchen<!--/lit-part--></h3>
+    </a>
+    <p><!--lit-part-->Cookware, appliances, bedding and furniture.<!--/lit-part--></p>
+  </li>
+<!--/lit-part--><!--lit-part 4lyPErBcxuU=-->
+  <li data-component="department-tile">
+    <!--lit-node 1--><a href="/d/clothing">
+      <!--lit-part EJlDegkQRZ4=--><!--lit-node 0--><img src="/img/p/mara-lane-incredible-shirt-dress-26/1.svg" alt="" width="400" height="400" loading="lazy" /><!--/lit-part-->
+      <h3><!--lit-part-->Clothing<!--/lit-part--></h3>
+    </a>
+    <p><!--lit-part-->Everyday clothing and shoes for the whole family.<!--/lit-part--></p>
+  </li>
+<!--/lit-part--><!--lit-part 4lyPErBcxuU=-->
+  <li data-component="department-tile">
+    <!--lit-node 1--><a href="/d/toys-games">
+      <!--lit-part EJlDegkQRZ4=--><!--lit-node 0--><img src="/img/p/brickhaven-electronic-city-builder-kit-33/1.svg" alt="" width="400" height="400" loading="lazy" /><!--/lit-part-->
+      <h3><!--lit-part-->Toys &amp; Games<!--/lit-part--></h3>
+    </a>
+    <p><!--lit-part-->Building sets, games, puzzles and outdoor play.<!--/lit-part--></p>
+  </li>
+<!--/lit-part--><!--lit-part 4lyPErBcxuU=-->
+  <li data-component="department-tile">
+    <!--lit-node 1--><a href="/d/grocery">
+      <!--lit-part EJlDegkQRZ4=--><!--lit-node 0--><img src="/img/p/harvest-row-incredible-maple-syrup-48/1.svg" alt="" width="400" height="400" loading="lazy" /><!--/lit-part-->
+      <h3><!--lit-part-->Grocery<!--/lit-part--></h3>
+    </a>
+    <p><!--lit-part-->Pantry staples, snacks, drinks, coffee and tea.<!--/lit-part--></p>
+  </li>
+<!--/lit-part--><!--lit-part 4lyPErBcxuU=-->
+  <li data-component="department-tile">
+    <!--lit-node 1--><a href="/d/beauty">
+      <!--lit-part EJlDegkQRZ4=--><!--lit-node 0--><img src="/img/p/lumiere-tasty-shampoo-55/1.svg" alt="" width="400" height="400" loading="lazy" /><!--/lit-part-->
+      <h3><!--lit-part-->Beauty<!--/lit-part--></h3>
+    </a>
+    <p><!--lit-part-->Skincare, makeup, hair care and fragrance.<!--/lit-part--></p>
+  </li>
+<!--/lit-part--><!--lit-part 4lyPErBcxuU=-->
+  <li data-component="department-tile">
+    <!--lit-node 1--><a href="/d/sports-outdoors">
+      <!--lit-part EJlDegkQRZ4=--><!--lit-node 0--><img src="/img/p/trailcraft-elegant-baseball-glove-66/1.svg" alt="" width="400" height="400" loading="lazy" /><!--/lit-part-->
+      <h3><!--lit-part-->Sports &amp; Outdoors<!--/lit-part--></h3>
+    </a>
+    <p><!--lit-part-->Fitness, camping, cycling and team sports.<!--/lit-part--></p>
+  </li>
+<!--/lit-part--><!--lit-part 4lyPErBcxuU=-->
+  <li data-component="department-tile">
+    <!--lit-node 1--><a href="/d/books">
+      <!--lit-part EJlDegkQRZ4=--><!--lit-node 0--><img src="/img/p/tidewater-books-fantastic-chapter-book-72/1.svg" alt="" width="400" height="400" loading="lazy" /><!--/lit-part-->
+      <h3><!--lit-part-->Books<!--/lit-part--></h3>
+    </a>
+    <p><!--lit-part-->Fiction, non-fiction, children’s books and cookbooks.<!--/lit-part--></p>
+  </li>
+<!--/lit-part--><!--/lit-part-->
     </ul>
   </section>
-  <!--lit-part MEsLYm9f520=-->
+  <div data-region="deals"><!--lit-part MEsLYm9f520=-->
   <!--lit-node 0--><section aria-labelledby="deals-title" class="card-section">
     <!--lit-node 1--><h2 id="deals-title"><!--lit-part-->Today&#39;s deals<!--/lit-part--></h2>
     <div class="card-grid"><!--lit-part--><!--lit-part 7SrfXS0FR04=-->
-  <article class="product-card" data-component="product-card">
-    <!--lit-node 1--><a href="/p/hearthly-gorgeous-pillow-18">
-      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
-              src="/img/p/hearthly-gorgeous-pillow-18/1.svg"
-              alt=""
-              width="400"
-              height="400"
-              loading="eager"
-              decoding="async"
-            /><!--/lit-part-->
-      <h3><!--lit-part-->Hearthly Gorgeous Pillow<!--/lit-part--></h3>
-    </a>
-    <p class="brand"><!--lit-part-->Hearthly<!--/lit-part--></p>
-    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
-        <ins
-          ><span class="visually-hidden">Sale price </span><!--lit-part-->$167.99<!--/lit-part--></ins
-        >
-        <del><span class="visually-hidden">Was </span><!--lit-part-->$231.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
-        <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
-          class="visually-hidden"
-        >
-          out of 5</span
-        >
-        <span class="count"
-          >(<!--lit-part-->1<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
-        >
-      </p><!--/lit-part-->
-    <!--lit-part--><!--/lit-part-->
-  </article>
-<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
-  <article class="product-card" data-component="product-card">
-    <!--lit-node 1--><a href="/p/summit-gear-recycled-bike-light-set-64">
-      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
-              src="/img/p/summit-gear-recycled-bike-light-set-64/1.svg"
-              alt=""
-              width="400"
-              height="400"
-              loading="eager"
-              decoding="async"
-            /><!--/lit-part-->
-      <h3><!--lit-part-->Summit Gear Recycled Bike Light Set<!--/lit-part--></h3>
-    </a>
-    <p class="brand"><!--lit-part-->Summit Gear<!--/lit-part--></p>
-    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
-        <ins
-          ><span class="visually-hidden">Sale price </span><!--lit-part-->$145.99<!--/lit-part--></ins
-        >
-        <del><span class="visually-hidden">Was </span><!--lit-part-->$198.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
-        <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
-          class="visually-hidden"
-        >
-          out of 5</span
-        >
-        <span class="count"
-          >(<!--lit-part-->1<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
-        >
-      </p><!--/lit-part-->
-    <!--lit-part--><!--/lit-part-->
-  </article>
-<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
   <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/trailcraft-elegant-baseball-glove-66">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
@@ -858,7 +868,7 @@
               alt=""
               width="400"
               height="400"
-              loading="lazy"
+              loading="eager"
               decoding="async"
             /><!--/lit-part-->
       <h3><!--lit-part-->Oak &amp; Iron Handmade Weighted Blanket<!--/lit-part--></h3>
@@ -890,7 +900,7 @@
               alt=""
               width="400"
               height="400"
-              loading="lazy"
+              loading="eager"
               decoding="async"
             /><!--/lit-part-->
       <h3><!--lit-part-->Playwise Bespoke Action Figure<!--/lit-part--></h3>
@@ -916,103 +926,6 @@
   </article>
 <!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
   <article class="product-card" data-component="product-card">
-    <!--lit-node 1--><a href="/p/voltra-refined-mirrorless-camera-10">
-      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
-              src="/img/p/voltra-refined-mirrorless-camera-10/1.svg"
-              alt=""
-              width="400"
-              height="400"
-              loading="lazy"
-              decoding="async"
-            /><!--/lit-part-->
-      <h3><!--lit-part-->Voltra Refined Mirrorless Camera<!--/lit-part--></h3>
-    </a>
-    <p class="brand"><!--lit-part-->Voltra<!--/lit-part--></p>
-    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
-        <ins
-          ><span class="visually-hidden">Sale price </span><!--lit-part-->$1,412.99<!--/lit-part--></ins
-        >
-        <del><span class="visually-hidden">Was </span><!--lit-part-->$1,690.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4">
-        <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->4.0<!--/lit-part--><span
-          class="visually-hidden"
-        >
-          out of 5</span
-        >
-        <span class="count"
-          >(<!--lit-part-->4<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
-        >
-      </p><!--/lit-part-->
-    <!--lit-part--><!--/lit-part-->
-  </article>
-<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
-  <article class="product-card" data-component="product-card">
-    <!--lit-node 1--><a href="/p/bean-leaf-handmade-basmati-rice-47">
-      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
-              src="/img/p/bean-leaf-handmade-basmati-rice-47/1.svg"
-              alt=""
-              width="400"
-              height="400"
-              loading="lazy"
-              decoding="async"
-            /><!--/lit-part-->
-      <h3><!--lit-part-->Bean &amp; Leaf Handmade Basmati Rice<!--/lit-part--></h3>
-    </a>
-    <p class="brand"><!--lit-part-->Bean &amp; Leaf<!--/lit-part--></p>
-    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
-        <ins
-          ><span class="visually-hidden">Sale price </span><!--lit-part-->$8.99<!--/lit-part--></ins
-        >
-        <del><span class="visually-hidden">Was </span><!--lit-part-->$12.99<!--/lit-part--></del>
-      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4">
-        <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->4.0<!--/lit-part--><span
-          class="visually-hidden"
-        >
-          out of 5</span
-        >
-        <span class="count"
-          >(<!--lit-part-->1<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
-        >
-      </p><!--/lit-part-->
-    <!--lit-part--><!--/lit-part-->
-  </article>
-<!--/lit-part--><!--/lit-part--></div>
-  </section>
-<!--/lit-part-->
-  <!--lit-part MEsLYm9f520=-->
-  <!--lit-node 0--><section aria-labelledby="top-rated-title" class="card-section">
-    <!--lit-node 1--><h2 id="top-rated-title"><!--lit-part-->Top rated<!--/lit-part--></h2>
-    <div class="card-grid"><!--lit-part--><!--lit-part 7SrfXS0FR04=-->
-  <article class="product-card" data-component="product-card">
-    <!--lit-node 1--><a href="/p/northwave-gorgeous-noise-cancelling-headphones-6">
-      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
-              src="/img/p/northwave-gorgeous-noise-cancelling-headphones-6/1.svg"
-              alt=""
-              width="400"
-              height="400"
-              loading="lazy"
-              decoding="async"
-            /><!--/lit-part-->
-      <h3><!--lit-part-->Northwave Gorgeous Noise-Cancelling Headphones<!--/lit-part--></h3>
-    </a>
-    <p class="brand"><!--lit-part-->Northwave<!--/lit-part--></p>
-    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$179.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
-        <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
-          class="visually-hidden"
-        >
-          out of 5</span
-        >
-        <span class="count"
-          >(<!--lit-part-->3<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
-        >
-      </p><!--/lit-part-->
-    <!--lit-part--><!--/lit-part-->
-  </article>
-<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
-  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/hearthly-gorgeous-pillow-18">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/hearthly-gorgeous-pillow-18/1.svg"
@@ -1031,60 +944,6 @@
         >
         <del><span class="visually-hidden">Was </span><!--lit-part-->$231.99<!--/lit-part--></del>
       </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
-        <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
-          class="visually-hidden"
-        >
-          out of 5</span
-        >
-        <span class="count"
-          >(<!--lit-part-->1<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
-        >
-      </p><!--/lit-part-->
-    <!--lit-part--><!--/lit-part-->
-  </article>
-<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
-  <article class="product-card" data-component="product-card">
-    <!--lit-node 1--><a href="/p/tumble-toys-licensed-water-blaster-39">
-      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
-              src="/img/p/tumble-toys-licensed-water-blaster-39/1.svg"
-              alt=""
-              width="400"
-              height="400"
-              loading="lazy"
-              decoding="async"
-            /><!--/lit-part-->
-      <h3><!--lit-part-->Tumble Toys Licensed Water Blaster<!--/lit-part--></h3>
-    </a>
-    <p class="brand"><!--lit-part-->Tumble Toys<!--/lit-part--></p>
-    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$290.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
-        <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
-          class="visually-hidden"
-        >
-          out of 5</span
-        >
-        <span class="count"
-          >(<!--lit-part-->1<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
-        >
-      </p><!--/lit-part-->
-    <!--lit-part--><!--/lit-part-->
-  </article>
-<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
-  <article class="product-card" data-component="product-card">
-    <!--lit-node 1--><a href="/p/good-field-fantastic-dark-chocolate-44">
-      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
-              src="/img/p/good-field-fantastic-dark-chocolate-44/1.svg"
-              alt=""
-              width="400"
-              height="400"
-              loading="lazy"
-              decoding="async"
-            /><!--/lit-part-->
-      <h3><!--lit-part-->Good Field Fantastic Dark Chocolate<!--/lit-part--></h3>
-    </a>
-    <p class="brand"><!--lit-part-->Good Field<!--/lit-part--></p>
-    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$11.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
           class="visually-hidden"
@@ -1131,6 +990,103 @@
   </article>
 <!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
   <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/voltra-refined-mirrorless-camera-10">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/voltra-refined-mirrorless-camera-10/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Voltra Refined Mirrorless Camera<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Voltra<!--/lit-part--></p>
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
+        <ins
+          ><span class="visually-hidden">Sale price </span><!--lit-part-->$1,412.99<!--/lit-part--></ins
+        >
+        <del><span class="visually-hidden">Was </span><!--lit-part-->$1,690.99<!--/lit-part--></del>
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.0<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->4<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/lumenix-incredible-smart-plug-7">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/lumenix-incredible-smart-plug-7/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Lumenix Incredible Smart Plug<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Lumenix<!--/lit-part--></p>
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
+        <ins
+          ><span class="visually-hidden">Sale price </span><!--lit-part-->$114.99<!--/lit-part--></ins
+        >
+        <del><span class="visually-hidden">Was </span><!--lit-part-->$146.99<!--/lit-part--></del>
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 3.8">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->3.8<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--/lit-part--></div>
+  </section>
+<!--/lit-part--></div>
+  <div data-region="top-rated"><!--lit-part MEsLYm9f520=-->
+  <!--lit-node 0--><section aria-labelledby="top-rated-title" class="card-section">
+    <!--lit-node 1--><h2 id="top-rated-title"><!--lit-part-->Top rated<!--/lit-part--></h2>
+    <div class="card-grid"><!--lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/northwave-gorgeous-noise-cancelling-headphones-6">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/northwave-gorgeous-noise-cancelling-headphones-6/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Northwave Gorgeous Noise-Cancelling Headphones<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Northwave<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$179.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 5">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->5.0<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->3<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
     <!--lit-node 1--><a href="/p/trailcraft-elegant-baseball-glove-66">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
               src="/img/p/trailcraft-elegant-baseball-glove-66/1.svg"
@@ -1163,54 +1119,405 @@
   </article>
 <!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
   <article class="product-card" data-component="product-card">
-    <!--lit-node 1--><a href="/p/stride-fresh-joggers-28">
+    <!--lit-node 1--><a href="/p/hearthly-handcrafted-desk-19">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
-              src="/img/p/stride-fresh-joggers-28/1.svg"
+              src="/img/p/hearthly-handcrafted-desk-19/1.svg"
               alt=""
               width="400"
               height="400"
               loading="lazy"
               decoding="async"
             /><!--/lit-part-->
-      <h3><!--lit-part-->Stride Fresh Joggers<!--/lit-part--></h3>
+      <h3><!--lit-part-->Hearthly Handcrafted Desk<!--/lit-part--></h3>
     </a>
-    <p class="brand"><!--lit-part-->Stride<!--/lit-part--></p>
-    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$30.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.7">
+    <p class="brand"><!--lit-part-->Hearthly<!--/lit-part--></p>
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
+        <ins
+          ><span class="visually-hidden">Sale price </span><!--lit-part-->$176.99<!--/lit-part--></ins
+        >
+        <del><span class="visually-hidden">Was </span><!--lit-part-->$256.99<!--/lit-part--></del>
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.6">
         <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->4.7<!--/lit-part--><span
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.6<!--/lit-part--><span
           class="visually-hidden"
         >
           out of 5</span
         >
         <span class="count"
-          >(<!--lit-part-->3<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
         >
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
   </article>
 <!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
   <article class="product-card" data-component="product-card">
-    <!--lit-node 1--><a href="/p/little-sprout-luxurious-fleece-jacket-32">
+    <!--lit-node 1--><a href="/p/mara-lane-incredible-shirt-dress-26">
       <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
-              src="/img/p/little-sprout-luxurious-fleece-jacket-32/1.svg"
+              src="/img/p/mara-lane-incredible-shirt-dress-26/1.svg"
               alt=""
               width="400"
               height="400"
               loading="lazy"
               decoding="async"
             /><!--/lit-part-->
-      <h3><!--lit-part-->Little Sprout Luxurious Fleece Jacket<!--/lit-part--></h3>
+      <h3><!--lit-part-->Mara Lane Incredible Shirt Dress<!--/lit-part--></h3>
     </a>
-    <p class="brand"><!--lit-part-->Little Sprout<!--/lit-part--></p>
-    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$120.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.7">
+    <p class="brand"><!--lit-part-->Mara Lane<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$93.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.6">
         <span class="stars" aria-hidden="true"></span>
-        <span class="visually-hidden">Rated </span><!--lit-part-->4.7<!--/lit-part--><span
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.6<!--/lit-part--><span
           class="visually-hidden"
         >
           out of 5</span
         >
         <span class="count"
-          >(<!--lit-part-->3<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/brickhaven-electronic-city-builder-kit-33">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/brickhaven-electronic-city-builder-kit-33/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Brickhaven Electronic City Builder Kit<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Brickhaven<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$134.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.6">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.6<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/tidewater-books-fantastic-chapter-book-72">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/tidewater-books-fantastic-chapter-book-72/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Tidewater Books Fantastic Chapter Book<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Tidewater Books<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$21.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.6">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.6<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/oak-iron-handmade-weighted-blanket-17">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/oak-iron-handmade-weighted-blanket-17/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Oak &amp; Iron Handmade Weighted Blanket<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Oak &amp; Iron<!--/lit-part--></p>
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
+        <ins
+          ><span class="visually-hidden">Sale price </span><!--lit-part-->$102.99<!--/lit-part--></ins
+        >
+        <del><span class="visually-hidden">Was </span><!--lit-part-->$121.99<!--/lit-part--></del>
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.4">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.4<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/playwise-soft-dollhouse-42">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/playwise-soft-dollhouse-42/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Playwise Soft Dollhouse<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Playwise<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$21.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.4">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.4<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--/lit-part--></div>
+  </section>
+<!--/lit-part--></div>
+  <div data-region="best-sellers">
+    <!--lit-part MEsLYm9f520=-->
+  <!--lit-node 0--><section aria-labelledby="best-sellers-title" class="card-section">
+    <!--lit-node 1--><h2 id="best-sellers-title"><!--lit-part-->Best sellers<!--/lit-part--></h2>
+    <div class="card-grid"><!--lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/hearthly-handcrafted-desk-19">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/hearthly-handcrafted-desk-19/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Hearthly Handcrafted Desk<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Hearthly<!--/lit-part--></p>
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
+        <ins
+          ><span class="visually-hidden">Sale price </span><!--lit-part-->$176.99<!--/lit-part--></ins
+        >
+        <del><span class="visually-hidden">Was </span><!--lit-part-->$256.99<!--/lit-part--></del>
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.6">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.6<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/mara-lane-incredible-shirt-dress-26">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/mara-lane-incredible-shirt-dress-26/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Mara Lane Incredible Shirt Dress<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Mara Lane<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$93.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.6">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.6<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/brickhaven-electronic-city-builder-kit-33">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/brickhaven-electronic-city-builder-kit-33/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Brickhaven Electronic City Builder Kit<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Brickhaven<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$134.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.6">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.6<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/tidewater-books-fantastic-chapter-book-72">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/tidewater-books-fantastic-chapter-book-72/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Tidewater Books Fantastic Chapter Book<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Tidewater Books<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$21.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.6">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.6<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/oak-iron-handmade-weighted-blanket-17">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/oak-iron-handmade-weighted-blanket-17/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Oak &amp; Iron Handmade Weighted Blanket<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Oak &amp; Iron<!--/lit-part--></p>
+    <!--lit-part G8CqUMrssVY=--><p class="price sale" data-component="price">
+        <ins
+          ><span class="visually-hidden">Sale price </span><!--lit-part-->$102.99<!--/lit-part--></ins
+        >
+        <del><span class="visually-hidden">Was </span><!--lit-part-->$121.99<!--/lit-part--></del>
+      </p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.4">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.4<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/playwise-soft-dollhouse-42">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/playwise-soft-dollhouse-42/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Playwise Soft Dollhouse<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Playwise<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$21.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.4">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.4<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/lumenix-unbranded-phone-case-12">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/lumenix-unbranded-phone-case-12/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Lumenix Unbranded Phone Case<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Lumenix<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$53.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.2">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.2<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
+        >
+      </p><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+  </article>
+<!--/lit-part--><!--lit-part 7SrfXS0FR04=-->
+  <article class="product-card" data-component="product-card">
+    <!--lit-node 1--><a href="/p/kettleby-small-blender-16">
+      <!--lit-part /Y/6ffIfdMs=--><!--lit-node 0--><img
+              src="/img/p/kettleby-small-blender-16/1.svg"
+              alt=""
+              width="400"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            /><!--/lit-part-->
+      <h3><!--lit-part-->Kettleby Small Blender<!--/lit-part--></h3>
+    </a>
+    <p class="brand"><!--lit-part-->Kettleby<!--/lit-part--></p>
+    <!--lit-part CpmyO7nDQ1E=--><p class="price" data-component="price"><!--lit-part-->$357.99<!--/lit-part--></p><!--/lit-part--> <!--lit-part xwrdDhbCGaQ=--><!--lit-node 0--><p class="rating" data-component="rating" style="--rating: 4.2">
+        <span class="stars" aria-hidden="true"></span>
+        <span class="visually-hidden">Rated </span><!--lit-part-->4.2<!--/lit-part--><span
+          class="visually-hidden"
+        >
+          out of 5</span
+        >
+        <span class="count"
+          >(<!--lit-part-->5<!--/lit-part--><span class="visually-hidden"> reviews</span>)</span
         >
       </p><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
@@ -1218,7 +1525,8 @@
 <!--/lit-part--><!--/lit-part--></div>
   </section>
 <!--/lit-part-->
-  <!--lit-part MEsLYm9f520=-->
+  </div>
+  <div data-region="new-arrivals"><!--lit-part MEsLYm9f520=-->
   <!--lit-node 0--><section aria-labelledby="new-title" class="card-section">
     <!--lit-node 1--><h2 id="new-title"><!--lit-part-->New arrivals<!--/lit-part--></h2>
     <div class="card-grid"><!--lit-part--><!--lit-part 7SrfXS0FR04=-->
@@ -1389,7 +1697,7 @@
   </article>
 <!--/lit-part--><!--/lit-part--></div>
   </section>
-<!--/lit-part-->
+<!--/lit-part--></div>
 <!--/lit-part--></main>
         <!--lit-part STG64S/HenM=-->
   <footer class="site-footer">
