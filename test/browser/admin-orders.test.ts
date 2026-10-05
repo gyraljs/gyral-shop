@@ -2,7 +2,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { AdminOrder, AdminOrderList } from '../../src/domain/admin.js';
 import { a11yViolations } from '../support/axe.js';
-import { fakeAdmin, mountAdmin, restoreAdmin, type FakeRequest } from '../support/admin-browser.js';
+import {
+  fakeAdmin,
+  mountAdmin,
+  reply,
+  restoreAdmin,
+  type FakeRequest,
+} from '../support/admin-browser.js';
 
 const NUMBER = 'GG-20261004-ABCDEF';
 
@@ -110,15 +116,9 @@ describe('order detail', () => {
   it('shows the schema’s amount error, then the server’s conflict message', async () => {
     fakeAdmin(`/admin/orders/${NUMBER}`, (req) => {
       if (req.method === 'POST') {
-        throw Object.assign(new Error('conflict'), {
-          _tag: 'HttpStatusError',
-          url: req.url,
-          status: 409,
-          statusText: 'Conflict',
-          body: {
-            error: 'conflict',
-            message: 'The payment provider refused the refund. Nothing was refunded.',
-          },
+        return reply(409, {
+          error: 'conflict',
+          message: 'The payment provider refused the refund. Nothing was refunded.',
         });
       }
       return order('paid', ['Fulfil', 'Cancel', 'Refund']);

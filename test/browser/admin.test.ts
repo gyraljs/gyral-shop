@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Dashboard } from '../../src/domain/admin.js';
 import { a11yViolations } from '../support/axe.js';
-import { fakeAdmin, mountAdmin, restoreAdmin } from '../support/admin-browser.js';
+import { fakeAdmin, mountAdmin, reply, restoreAdmin } from '../support/admin-browser.js';
 
 const dashboard: Dashboard = {
   asOf: '2026-10-04T12:00:00.000Z',
@@ -66,9 +66,7 @@ describe('<shop-admin>', () => {
   });
 
   it('shows an error notice when the API fails', async () => {
-    fakeAdmin('/admin', () => {
-      throw new Error('boom');
-    });
+    fakeAdmin('/admin', () => reply(500, { error: 'boom' }));
     const el = await mountAdmin('/admin');
     await vi.waitFor(() => {
       expect(el.querySelector('[role="alert"]')?.textContent).toMatch(/Something went wrong/);
