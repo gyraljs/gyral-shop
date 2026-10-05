@@ -26,7 +26,7 @@ export const wishlistCss = `
   a.wish-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   .product-wish { display: block; margin-block-start: var(--space-3); }
 
-  [data-region='wishlist'] .count { color: var(--ink-muted); }
+  [data-region='wishlist'] .count { color: var(--ink-muted); font-size: 1rem; font-weight: 400; }
   .wishlist {
     list-style: none;
     padding: 0;

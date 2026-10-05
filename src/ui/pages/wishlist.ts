@@ -28,7 +28,7 @@ const items = (d: WishlistPageData) =>
         Your wishlist is empty. Press <strong>Save</strong> on any product to keep it here.
         <a href="/">Start shopping</a>
       </p>`
-    : html`<p class="count">${d.items.length} saved ${d.items.length === 1 ? 'item' : 'items'}</p>
+    : html`<h2 class="count">${d.items.length} saved ${d.items.length === 1 ? 'item' : 'items'}</h2>
         <ul class="wishlist" data-component="wishlist-items">
           ${d.items.map(
             (card) =>

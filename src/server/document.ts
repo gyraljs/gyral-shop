@@ -112,7 +112,9 @@ export function shell(options: ShellOptions): Response {
       ...(options.description === undefined ? {} : { description: options.description }),
       head,
       body: html`
-        <a class="skip-link" href="#main">Skip to content</a>
+        <nav class="skip-links" aria-label="Skip links">
+          <a class="skip-link" href="#main">Skip to content</a>
+        </nav>
         <shop-header
           .departments=${options.departments}
           query=${options.query ?? ''}
