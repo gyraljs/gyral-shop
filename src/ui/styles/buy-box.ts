@@ -1,5 +1,6 @@
 // Shadow styles for <shop-buy-box>. A plain string so it can be shared and tested.
 export const buyBoxCss = `
+@layer components {
 :host { display: grid; gap: var(--space-3); }
 p { margin: 0; }
 .price { font-size: 1.6rem; font-weight: 800; }
@@ -44,6 +45,7 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .visually-hidden {
   position: absolute; inline-size: 1px; block-size: 1px;
   overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
 }
 @layer components {
   .added:empty { display: none; }

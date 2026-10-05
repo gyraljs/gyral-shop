@@ -143,69 +143,71 @@ export const hiddenFields = (props: AuthProps) =>
     <input type="hidden" name="next" value=${props.next ?? ''} />`;
 
 export const authStyles = css`
-  :host {
-    display: block;
-    max-inline-size: 26rem;
-  }
-  form {
-    display: grid;
-    gap: var(--space-3);
-  }
-  .field {
-    display: grid;
-    gap: var(--space-1);
-    margin: 0;
-  }
-  label {
-    font-weight: 600;
-  }
-  small {
-    color: var(--ink-muted);
-  }
-  input {
-    font: inherit;
-    padding: var(--space-2) var(--space-3);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius);
-    background: var(--surface-raised);
-    color: var(--ink);
-  }
-  input:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 1px;
-  }
-  input:user-invalid,
-  input[aria-invalid='true'] {
-    border-color: var(--danger);
-  }
-  .error {
-    color: var(--danger);
-    min-block-size: 1lh;
-    font-size: 0.9rem;
-  }
-  .form-error {
-    margin: 0;
-    padding: var(--space-2) var(--space-3);
-    border-inline-start: 4px solid var(--danger);
-    background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
-  }
-  button {
-    justify-self: start;
-    font: inherit;
-    font-weight: 600;
-    padding: var(--space-2) var(--space-4);
-    border: 0;
-    border-radius: var(--radius);
-    background: var(--brand);
-    color: var(--brand-ink);
-    cursor: pointer;
-  }
-  button:disabled {
-    opacity: 0.6;
-    cursor: progress;
-  }
-  button:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
+  @layer components {
+    :host {
+      display: block;
+      max-inline-size: 26rem;
+    }
+    form {
+      display: grid;
+      gap: var(--space-3);
+    }
+    .field {
+      display: grid;
+      gap: var(--space-1);
+      margin: 0;
+    }
+    label {
+      font-weight: 600;
+    }
+    small {
+      color: var(--ink-muted);
+    }
+    input {
+      font: inherit;
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--surface-raised);
+      color: var(--ink);
+    }
+    input:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 1px;
+    }
+    input:user-invalid,
+    input[aria-invalid='true'] {
+      border-color: var(--danger);
+    }
+    .error {
+      color: var(--danger);
+      min-block-size: 1lh;
+      font-size: 0.9rem;
+    }
+    .form-error {
+      margin: 0;
+      padding: var(--space-2) var(--space-3);
+      border-inline-start: 4px solid var(--danger);
+      background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
+    }
+    button {
+      justify-self: start;
+      font: inherit;
+      font-weight: 600;
+      padding: var(--space-2) var(--space-4);
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--brand);
+      color: var(--brand-ink);
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: progress;
+    }
+    button:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
   }
 `;

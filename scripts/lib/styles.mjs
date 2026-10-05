@@ -34,3 +34,23 @@ export function styleViolations(file, text) {
 /** Token definitions and theme files are where literal values belong. */
 export const isExempt = (file) =>
   file.endsWith('src/ui/styles/base.ts') || file.includes('src/ui/themes/');
+
+/**
+ * Rule 3: every stylesheet sits in a cascade layer. Checks `css` template literals and
+ * exported `...Css` strings: each must start (after comments) with `@layer` or with an
+ * interpolation of another, already layered stylesheet.
+ */
+export function unlayeredStyles(file, text) {
+  const blocks = /(?:\bcss`|export const \w+Css = `)([\s\S]*?)`/g;
+  const findings = [];
+  for (const match of text.matchAll(blocks)) {
+    const body = (match[1] ?? '').replace(/\/\*[\s\S]*?\*\//g, '').trimStart();
+    if (body === '' || body.startsWith('@layer') || body.startsWith('${')) continue;
+    const line = text.slice(0, match.index).split('\n').length;
+    findings.push(
+      `${file}:${String(line)}: stylesheet outside a cascade layer. Wrap it in ` +
+        `@layer components { … } (docs/design-docs/0006-theming.md rule 3).`,
+    );
+  }
+  return findings;
+}

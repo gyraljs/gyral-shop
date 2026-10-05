@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isExempt, styleViolations } from '../lib/styles.mjs';
+import { isExempt, styleViolations, unlayeredStyles } from '../lib/styles.mjs';
 
 const check = (css) => styleViolations('x.ts', css);
 
@@ -27,5 +27,21 @@ describe('styleViolations', () => {
     expect(isExempt('src/ui/styles/base.ts')).toBe(true);
     expect(isExempt('src/ui/themes/marketplace.css.ts')).toBe(true);
     expect(isExempt('src/ui/styles/buy-box.ts')).toBe(false);
+  });
+});
+
+describe('unlayeredStyles', () => {
+  it('flags css templates and exported Css strings outside a layer', () => {
+    expect(unlayeredStyles('x.ts', 'styles: css`:host { display: block; }`')).toHaveLength(1);
+    expect(
+      unlayeredStyles('x.ts', 'export const fooCss = `\n.a { color: var(--ink); }`;'),
+    ).toHaveLength(1);
+  });
+
+  it('accepts layered or composed stylesheets', () => {
+    expect(
+      unlayeredStyles('x.ts', 'styles: css`\n  /* note */\n  @layer components { :host {} }`'),
+    ).toEqual([]);
+    expect(unlayeredStyles('x.ts', 'export const barCss = `${baseCss}${fooCss}`;')).toEqual([]);
   });
 });

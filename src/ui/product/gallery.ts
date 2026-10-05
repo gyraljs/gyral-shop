@@ -92,77 +92,79 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gall
     `;
   },
   styles: css`
-    :host {
-      display: block;
-    }
-    .views {
-      aspect-ratio: 1;
-      border-radius: var(--radius);
-      background: var(--surface-sunken);
-      overflow: hidden;
-    }
-    .view {
-      display: none;
-      margin: 0;
-    }
-    /* One image: no radios, so the first view is always shown. */
-    .gallery:not(:has(.thumbs)) .view:first-of-type {
-      display: block;
-    }
-    ${unsafeCSS(viewRules)}
-    .view img {
-      display: block;
-      inline-size: 100%;
-      block-size: auto;
-    }
-    .thumbs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-      border: 0;
-      padding: 0;
-      margin: var(--space-2) 0 0;
-    }
-    .thumb {
-      position: relative;
-      display: block;
-      inline-size: 4.5rem;
-      border: 2px solid var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
-      cursor: pointer;
-    }
-    .thumb img {
-      display: block;
-      inline-size: 100%;
-      block-size: auto;
-    }
-    .thumb input {
-      position: absolute;
-      opacity: 0;
-      inset: 0;
-      margin: 0;
-      cursor: pointer;
-    }
-    .thumb:has(input:checked) {
-      border-color: var(--brand);
-    }
-    .thumb:has(input:focus-visible) {
-      outline: 3px solid var(--focus, var(--brand));
-      outline-offset: 2px;
-    }
-    .status {
-      margin: var(--space-1) 0 0;
-      font-size: 0.9rem;
-      color: var(--ink-muted);
-    }
-    .visually-hidden {
-      position: absolute;
-      inline-size: 1px;
-      block-size: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
+    @layer components {
+      :host {
+        display: block;
+      }
+      .views {
+        aspect-ratio: 1;
+        border-radius: var(--radius);
+        background: var(--surface-sunken);
+        overflow: hidden;
+      }
+      .view {
+        display: none;
+        margin: 0;
+      }
+      /* One image: no radios, so the first view is always shown. */
+      .gallery:not(:has(.thumbs)) .view:first-of-type {
+        display: block;
+      }
+      ${unsafeCSS(viewRules)}
+      .view img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+      }
+      .thumbs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        border: 0;
+        padding: 0;
+        margin: var(--space-2) 0 0;
+      }
+      .thumb {
+        position: relative;
+        display: block;
+        inline-size: 4.5rem;
+        border: 2px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .thumb img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+      }
+      .thumb input {
+        position: absolute;
+        opacity: 0;
+        inset: 0;
+        margin: 0;
+        cursor: pointer;
+      }
+      .thumb:has(input:checked) {
+        border-color: var(--brand);
+      }
+      .thumb:has(input:focus-visible) {
+        outline: 3px solid var(--focus, var(--brand));
+        outline-offset: 2px;
+      }
+      .status {
+        margin: var(--space-1) 0 0;
+        font-size: 0.9rem;
+        color: var(--ink-muted);
+      }
+      .visually-hidden {
+        position: absolute;
+        inline-size: 1px;
+        block-size: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
     }
   `,
 });
