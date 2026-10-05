@@ -22,6 +22,8 @@ export const baseCss = `
     --ink: light-dark(oklch(22% 0.02 250), oklch(93% 0.01 250));
     --ink-muted: light-dark(oklch(45% 0.02 250), oklch(72% 0.015 250));
     --line: light-dark(oklch(88% 0.01 250), oklch(32% 0.015 250));
+    --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
+    --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
     --focus: oklch(60% 0.18 250);
     --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
     --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));

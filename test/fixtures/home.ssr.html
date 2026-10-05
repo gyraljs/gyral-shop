@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Gyral Goods</title>
     <meta name="description" content="Electronics, home, clothing, toys, groceries and more, in one store.">
-    <!--lit-part kw2vULl7gTE=--><!--lit-part cRpCEc46RN0=--><style>
+    <!--lit-part kw2vULl7gTE=--><!--lit-part GEN//Xk3Zwg=--><style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -26,6 +26,8 @@
     --ink: light-dark(oklch(22% 0.02 250), oklch(93% 0.01 250));
     --ink-muted: light-dark(oklch(45% 0.02 250), oklch(72% 0.015 250));
     --line: light-dark(oklch(88% 0.01 250), oklch(32% 0.015 250));
+    --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
+    --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
     --focus: oklch(60% 0.18 250);
     --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
     --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
@@ -199,6 +201,18 @@
     background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
   }
 }
+
+@layer components {
+  .auth, .account { max-inline-size: 32rem; display: grid; gap: var(--space-3); }
+  .auth h1, .account h1 { margin-block: 0; }
+  .auth > p { margin-block: 0; }
+  .account-details {
+    display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3);
+    margin: 0;
+  }
+  .account-details dt { font-weight: 600; }
+  .account-details dd { margin: 0; overflow-wrap: anywhere; }
+}
 </style><!--/lit-part-->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <!--lit-part--><!--/lit-part-->
@@ -208,9 +222,10 @@
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part MKg+G2FQvRw=-->
+    <!--lit-part ma8unLBnXLY=-->
         <a class="skip-link" href="#main">Skip to content</a>
         <!--lit-node 1--><shop-header
+          
           
           
           
@@ -303,6 +318,52 @@
       font-weight: 700;
       text-underline-offset: 0.3em;
     }
+    .account-menu {
+      position: relative;
+    }
+    .account-menu summary {
+      cursor: pointer;
+      list-style-position: inside;
+    }
+    .account-menu ul {
+      position: absolute;
+      inset-inline-end: 0;
+      inset-block-start: calc(100% + var(--space-1));
+      z-index: 10;
+      min-inline-size: 12rem;
+      margin: 0;
+      padding: var(--space-2);
+      list-style: none;
+      display: grid;
+      gap: var(--space-1);
+      background: var(--surface-raised);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.15);
+    }
+    .account-menu ul a,
+    .account-menu ul button {
+      display: block;
+      inline-size: 100%;
+      padding: var(--space-1) var(--space-2);
+      text-align: start;
+      color: inherit;
+      border-radius: calc(var(--radius) / 2);
+    }
+    .account-menu ul button {
+      font: inherit;
+      background: none;
+      border: 0;
+      cursor: pointer;
+    }
+    .account-menu ul a:hover,
+    .account-menu ul button:hover {
+      background: var(--surface-sunken);
+    }
+    .account-menu ul :focus-visible {
+      outline-color: var(--focus);
+    }
     :focus-visible {
       outline: 2px solid var(--brand-ink);
       outline-offset: 2px;
@@ -315,7 +376,7 @@
       clip-path: inset(50%);
       white-space: nowrap;
     }
-  </style><!--lit-part s9KBkN9Wsus=-->
+  </style><!--lit-part MvQZgyN4DFg=-->
     <header>
       <div class="bar">
         <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
@@ -334,7 +395,7 @@
           </form>
         </search>
         <nav class="utility" aria-label="Account and cart">
-          <a href="/account/login">Sign in</a>
+          <!--lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--/lit-part-->
           <a href="/cart">Cart</a>
         </nav>
       </div>

@@ -1,4 +1,6 @@
 import { Hono } from 'hono';
+import { contextStorage, tryGetContext } from 'hono/context-storage';
+import { firstName } from '../domain/accounts.js';
 import type { Db } from '../db/client.js';
 import { departmentLinks, homeData } from '../services/catalog.js';
 import { createMailer } from '../services/mail.js';
@@ -6,6 +8,7 @@ import { homePage } from '../ui/pages/home.js';
 import { notFoundPage, serverErrorPage } from '../ui/pages/errors.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
 import { SECURITY_TITLES, securityErrorPage } from '../ui/pages/security-errors.js';
+import { accountRoutes } from './routes/account.js';
 import { catalogRoutes } from './routes/catalog.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
@@ -24,7 +27,17 @@ export interface AppOptions {
 
 const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#c8102e"/><text x="16" y="22" font-family="system-ui,sans-serif" font-size="17" font-weight="800" text-anchor="middle" fill="#fff">G</text></svg>`;
 
-type PageOptions = Omit<ShellOptions, 'clientEntry' | 'departments'>;
+type PageOptions = Omit<ShellOptions, 'clientEntry' | 'departments' | 'account'>;
+
+/** The signed-in member for the header, read from the current request (if any). */
+function accountSummary(): ShellOptions['account'] {
+  const c = tryGetContext<AppEnv>();
+  const user = c?.get('user');
+  const session = c?.get('session');
+  return user === undefined || session === undefined
+    ? undefined
+    : { firstName: firstName(user.name), csrfToken: session.csrfToken };
+}
 
 export function createApp({
   clientEntry,
@@ -36,7 +49,17 @@ export function createApp({
   // Departments appear in every page's header; they change rarely, so load once per app.
   let departments: Promise<readonly DepartmentLink[]> | undefined;
   const nav = () => (departments ??= departmentLinks(db));
-  const page = async (o: PageOptions) => shell({ ...o, clientEntry, departments: await nav() });
+  const page = async (o: PageOptions) => {
+    const account = accountSummary();
+    return shell({
+      ...o,
+      clientEntry,
+      departments: await nav(),
+      ...(account === undefined ? {} : { account }),
+    });
+  };
+  // Lets page() see the request's member without threading the context through every route.
+  app.use('*', contextStorage());
   installSecurity(app, {
     ...security,
     db,
@@ -75,6 +98,11 @@ export function createApp({
   });
 
   app.route('/', catalogRoutes({ db, render: page }));
+  const clock = security?.now;
+  app.route(
+    '/',
+    accountRoutes({ db, render: page, now: () => (clock?.() ?? new Date()).getTime() }),
+  );
   if (mode !== 'production') app.route('/dev/mail', devMailRoutes(createMailer(db), page));
 
   app.notFound(async (c) =>
