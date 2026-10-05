@@ -108,7 +108,12 @@ export async function paymentRefOf(db: Reader, orderId: number): Promise<string 
  * Claims the cancellation: `paid` → `cancelled` only if the order is still paid, then puts
  * its stock back and records the event. False when someone else changed the order first.
  */
-export async function claimCancellation(tx: Tx, order: OrderRow, now: Date): Promise<boolean> {
+export async function claimCancellation(
+  tx: Tx,
+  order: OrderRow,
+  now: Date,
+  note = 'Cancelled at your request',
+): Promise<boolean> {
   const claimed = await tx
     .update(orders)
     .set({ status: 'cancelled', updatedAt: now })
@@ -135,7 +140,7 @@ export async function claimCancellation(tx: Tx, order: OrderRow, now: Date): Pro
       })),
     );
   }
-  await addOrderEvent(tx, order.id, 'cancelled', 'Cancelled at your request', now);
+  await addOrderEvent(tx, order.id, 'cancelled', note, now);
   return true;
 }
 
