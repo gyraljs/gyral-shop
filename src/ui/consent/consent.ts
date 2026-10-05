@@ -3,7 +3,7 @@
 // JavaScript it is a POST form to /consent that redirects back. With it, the same form is sent
 // with submitForm and the banner closes in place. Light DOM (theme contract, ADR 0006).
 import { define, defineForm, form, html, liveBoolean, nothing } from '@gyral/core';
-import { submitForm } from '@gyral/http';
+import { get, submitForm } from '@gyral/http';
 import * as v from 'valibot';
 
 /** One schema for the browser and the server's formAction (Gyral ADR 0008). */
@@ -22,7 +22,16 @@ export interface ConsentProps {
   readonly analytics?: boolean;
   /** Where the no-JS form returns to after saving. */
   readonly returnTo?: string;
+  /**
+   * On a prerendered page the server can't know the visitor: start closed and, once hydrated,
+   * ask `/api/me` whether they already chose (no banner without JavaScript there).
+   */
+  readonly deferred?: boolean;
 }
+
+/** Kept in sync with src/server/routes/me.ts (ui may not import server code). */
+const ME_PATH = '/api/me';
+const MeConsentSchema = v.object({ consentDecided: v.boolean() });
 
 export interface ConsentModel {
   readonly open: boolean;
@@ -33,7 +42,8 @@ export interface ConsentModel {
 export type ConsentMsg =
   | { readonly _tag: 'Choose'; readonly form: FormData }
   | { readonly _tag: 'Saved' }
-  | { readonly _tag: 'Failed' };
+  | { readonly _tag: 'Failed' }
+  | { readonly _tag: 'Known'; readonly decided: boolean };
 
 const FAILED = 'Your choice could not be saved. Please try again.';
 
@@ -43,8 +53,9 @@ export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>('shop-c
     mode: { type: String },
     analytics: { type: Boolean },
     returnTo: { type: String, attribute: 'return-to' },
+    deferred: { type: Boolean },
   },
-  init: () => ({ open: true, saving: false, message: null }),
+  init: (props) => ({ open: props.deferred !== true, saving: false, message: null }),
   intent: {
     Choose: form(ConsentForm, (_data, raw) => ({ _tag: 'Choose', form: raw })),
   },
@@ -64,6 +75,23 @@ export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>('shop-c
         ? { ...s, saving: false, message: 'Your choices are saved.' }
         : { ...s, saving: false, open: false },
     Failed: (s) => ({ ...s, saving: false, message: FAILED }),
+    Hydrated: (s, _m, { props }) =>
+      props.deferred === true
+        ? [
+            s,
+            [
+              get(ME_PATH, {
+                schema: MeConsentSchema,
+                onSuccess: ({ consentDecided }): ConsentMsg => ({
+                  _tag: 'Known',
+                  decided: consentDecided,
+                }),
+                key: 'consent-known',
+              }),
+            ],
+          ]
+        : s,
+    Known: (s, m) => ({ ...s, open: !m.decided }),
     IntentRejected: (s) => ({ ...s, saving: false, message: FAILED }),
   },
   view: (s, i, { props }) => {

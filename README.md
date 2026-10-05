@@ -25,5 +25,14 @@ pnpm dev           # http://localhost:5200
 pnpm check         # typecheck, lint, format, invariants, tests
 ```
 
+Production (Gyral ADR 0016): a Vite client build plus the static content pages prerendered at
+build time, served by a Hono production server.
+
+```sh
+pnpm db:reset      # the prerender step reads departments from the database
+pnpm build         # dist/client (hashed assets) + dist/static (about, FAQ, terms, privacy)
+NODE_ENV=production APP_SECRET=<32+ chars> SITE_ORIGIN=https://your.host pnpm start
+```
+
 Docs: [ARCHITECTURE.md](ARCHITECTURE.md), [design docs](docs/design-docs/index.md),
 [product specs](docs/product-specs/index.md). Work is tracked in beads (`bd ready`).

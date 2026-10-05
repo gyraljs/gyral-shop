@@ -22,7 +22,7 @@ import { sessionMiddleware } from './sessions.js';
 export type { AppEnv, SecurityVariables } from './context.js';
 export { scriptSafeJson } from './json.js';
 export { LIMITS, SlidingWindowLimiter, type RateLimitResult } from './rate-limit.js';
-export { safeNext, wantsJson } from './request.js';
+export { isHttps, safeNext, wantsJson } from './request.js';
 export { LOGIN_PATH, loginRedirect, requireAdmin, requireUser } from './roles.js';
 export type { SecurityOptions } from './runtime.js';
 export {
@@ -32,6 +32,7 @@ export {
   queueCookie,
   SESSION_COOKIE,
   startMemberSession,
+  WISHLIST_SAVE_COOKIE,
 } from './sessions.js';
 
 /** Registers headers, sessions and CSRF checks, in that order, for every route. */

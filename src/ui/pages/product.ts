@@ -4,7 +4,11 @@ import { cardGrid, type ProductCard } from '../catalog/product-card.js';
 import type { BuyBoxVariant } from '../product/buy-box.js';
 import type { GalleryImage } from '../product/gallery.js';
 import '../product/buy-box.js'; // registers <shop-buy-box> for server rendering
+import '../wishlist/toggle.js'; // registers <shop-wish-toggle> for server rendering
 import '../product/gallery.js'; // registers <shop-gallery> for server rendering
+import type { ReviewsViewData } from '../product/reviews-model.js';
+import type { Notice } from '../product/reviews-view.js';
+import { reviewsElement } from './reviews.js';
 
 /** What the page shows. Matches services/product.ts ProductPageData. */
 export interface ProductView {
@@ -78,64 +82,13 @@ const specsTable = (specs: ProductView['specs']) =>
         </table>
       </section>`;
 
-const distribution = (view: ProductView) => html`
-  <dl class="distribution">
-    ${view.rating.distribution.map(
-      (row) => html`
-        <div>
-          <dt>${plural(row.stars, 'star')}</dt>
-          <dd>
-            <meter
-              min="0"
-              max=${Math.max(1, view.rating.count)}
-              value=${row.count}
-              aria-label=${`${plural(row.stars, 'star')}: ${plural(row.count, 'review')}`}
-            ></meter>
-            <span class="count">${row.count}</span>
-          </dd>
-        </div>
-      `,
-    )}
-  </dl>
-`;
-
-const reviewsSection = (view: ProductView) => html`
-  <section id="reviews" aria-labelledby="reviews-title" class="product-section reviews">
-    <h2 id="reviews-title">Customer reviews</h2>
-    ${
-      view.rating.average === null
-        ? html`<p>No one has reviewed this product yet.</p>`
-        : html`
-            <div class="reviews-summary">
-              <p class="average">
-                <span class="big">${view.rating.average.toFixed(1)}</span>
-                ${stars(view.rating.average, `out of 5 stars`)}
-                <span>${plural(view.rating.count, 'review')}</span>
-              </p>
-              ${distribution(view)}
-            </div>
-            <ol class="review-list">
-              ${view.reviews.map(
-                (r) => html`
-                  <li>
-                    <article aria-labelledby="review-${r.id}">
-                      <h3 id="review-${r.id}">${r.title}</h3>
-                      ${stars(r.rating, `${String(r.rating)} out of 5 stars`)}
-                      <p class="byline">${r.author}, <time datetime=${r.date}>${r.date}</time></p>
-                      <p>${r.body}</p>
-                    </article>
-                  </li>
-                `,
-              )}
-            </ol>
-          `
-    }
-  </section>
-`;
-
 export interface ProductPageOptions {
   readonly csrf?: string;
   readonly action?: string;
+  /** The reviews section (first page); omitted, the page shows no reviews section. */
+  readonly reviews?: ReviewsViewData;
+  /** A flash message for the reviews section (after a no-JS helpful vote). */
+  readonly notice?: Notice;
 }
 
 /** The product detail page: gallery, buy box, description, specs, reviews, related. */
@@ -152,13 +105,27 @@ export const productPage = (view: ProductView, options: ProductPageOptions = {})
         action=${options.action ?? nothing}
         csrf=${options.csrf ?? nothing}
       ></shop-buy-box>
+      <shop-wish-toggle
+        class="product-wish"
+        slug=${view.slug}
+        name=${view.name}
+        next=${productPath(view.slug)}
+      ></shop-wish-toggle>
     </div>
   </div>
   <section aria-labelledby="description-title" class="product-section">
     <h2 id="description-title">About this item</h2>
     <p>${view.description}</p>
   </section>
-  ${specsTable(view.specs)} ${reviewsSection(view)}
+  ${specsTable(view.specs)}
+  ${
+    options.reviews === undefined
+      ? nothing
+      : reviewsElement(options.reviews, {
+          ...(options.csrf === undefined ? {} : { csrfToken: options.csrf }),
+          ...(options.notice === undefined ? {} : { notice: options.notice }),
+        })
+  }
   ${
     view.related.length === 0
       ? nothing

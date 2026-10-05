@@ -17,7 +17,7 @@ export const notFoundPage = (path: string, departments: readonly DepartmentLink[
 `;
 
 const searchForm = (id: string) => html`
-  <form action="/search" method="get" role="search">
+  <form action="/search" method="get" role="search" aria-label="Search the catalog">
     <label for=${id}>Search products</label>
     <input id=${id} name="q" type="search" />
     <button type="submit">Search</button>

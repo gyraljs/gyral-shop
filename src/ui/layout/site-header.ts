@@ -1,4 +1,6 @@
-import { css, define, html, nothing, repeat, type Stateless } from '@gyral/core';
+import { css, define, html, nothing, repeat } from '@gyral/core';
+import { get } from '@gyral/http';
+import * as v from 'valibot';
 import { csrfField } from '../forms/csrf.js';
 
 /** The signed-in member, as far as the header needs to know. */
@@ -23,7 +25,26 @@ export interface HeaderProps {
   readonly current?: string;
   /** Set when a member is signed in. */
   readonly account?: AccountSummary;
+  /**
+   * The page was prerendered for everyone (ssg): after hydration, ask the server who is
+   * signed in (`GET /api/me`) instead of trusting the static HTML.
+   */
+  readonly personalize?: boolean;
 }
+
+/** The account fetched on prerendered pages (undefined until known, null for a guest). */
+interface HeaderState {
+  readonly fetched: AccountSummary | null | undefined;
+}
+
+type HeaderMsg = { readonly _tag: 'Me'; readonly account: AccountSummary | null };
+
+const MeSchema = v.object({
+  account: v.nullable(v.object({ firstName: v.string(), csrfToken: v.string() })),
+});
+
+/** Kept in sync with src/server/routes/me.ts (ui may not import server code). */
+const ME_PATH = '/api/me';
 
 /**
  * The site header: brand, search, account and cart entry points, department navigation.
@@ -49,16 +70,33 @@ const accountLinks = (account: AccountSummary | undefined) =>
         </ul>
       </details>`;
 
-export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
+export const SiteHeader = define<HeaderState, HeaderMsg, HeaderProps>('shop-header', {
   props: {
     departments: { attribute: false, default: [] },
     query: { type: String },
     current: { type: String },
     account: { attribute: false },
+    personalize: { type: Boolean },
   },
+  init: () => ({ fetched: undefined }),
   intent: {},
-  update: {},
-  view: (_s, _i, { props }) => html`
+  update: {
+    Hydrated: (s, _m, { props }) =>
+      props.personalize === true
+        ? [
+            s,
+            [
+              get(ME_PATH, {
+                schema: MeSchema,
+                onSuccess: ({ account }): HeaderMsg => ({ _tag: 'Me', account }),
+                key: 'me',
+              }),
+            ],
+          ]
+        : s,
+    Me: (s, m) => ({ ...s, fetched: m.account }),
+  },
+  view: (s, _i, { props }) => html`
     <header>
       <div class="bar">
         <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
@@ -81,7 +119,7 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
           </search>
         </slot>
         <nav class="utility" aria-label="Account and cart">
-          ${accountLinks(props.account)}
+          ${accountLinks(props.account ?? s.fetched ?? undefined)}
           <!-- The document shell slots <shop-mini-cart> here. It must stay in the light DOM:
                Gyral components nested in another component's server-rendered shadow root get
                defer-hydration, and Gyral then never wires their intents (Gyral bug, reported). -->

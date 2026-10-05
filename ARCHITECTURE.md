@@ -29,8 +29,12 @@ reaches it as props (SSR) or over HTTP.
 
 - **ssr:** catalog, search, product pages, cart, checkout, account, orders. Personalized or
   live data, SEO matters for catalog pages.
-- **ssg:** content pages (about, FAQ, terms, privacy), once Gyral ships prerendering
-  (gyral-4k7.3).
+- **ssg:** content pages (about, FAQ, terms, privacy), prerendered by `pnpm build`
+  (`src/server/prerender.ts`, Gyral `@gyral/ssr/static`) and served from `dist/static`. They
+  carry no per-visitor data: the header fetches `/api/me` and the mini-cart loads the cart
+  after hydration (`personalize` on `<shop-header>`, `static: true` page option).
+  `pnpm start` serves hashed assets immutable, static pages with revalidation, and everything
+  else per request, adding the security headers to files served from disk.
 - **csr:** admin UI behind auth.
 
 ## Gyral

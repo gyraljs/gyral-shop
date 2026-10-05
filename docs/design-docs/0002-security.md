@@ -73,3 +73,11 @@ and instead **requires proof of same origin**: an `Origin` header equal to this 
 as is a cross-site one. This is OWASP's standard-header verification. The worst a forged
 request could do is change a consent choice, and browsers send these headers on every POST.
 Tested in `test/node/consent.test.ts`.
+
+## Addendum: production serving (shop-2gz, 2026-10-04)
+
+`pnpm start` serves prerendered pages and hashed assets from disk without passing through the
+app, so `src/server/prod-app.ts` adds the same headers (`securityHeaderValues` in
+`src/server/security/headers.ts`) to those responses. Prerendered pages contain no session,
+CSRF token or account: `/api/me` (never cached, never starts a session) personalizes them after
+hydration. `pnpm start` refuses to run unless `NODE_ENV=production` and `APP_SECRET` is set.
