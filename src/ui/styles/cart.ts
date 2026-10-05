@@ -1,5 +1,6 @@
 // Cart page styles (shadow root of <shop-cart-page>; tokens come from the document's :root).
 export const cartCss = `
+@layer reset, tokens, base, components, theme;
 @layer components {
   h1 { margin-block: var(--space-3) var(--space-2); }
   .notice:empty { display: none; }
@@ -12,7 +13,7 @@ export const cartCss = `
   .notice.error { border-inline-start-color: var(--danger); }
   .layout {
     display: grid;
-    gap: var(--space-4, 2rem);
+    gap: var(--space-4);
     grid-template-columns: minmax(0, 1fr);
   }
   @container cart (min-width: 52rem) {
@@ -89,7 +90,7 @@ export const cartCss = `
   .promo input { flex: 1; min-inline-size: 0; inline-size: 100%; padding: var(--space-1) var(--space-2); text-transform: uppercase; }
   .promo .error { color: var(--danger); margin-block: var(--space-1) 0; }
   .promo.applied p { margin: 0; }
-  .empty { padding-block: var(--space-4, 2rem); }
+  .empty { padding-block: var(--space-4); }
   .visually-hidden {
     position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
     clip-path: inset(50%); white-space: nowrap;

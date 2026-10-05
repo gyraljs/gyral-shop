@@ -18,7 +18,14 @@ const promoBlock = (
 ) =>
   cart.promo === undefined
     ? html`
-        <form method="post" action="/cart/promo" data-intent=${i.ApplyPromo} class="promo">
+        <form
+          method="post"
+          action="/cart/promo"
+          data-intent=${i.ApplyPromo}
+          class="promo"
+          data-component="promo-code"
+          part="promo"
+        >
           ${csrfField(csrf)}
           <label for="promo-code">Promo code</label>
           <span class="row">
@@ -37,7 +44,7 @@ const promoBlock = (
         </form>
       `
     : html`
-        <div class="promo applied">
+        <div class="promo applied" data-component="promo-code" part="promo">
           <p>
             Promo code <strong>${cart.promo.code}</strong>
             ${cart.promo.applied ? 'applied.' : html`not applied: ${cart.promo.message ?? ''}`}
@@ -60,6 +67,8 @@ export function cartSummary(
   return html`
     <section
       class="summary"
+      data-region="cart-summary"
+      part="summary"
       aria-labelledby="summary-heading"
       aria-busy=${updating ? 'true' : 'false'}
     >
@@ -85,7 +94,7 @@ export function cartSummary(
           <dt>Tax</dt>
           <dd>${t.taxPending ? 'Calculated at checkout' : format(t.tax)}</dd>
         </div>
-        <div class="total">
+        <div class="total" data-component="price">
           <dt>Estimated total</dt>
           <dd>${format(t.total)}</dd>
         </div>
@@ -99,11 +108,12 @@ export function cartSummary(
       ${promoBlock(cart, csrf, i, promoError)}
       ${
         cart.canCheckout
-          ? html`<a class="button primary" href="/checkout">Checkout</a>`
+          ? html`<a class="button primary" part="checkout" href="/checkout">Checkout</a>`
           : html`
               <button
                 type="button"
                 class="button primary"
+                part="checkout"
                 disabled
                 aria-describedby="checkout-blocked"
               >

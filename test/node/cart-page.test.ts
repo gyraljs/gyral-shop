@@ -56,12 +56,12 @@ describe('/cart', () => {
     const page = await response.text();
     expect(page).toContain('Added 2 items of LEGO to your cart.');
     expect(response.headers.getSetCookie().join()).toMatch(/flash=;.*Max-Age=0/);
-    expect(page).toMatch(/<form method="post" action="\/cart\/update"[^>]*>/);
-    expect(page).toMatch(/<form method="post" action="\/cart\/remove"[^>]*>/);
-    expect(page).toMatch(/<form method="post" action="\/cart\/promo"[^>]*>/);
+    expect(page).toMatch(/<form\s+method="post"\s+action="\/cart\/update"/);
+    expect(page).toMatch(/<form\s+method="post"\s+action="\/cart\/remove"/);
+    expect(page).toMatch(/<form\s+method="post"\s+action="\/cart\/promo"/);
     expect(page).toContain(`name="_csrf" value="${visitor.session.csrfToken}"`);
     expect(page).toContain('$100.00'); // 2 × $50 line total and subtotal
-    expect(page).toMatch(/<a class="button primary" href="\/checkout">/);
+    expect(page).toMatch(/<a class="button primary" part="checkout" href="\/checkout">/);
     expect(seededCart(page)).toMatchObject({ itemCount: 2, lines: [{ sku: SKU.lego }] });
 
     const again = await (await visitor.get('/cart')).text();

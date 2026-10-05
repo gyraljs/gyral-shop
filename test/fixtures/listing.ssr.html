@@ -255,7 +255,7 @@
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part Ipjf6nOs0k8=-->
+    <!--lit-part O6iCW/Yvpmw=-->
         <a class="skip-link" href="#main">Skip to content</a>
         <!--lit-node 1--><shop-header
           
@@ -473,117 +473,120 @@
         </ul>
       </nav>
     </header>
-  <!--/lit-part--></template><shop-mini-cart  slot="cart" data-gyral-seed="{&quot;state&quot;:{},&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
-    :host {
-      display: inline-block;
-      position: relative;
+  <!--/lit-part--></template><shop-mini-cart   slot="cart" data-region="cart" data-gyral-seed="{&quot;state&quot;:{},&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
+    @layer reset, tokens, base, components, theme;
+    @layer components {
+      :host {
+        display: inline-block;
+        position: relative;
+      }
+      a,
+      summary {
+        color: inherit;
+      }
+      summary {
+        cursor: pointer;
+        list-style-position: inside;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+      }
+      .badge {
+        min-inline-size: 1.4em;
+        padding-inline: 0.35em;
+        border-radius: 1em;
+        background: var(--brand-ink);
+        color: var(--brand);
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+      }
+      .panel {
+        position: absolute;
+        inset-inline-end: 0;
+        inset-block-start: calc(100% + var(--space-1));
+        z-index: 10;
+        inline-size: min(22rem, 90vw);
+        padding: var(--space-3);
+        background: var(--surface-raised);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-popover);
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: var(--space-2);
+      }
+      li {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: var(--space-2);
+        align-items: baseline;
+      }
+      li a {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .qty,
+      .more {
+        color: var(--ink-muted);
+      }
+      .amount,
+      .subtotal strong {
+        font-variant-numeric: tabular-nums;
+      }
+      .subtotal {
+        display: flex;
+        justify-content: space-between;
+        border-block-start: 1px solid var(--line);
+        padding-block-start: var(--space-2);
+      }
+      .actions {
+        display: flex;
+        gap: var(--space-2);
+        justify-content: flex-end;
+        margin-block-end: 0;
+      }
+      .actions a {
+        padding: var(--space-1) var(--space-3);
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        text-decoration: none;
+      }
+      .actions a.primary {
+        background: var(--brand);
+        border-color: var(--brand);
+        color: var(--brand-ink);
+      }
+      [aria-busy='true'] .panel {
+        opacity: 0.7;
+      }
+      :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+      }
+      .visually-hidden {
+        position: absolute;
+        inline-size: 1px;
+        block-size: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
     }
-    a,
-    summary {
-      color: inherit;
-    }
-    summary {
-      cursor: pointer;
-      list-style-position: inside;
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-1);
-    }
-    .badge {
-      min-inline-size: 1.4em;
-      padding-inline: 0.35em;
-      border-radius: 1em;
-      background: var(--brand-ink);
-      color: var(--brand);
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-align: center;
-      font-variant-numeric: tabular-nums;
-    }
-    .panel {
-      position: absolute;
-      inset-inline-end: 0;
-      inset-block-start: calc(100% + var(--space-1));
-      z-index: 10;
-      inline-size: min(22rem, 90vw);
-      padding: var(--space-3);
-      background: var(--surface-raised);
-      color: var(--ink);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.15);
-    }
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: var(--space-2);
-    }
-    li {
-      display: grid;
-      grid-template-columns: 1fr auto auto;
-      gap: var(--space-2);
-      align-items: baseline;
-    }
-    li a {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .qty,
-    .more {
-      color: var(--ink-muted);
-    }
-    .amount,
-    .subtotal strong {
-      font-variant-numeric: tabular-nums;
-    }
-    .subtotal {
-      display: flex;
-      justify-content: space-between;
-      border-block-start: 1px solid var(--line);
-      padding-block-start: var(--space-2);
-    }
-    .actions {
-      display: flex;
-      gap: var(--space-2);
-      justify-content: flex-end;
-      margin-block-end: 0;
-    }
-    .actions a {
-      padding: var(--space-1) var(--space-3);
-      border: 1px solid var(--line-strong);
-      border-radius: var(--radius);
-      text-decoration: none;
-    }
-    .actions a.primary {
-      background: var(--brand);
-      border-color: var(--brand);
-      color: var(--brand-ink);
-    }
-    [aria-busy='true'] .panel {
-      opacity: 0.7;
-    }
-    :focus-visible {
-      outline: 2px solid var(--focus);
-      outline-offset: 2px;
-    }
-    .visually-hidden {
-      position: absolute;
-      inline-size: 1px;
-      block-size: 1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
-    }
-  </style><!--lit-part 8jf8iKsTUso=-->
-      <!--lit-node 0--><details class="mini-cart" aria-busy="false">
-        <summary>
-          Cart<span class="badge" aria-hidden="true"><!--lit-part-->0<!--/lit-part--></span
+  </style><!--lit-part HOZmKPXsb8I=-->
+      <!--lit-node 0--><details class="mini-cart" part="disclosure" aria-busy="false">
+        <summary part="summary">
+          Cart<span class="badge" part="badge" aria-hidden="true"><!--lit-part-->0<!--/lit-part--></span
           ><span class="visually-hidden">, <!--lit-part-->0 items<!--/lit-part--></span>
         </summary>
-        <div class="panel"><!--lit-part +G7B0qPP8mo=--><p>Your cart is empty.</p><!--/lit-part--></div>
+        <div class="panel" part="panel"><!--lit-part +G7B0qPP8mo=--><p>Your cart is empty.</p><!--/lit-part--></div>
       </details>
     <!--/lit-part--></template></shop-mini-cart
         ></shop-header>

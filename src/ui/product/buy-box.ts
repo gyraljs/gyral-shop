@@ -207,7 +207,12 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
           ${s.enhanced && max === 0 ? 'Out of stock' : inFlight > 0 ? 'Adding…' : 'Add to cart'}
         </button>
       </form>
-      <p class="added ${s.formError === undefined ? (added?.kind ?? '') : 'error'}" role="status">
+      <p
+        data-component="cart-notice"
+        part="added"
+        class="added ${s.formError === undefined ? (added?.kind ?? '') : 'error'}"
+        role="status"
+      >
         ${
           s.formError ?? added?.message ?? ''
         }${added?.kind === 'success' && s.formError === undefined ? html` <a href="/cart">View cart</a>` : nothing}

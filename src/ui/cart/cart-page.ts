@@ -65,17 +65,17 @@ export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>('shop-
     const shown = notice !== undefined && PAGE_OPS.includes(notice.op) ? notice : props.flash;
     return html`
       <h1>Your cart</h1>
-      <p class="notice ${shown?.kind ?? ''}" role="status">${shown?.message ?? ''}</p>
+      <p class="notice ${shown?.kind ?? ''}" part="notice" role="status">${shown?.message ?? ''}</p>
       ${
         cart === undefined
           ? html`<p>Loading your cart…</p>`
           : cart.lines.length === 0
-            ? html`<div class="empty">
+            ? html`<div class="empty" part="empty">
                 <p>Your cart is empty.</p>
                 <p><a class="button primary" href="/">Continue shopping</a></p>
               </div>`
             : html`<div class="layout">
-                <section aria-labelledby="items-heading">
+                <section data-region="cart-lines" aria-labelledby="items-heading">
                   <h2 id="items-heading" class="visually-hidden">Items</h2>
                   ${cartLines(cart.lines, csrf, i)}
                 </section>

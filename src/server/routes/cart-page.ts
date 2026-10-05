@@ -18,7 +18,7 @@ export function cartPageRoutes({ render }: { readonly render: RenderPage }): Hon
       title: 'Your cart',
       noindex: true,
       csrfToken: csrf,
-      main: html`<shop-cart-page csrf=${csrf} .flash=${flash}></shop-cart-page>`,
+      main: html`<shop-cart-page data-region="cart" csrf=${csrf} .flash=${flash}></shop-cart-page>`,
     });
   });
   return routes;

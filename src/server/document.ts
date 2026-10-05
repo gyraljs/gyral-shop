@@ -98,7 +98,7 @@ export function shell(options: ShellOptions): Response {
           query=${options.query ?? ''}
           current=${options.currentDepartment ?? ''}
           .account=${options.account}
-          ><shop-mini-cart slot="cart"></shop-mini-cart
+          ><shop-mini-cart slot="cart" data-region="cart"></shop-mini-cart
         ></shop-header>
         <main id="main" class="page" tabindex="-1">${options.main}</main>
         ${footer}
