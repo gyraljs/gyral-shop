@@ -15,7 +15,7 @@ import {
   type OrderRow,
   type ReserveFailure,
 } from '../db/repos/orders.js';
-import { lockedWrite, writeTransaction } from '../db/tx.js';
+import { writeTransaction } from '../db/tx.js';
 import { readyToPlace } from '../domain/checkout.js';
 import { format, usd, type Money } from '../domain/money.js';
 import { newOrder, transition } from '../domain/orders.js';
@@ -195,19 +195,17 @@ export async function placeOrder(
     await release();
     if (charged.error._tag === 'PaymentDeclined') {
       // A declined intent can't be retried: the customer enters a card again.
-      await lockedWrite(db, () =>
-        saveCheckout(
-          db,
-          state.cartId,
-          {
-            paymentRef: null,
-            cardBrand: null,
-            cardLast4: null,
-            cardExpMonth: null,
-            cardExpYear: null,
-          },
-          now,
-        ),
+      await saveCheckout(
+        db,
+        state.cartId,
+        {
+          paymentRef: null,
+          cardBrand: null,
+          cardLast4: null,
+          cardExpMonth: null,
+          cardExpYear: null,
+        },
+        now,
       );
     }
     return charged;
@@ -240,7 +238,7 @@ export async function placeOrder(
       })),
       totals: breakdown,
     });
-    await lockedWrite(db, () => mailer.send(message));
+    await mailer.send(message);
   } catch (error) {
     // The order is placed and paid; a mail failure must not undo that.
     console.error(`order ${order.number}: confirmation email failed`, error);

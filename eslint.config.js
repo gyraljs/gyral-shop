@@ -101,5 +101,25 @@ export default tseslint.config(
     languageOptions: { globals: globals.browser },
     rules: { 'compat/compat': 'error' },
   },
+  {
+    // Every database write goes through the write lock (src/db/tx.ts): libsql's synchronous
+    // driver fails or deadlocks concurrent writers otherwise. Seed, migration and the lock
+    // itself are the only exceptions.
+    files: ['src/**/*.ts'],
+    ignores: ['src/db/tx.ts', 'src/db/client.ts', 'src/db/seed/**', 'src/**/*.test.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        ...[
+          "CallExpression[callee.property.name=/^(insert|update|delete|transaction|run)$/][callee.object.name='db']",
+          "CallExpression[callee.property.name=/^(insert|update|delete|transaction|run)$/][callee.object.property.name='db']",
+        ].map((selector) => ({
+          selector,
+          message:
+            'Write through the lock: lockedWrite(db, (w) => w.insert(…)) or writeTransaction(db, (tx) => …) from src/db/tx.ts. Unlocked writes fail with SQLITE_BUSY/TRANSACTION_ACTIVE under concurrency.',
+        })),
+      ],
+    },
+  },
   { files: ['**/*.js', '**/*.mjs'], languageOptions: { globals: globals.node } },
 );

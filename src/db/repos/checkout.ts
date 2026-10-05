@@ -3,6 +3,7 @@
 import { and, asc, desc, eq } from 'drizzle-orm';
 import type { Db } from '../client.js';
 import { addresses, checkouts, type ShippingAddress } from '../schema.js';
+import { lockedWrite, writeTransaction } from '../tx.js';
 
 export interface CheckoutRow {
   readonly email: string | null;
@@ -41,10 +42,12 @@ export async function saveCheckout(
   patch: CheckoutPatch,
   now: Date,
 ): Promise<void> {
-  await db
-    .insert(checkouts)
-    .values({ cartId, ...patch, updatedAt: now })
-    .onConflictDoUpdate({ target: checkouts.cartId, set: { ...patch, updatedAt: now } });
+  await lockedWrite(db, (w) =>
+    w
+      .insert(checkouts)
+      .values({ cartId, ...patch, updatedAt: now })
+      .onConflictDoUpdate({ target: checkouts.cartId, set: { ...patch, updatedAt: now } }),
+  );
 }
 
 export interface AddressRow extends ShippingAddress {
@@ -86,9 +89,11 @@ export async function insertMemberAddress(
   userId: number,
   address: ShippingAddress,
 ): Promise<void> {
-  const existing = await db
-    .select({ id: addresses.id })
-    .from(addresses)
-    .where(and(eq(addresses.userId, userId)));
-  await db.insert(addresses).values({ userId, ...address, isDefault: existing.length === 0 });
+  await writeTransaction(db, async (tx) => {
+    const existing = await tx
+      .select({ id: addresses.id })
+      .from(addresses)
+      .where(and(eq(addresses.userId, userId)));
+    await tx.insert(addresses).values({ userId, ...address, isDefault: existing.length === 0 });
+  });
 }

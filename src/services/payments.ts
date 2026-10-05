@@ -20,7 +20,7 @@ import {
 import { err, ok, type Result } from '../domain/result.js';
 import type { Db } from '../db/client.js';
 import { payments } from '../db/schema.js';
-import { writeTransaction } from '../db/tx.js';
+import { lockedWrite, writeTransaction } from '../db/tx.js';
 
 /** What callers see. Never contains card digits. */
 export interface Payment {
@@ -144,19 +144,21 @@ export function createPaymentProvider(db: Db, options: PaymentOptions = {}): Pay
       const valid = validateCard(card, now());
       if (!valid.ok) return err({ _tag: 'CardInvalid', issues: valid.error });
       const state = newPayment(amount, outcomeOf(testCardOutcome(valid.value.digits)));
-      const [row] = await db
-        .insert(payments)
-        .values({
-          providerRef: newRef(),
-          orderId: orderId ?? null,
-          brand: valid.value.brand,
-          last4: valid.value.last4,
-          expMonth: valid.value.expMonth,
-          expYear: valid.value.expYear,
-          outcome: state.outcome,
-          ...stateColumns(state),
-        })
-        .returning();
+      const [row] = await lockedWrite(db, (w) =>
+        w
+          .insert(payments)
+          .values({
+            providerRef: newRef(),
+            orderId: orderId ?? null,
+            brand: valid.value.brand,
+            last4: valid.value.last4,
+            expMonth: valid.value.expMonth,
+            expYear: valid.value.expYear,
+            outcome: state.outcome,
+            ...stateColumns(state),
+          })
+          .returning(),
+      );
       if (row === undefined) throw new Error('payments insert returned no row');
       return ok(toPayment(row));
     },
