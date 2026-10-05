@@ -27,8 +27,8 @@ export const aboutPage = () =>
         <h2 id="why">Why it exists</h2>
         <p>
           It shows a complete, realistic web application built with
-          <a href="https://github.com/mikezupper/gyral">Gyral</a>, a Model-View-Intent framework on
-          web standards: server rendering, forms that work without JavaScript, and an accessible,
+          <a href="https://github.com/gyraljs/gyral">Gyral</a>, a Model-View-Intent framework on web
+          standards: server rendering, forms that work without JavaScript, and an accessible,
           themeable interface.
         </p>
       </section>

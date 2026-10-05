@@ -1,7 +1,7 @@
 # gyral-shop
 
 A department-store web app (think Target/Walmart, much smaller) built with
-[Gyral](https://github.com/mikezupper/gyral), a Model-View-Intent framework on web standards.
+[Gyral](https://github.com/gyraljs/gyral), a Model-View-Intent framework on web standards.
 It exists to show a complete, realistic project, not a toy.
 
 **Features:** department catalog with filters, search, product pages, accounts (register,
@@ -16,7 +16,7 @@ valibot, Vitest (browser mode) + Playwright.
 Gyral is linked from a sibling checkout:
 
 ```sh
-git clone git@github.com:mikezupper/gyral.git cyclejs-web-framework   # next to this repo
+git clone git@github.com:gyraljs/gyral.git cyclejs-web-framework   # next to this repo
 (cd cyclejs-web-framework && pnpm install)
 pnpm install
 pnpm exec playwright install chromium

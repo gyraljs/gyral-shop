@@ -15,7 +15,7 @@ jobs:
           path: gyral-shop
       - uses: actions/checkout@v4
         with:
-          repository: mikezupper/gyral
+          repository: gyraljs/gyral
           path: cyclejs-web-framework
           token: ${{ secrets.GITHUB_TOKEN }}
       - uses: pnpm/action-setup@v4
