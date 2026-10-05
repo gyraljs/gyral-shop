@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "tsx src/server/dev.ts",
-    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm invariants && pnpm test",
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm invariants && pnpm test && node scripts/check-fixtures.mjs",
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint .",
     "format": "prettier --write .",

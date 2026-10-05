@@ -11,6 +11,7 @@ import * as v from 'valibot';
 import { testApp, type TestApp } from '../support/app.js';
 import { createMember, guest, loginAs, type TestSession } from '../support/auth.js';
 import { insertCartFixture, SKU, T0 } from '../support/cart-fixture.js';
+import { pinTokens } from '../support/fixtures.js';
 import { placeOrder } from '../support/orders.js';
 
 let test: TestApp;
@@ -69,7 +70,10 @@ describe('product page reviews section', () => {
     expect(product?.review.map((r) => [r.name, r.reviewRating.ratingValue])).toEqual([
       ['Solid', '4'],
     ]);
-    writeFileSync(new URL('../fixtures/product-reviews.ssr.html', import.meta.url), html);
+    writeFileSync(
+      new URL('../fixtures/product-reviews.ssr.html', import.meta.url),
+      pinTokens(html),
+    );
   });
 
   it('offers buyers the write link and guests a sign-in link', async () => {
