@@ -4,7 +4,7 @@
 import { html, live, nothing } from '@gyral/core';
 import { RATINGS, SORT_LABELS, SORTS, type ListingState } from '../../domain/listing.js';
 import { liveChecked } from '../forms/live-checked.js';
-import { listingHref, type ListingView } from './listing-view.js';
+import { fixedParams, listingHref, type ListingView } from './listing-view.js';
 
 export interface FilterIntents {
   /** On the form (submit) and on the fields wrapper (change). */
@@ -31,14 +31,14 @@ const price = (name: 'min' | 'max', label: string, value: number | null) => html
   </label>
 `;
 
-const sortField = (state: ListingState) => html`
+const sortField = (state: ListingState, relevanceLabel: string | undefined) => html`
   <p class="sort-field">
     <label for="sort">Sort by</label>
     <select id="sort" name="sort" .value=${live(state.sort)}>
       ${SORTS.map(
         (sort) =>
           html`<option value=${sort} ?selected=${sort === state.sort}>
-            ${SORT_LABELS[sort]}
+            ${sort === 'relevance' && relevanceLabel !== undefined ? relevanceLabel : SORT_LABELS[sort]}
           </option>`,
       )}
     </select>
@@ -115,8 +115,11 @@ export const filtersForm = (view: ListingView, intents: FilterIntents) => {
       aria-label="Filter and sort"
       data-intent=${intents.refine}
     >
+      ${fixedParams(view).map(
+        ([name, value]) => html`<input type="hidden" name=${name} value=${value} />`,
+      )}
       <div class="filter-fields" data-intent=${intents.refine} data-intent-on="change">
-        ${sortField(state)}
+        ${sortField(state, view.relevanceLabel)}
         <fieldset>
           <legend>Price</legend>
           <div class="price-range">

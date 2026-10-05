@@ -24,22 +24,40 @@ export interface ListingView {
   readonly api: string;
   /** The listing's name (category name), the page heading. */
   readonly heading: string;
-  /** Context for the title, e.g. the department name. */
+  /** Context for the title, e.g. the department name (`''` for none). */
   readonly context: string;
   readonly state: ListingState;
   readonly cards: readonly ProductCard[];
   readonly total: number;
   readonly pageCount: number;
   readonly brands: readonly BrandOption[];
+  /**
+   * Query parameters that identify the listing itself and are kept on every URL, e.g.
+   * `q=earbuds` for search results. Canonical spelling, without `?`.
+   */
+  readonly fixedQuery?: string;
+  /** Label for the `relevance` sort, e.g. "Best match" in search ("Featured" by default). */
+  readonly relevanceLabel?: string;
 }
 
-/** The URL of a listing state (canonical spelling). */
-export const listingHref = (view: Pick<ListingView, 'basePath'>, state: Partial<ListingState>) =>
-  `${view.basePath}${listingSearch(state)}`;
+/** The URL of a listing state (canonical spelling): fixed parameters first, then the state's. */
+export function listingHref(
+  view: Pick<ListingView, 'basePath' | 'fixedQuery'>,
+  state: Partial<ListingState>,
+): string {
+  const own = listingSearch(state).slice(1);
+  const query = [view.fixedQuery ?? '', own].filter((part) => part !== '').join('&');
+  return query === '' ? view.basePath : `${view.basePath}?${query}`;
+}
+
+/** The fixed parameters as name/value pairs (hidden fields of the no-JS filter form). */
+export const fixedParams = (view: Pick<ListingView, 'fixedQuery'>): [string, string][] => [
+  ...new URLSearchParams(view.fixedQuery ?? ''),
+];
 
 /** The page title (without the site name). Server and client use the same function. */
 export const listingTitle = (view: ListingView): string =>
-  `${view.heading} — ${view.context}${view.state.page > 1 ? ` (page ${String(view.state.page)})` : ''}`;
+  `${view.heading}${view.context === '' ? '' : ` — ${view.context}`}${view.state.page > 1 ? ` (page ${String(view.state.page)})` : ''}`;
 
 /** "Showing 25–48 of 120 products", announced politely when results change. */
 export function resultSummary(view: Pick<ListingView, 'state' | 'total'>): string {
@@ -84,4 +102,6 @@ export const ListingViewSchema = v.object({
   brands: v.array(
     v.object({ slug: v.string(), name: v.string(), count: v.pipe(v.number(), v.integer()) }),
   ),
+  fixedQuery: v.exactOptional(v.string()),
+  relevanceLabel: v.exactOptional(v.string()),
 }) satisfies v.GenericSchema<unknown, ListingView>;

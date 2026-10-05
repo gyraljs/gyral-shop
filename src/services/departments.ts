@@ -93,7 +93,10 @@ export const listingFilter = (state: ListingState): ProductFilter => ({
 /**
  * Brand facets plus any selected brand that no longer matches, so it can still be unchecked.
  */
-const withSelected = (facets: readonly BrandFacet[], selected: readonly string[]): BrandFacet[] => [
+export const withSelected = (
+  facets: readonly BrandFacet[],
+  selected: readonly string[],
+): BrandFacet[] => [
   ...facets,
   ...selected
     .filter((slug) => !facets.some((f) => f.slug === slug))

@@ -12,6 +12,7 @@ import { accountRoutes } from './routes/account.js';
 import { cartRoutes } from './routes/cart-api.js';
 import { catalogRoutes } from './routes/catalog.js';
 import { productRoutes } from './routes/product.js';
+import { searchRoutes } from './routes/search.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
 import { placeholderSvg } from './placeholder-image.js';
@@ -106,6 +107,7 @@ export function createApp({
     accountRoutes({ db, render: page, now: () => (clock?.() ?? new Date()).getTime() }),
   );
   app.route('/', productRoutes({ db, render: page }));
+  app.route('/', searchRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));
   if (mode !== 'production') app.route('/dev/mail', devMailRoutes(createMailer(db), page));
 
