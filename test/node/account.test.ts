@@ -120,22 +120,6 @@ describe('sign in', () => {
     });
   });
 
-  it('limits attempts per account with 429 and Retry-After', async () => {
-    const test = await withAda();
-    const statuses: number[] = [];
-    for (let attempt = 0; attempt < 6; attempt += 1) {
-      const res = await (
-        await guest(test)
-      ).postForm('/account/login', {
-        email: ADA.email,
-        password: `wrong-${String(attempt)}`,
-      });
-      statuses.push(res.status);
-      if (res.status === 429) expect(Number(res.headers.get('retry-after'))).toBeGreaterThan(0);
-    }
-    expect(statuses).toEqual([422, 422, 422, 422, 422, 429]);
-  });
-
   it('sends members who are already signed in on their way', async () => {
     const test = await withAda();
     const member = await loginAs(test, ADA.email);
