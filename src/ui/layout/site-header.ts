@@ -16,7 +16,7 @@ export interface DepartmentLink {
 // Optional: a custom element's props are unset until the parent (or the hydration seed)
 // provides them, so the view must cope with undefined.
 export interface HeaderProps {
-  readonly departments?: readonly DepartmentLink[];
+  readonly departments: readonly DepartmentLink[];
   /** The current search query, echoed in the search box. */
   readonly query?: string;
   /** Slug of the department being browsed, marked as the current link. */
@@ -50,7 +50,7 @@ const accountLinks = (account: AccountSummary | undefined) =>
 
 export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
   props: {
-    departments: { attribute: false },
+    departments: { attribute: false, default: [] },
     query: { type: String },
     current: { type: String },
     account: { attribute: false },
@@ -86,7 +86,7 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
       <nav class="departments" aria-label="Departments">
         <ul>
           ${repeat(
-            props.departments ?? [],
+            props.departments,
             (d) => d.slug,
             (d) =>
               html`<li>

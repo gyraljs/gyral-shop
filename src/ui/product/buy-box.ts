@@ -1,4 +1,4 @@
-import { define, fieldErrors, form, html, nothing, send, unsafeCSS } from '@gyral/core';
+import { define, fieldErrors, form, html, nothing, send } from '@gyral/core';
 import { maxQuantity } from '../../domain/inventory.js';
 import { format, usd } from '../../domain/money.js';
 import {
@@ -27,9 +27,9 @@ export interface BuyBoxVariant {
 }
 
 export interface BuyBoxProps {
-  readonly variants?: readonly BuyBoxVariant[];
+  readonly variants: readonly BuyBoxVariant[];
   /** Where the form posts. The cart epic owns the endpoint. */
-  readonly action?: string;
+  readonly action: string;
   readonly csrf?: string;
 }
 
@@ -130,15 +130,15 @@ const axisPickers = (variants: readonly BuyBoxVariant[], selection: Selection, i
  */
 export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box', {
   props: {
-    variants: { attribute: false },
-    action: { type: String },
+    variants: { attribute: false, required: true },
+    action: { type: String, default: ADD_TO_CART_PATH },
     csrf: { type: String },
   },
   stores: [cartStore],
   // The server and the first client render show the no-JS SKU list (hydration must match);
   // Gyral's `Hydrated` message then switches to per-option choices (Gyral ADR 0012).
   init: (props) => ({
-    selection: defaultSelection(props.variants ?? []),
+    selection: defaultSelection(props.variants),
     enhanced: false,
     formError: undefined,
   }),
@@ -155,7 +155,7 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
     Hydrated: (s) => ({ ...s, enhanced: true }),
     Choose: (s, m, { props }) => ({
       ...s,
-      selection: choose(props.variants ?? [], s.selection, m.axis, m.value),
+      selection: choose(props.variants, s.selection, m.axis, m.value),
     }),
     Add: (s, m) => [{ ...s, formError: undefined }, [send(cartStore, m)]],
     IntentRejected: (s, m) => ({
@@ -166,7 +166,7 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
   view: (s, i, { props, read }) => {
     const { notice, inFlight } = read(cartStore);
     const added = notice?.op === 'add' ? notice : undefined;
-    const variants = props.variants ?? [];
+    const { variants } = props;
     const current = resolveVariant(variants, s.selection) ?? variants[0];
     if (current === undefined) return html`<p>This product is not available.</p>`;
     const max = maxQuantity(current.stock);
@@ -178,7 +178,7 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
           current,
         )}
       </p>
-      <form method="post" action=${props.action ?? ADD_TO_CART_PATH} data-intent=${i.Add}>
+      <form method="post" action=${props.action} data-intent=${i.Add}>
         ${props.csrf === undefined || props.csrf === '' ? nothing : csrfField(props.csrf)}
         ${
           !multiple
@@ -218,7 +218,7 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
       </p>
     `;
   },
-  styles: unsafeCSS(buyBoxCss),
+  styles: buyBoxCss,
 });
 
 declare global {

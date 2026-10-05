@@ -50,7 +50,7 @@ export type CheckoutMsg =
 
 export interface CheckoutProps {
   /** Set by the server render; the browser restores it from the hydration seed. */
-  readonly view?: CheckoutClient;
+  readonly view: CheckoutClient;
   /** For the no-JS forms (the JS path reads the page's <meta> token). */
   readonly csrf?: string;
 }
@@ -114,10 +114,10 @@ const toForm =
 
 export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>('shop-checkout', {
   shadow: false,
-  props: { view: { attribute: false }, csrf: { type: String } },
+  props: { view: { attribute: false, required: true }, csrf: { type: String } },
   init: (props) => ({
     view: props.view,
-    open: props.view?.open ?? 'contact',
+    open: props.view.open,
     errors: {},
     values: {},
     pending: undefined,

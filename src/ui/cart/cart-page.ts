@@ -1,7 +1,7 @@
 // The cart page (docs/product-specs/cart.md). Server-rendered from the seeded cart store; every
 // control is a POST form. With JavaScript, the same forms become intents that send messages
 // to the shared store, which updates optimistically and reconciles with the JSON API.
-import { define, fieldErrors, form, html, nothing, send, unsafeCSS } from '@gyral/core';
+import { define, fieldErrors, form, html, nothing, send } from '@gyral/core';
 import { cartCss } from '../styles/cart.js';
 import { shadowBaseCss } from '../styles/shadow-base.js';
 import { cartLines } from './cart-lines.js';
@@ -85,7 +85,7 @@ export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>('shop-
       }
     `;
   },
-  styles: unsafeCSS(`${shadowBaseCss}${cartCss}`),
+  styles: `${shadowBaseCss}${cartCss}`,
 });
 
 declare global {

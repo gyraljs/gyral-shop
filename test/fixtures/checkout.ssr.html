@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Checkout — Gyral Goods</title>
     
-    <!--lit-part eabATTlSz5c=--><!--lit-part aLeeHLVZdjI=--><style>
+    <style>
 @layer reset, tokens, base, components;
 
 @layer reset {
@@ -86,7 +86,7 @@
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
 }
-
+</style><style>
 @layer components {
   .visually-hidden {
     position: absolute; inline-size: 1px; block-size: 1px;
@@ -148,7 +148,7 @@
   .count { color: var(--ink-muted); }
   .stock.out { color: var(--sale); font-weight: 600; font-size: 0.9rem; }
 }
-
+</style><style>
 @layer components {
   .breadcrumbs ol {
     list-style: none; padding: 0; margin-block: 0 var(--space-3);
@@ -205,7 +205,7 @@
     background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
   }
 }
-
+</style><style>
 @layer components {
   .filters {
     margin-block-start: var(--space-3);
@@ -240,14 +240,14 @@
   .results { transition: opacity 150ms; }
   shop-listing { display: block; min-inline-size: 0; }
   shop-listing:state(loading) .results { opacity: 0.55; }
-  /* Focus moves to the heading after paging (focusOn): only show a ring for keyboard focus. */
+  /* Focus moves to the heading after paging (focus() command): only show a ring for keyboard focus. */
   .listing-header h1:focus:not(:focus-visible) { outline: none; }
   .load-error {
     padding: var(--space-3); border-radius: var(--radius);
     border: 1px solid var(--sale); color: var(--sale);
   }
 }
-
+</style><style>
 @layer components {
   .product {
     display: grid; gap: var(--space-5);
@@ -277,7 +277,7 @@
   .review-list h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
   .byline { color: var(--ink-muted); font-size: 0.9rem; margin-block: var(--space-1); }
 }
-
+</style><style>
 @layer components {
   .auth, .account { max-inline-size: 32rem; display: grid; gap: var(--space-3); }
   .auth h1, .account h1 { margin-block: 0; }
@@ -289,7 +289,7 @@
   .account-details dt { font-weight: 600; }
   .account-details dd { margin: 0; overflow-wrap: anywhere; }
 }
-
+</style><style>
 @layer components {
   .confirmation {
     container: confirmation / inline-size;
@@ -327,7 +327,7 @@
     .order-lines thead th:nth-child(3), .order-lines td:nth-child(3) { display: none; }
   }
 }
-
+</style><style>
 @layer reset, tokens, base, components, theme;
 @layer components {
 shop-checkout {
@@ -417,9 +417,7 @@ shop-checkout {
   }
 }
 }
-</style><!--/lit-part-->
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <!--lit-part--><!--/lit-part-->
+</style><!--lit-part kzktHFP7Xvk=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part--><!--/lit-part-->
     <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
     <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
