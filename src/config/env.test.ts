@@ -11,4 +11,12 @@ describe('config', () => {
     expect(() => loadConfig({ PAYMENT_LATENCY_MS: '-1' })).toThrow(/PAYMENT_LATENCY_MS/);
     expect(() => loadConfig({ PAYMENT_LATENCY_MS: 'fast' })).toThrow(/PAYMENT_LATENCY_MS/);
   });
+
+  it('requires a 32+ character APP_SECRET in production only', () => {
+    expect(loadConfig({}).APP_SECRET).toBeUndefined();
+    expect(() => loadConfig({ NODE_ENV: 'production' })).toThrow(/APP_SECRET/);
+    expect(() => loadConfig({ APP_SECRET: 'short' })).toThrow(/APP_SECRET/);
+    const secret = 'x'.repeat(32);
+    expect(loadConfig({ NODE_ENV: 'production', APP_SECRET: secret }).APP_SECRET).toBe(secret);
+  });
 });
