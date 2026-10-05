@@ -8,6 +8,8 @@ import '../ui/account/register-form.js';
 import '../ui/product/buy-box.js';
 import '../ui/product/gallery.js';
 import '../ui/cart/mini-cart.js';
+import '../ui/layout/search-box.js';
+import '../ui/consent/consent.js';
 import '../ui/cart/cart-page.js';
 import '../ui/checkout/checkout-page.js';
 import '../ui/account/settings-forms.js';

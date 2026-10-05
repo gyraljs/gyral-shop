@@ -51,13 +51,13 @@ export function productSkus(db: Db, productId: number): Promise<{ sku: string; s
 }
 
 export const addWishlistItem = (db: Db, userId: number, productId: number): Promise<unknown> =>
-  lockedWrite(db, () =>
-    db.insert(wishlistItems).values({ userId, productId }).onConflictDoNothing(),
+  lockedWrite(db, (w) =>
+    w.insert(wishlistItems).values({ userId, productId }).onConflictDoNothing(),
   );
 
 export const removeWishlistItem = (db: Db, userId: number, productId: number): Promise<unknown> =>
-  lockedWrite(db, () =>
-    db
+  lockedWrite(db, (w) =>
+    w
       .delete(wishlistItems)
       .where(and(eq(wishlistItems.userId, userId), eq(wishlistItems.productId, productId))),
   );

@@ -7,6 +7,7 @@ import type { Db } from '../client.js';
 import {
   carts,
   inventoryLog,
+  orderEvents,
   orderLines,
   orders,
   payments,
@@ -181,6 +182,19 @@ export async function completeOrder(
     .update(orders)
     .set({ status: input.status, updatedAt: now })
     .where(eq(orders.id, input.orderId));
+  await tx.insert(orderEvents).values([
+    { orderId: input.orderId, status: 'pending_payment', note: 'Order placed', createdAt: now },
+    ...(input.status === 'paid'
+      ? [
+          {
+            orderId: input.orderId,
+            status: 'paid' as const,
+            note: 'Payment received',
+            createdAt: now,
+          },
+        ]
+      : []),
+  ]);
   await tx
     .update(payments)
     .set({ orderId: input.orderId })

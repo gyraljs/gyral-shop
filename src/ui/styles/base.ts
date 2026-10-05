@@ -47,11 +47,16 @@ export const baseCss = `
     color: var(--ink);
     min-block-size: 100dvb;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    /* header, consent banner (only for undecided visitors; empty otherwise), main, footer */
+    grid-template-rows: auto auto 1fr auto;
     /* One column no wider than the viewport: an auto column would grow to the widest
        unwrapped content (the department nav) and overflow phones. */
     grid-template-columns: minmax(0, 1fr);
   }
+  body > shop-header { grid-row: 1; }
+  body > shop-consent { grid-row: 2; }
+  body > main { grid-row: 3; }
+  body > .site-footer { grid-row: 4; }
   a { color: inherit; }
   /* Form controls take the page font (shadow roots get this from shadow-base.ts). */
   button, input, select, textarea { font: inherit; }

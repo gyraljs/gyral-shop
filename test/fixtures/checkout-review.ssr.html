@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout — Gyral Goods</title>
+    
+    <style>
+@layer reset, tokens, base, components;
+
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  img, svg { display: block; max-inline-size: 100%; }
+}
+
+@layer tokens {
+  :root {
+    color-scheme: light dark;
+    --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --brand: oklch(50% 0.2 25);
+    --brand-ink: oklch(99% 0 0);
+    --surface: light-dark(oklch(99% 0.003 250), oklch(18% 0.01 250));
+    --surface-raised: light-dark(oklch(100% 0 0), oklch(23% 0.012 250));
+    --surface-sunken: light-dark(oklch(96% 0.005 250), oklch(15% 0.01 250));
+    --ink: light-dark(oklch(22% 0.02 250), oklch(93% 0.01 250));
+    --ink-muted: light-dark(oklch(45% 0.02 250), oklch(72% 0.015 250));
+    --line: light-dark(oklch(88% 0.01 250), oklch(32% 0.015 250));
+    --line-strong: light-dark(oklch(60% 0.015 250), oklch(55% 0.015 250));
+    --danger: light-dark(oklch(48% 0.19 25), oklch(74% 0.15 25));
+    --focus: oklch(60% 0.18 250);
+    --rating-fill: light-dark(oklch(75% 0.16 80), oklch(80% 0.15 80));
+    --shadow-popover: 0 0.5rem 1.5rem light-dark(oklch(0% 0 0 / 0.15), oklch(0% 0 0 / 0.5));
+    --sale: light-dark(oklch(50% 0.2 25), oklch(72% 0.17 25));
+    --ok: light-dark(oklch(48% 0.13 150), oklch(75% 0.14 150));
+    --radius: 0.5rem;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 1rem;
+    --space-4: 1.5rem;
+    --space-5: 2.5rem;
+    --page-max: 80rem;
+  }
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    background: var(--surface);
+    color: var(--ink);
+    min-block-size: 100dvb;
+    display: grid;
+    /* header, consent banner (only for undecided visitors; empty otherwise), main, footer */
+    grid-template-rows: auto auto 1fr auto;
+    /* One column no wider than the viewport: an auto column would grow to the widest
+       unwrapped content (the department nav) and overflow phones. */
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body > shop-header { grid-row: 1; }
+  body > shop-consent { grid-row: 2; }
+  body > main { grid-row: 3; }
+  body > .site-footer { grid-row: 4; }
+  a { color: inherit; }
+  /* Form controls take the page font (shadow roots get this from shadow-base.ts). */
+  button, input, select, textarea { font: inherit; }
+  .skip-link {
+    position: absolute;
+    inset-inline-start: var(--space-2);
+    inset-block-start: -10rem;
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface-raised);
+    color: var(--ink);
+    border-radius: var(--radius);
+    z-index: 10;
+  }
+  .skip-link:focus { inset-block-start: var(--space-2); }
+  main:focus { outline: none; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .page { inline-size: min(100% - 2 * var(--space-3), var(--page-max)); margin-inline: auto; padding-block: var(--space-4); }
+  h1, h2 { line-height: 1.2; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  .site-footer {
+    border-block-start: 1px solid var(--line);
+    background: var(--surface-sunken);
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+  }
+  .site-footer nav ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+}
+</style><style>
+@layer components {
+  .visually-hidden {
+    position: absolute; inline-size: 1px; block-size: 1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .button {
+    display: inline-block; padding: var(--space-2) var(--space-4);
+    background: var(--brand); color: var(--brand-ink);
+    border-radius: var(--radius); font-weight: 600; text-decoration: none;
+  }
+  .hero {
+    padding: var(--space-5) var(--space-4);
+    border-radius: calc(var(--radius) * 2);
+    background:
+      radial-gradient(circle at 85% 20%, oklch(from var(--brand) l c h / 0.25), transparent 50%),
+      var(--surface-sunken);
+  }
+  .hero h1 { font-size: clamp(1.8rem, 1rem + 3vw, 3rem); margin-block: 0 var(--space-2); }
+  .card-section { margin-block: var(--space-5); }
+  .department-grid {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr));
+  }
+  .department-grid a {
+    display: block; padding: var(--space-3); text-align: center; font-weight: 600;
+    background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius);
+    text-decoration: none;
+  }
+  .department-grid a:hover { border-color: var(--brand); }
+  [data-component="department-tile"] { display: grid; gap: var(--space-1); align-content: start; }
+  [data-component="department-tile"] a { display: grid; gap: var(--space-2); padding: var(--space-2); }
+  [data-component="department-tile"] img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover;
+    border-radius: var(--radius);
+  }
+  [data-component="department-tile"] h3 { margin: 0; font-size: 1rem; }
+  [data-component="department-tile"] p {
+    margin: 0; color: var(--ink-muted); font-size: 0.9rem; text-align: center;
+  }
+  .card-grid {
+    display: grid; gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  }
+  .product-card {
+    container-type: inline-size;
+    display: grid; align-content: start; gap: var(--space-1);
+    /* No content-visibility here: card height depends on the column width, so any
+       contain-intrinsic-size estimate is wrong somewhere, and skipped cards then overlap their
+       neighbours (axe target-size). Listings show at most 24 cards. */
+  }
+  .product-card > a { text-decoration: none; }
+  .product-card > a:hover h3 { text-decoration: underline; }
+  .product-card img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1;
+    border-radius: var(--radius); background: var(--surface-sunken);
+  }
+  .product-card h3 { font-size: 1rem; margin-block: var(--space-2) 0; line-height: 1.3; }
+  .product-card p { margin: 0; }
+  .brand { color: var(--ink-muted); font-size: 0.9rem; }
+  .price { font-weight: 700; font-size: 1.1rem; }
+  .price.sale ins { color: var(--sale); text-decoration: none; }
+  .price.sale del { color: var(--ink-muted); font-weight: 400; font-size: 0.9rem; margin-inline-start: var(--space-1); }
+  .rating { display: flex; align-items: center; gap: var(--space-1); font-size: 0.9rem; }
+  .stars {
+    --pct: calc(var(--rating) / 5 * 100%);
+    inline-size: 5.5em; block-size: 1em;
+    background: linear-gradient(90deg, var(--rating-fill) var(--pct), var(--line) var(--pct));
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 20'%3E%3Cpath d='M10 1l2.6 6 6.4.5-4.9 4.2 1.5 6.3L10 14.6 4.4 18l1.5-6.3L1 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L32 14.6 26.4 18l1.5-6.3L23 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L54 14.6 48.4 18l1.5-6.3L45 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L76 14.6 70.4 18l1.5-6.3L67 7.5l6.4-.5zm22 0l2.6 6 6.4.5-4.9 4.2 1.5 6.3L98 14.6 92.4 18l1.5-6.3L89 7.5l6.4-.5z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
+  }
+  .count { color: var(--ink-muted); }
+  .stock.out { color: var(--sale); font-weight: 600; font-size: 0.9rem; }
+}
+</style><style>
+@layer components {
+  .breadcrumbs ol {
+    list-style: none; padding: 0; margin-block: 0 var(--space-3);
+    display: flex; flex-wrap: wrap; gap: var(--space-1); font-size: 0.9rem;
+  }
+  .breadcrumbs li:not(:last-child)::after {
+    content: "›"; margin-inline-start: var(--space-1); color: var(--ink-muted);
+  }
+  .breadcrumbs [aria-current="page"] { color: var(--ink-muted); }
+  .page-intro h1 { margin-block: 0 var(--space-2); }
+  .page-intro p { max-inline-size: 65ch; color: var(--ink-muted); margin-block: 0; }
+  .category-grid {
+    list-style: none; padding: 0; margin: 0;
+    display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+  }
+  .category-grid a {
+    display: grid; gap: var(--space-1); padding: var(--space-3);
+    background: var(--surface-raised); border: 1px solid var(--line);
+    border-radius: var(--radius); text-decoration: none;
+  }
+  .category-grid a:hover { border-color: var(--brand); }
+  [data-component="category-tile"] img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover;
+    border-radius: var(--radius); margin-block-end: var(--space-2);
+  }
+  .category-grid .name { font-weight: 600; }
+  .category-grid .count { color: var(--ink-muted); font-size: 0.9rem; }
+  .listing {
+    display: grid; gap: var(--space-5); align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (width >= 48rem) {
+    .listing { grid-template-columns: 14rem minmax(0, 1fr); }
+  }
+  .listing-nav h2 { font-size: 1.1rem; margin-block: 0 var(--space-2); }
+  .listing-nav ul { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-1); }
+  .listing-nav a { text-decoration: none; }
+  .listing-nav a:hover { text-decoration: underline; }
+  .listing-nav [aria-current="page"] { font-weight: 700; text-decoration: underline; }
+  .listing-header { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); }
+  .listing-header h1 { margin-block: 0; }
+  .result-count { color: var(--ink-muted); margin-block: 0; }
+  .listing-results .card-grid { margin-block-start: var(--space-4); }
+  .empty { padding: var(--space-4); background: var(--surface-sunken); border-radius: var(--radius); }
+  .pager ul {
+    list-style: none; padding: 0; margin-block: var(--space-5) 0;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-1);
+  }
+  .pager a, .pager .gap {
+    display: inline-grid; place-items: center;
+    min-inline-size: 2.75rem; min-block-size: 2.75rem; padding-inline: var(--space-2);
+    border-radius: var(--radius);
+  }
+  .pager a { border: 1px solid var(--line); text-decoration: none; }
+  .pager a:hover { border-color: var(--brand); }
+  .pager a[aria-current="page"] {
+    background: var(--brand); border-color: var(--brand); color: var(--brand-ink); font-weight: 700;
+  }
+}
+</style><style>
+@layer components {
+  .filters {
+    margin-block-start: var(--space-3);
+    padding: var(--space-3);
+    background: var(--surface-sunken);
+    border-radius: var(--radius);
+  }
+  .filter-fields {
+    display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
+    align-items: start;
+  }
+  .filters fieldset { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
+  .filters legend, .sort-field label { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
+  .sort-field { margin: 0; display: grid; }
+  .sort-field select { padding: var(--space-1) var(--space-2); border-radius: var(--radius); }
+  .options { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.15rem; }
+  .options label { display: flex; align-items: center; gap: var(--space-1); cursor: pointer; }
+  .options .count { color: var(--ink-muted); font-size: 0.9rem; }
+  .price-range { display: flex; gap: var(--space-2); }
+  .price-field { display: grid; gap: 0.15rem; font-size: 0.9rem; min-inline-size: 0; }
+  .money-input { display: flex; align-items: center; gap: 0.2rem; }
+  .money-input input { inline-size: 100%; min-inline-size: 4rem; padding: var(--space-1); }
+  .filter-actions {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+    margin-block: var(--space-3) 0;
+  }
+  .filter-actions button {
+    padding: var(--space-2) var(--space-4); border: 0; border-radius: var(--radius);
+    background: var(--brand); color: var(--brand-ink); font-weight: 600; cursor: pointer;
+  }
+  .results { transition: opacity 150ms; }
+  shop-listing { display: block; min-inline-size: 0; }
+  shop-listing:state(loading) .results { opacity: 0.55; }
+  /* Focus moves to the heading after paging (focus() command): only show a ring for keyboard focus. */
+  .listing-header h1:focus:not(:focus-visible) { outline: none; }
+  .load-error {
+    padding: var(--space-3); border-radius: var(--radius);
+    border: 1px solid var(--sale); color: var(--sale);
+  }
+}
+</style><style>
+@layer components {
+  .product {
+    display: grid; gap: var(--space-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    align-items: start;
+  }
+  .product-info { display: grid; gap: var(--space-3); align-content: start; }
+  .product-info h1 { margin: 0; font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem); line-height: 1.2; text-wrap: balance; }
+  .product-info .brand { margin: 0; }
+  .rating-summary { display: flex; align-items: center; gap: var(--space-2); margin: 0; }
+  .product-section { margin-block: var(--space-5); max-inline-size: 70ch; }
+  .product-section p { text-wrap: pretty; }
+  .specs { border-collapse: collapse; inline-size: 100%; }
+  .specs th, .specs td { text-align: start; padding: var(--space-2) var(--space-3); border-block-end: 1px solid var(--line); }
+  .specs th { font-weight: 600; inline-size: 40%; }
+  .reviews-summary { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; }
+  .average { display: grid; justify-items: start; gap: var(--space-1); margin: 0; }
+  .average .big { font-size: 2.5rem; font-weight: 800; line-height: 1; }
+  .distribution { display: grid; gap: var(--space-1); margin: 0; min-inline-size: min(100%, 18rem); }
+  .distribution div { display: grid; grid-template-columns: 4.5rem 1fr 2.5rem; align-items: center; gap: var(--space-2); }
+  .distribution dt { font-size: 0.9rem; }
+  .distribution dd { display: contents; }
+  .distribution meter { inline-size: 100%; block-size: 0.75rem; }
+  .distribution .count { text-align: end; font-variant-numeric: tabular-nums; color: var(--ink-muted); }
+  .review-list { list-style: none; padding: 0; display: grid; gap: var(--space-4); }
+  .review-list article { border-block-start: 1px solid var(--line); padding-block-start: var(--space-3); }
+  .review-list h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
+  .byline { color: var(--ink-muted); font-size: 0.9rem; margin-block: var(--space-1); }
+}
+</style><style>
+@layer components {
+  .auth, .account { max-inline-size: 32rem; display: grid; gap: var(--space-3); }
+  .auth h1, .account h1 { margin-block: 0; }
+  .auth > p { margin-block: 0; }
+  .account-details {
+    display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3);
+    margin: 0;
+  }
+  .account-details dt { font-weight: 600; }
+  .account-details dd { margin: 0; overflow-wrap: anywhere; }
+  .account-layout {
+    display: grid; gap: var(--space-4);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (width > 48rem) {
+    .account-layout { grid-template-columns: 14rem minmax(0, 1fr); }
+  }
+  [data-region="account-nav"] ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
+  [data-region="account-nav"] a { display: block; padding: var(--space-1) var(--space-2); border-radius: var(--radius); }
+  [data-region="account-nav"] a[aria-current="page"] { background: var(--surface-sunken); font-weight: 600; }
+  .account h2 { margin-block: var(--space-3) 0; font-size: 1.15rem; }
+  .account section { display: grid; gap: var(--space-2); }
+  .notice {
+    margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius);
+    border-inline-start: 4px solid var(--ok);
+    background: color-mix(in oklch, var(--ok) 10%, var(--surface-raised));
+  }
+  .notice[data-kind="error"] {
+    border-inline-start-color: var(--danger);
+    background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
+  }
+  .address-list {
+    list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  }
+  [data-component="address-card"] {
+    display: grid; gap: var(--space-2); align-content: start;
+    padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface-raised);
+  }
+  [data-component="address-card"][data-default] { border-color: var(--brand); }
+  [data-component="address-card"] address { font-style: normal; }
+  [data-component="address-card"] form, .address-actions { margin: 0; }
+  [data-component="badge"] {
+    margin: 0; justify-self: start; font-size: 0.8rem; font-weight: 700;
+    padding-inline: var(--space-2); border-radius: var(--radius);
+    background: var(--brand); color: var(--brand-ink);
+  }
+  .button-link {
+    font: inherit; padding: 0; border: 0; background: none; color: inherit;
+    text-decoration: underline; cursor: pointer;
+  }
+}
+</style><style>
+@layer components {
+  .confirmation, .order-page {
+    container: confirmation / inline-size;
+    display: grid;
+    gap: var(--space-4);
+    max-inline-size: 48rem;
+  }
+  :is(.confirmation, .order-page) :is(h1, h2) { margin-block: 0; }
+  :is(.confirmation, .order-page) header { display: grid; gap: var(--space-2); }
+  :is(.confirmation, .order-page) header p { margin: 0; }
+  :is(.confirmation, .order-page) section {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+  }
+  :is(.confirmation, .order-page) address { font-style: normal; }
+  .order-lines { inline-size: 100%; border-collapse: collapse; }
+  .order-lines th, .order-lines td {
+    padding-block: var(--space-1);
+    text-align: start;
+    border-block-end: 1px solid var(--line);
+  }
+  .order-lines td { text-align: end; }
+  .order-lines thead th:not(:first-child) { text-align: end; }
+  .order-lines small { color: var(--ink-muted); }
+  :is(.confirmation, .order-page) .totals dl { margin: 0; display: grid; gap: var(--space-1); }
+  :is(.confirmation, .order-page) .row { display: flex; justify-content: space-between; gap: var(--space-3); }
+  :is(.confirmation, .order-page) .row dd { margin: 0; font-variant-numeric: tabular-nums; }
+  :is(.confirmation, .order-page) .row.total { font-weight: 700; border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-1); }
+  :is(.confirmation, .order-page) .totals p { margin: 0; color: var(--ink-muted); }
+  @container confirmation (inline-size < 30rem) {
+    .order-lines thead th:nth-child(3), .order-lines td:nth-child(3) { display: none; }
+  }
+  .order-page .row.refunded { color: var(--ok); }
+  .order-page .crumbs { font-size: 0.9rem; }
+  .order-page .crumbs a { color: var(--ink-muted); }
+  .order-status {
+    display: inline-block;
+    margin-inline-start: var(--space-1);
+    padding-block: 0.1em;
+    padding-inline: var(--space-2);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--surface-sunken);
+  }
+  .order-status:is([data-status='paid'], [data-status='delivered']) { color: var(--ok); }
+  .order-status:is([data-status='cancelled'], [data-status='refunded'], [data-status='partially_refunded']) {
+    color: var(--danger);
+  }
+  .order-table { inline-size: 100%; border-collapse: collapse; }
+  .order-table caption { text-align: start; color: var(--ink-muted); padding-block-end: var(--space-1); }
+  .order-table :is(th, td) {
+    padding-block: var(--space-2);
+    padding-inline-end: var(--space-2);
+    text-align: start;
+    border-block-end: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+  }
+  .order-table td:last-child, .order-table thead th:last-child { text-align: end; padding-inline-end: 0; }
+  .order-page .pager { display: flex; gap: var(--space-3); align-items: center; justify-content: space-between; }
+  .order-page .notice {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface-raised);
+  }
+  .order-page .notice[data-kind='error'] { border-color: var(--danger); color: var(--danger); }
+  .order-page .notice[data-kind='success'] { border-color: var(--ok); }
+  .timeline { margin: 0; padding-inline-start: var(--space-4); display: grid; gap: var(--space-1); }
+  .timeline time { color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .order-detail details { display: grid; gap: var(--space-2); }
+  .order-detail summary { cursor: pointer; color: var(--danger); font-weight: 600; }
+  :is(.order-detail, .order-lookup) button {
+    font: inherit;
+    padding-block: var(--space-2);
+    padding-inline: var(--space-3);
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--brand);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  .order-detail [data-component='cancel-form'] button { background: var(--danger); }
+  .order-lookup form { display: grid; gap: var(--space-2); max-inline-size: 28rem; }
+  .order-lookup form p { margin: 0; display: grid; gap: var(--space-1); }
+  .order-lookup input {
+    font: inherit;
+    padding: var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+  }
+  @container confirmation (inline-size < 30rem) {
+    .order-table :is(thead th, td):nth-child(4) { display: none; }
+  }
+}
+</style><style>
+@layer components {
+  [data-component="member-form"] { display: grid; gap: var(--space-3); max-inline-size: 32rem; }
+  [data-component="member-form"] .field { display: grid; gap: var(--space-1); margin: 0; }
+  [data-component="member-form"] .field[data-kind="checkbox"] {
+    grid-template-columns: auto 1fr; align-items: center; column-gap: var(--space-2);
+  }
+  [data-component="member-form"] .field[data-kind="checkbox"] .error,
+  [data-component="member-form"] .field[data-kind="checkbox"] small { grid-column: 1 / -1; }
+  [data-component="member-form"] label { font-weight: 600; }
+  [data-component="member-form"] small { color: var(--ink-muted); }
+  [data-component="member-form"] :is(input:not([type="checkbox"]), select, textarea) {
+    font: inherit; padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--line-strong); border-radius: var(--radius);
+    background: var(--surface-raised); color: var(--ink);
+  }
+  [data-component="member-form"] :is(input, select, textarea):focus-visible {
+    outline: 2px solid var(--focus); outline-offset: 1px;
+  }
+  [data-component="member-form"] :is(input, select, textarea):is(:user-invalid, [aria-invalid="true"]) {
+    border-color: var(--danger);
+  }
+  [data-component="member-form"] .error { color: var(--danger); font-size: 0.9rem; }
+  [data-component="member-form"] .error:empty { display: none; }
+  [data-component="member-form"] .form-error {
+    margin: 0; padding: var(--space-2) var(--space-3);
+    border-inline-start: 4px solid var(--danger);
+    background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
+  }
+  [data-component="member-form"] .form-actions { margin: 0; }
+  [data-component="member-form"] button { font: inherit; font-weight: 600; }
+  [data-component="member-form"] button:disabled { opacity: 0.6; cursor: progress; }
+}
+</style><style>
+@layer components {
+  .prose { max-inline-size: 42rem; display: grid; gap: var(--space-3); }
+  .prose header { display: grid; gap: var(--space-1); }
+  .prose h1, .prose h2 { margin: 0; text-wrap: balance; }
+  .prose h2 { font-size: 1.2rem; margin-block-start: var(--space-2); }
+  .prose p, .prose ul, .prose dl { margin: 0; text-wrap: pretty; }
+  .prose .lead { color: var(--ink-muted); font-size: 1.1rem; }
+  .prose section { display: grid; gap: var(--space-2); }
+  .prose dt { font-weight: 600; }
+  .prose dd { margin-inline-start: 0; margin-block-end: var(--space-2); }
+  [data-component="faq"] { display: grid; gap: var(--space-2); }
+  [data-component="faq"] details {
+    border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface-raised); padding: var(--space-2) var(--space-3);
+  }
+  [data-component="faq"] summary { cursor: pointer; font-weight: 600; }
+  [data-component="faq"] details[open] summary { margin-block-end: var(--space-2); }
+  [data-component="faq"] details::details-content {
+    transition: content-visibility 0.2s allow-discrete, opacity 0.2s;
+    opacity: 0;
+  }
+  [data-component="faq"] details[open]::details-content { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-component="faq"] details::details-content { transition: none; }
+  }
+  [data-region="error"] { display: grid; gap: var(--space-3); max-inline-size: 42rem; }
+  [data-region="error"] h1 { margin: 0; }
+  [data-region="error"] form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+}
+</style><style>
+@layer reset, tokens, base, components, theme;
+@layer components {
+shop-checkout {
+  display: block;
+  min-inline-size: 0;
+  container: checkout / inline-size;
+  h1 { margin-block: var(--space-3) var(--space-2); }
+  .layout { display: grid; gap: var(--space-4); grid-template-columns: minmax(0, 1fr); }
+  @container checkout (min-width: 56rem) {
+    .layout { grid-template-columns: minmax(0, 1fr) 20rem; align-items: start; }
+    .order-summary { position: sticky; inset-block-start: var(--space-3); }
+  }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .step {
+    padding: var(--space-3);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+  }
+  .step.open { border-color: var(--line-strong); }
+  .step.locked { background: var(--surface-sunken); color: var(--ink-muted); }
+  .step h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+  .step.locked h2 { margin: 0; }
+  .number { color: var(--ink-muted); }
+  .locked { margin: 0; font-size: 0.9rem; }
+  .step.locked .locked { display: none; }
+  .step-summary { display: flex; justify-content: space-between; gap: var(--space-3); align-items: start; }
+  .step-summary p, .step-summary address { margin: 0; font-style: normal; }
+  form { display: grid; gap: var(--space-2); }
+  fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  legend { font-weight: 600; padding: 0; margin-block-end: var(--space-1); }
+  .field { display: grid; gap: var(--space-1); margin: 0; }
+  .row { display: grid; gap: var(--space-2); grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+  input:not([type='radio'], [type='checkbox']), select {
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  input[aria-invalid='true'], input:user-invalid { border-color: var(--danger); }
+  .error { color: var(--danger); font-size: 0.9rem; }
+  .error:empty { display: none; }
+  .hint { color: var(--ink-muted); font-size: 0.9rem; margin: 0; }
+  .choice {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--space-1) var(--space-2);
+    align-items: center;
+    padding: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  .choice:has(input:checked) { border-color: var(--brand); background: var(--surface-sunken); }
+  .choice .estimate { grid-column: 2; color: var(--ink-muted); font-size: 0.9rem; }
+  .choice .amount { grid-row: 1; grid-column: 3; font-weight: 600; }
+  button.primary {
+    justify-self: start;
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--brand);
+    color: var(--brand-ink);
+    font-weight: 700;
+    cursor: pointer;
+  }
+  button.primary:disabled { opacity: 0.6; cursor: progress; }
+  .order-summary {
+    padding: var(--space-3);
+    border-radius: var(--radius);
+    background: var(--surface-sunken);
+  }
+  .order-summary h2 { font-size: 1.1rem; margin: 0 0 var(--space-2); }
+  .summary-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .summary-lines li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 var(--space-2); }
+  .summary-lines .options { grid-column: 1; color: var(--ink-muted); font-size: 0.85rem; }
+  .summary-lines .amount { grid-row: 1; grid-column: 2; font-variant-numeric: tabular-nums; }
+  .totals { margin: var(--space-3) 0 0; display: grid; gap: var(--space-1); }
+  .totals div { display: flex; justify-content: space-between; gap: var(--space-2); }
+  .totals dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .totals .discount dd { color: var(--sale); }
+  .totals .total { border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-2); font-weight: 700; }
+  .visually-hidden {
+    position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+}
+}
+</style><style>
+@layer components {
+  .wish-toggle { margin: 0; }
+  .wish-toggle button,
+  a.wish-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    /* WCAG 2.5.8: at least 24px, even inside skipped (content-visibility) cards. */
+    min-block-size: 2rem;
+    min-inline-size: 2rem;
+    justify-self: start;
+  }
+  .wish-toggle button[aria-pressed='true'] .heart { color: var(--sale); }
+  .wish-toggle button:focus-visible,
+  a.wish-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .product-wish { display: block; margin-block-start: var(--space-3); }
+
+  [data-region='wishlist'] .count { color: var(--ink-muted); font-size: 1rem; font-weight: 400; }
+  .wishlist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  }
+  .wishlist > li { display: grid; gap: var(--space-2); align-content: start; }
+  .wishlist-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .wishlist-actions form { margin: 0; }
+  .wishlist-actions button {
+    font: inherit;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--line-strong);
+    background: var(--surface-raised);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .wishlist-actions .primary button {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-ink);
+  }
+}
+</style><style>
+@layer components {
+  shop-search { display: block; flex: 1 1 18rem; min-inline-size: 0; }
+  shop-search form { display: flex; position: relative; }
+  shop-search .combo { flex: 1; position: relative; display: flex; min-inline-size: 0; }
+  shop-search .keys { display: flex; flex: 1; min-inline-size: 0; }
+  shop-search input {
+    flex: 1;
+    min-inline-size: 0;
+    font: inherit;
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    border-start-start-radius: var(--radius);
+    border-end-start-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+  }
+  shop-search button {
+    font: inherit;
+    font-weight: 600;
+    padding-inline: var(--space-3);
+    border: 0;
+    border-start-end-radius: var(--radius);
+    border-end-end-radius: var(--radius);
+    background: oklch(from var(--brand) calc(l - 0.15) c h);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  shop-search [role='listbox'] {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    z-index: 20;
+    margin: var(--space-1) 0 0;
+    padding: var(--space-1);
+    list-style: none;
+    background: var(--surface-raised);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-popover);
+    max-block-size: min(24rem, 60dvb);
+    overflow-y: auto;
+    container: search-suggestions / inline-size;
+  }
+  shop-search [role='listbox'][hidden] { display: none; }
+  shop-search [role='option'] {
+    display: grid;
+    gap: 0 var(--space-2);
+    grid-template-columns: 1fr auto;
+    padding: var(--space-2);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  shop-search [role='option'] .detail { color: var(--ink-muted); font-size: 0.875rem; }
+  shop-search [role='option'][data-kind='category'] .label { font-weight: 600; }
+  shop-search [role='option']:hover,
+  shop-search [role='option'][aria-selected='true'] { background: var(--surface-sunken); }
+  shop-search [role='option'][aria-selected='true'] { outline: 2px solid var(--focus); }
+
+  @container search-suggestions (inline-size < 26rem) {
+    shop-search [role='option'] { grid-template-columns: 1fr; }
+  }
+}
+</style><style>
+@layer components {
+  shop-consent { display: block; }
+  /* In the page flow under the header: visible on arrival, never covering content. */
+  .consent-banner {
+    padding: var(--space-3);
+    background: var(--surface-raised);
+    color: var(--ink);
+    border-block-end: 1px solid var(--line-strong);
+  }
+  .consent-banner > * { max-inline-size: var(--page-max); margin-inline: auto; }
+  .consent h2 { margin-block: 0 var(--space-2); font-size: 1.1rem; }
+  .consent p { margin-block: 0 var(--space-2); }
+  .consent-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .consent button {
+    font: inherit;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--brand);
+    background: var(--brand);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  .consent button[value='reject'],
+  .consent button[value='save'] { background: var(--surface-raised); color: var(--ink); }
+  .consent button:disabled { opacity: 0.6; cursor: progress; }
+  .consent-custom { margin-block-start: var(--space-2); }
+  .consent-custom summary { cursor: pointer; inline-size: fit-content; }
+  .consent-custom fieldset {
+    display: grid;
+    gap: var(--space-2);
+    margin-block: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .consent-custom small { color: var(--ink-muted); }
+}
+</style><!--lit-part eVKfaNMXC80=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part--><!--/lit-part-->
+    <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
+    <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
+    <!--lit-part--><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[{"sku":"LEGO-1","quantity":1,"productName":"LEGO","href":"/p/lego","options":{},"unit":{"cents":5000,"currency":"USD"},"listPrice":{"cents":5000,"currency":"USD"},"onSale":false,"lineTotal":{"cents":5000,"currency":"USD"},"maxQuantity":10}],"itemCount":1,"canCheckout":true,"totals":{"subtotal":{"cents":5000,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":5000,"currency":"USD"}}},"inFlight":0},"wishlist":{"member":false,"slugs":[],"csrf":"","inFlight":0}}</script>
+    <script type="module" src="/src/client/entry.ts"></script>
+  </head>
+  <body>
+    <!--lit-part XoXIiwCTunU=-->
+        <nav class="skip-links" aria-label="Skip links">
+          <a class="skip-link" href="#main">Skip to content</a>
+        </nav>
+        <!--lit-node 2--><shop-header
+          
+          
+          
+          
+           query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+    @layer components {
+      :host {
+        display: block;
+        background: var(--brand);
+        color: var(--brand-ink);
+      }
+      .bar,
+      .departments ul {
+        inline-size: min(100% - 2 * var(--space-3), var(--page-max));
+        margin-inline: auto;
+      }
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-3);
+        padding-block: var(--space-2);
+      }
+      .brand {
+        font-weight: 800;
+        font-size: 1.4rem;
+        text-decoration: none;
+        color: inherit;
+        letter-spacing: -0.02em;
+      }
+      .brand span {
+        font-weight: 400;
+      }
+      search {
+        flex: 1 1 18rem;
+      }
+      form {
+        display: flex;
+      }
+      input {
+        flex: 1;
+        min-inline-size: 0;
+        font: inherit;
+        padding: var(--space-2) var(--space-3);
+        border: 0;
+        border-start-start-radius: var(--radius);
+        border-end-start-radius: var(--radius);
+        background: var(--surface-raised);
+        color: var(--ink);
+      }
+      button {
+        font: inherit;
+        font-weight: 600;
+        padding-inline: var(--space-3);
+        border: 0;
+        border-start-end-radius: var(--radius);
+        border-end-end-radius: var(--radius);
+        background: oklch(from var(--brand) calc(l - 0.15) c h);
+        color: inherit;
+        cursor: pointer;
+      }
+      .utility {
+        display: flex;
+        gap: var(--space-3);
+      }
+      a {
+        color: inherit;
+      }
+      .departments {
+        background: oklch(from var(--brand) calc(l - 0.08) c h);
+      }
+      .departments ul {
+        list-style: none;
+        display: flex;
+        gap: var(--space-3);
+        overflow-x: auto;
+        padding-block: var(--space-2);
+        padding-inline: 0;
+        margin-block: 0;
+        scrollbar-width: thin;
+      }
+      .departments a {
+        white-space: nowrap;
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .departments a:hover,
+      .departments a[aria-current] {
+        text-decoration: underline;
+      }
+      .departments a[aria-current] {
+        font-weight: 700;
+        text-underline-offset: 0.3em;
+      }
+      .account-menu {
+        position: relative;
+      }
+      .account-menu summary {
+        cursor: pointer;
+        list-style-position: inside;
+      }
+      .account-menu ul {
+        position: absolute;
+        inset-inline-end: 0;
+        inset-block-start: calc(100% + var(--space-1));
+        z-index: 10;
+        min-inline-size: 12rem;
+        margin: 0;
+        padding: var(--space-2);
+        list-style: none;
+        display: grid;
+        gap: var(--space-1);
+        background: var(--surface-raised);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-popover);
+      }
+      .account-menu ul a,
+      .account-menu ul button {
+        display: block;
+        inline-size: 100%;
+        padding: var(--space-1) var(--space-2);
+        text-align: start;
+        color: inherit;
+        border-radius: calc(var(--radius) / 2);
+      }
+      .account-menu ul button {
+        font: inherit;
+        background: none;
+        border: 0;
+        cursor: pointer;
+      }
+      .account-menu ul a:hover,
+      .account-menu ul button:hover {
+        background: var(--surface-sunken);
+      }
+      .account-menu ul :focus-visible {
+        outline-color: var(--focus);
+      }
+      :focus-visible {
+        outline: 2px solid var(--brand-ink);
+        outline-offset: 2px;
+      }
+      .visually-hidden {
+        position: absolute;
+        inline-size: 1px;
+        block-size: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+    }
+  </style><!--lit-part jJOlMGfqhkY=-->
+    <header>
+      <div class="bar">
+        <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
+        <!-- The document shell slots <shop-search> (light DOM, with suggestions) here; the plain
+             form is the fallback when nothing is slotted. -->
+        <slot name="search">
+          <search>
+            <form action="/search" method="get" role="search">
+              <label for="q" class="visually-hidden">Search products</label>
+              <!--lit-node 9--><input
+                id="q"
+                name="q"
+                type="search"
+                placeholder="Search everything"
+                autocomplete="off"
+                value=""
+              />
+              <button type="submit">Search</button>
+            </form>
+          </search>
+        </slot>
+        <nav class="utility" aria-label="Account and cart">
+          <!--lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--/lit-part-->
+          <!-- The document shell slots <shop-mini-cart> here. It must stay in the light DOM:
+               Gyral components nested in another component's server-rendered shadow root get
+               defer-hydration, and Gyral then never wires their intents (Gyral bug, reported). -->
+          <slot name="cart"><a href="/cart">Cart</a></slot>
+        </nav>
+      </div>
+      <nav class="departments" aria-label="Departments">
+        <ul>
+          <!--lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/electronics" 
+                  ><!--lit-part-->Electronics<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/grocery" 
+                  ><!--lit-part-->Grocery<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--lit-part 33IYYt1IJ00=--><li>
+                <!--lit-node 1--><a href="/d/toys-games" 
+                  ><!--lit-part-->Toys &amp; Games<!--/lit-part--></a
+                >
+              </li><!--/lit-part--><!--/lit-part-->
+        </ul>
+      </nav>
+    </header>
+  <!--/lit-part--></template><!--lit-node 3--><shop-search   slot="search" query data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part zkDyF4njGhg=-->
+    <search data-region="search">
+      <!--gyral:lit-node 1--><form action="/search" method="get" role="search" data-intent="Submit">
+        <label for="q" class="visually-hidden">Search products</label>
+        <!--gyral:lit-node 3--><span class="combo" data-intent="Blurred" data-intent-on="focusout">
+          <!--gyral:lit-node 4--><span class="keys" data-intent="Key" data-intent-on="keydown">
+            <!--gyral:lit-node 5--><input
+              id="q"
+              name="q"
+              type="search"
+              placeholder="Search everything"
+              autocomplete="off"
+              
+              
+              
+              
+              
+              value=""
+              value=""
+              data-intent="Typed"
+            />
+          </span>
+          <!--gyral:lit-part--><!--gyral:/lit-part-->
+        </span>
+        <button type="submit">Search</button>
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
+      </form>
+    </search>
+  <!--gyral:/lit-part--></shop-search
+          ><shop-mini-cart   slot="cart" data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
+    @layer reset, tokens, base, components, theme;
+    @layer components {
+      :host {
+        display: inline-block;
+        position: relative;
+      }
+      a,
+      summary {
+        color: inherit;
+      }
+      summary {
+        cursor: pointer;
+        list-style-position: inside;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+      }
+      .badge {
+        min-inline-size: 1.4em;
+        padding-inline: 0.35em;
+        border-radius: 1em;
+        background: var(--brand-ink);
+        color: var(--brand);
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+      }
+      .panel {
+        position: absolute;
+        inset-inline-end: 0;
+        inset-block-start: calc(100% + var(--space-1));
+        z-index: 10;
+        inline-size: min(22rem, 90vw);
+        padding: var(--space-3);
+        background: var(--surface-raised);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-popover);
+      }
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: var(--space-2);
+      }
+      li {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: var(--space-2);
+        align-items: baseline;
+      }
+      li a {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .qty,
+      .more {
+        color: var(--ink-muted);
+      }
+      .amount,
+      .subtotal strong {
+        font-variant-numeric: tabular-nums;
+      }
+      .subtotal {
+        display: flex;
+        justify-content: space-between;
+        border-block-start: 1px solid var(--line);
+        padding-block-start: var(--space-2);
+      }
+      .actions {
+        display: flex;
+        gap: var(--space-2);
+        justify-content: flex-end;
+        margin-block-end: 0;
+      }
+      .actions a {
+        padding: var(--space-1) var(--space-3);
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius);
+        text-decoration: none;
+      }
+      .actions a.primary {
+        background: var(--brand);
+        border-color: var(--brand);
+        color: var(--brand-ink);
+      }
+      [aria-busy='true'] .panel {
+        opacity: 0.7;
+      }
+      :focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+      }
+      .visually-hidden {
+        position: absolute;
+        inline-size: 1px;
+        block-size: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+    }
+  </style><!--lit-part HOZmKPXsb8I=-->
+      <!--lit-node 0--><details class="mini-cart" part="disclosure" aria-busy="false">
+        <summary part="summary">
+          Cart<span class="badge" part="badge" aria-hidden="true"><!--lit-part-->1<!--/lit-part--></span
+          ><span class="visually-hidden">, <!--lit-part-->1 item<!--/lit-part--></span>
+        </summary>
+        <div class="panel" part="panel"><!--lit-part 2fCK+xlPk5Q=-->
+        <ul>
+          <!--lit-part--><!--lit-part L9RnVOKL9UQ=--><li data-component="cart-line" part="line">
+                <!--lit-node 1--><a href="/p/lego"><!--lit-part-->LEGO<!--/lit-part--></a>
+                <span class="qty">× <!--lit-part-->1<!--/lit-part--></span>
+                <span class="amount" data-component="price"><!--lit-part-->$50.00<!--/lit-part--></span>
+              </li><!--/lit-part--><!--/lit-part-->
+        </ul>
+        <!--lit-part--><!--/lit-part-->
+        <p class="subtotal" part="subtotal">
+          <span>Subtotal</span> <strong><!--lit-part-->$50.00<!--/lit-part--></strong>
+        </p>
+        <p class="actions" part="actions">
+          <a href="/cart">View cart</a>
+          <!--lit-part UyDA2YgzmK0=--><a class="primary" href="/checkout">Checkout</a><!--/lit-part-->
+        </p>
+      <!--/lit-part--></div>
+      </details>
+    <!--/lit-part--></template></shop-mini-cart
+        ></shop-header>
+        <!--lit-part 4beU1UUCQrU=--><!--lit-node 0--><shop-consent   mode="banner" return-to="/checkout" data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part cld6gESxFdA=-->
+      <!--gyral:lit-node 0--><section
+        class="consent consent-banner"
+        data-region="consent"
+        aria-labelledby="consent-title"
+      >
+        <h2 id="consent-title"><!--gyral:lit-part-->Cookies on Gyral Goods<!--gyral:/lit-part--></h2>
+        <p>
+          We use strictly necessary cookies to run the store (your session, cart and security). With
+          your permission we also count page views and add-to-cart clicks to improve the store.
+          Nothing is shared with anyone.
+        </p>
+        <!--gyral:lit-node 4--><form method="post" action="/consent" data-intent="Choose">
+          <!--gyral:lit-node 5--><input type="hidden" name="return" value="/checkout" />
+          <div class="consent-actions" data-component="consent-actions">
+            <!--gyral:lit-node 7--><button type="submit" name="choice" value="accept" >
+              Accept all
+            </button>
+            <!--gyral:lit-node 8--><button type="submit" name="choice" value="reject" >
+              Reject non-essential
+            </button>
+          </div>
+          <!--gyral:lit-node 9--><details class="consent-custom" data-component="consent-custom" >
+            <summary>Customize</summary>
+            <fieldset>
+              <legend>Cookie categories</legend>
+              <label>
+                <input type="checkbox" checked disabled />
+                Strictly necessary <small>(always on)</small>
+              </label>
+              <label>
+                <!--gyral:lit-node 17--><input
+                  type="checkbox"
+                  name="analytics"
+                  
+                />
+                Analytics <small>(page views and add-to-cart clicks)</small>
+              </label>
+            </fieldset>
+            <!--gyral:lit-node 19--><button type="submit" name="choice" value="save" >
+              Save choices
+            </button>
+          </details>
+        </form>
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
+      </section>
+    <!--gyral:/lit-part--></shop-consent><!--/lit-part-->
+        <main id="main" class="page" tabindex="-1"><!--lit-part XABnjrv1IV8=--><!--lit-node 0--><shop-checkout
+        
+        
+        
+        
+       data-region="checkout" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;open&quot;:&quot;review&quot;,&quot;steps&quot;:[{&quot;step&quot;:&quot;contact&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;address&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;shipping&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;payment&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;review&quot;,&quot;status&quot;:&quot;open&quot;}],&quot;email&quot;:&quot;ada@example.com&quot;,&quot;address&quot;:{&quot;name&quot;:&quot;Ada Lovelace&quot;,&quot;line1&quot;:&quot;1 Analytical Way&quot;,&quot;line2&quot;:&quot;&quot;,&quot;city&quot;:&quot;Albany&quot;,&quot;state&quot;:&quot;NY&quot;,&quot;postalCode&quot;:&quot;12207&quot;,&quot;phone&quot;:&quot;&quot;},&quot;shippingMethod&quot;:&quot;standard&quot;,&quot;card&quot;:{&quot;brand&quot;:&quot;visa&quot;,&quot;last4&quot;:&quot;4242&quot;,&quot;expMonth&quot;:12,&quot;expYear&quot;:2030},&quot;savedAddresses&quot;:[],&quot;shippingOptions&quot;:[{&quot;method&quot;:&quot;standard&quot;,&quot;label&quot;:&quot;Standard&quot;,&quot;price&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:5,&quot;max&quot;:7}},{&quot;method&quot;:&quot;express&quot;,&quot;label&quot;:&quot;Express&quot;,&quot;price&quot;:{&quot;cents&quot;:1299,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:2,&quot;max&quot;:3}},{&quot;method&quot;:&quot;next_day&quot;,&quot;label&quot;:&quot;Next day&quot;,&quot;price&quot;:{&quot;cents&quot;:2499,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:1,&quot;max&quot;:1}}],&quot;lines&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;name&quot;:&quot;LEGO&quot;,&quot;href&quot;:&quot;/p/lego&quot;,&quot;options&quot;:{},&quot;quantity&quot;:1,&quot;lineTotal&quot;:{&quot;cents&quot;:5000,&quot;currency&quot;:&quot;USD&quot;}}],&quot;totals&quot;:{&quot;subtotal&quot;:{&quot;cents&quot;:5000,&quot;currency&quot;:&quot;USD&quot;},&quot;discount&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;shipping&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;tax&quot;:{&quot;cents&quot;:200,&quot;currency&quot;:&quot;USD&quot;},&quot;taxPending&quot;:false,&quot;total&quot;:{&quot;cents&quot;:5200,&quot;currency&quot;:&quot;USD&quot;}},&quot;ready&quot;:true,&quot;placeKey&quot;:&quot;test-place-key&quot;}}}" data-gyral-light><!--gyral:lit-part ZCmhcLWsXoI=--><h1>Checkout</h1>
+      <p class="visually-hidden" role="status">
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
+      </p>
+      <div class="layout">
+        <ol class="steps">
+          <!--gyral:lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
+              class="step done"
+              data-component="checkout-step"
+              data-step="contact"
+              aria-current="false"
+            >
+              <!--gyral:lit-node 1--><section aria-labelledby="contact-heading">
+                <!--gyral:lit-node 2--><h2 id="contact-heading">
+                  <span class="number"><!--gyral:lit-part-->1<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Contact<!--gyral:/lit-part-->
+                </h2>
+                <!--gyral:lit-part cYmKr/erLFw=--><div class="step-summary" data-component="step-summary">
+      <!--gyral:lit-part y6RVfKR7hws=--><p><!--gyral:lit-part-->ada@example.com<!--gyral:/lit-part--></p><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><a
+        href="/checkout?edit=contact"
+        data-intent="Edit"
+        data-step="contact"
+        data-component="step-edit"
+        >Edit <span class="visually-hidden"><!--gyral:lit-part-->Contact<!--gyral:/lit-part--></span></a
+      >
+    </div><!--gyral:/lit-part-->
+              </section>
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
+              class="step done"
+              data-component="checkout-step"
+              data-step="address"
+              aria-current="false"
+            >
+              <!--gyral:lit-node 1--><section aria-labelledby="address-heading">
+                <!--gyral:lit-node 2--><h2 id="address-heading">
+                  <span class="number"><!--gyral:lit-part-->2<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Shipping address<!--gyral:/lit-part-->
+                </h2>
+                <!--gyral:lit-part cYmKr/erLFw=--><div class="step-summary" data-component="step-summary">
+      <!--gyral:lit-part zQAv+wISgT4=--><address><!--gyral:lit-part--><!--gyral:lit-part BIKGC1k/hws=--><!--gyral:lit-part-->Ada Lovelace<!--gyral:/lit-part--><br /><!--gyral:/lit-part--><!--gyral:lit-part BIKGC1k/hws=--><!--gyral:lit-part-->1 Analytical Way<!--gyral:/lit-part--><br /><!--gyral:/lit-part--><!--gyral:lit-part BIKGC1k/hws=--><!--gyral:lit-part-->Albany, NY 12207<!--gyral:/lit-part--><br /><!--gyral:/lit-part--><!--gyral:/lit-part--></address><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><a
+        href="/checkout?edit=address"
+        data-intent="Edit"
+        data-step="address"
+        data-component="step-edit"
+        >Edit <span class="visually-hidden"><!--gyral:lit-part-->Shipping address<!--gyral:/lit-part--></span></a
+      >
+    </div><!--gyral:/lit-part-->
+              </section>
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
+              class="step done"
+              data-component="checkout-step"
+              data-step="shipping"
+              aria-current="false"
+            >
+              <!--gyral:lit-node 1--><section aria-labelledby="shipping-heading">
+                <!--gyral:lit-node 2--><h2 id="shipping-heading">
+                  <span class="number"><!--gyral:lit-part-->3<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Shipping method<!--gyral:/lit-part-->
+                </h2>
+                <!--gyral:lit-part cYmKr/erLFw=--><div class="step-summary" data-component="step-summary">
+      <!--gyral:lit-part B/UJByTWdnw=--><p><!--gyral:lit-part-->Standard<!--gyral:/lit-part-->, <!--gyral:lit-part-->5–7 business days<!--gyral:/lit-part--></p><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><a
+        href="/checkout?edit=shipping"
+        data-intent="Edit"
+        data-step="shipping"
+        data-component="step-edit"
+        >Edit <span class="visually-hidden"><!--gyral:lit-part-->Shipping method<!--gyral:/lit-part--></span></a
+      >
+    </div><!--gyral:/lit-part-->
+              </section>
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
+              class="step done"
+              data-component="checkout-step"
+              data-step="payment"
+              aria-current="false"
+            >
+              <!--gyral:lit-node 1--><section aria-labelledby="payment-heading">
+                <!--gyral:lit-node 2--><h2 id="payment-heading">
+                  <span class="number"><!--gyral:lit-part-->4<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Payment<!--gyral:/lit-part-->
+                </h2>
+                <!--gyral:lit-part cYmKr/erLFw=--><div class="step-summary" data-component="step-summary">
+      <!--gyral:lit-part y6RVfKR7hws=--><p><!--gyral:lit-part-->Visa ending 4242, expires 12/30<!--gyral:/lit-part--></p><!--gyral:/lit-part-->
+      <!--gyral:lit-node 2--><a
+        href="/checkout?edit=payment"
+        data-intent="Edit"
+        data-step="payment"
+        data-component="step-edit"
+        >Edit <span class="visually-hidden"><!--gyral:lit-part-->Payment<!--gyral:/lit-part--></span></a
+      >
+    </div><!--gyral:/lit-part-->
+              </section>
+            </li><!--gyral:/lit-part--><!--gyral:lit-part DWLzbFGCFwY=--><!--gyral:lit-node 0--><li
+              class="step open"
+              data-component="checkout-step"
+              data-step="review"
+              aria-current="step"
+            >
+              <!--gyral:lit-node 1--><section aria-labelledby="review-heading">
+                <!--gyral:lit-node 2--><h2 id="review-heading">
+                  <span class="number"><!--gyral:lit-part-->5<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Review and place order<!--gyral:/lit-part-->
+                </h2>
+                <!--gyral:lit-part dl8m7W9hs2E=--><!--gyral:lit-node 0--><form
+    action="/checkout/place"
+    method="post"
+    class="place-order"
+    data-component="place-order"
+    data-intent="PlaceOrder"
+  >
+    <!--gyral:lit-part TIYrCHR1D68=--><!--gyral:lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--gyral:/lit-part-->
+    <!--gyral:lit-node 2--><input type="hidden" name="key" value="test-place-key" />
+    <!--gyral:lit-node 3--><input type="hidden" name="expectedTotal" value="5200" />
+    <p>Total to pay: <strong data-component="price"><!--gyral:lit-part-->$52.00<!--gyral:/lit-part--></strong></p>
+    <label class="choice"
+      ><!--gyral:lit-node 8--><input
+        type="checkbox"
+        name="terms"
+        required
+        aria-describedby="PlaceOrder-terms-error"
+        
+      />
+      <span>I accept the <a href="/terms">terms of sale</a>.</span></label
+    >
+    <span id="PlaceOrder-terms-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span>
+    <!--gyral:lit-part--><!--gyral:/lit-part--> <!--gyral:lit-part MJXybzLLglI=--><!--gyral:lit-node 0--><button class="primary" ><!--gyral:lit-part-->Place order<!--gyral:/lit-part--></button><!--gyral:/lit-part-->
+  </form><!--gyral:/lit-part-->
+              </section>
+            </li><!--gyral:/lit-part--><!--gyral:/lit-part-->
+        </ol>
+        <!--gyral:lit-part JmysGYtuQgw=--><aside
+    class="order-summary"
+    data-component="order-summary"
+    aria-labelledby="summary-heading"
+  >
+    <h2 id="summary-heading">Order summary</h2>
+    <ul class="summary-lines">
+      <!--gyral:lit-part--><!--gyral:lit-part uZ/0PH+Hd7o=--><li data-component="summary-line">
+            <span class="name"
+              ><!--gyral:lit-part-->LEGO<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part--></span
+            >
+            <!--gyral:lit-part--><!--gyral:/lit-part-->
+            <span class="amount" data-component="price"><!--gyral:lit-part-->$50.00<!--gyral:/lit-part--></span>
+          </li><!--gyral:/lit-part--><!--gyral:/lit-part-->
+    </ul>
+    <dl class="totals">
+      <div>
+        <dt>Subtotal</dt>
+        <dd><!--gyral:lit-part-->$50.00<!--gyral:/lit-part--></dd>
+      </div>
+      <!--gyral:lit-part--><!--gyral:/lit-part-->
+      <div>
+        <dt>Shipping</dt>
+        <dd><!--gyral:lit-part-->Free<!--gyral:/lit-part--></dd>
+      </div>
+      <div>
+        <dt>Tax</dt>
+        <dd><!--gyral:lit-part-->$2.00<!--gyral:/lit-part--></dd>
+      </div>
+      <div class="total">
+        <dt>Total</dt>
+        <dd data-component="price"><!--gyral:lit-part-->$52.00<!--gyral:/lit-part--></dd>
+      </div>
+    </dl>
+    <p><a href="/cart">Edit cart</a></p>
+  </aside><!--gyral:/lit-part-->
+      </div><!--gyral:/lit-part--></shop-checkout><!--/lit-part--></main>
+        <!--lit-part 72kieget6kI=-->
+  <footer class="site-footer">
+    <div class="page">
+      <nav aria-label="Site">
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/faq">FAQ</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/terms">Terms</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/consent">Cookie settings</a></li>
+        </ul>
+      </nav>
+      <p>
+        <small>© 2026 <!--lit-part-->Gyral Goods<!--/lit-part-->. A demo store built with Gyral; nothing here is for sale.</small>
+      </p>
+    </div>
+  </footer>
+<!--/lit-part-->
+      <!--/lit-part-->
+  </body>
+</html>

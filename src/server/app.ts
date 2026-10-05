@@ -27,6 +27,10 @@ import { installSecurity, type AppEnv, type SecurityOptions } from './security/i
 import { placeholderSvg } from './placeholder-image.js';
 import { productLabel } from '../db/repos/catalog.js';
 import { devMailRoutes } from './routes/dev-mail.js';
+import { seoRoutes } from './routes/seo.js';
+import { consentRoutes } from './routes/consent.js';
+import { analyticsMiddleware } from './analytics.js';
+import { organizationJsonLd, twitterCard, websiteJsonLd } from './seo.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
@@ -105,6 +109,7 @@ export function createApp({
       }),
   });
 
+  app.use('*', analyticsMiddleware(db)); // consented page views and add-to-cart only
   app.get(
     '/favicon.svg',
     () => new Response(FAVICON, { headers: { 'content-type': 'image/svg+xml' } }),
@@ -123,15 +128,30 @@ export function createApp({
     });
   });
 
-  app.get('/', async () => {
+  app.get('/', async (c) => {
     const data = await homeData(db);
+    const { origin } = new URL(c.req.url);
+    const canonical = new URL('/', origin).href;
+    const description = 'Electronics, home, clothing, toys, groceries and more, in one store.';
     return page({
       title: SITE_NAME,
-      description: 'Electronics, home, clothing, toys, groceries and more, in one store.',
+      description,
+      canonical,
+      jsonLd: [organizationJsonLd(origin, SITE_NAME), websiteJsonLd(origin, SITE_NAME)],
+      meta: [
+        ['og:type', 'website'],
+        ['og:site_name', SITE_NAME],
+        ['og:title', SITE_NAME],
+        ['og:description', description],
+        ['og:url', canonical],
+      ],
+      metaNames: twitterCard(undefined),
       main: homePage(data),
     });
   });
 
+  app.route('/', seoRoutes({ db }));
+  app.route('/', consentRoutes({ render: page }));
   app.route('/', catalogRoutes({ db, render: page }));
   const millis = () => services.now().getTime();
   app.route('/', accountRoutes({ db, render: page, now: millis }));

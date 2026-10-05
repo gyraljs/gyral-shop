@@ -23,8 +23,8 @@ const MESSAGES: Readonly<Record<ProfileError['_tag'], string>> = {
 export const profileErrorMessage = (error: ProfileError): string => MESSAGES[error._tag];
 
 export async function updateName(db: Db, userId: number, name: string): Promise<void> {
-  await lockedWrite(db, () =>
-    db.update(users).set({ name: name.trim() }).where(eq(users.id, userId)),
+  await lockedWrite(db, (w) =>
+    w.update(users).set({ name: name.trim() }).where(eq(users.id, userId)),
   );
 }
 
@@ -61,7 +61,7 @@ export async function changeEmail(
   const [taken] = await db.select({ id: users.id }).from(users).where(eq(users.email, email));
   if (taken !== undefined && taken.id !== userId) return err({ _tag: 'EmailTaken' });
   try {
-    await lockedWrite(db, () => db.update(users).set({ email }).where(eq(users.id, userId)));
+    await lockedWrite(db, (w) => w.update(users).set({ email }).where(eq(users.id, userId)));
   } catch (error) {
     if (isUniqueViolation(error)) return err({ _tag: 'EmailTaken' });
     throw error;
@@ -84,5 +84,5 @@ export async function changePassword(
 /** Stores a new password hash (also used by password reset). */
 export async function setPassword(db: Db, userId: number, password: string): Promise<void> {
   const passwordHash = await hashPassword(password);
-  await lockedWrite(db, () => db.update(users).set({ passwordHash }).where(eq(users.id, userId)));
+  await lockedWrite(db, (w) => w.update(users).set({ passwordHash }).where(eq(users.id, userId)));
 }

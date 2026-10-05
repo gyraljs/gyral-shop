@@ -7,6 +7,7 @@ import { err, ok, type Result } from '../domain/result.js';
 import { normalizeEmail } from './auth.js';
 import { hashPassword } from './passwords.js';
 import type { SessionUser } from './sessions.js';
+import { lockedWrite } from '../db/tx.js';
 
 export type RegisterError = { readonly _tag: 'EmailTaken' };
 
@@ -30,10 +31,12 @@ export async function registerMember(
   const [existing] = await db.select({ id: users.id }).from(users).where(eq(users.email, email));
   if (existing !== undefined) return err({ _tag: 'EmailTaken' });
   try {
-    const [row] = await db
-      .insert(users)
-      .values({ email, name: member.name.trim(), passwordHash, role: 'customer' })
-      .returning();
+    const [row] = await lockedWrite(db, (w) =>
+      w
+        .insert(users)
+        .values({ email, name: member.name.trim(), passwordHash, role: 'customer' })
+        .returning(),
+    );
     if (row === undefined) throw new Error('registerMember: insert returned no row');
     return ok({ id: row.id, email: row.email, name: row.name, role: row.role });
   } catch (error) {

@@ -77,3 +77,37 @@ export function productJsonLd(origin: string, product: ProductPageData, path: st
         }),
   };
 }
+
+/** `Organization` for the home page (logo and name for knowledge panels). */
+export function organizationJsonLd(origin: string, name: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name,
+    url: new URL('/', origin).href,
+    logo: new URL('/favicon.svg', origin).href,
+  };
+}
+
+/** `WebSite` with a `SearchAction`, so search engines can offer a site search box. */
+export function websiteJsonLd(origin: string, name: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name,
+    url: new URL('/', origin).href,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${new URL('/search', origin).href}?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+}
+
+/** Twitter (X) card tags; they fall back to Open Graph for anything not set here. */
+export function twitterCard(image: string | undefined): (readonly [string, string])[] {
+  return [['twitter:card', image === undefined ? 'summary' : 'summary_large_image']];
+}

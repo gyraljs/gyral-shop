@@ -6,6 +6,11 @@ import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
 import '../ui/cart/mini-cart.js'; // registers <shop-mini-cart>
+import '../ui/layout/search-box.js'; // registers <shop-search>
+import '../ui/consent/consent.js'; // registers <shop-consent>
+import { consentCss } from '../ui/styles/consent.js';
+import { currentConsent, currentPath } from './consent.js';
+import { searchCss } from '../ui/styles/search.js';
 import { CSRF_META } from '../ui/forms/csrf.js';
 import { baseCss } from '../ui/styles/base.js';
 import { catalogCss } from '../ui/styles/catalog.js';
@@ -45,8 +50,10 @@ export interface ShellOptions {
   readonly currentDepartment?: string;
   /** The signed-in member, for the header's account menu (set by createApp's page()). */
   readonly account?: AccountSummary;
-  /** Open Graph / Twitter `<meta property>` pairs (SEO spec), e.g. `['og:type', 'product']`. */
+  /** Open Graph `<meta property>` pairs (SEO spec), e.g. `['og:type', 'product']`. */
   readonly meta?: readonly (readonly [property: string, content: string])[];
+  /** `<meta name>` pairs, e.g. Twitter cards: `['twitter:card', 'summary_large_image']`. */
+  readonly metaNames?: readonly (readonly [name: string, content: string])[];
   /** Per-request store instances, read during the render and seeded for hydration. */
   readonly stores?: readonly AnyStoreInstance[];
 }
@@ -64,6 +71,7 @@ const footer = html`
           <li><a href="/contact">Contact</a></li>
           <li><a href="/terms">Terms</a></li>
           <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/consent">Cookie settings</a></li>
         </ul>
       </nav>
       <p>
@@ -86,7 +94,17 @@ const DOCUMENT_STYLES = [
   contentCss,
   checkoutCss,
   wishlistCss,
+  searchCss,
+  consentCss,
 ];
+
+/** The consent banner for undecided visitors (never on the settings page itself). */
+function consentBanner() {
+  const { decided } = currentConsent();
+  const path = currentPath();
+  if (decided || path.startsWith('/consent')) return nothing;
+  return html`<shop-consent mode="banner" return-to=${path}></shop-consent>`;
+}
 
 export function shell(options: ShellOptions): Response {
   const structured = (options.jsonLd ?? [])
@@ -104,6 +122,7 @@ export function shell(options: ShellOptions): Response {
         : html`<meta name=${CSRF_META} content=${options.csrfToken} />`
     }
     ${(options.meta ?? []).map(([property, content]) => html`<meta property=${property} content=${content} />`)}
+    ${(options.metaNames ?? []).map(([name, content]) => html`<meta name=${name} content=${content} />`)}
     ${structured === '' ? nothing : unsafeHTML(structured)}`;
   return renderPage(
     {
@@ -120,8 +139,10 @@ export function shell(options: ShellOptions): Response {
           query=${options.query ?? ''}
           current=${options.currentDepartment ?? ''}
           .account=${options.account}
+          ><shop-search slot="search" query=${options.query ?? ''}></shop-search
           ><shop-mini-cart slot="cart" data-region="cart"></shop-mini-cart
         ></shop-header>
+        ${consentBanner()}
         <main id="main" class="page" tabindex="-1">${options.main}</main>
         ${footer}
       `,

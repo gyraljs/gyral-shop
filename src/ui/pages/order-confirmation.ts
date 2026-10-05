@@ -1,8 +1,8 @@
 // Order confirmation (docs/product-specs/checkout.md): server-rendered light DOM, no script
 // needed. Theme hooks per docs/design-docs/0006-theming.md.
-import { html, nothing } from '@gyral/core';
-import { addressLines } from '../../domain/checkout.js';
-import { format, type Money } from '../../domain/money.js';
+import { html } from '@gyral/core';
+import type { Money } from '../../domain/money.js';
+import { addressBlock, day, iso, orderLinesSection, orderTotalsSection } from '../orders/parts.js';
 
 /** Plain data; the server maps its order view into this (ui/ never imports services). */
 export interface ConfirmationData {
@@ -37,28 +37,6 @@ export interface ConfirmationData {
   readonly payment: { readonly brand: string; readonly last4: string } | undefined;
 }
 
-const day = new Intl.DateTimeFormat('en-US', {
-  weekday: 'short',
-  month: 'short',
-  day: 'numeric',
-  timeZone: 'UTC',
-});
-
-const iso = (d: Date) => d.toISOString().slice(0, 10);
-
-const BRAND: Readonly<Record<string, string>> = {
-  visa: 'Visa',
-  mastercard: 'Mastercard',
-  amex: 'American Express',
-  discover: 'Discover',
-};
-
-const totalRow = (label: string, amount: Money, negative = false) =>
-  html`<div class="row">
-    <dt>${label}</dt>
-    <dd data-component="price">${negative ? `−${format(amount)}` : format(amount)}</dd>
-  </div>`;
-
 export const orderConfirmationPage = (o: ConfirmationData) => html`
   <article class="confirmation" data-region="order-confirmation" aria-labelledby="title">
     <header>
@@ -76,63 +54,10 @@ export const orderConfirmationPage = (o: ConfirmationData) => html`
         <time datetime=${iso(o.shipping.earliest)}>${day.format(o.shipping.earliest)}</time> –
         <time datetime=${iso(o.shipping.latest)}>${day.format(o.shipping.latest)}</time>
       </p>
-      <address>${addressLines(o.address).map((line) => html`${line}<br />`)}</address>
+      ${addressBlock(o.address)}
     </section>
 
-    <section data-region="order-lines" aria-labelledby="items-title">
-      <h2 id="items-title">Items</h2>
-      <table class="order-lines">
-        <thead>
-          <tr>
-            <th scope="col">Item</th>
-            <th scope="col">Qty</th>
-            <th scope="col">Price</th>
-            <th scope="col">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${o.lines.map(
-            (l) =>
-              html`<tr data-component="order-line">
-                <th scope="row">
-                  ${l.name}${l.variant === '' ? nothing : html`<br /><small>${l.variant}</small>`}
-                </th>
-                <td>${l.quantity}</td>
-                <td data-component="price">${format(l.unit)}</td>
-                <td data-component="price">${format(l.lineTotal)}</td>
-              </tr>`,
-          )}
-        </tbody>
-      </table>
-    </section>
-
-    <section class="totals" data-region="order-totals" aria-labelledby="totals-title">
-      <h2 id="totals-title">Summary</h2>
-      <dl>
-        ${totalRow('Subtotal', o.totals.subtotal)}
-        ${
-          o.totals.discount.cents === 0
-            ? nothing
-            : totalRow(
-                o.promoCode === null ? 'Discount' : `Discount (${o.promoCode})`,
-                o.totals.discount,
-                true,
-              )
-        }
-        ${totalRow('Shipping', o.totals.shipping)} ${totalRow('Tax', o.totals.tax)}
-        <div class="row total">
-          <dt>Total charged</dt>
-          <dd data-component="price">${format(o.totals.total)}</dd>
-        </div>
-      </dl>
-      ${
-        o.payment === undefined
-          ? nothing
-          : html`<p>
-              Paid with ${BRAND[o.payment.brand] ?? o.payment.brand} ending ${o.payment.last4}.
-            </p>`
-      }
-    </section>
+    ${orderLinesSection(o.lines)} ${orderTotalsSection(o)}
 
     <p class="next"><a href="/">Continue shopping</a></p>
   </article>

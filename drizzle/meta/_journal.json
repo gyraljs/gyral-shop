@@ -29,6 +29,20 @@
       "when": 1791163676653,
       "tag": "0003_checkouts",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791167440191,
+      "tag": "0004_order_refunds",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1791167659928,
+      "tag": "0005_order_events",
+      "breakpoints": true
     }
   ]
 }

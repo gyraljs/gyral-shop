@@ -51,11 +51,16 @@
     color: var(--ink);
     min-block-size: 100dvb;
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    /* header, consent banner (only for undecided visitors; empty otherwise), main, footer */
+    grid-template-rows: auto auto 1fr auto;
     /* One column no wider than the viewport: an auto column would grow to the widest
        unwrapped content (the department nav) and overflow phones. */
     grid-template-columns: minmax(0, 1fr);
   }
+  body > shop-header { grid-row: 1; }
+  body > shop-consent { grid-row: 2; }
+  body > main { grid-row: 3; }
+  body > .site-footer { grid-row: 4; }
   a { color: inherit; }
   /* Form controls take the page font (shadow roots get this from shadow-base.ts). */
   button, input, select, textarea { font: inherit; }
@@ -349,16 +354,16 @@
 }
 </style><style>
 @layer components {
-  .confirmation {
+  .confirmation, .order-page {
     container: confirmation / inline-size;
     display: grid;
     gap: var(--space-4);
     max-inline-size: 48rem;
   }
-  .confirmation h1, .confirmation h2 { margin-block: 0; }
-  .confirmation header { display: grid; gap: var(--space-2); }
-  .confirmation header p { margin: 0; }
-  .confirmation section {
+  :is(.confirmation, .order-page) :is(h1, h2) { margin-block: 0; }
+  :is(.confirmation, .order-page) header { display: grid; gap: var(--space-2); }
+  :is(.confirmation, .order-page) header p { margin: 0; }
+  :is(.confirmation, .order-page) section {
     display: grid;
     gap: var(--space-2);
     padding: var(--space-3);
@@ -366,7 +371,7 @@
     border-radius: var(--radius);
     background: var(--surface-raised);
   }
-  .confirmation address { font-style: normal; }
+  :is(.confirmation, .order-page) address { font-style: normal; }
   .order-lines { inline-size: 100%; border-collapse: collapse; }
   .order-lines th, .order-lines td {
     padding-block: var(--space-1);
@@ -376,13 +381,78 @@
   .order-lines td { text-align: end; }
   .order-lines thead th:not(:first-child) { text-align: end; }
   .order-lines small { color: var(--ink-muted); }
-  .confirmation .totals dl { margin: 0; display: grid; gap: var(--space-1); }
-  .confirmation .row { display: flex; justify-content: space-between; gap: var(--space-3); }
-  .confirmation .row dd { margin: 0; font-variant-numeric: tabular-nums; }
-  .confirmation .row.total { font-weight: 700; border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-1); }
-  .confirmation .totals p { margin: 0; color: var(--ink-muted); }
+  :is(.confirmation, .order-page) .totals dl { margin: 0; display: grid; gap: var(--space-1); }
+  :is(.confirmation, .order-page) .row { display: flex; justify-content: space-between; gap: var(--space-3); }
+  :is(.confirmation, .order-page) .row dd { margin: 0; font-variant-numeric: tabular-nums; }
+  :is(.confirmation, .order-page) .row.total { font-weight: 700; border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-1); }
+  :is(.confirmation, .order-page) .totals p { margin: 0; color: var(--ink-muted); }
   @container confirmation (inline-size < 30rem) {
     .order-lines thead th:nth-child(3), .order-lines td:nth-child(3) { display: none; }
+  }
+  .order-page .row.refunded { color: var(--ok); }
+  .order-page .crumbs { font-size: 0.9rem; }
+  .order-page .crumbs a { color: var(--ink-muted); }
+  .order-status {
+    display: inline-block;
+    margin-inline-start: var(--space-1);
+    padding-block: 0.1em;
+    padding-inline: var(--space-2);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--surface-sunken);
+  }
+  .order-status:is([data-status='paid'], [data-status='delivered']) { color: var(--ok); }
+  .order-status:is([data-status='cancelled'], [data-status='refunded'], [data-status='partially_refunded']) {
+    color: var(--danger);
+  }
+  .order-table { inline-size: 100%; border-collapse: collapse; }
+  .order-table caption { text-align: start; color: var(--ink-muted); padding-block-end: var(--space-1); }
+  .order-table :is(th, td) {
+    padding-block: var(--space-2);
+    padding-inline-end: var(--space-2);
+    text-align: start;
+    border-block-end: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+  }
+  .order-table td:last-child, .order-table thead th:last-child { text-align: end; padding-inline-end: 0; }
+  .order-page .pager { display: flex; gap: var(--space-3); align-items: center; justify-content: space-between; }
+  .order-page .notice {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface-raised);
+  }
+  .order-page .notice[data-kind='error'] { border-color: var(--danger); color: var(--danger); }
+  .order-page .notice[data-kind='success'] { border-color: var(--ok); }
+  .timeline { margin: 0; padding-inline-start: var(--space-4); display: grid; gap: var(--space-1); }
+  .timeline time { color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .order-detail details { display: grid; gap: var(--space-2); }
+  .order-detail summary { cursor: pointer; color: var(--danger); font-weight: 600; }
+  :is(.order-detail, .order-lookup) button {
+    font: inherit;
+    padding-block: var(--space-2);
+    padding-inline: var(--space-3);
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--brand);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  .order-detail [data-component='cancel-form'] button { background: var(--danger); }
+  .order-lookup form { display: grid; gap: var(--space-2); max-inline-size: 28rem; }
+  .order-lookup form p { margin: 0; display: grid; gap: var(--space-1); }
+  .order-lookup input {
+    font: inherit;
+    padding: var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+  }
+  @container confirmation (inline-size < 30rem) {
+    .order-table :is(thead th, td):nth-child(4) { display: none; }
   }
 }
 </style><style>
@@ -592,15 +662,117 @@ shop-checkout {
     color: var(--brand-ink);
   }
 }
-</style><!--lit-part kzktHFP7Xvk=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part--><!--/lit-part-->
+</style><style>
+@layer components {
+  shop-search { display: block; flex: 1 1 18rem; min-inline-size: 0; }
+  shop-search form { display: flex; position: relative; }
+  shop-search .combo { flex: 1; position: relative; display: flex; min-inline-size: 0; }
+  shop-search .keys { display: flex; flex: 1; min-inline-size: 0; }
+  shop-search input {
+    flex: 1;
+    min-inline-size: 0;
+    font: inherit;
+    padding: var(--space-2) var(--space-3);
+    border: 0;
+    border-start-start-radius: var(--radius);
+    border-end-start-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+  }
+  shop-search button {
+    font: inherit;
+    font-weight: 600;
+    padding-inline: var(--space-3);
+    border: 0;
+    border-start-end-radius: var(--radius);
+    border-end-end-radius: var(--radius);
+    background: oklch(from var(--brand) calc(l - 0.15) c h);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  shop-search [role='listbox'] {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    z-index: 20;
+    margin: var(--space-1) 0 0;
+    padding: var(--space-1);
+    list-style: none;
+    background: var(--surface-raised);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-popover);
+    max-block-size: min(24rem, 60dvb);
+    overflow-y: auto;
+    container: search-suggestions / inline-size;
+  }
+  shop-search [role='listbox'][hidden] { display: none; }
+  shop-search [role='option'] {
+    display: grid;
+    gap: 0 var(--space-2);
+    grid-template-columns: 1fr auto;
+    padding: var(--space-2);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  shop-search [role='option'] .detail { color: var(--ink-muted); font-size: 0.875rem; }
+  shop-search [role='option'][data-kind='category'] .label { font-weight: 600; }
+  shop-search [role='option']:hover,
+  shop-search [role='option'][aria-selected='true'] { background: var(--surface-sunken); }
+  shop-search [role='option'][aria-selected='true'] { outline: 2px solid var(--focus); }
+
+  @container search-suggestions (inline-size < 26rem) {
+    shop-search [role='option'] { grid-template-columns: 1fr; }
+  }
+}
+</style><style>
+@layer components {
+  shop-consent { display: block; }
+  /* In the page flow under the header: visible on arrival, never covering content. */
+  .consent-banner {
+    padding: var(--space-3);
+    background: var(--surface-raised);
+    color: var(--ink);
+    border-block-end: 1px solid var(--line-strong);
+  }
+  .consent-banner > * { max-inline-size: var(--page-max); margin-inline: auto; }
+  .consent h2 { margin-block: 0 var(--space-2); font-size: 1.1rem; }
+  .consent p { margin-block: 0 var(--space-2); }
+  .consent-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .consent button {
+    font: inherit;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--brand);
+    background: var(--brand);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  .consent button[value='reject'],
+  .consent button[value='save'] { background: var(--surface-raised); color: var(--ink); }
+  .consent button:disabled { opacity: 0.6; cursor: progress; }
+  .consent-custom { margin-block-start: var(--space-2); }
+  .consent-custom summary { cursor: pointer; inline-size: fit-content; }
+  .consent-custom fieldset {
+    display: grid;
+    gap: var(--space-2);
+    margin-block: var(--space-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .consent-custom small { color: var(--ink-muted); }
+}
+</style><!--lit-part eVKfaNMXC80=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part--><!--/lit-part-->
     <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
     <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
+    <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[],"itemCount":0,"canCheckout":false,"totals":{"subtotal":{"cents":0,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":0,"currency":"USD"}}},"inFlight":0},"wishlist":{"member":false,"slugs":[],"csrf":"","inFlight":0}}</script>
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part lg+r4Ce5tHA=-->
+    <!--lit-part XoXIiwCTunU=-->
         <nav class="skip-links" aria-label="Skip links">
           <a class="skip-link" href="#main">Skip to content</a>
         </nav>
@@ -758,24 +930,28 @@ shop-checkout {
         white-space: nowrap;
       }
     }
-  </style><!--lit-part NV46e2OdDB0=-->
+  </style><!--lit-part jJOlMGfqhkY=-->
     <header>
       <div class="bar">
         <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
-        <search>
-          <form action="/search" method="get" role="search">
-            <label for="q" class="visually-hidden">Search products</label>
-            <!--lit-node 7--><input
-              id="q"
-              name="q"
-              type="search"
-              placeholder="Search everything"
-              autocomplete="off"
-              value=""
-            />
-            <button type="submit">Search</button>
-          </form>
-        </search>
+        <!-- The document shell slots <shop-search> (light DOM, with suggestions) here; the plain
+             form is the fallback when nothing is slotted. -->
+        <slot name="search">
+          <search>
+            <form action="/search" method="get" role="search">
+              <label for="q" class="visually-hidden">Search products</label>
+              <!--lit-node 9--><input
+                id="q"
+                name="q"
+                type="search"
+                placeholder="Search everything"
+                autocomplete="off"
+                value=""
+              />
+              <button type="submit">Search</button>
+            </form>
+          </search>
+        </slot>
         <nav class="utility" aria-label="Account and cart">
           <!--lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--/lit-part-->
           <!-- The document shell slots <shop-mini-cart> here. It must stay in the light DOM:
@@ -802,7 +978,36 @@ shop-checkout {
         </ul>
       </nav>
     </header>
-  <!--/lit-part--></template><shop-mini-cart   slot="cart" data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
+  <!--/lit-part--></template><!--lit-node 3--><shop-search   slot="search" query data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part zkDyF4njGhg=-->
+    <search data-region="search">
+      <!--gyral:lit-node 1--><form action="/search" method="get" role="search" data-intent="Submit">
+        <label for="q" class="visually-hidden">Search products</label>
+        <!--gyral:lit-node 3--><span class="combo" data-intent="Blurred" data-intent-on="focusout">
+          <!--gyral:lit-node 4--><span class="keys" data-intent="Key" data-intent-on="keydown">
+            <!--gyral:lit-node 5--><input
+              id="q"
+              name="q"
+              type="search"
+              placeholder="Search everything"
+              autocomplete="off"
+              
+              
+              
+              
+              
+              value=""
+              value=""
+              data-intent="Typed"
+            />
+          </span>
+          <!--gyral:lit-part--><!--gyral:/lit-part-->
+        </span>
+        <button type="submit">Search</button>
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
+      </form>
+    </search>
+  <!--gyral:/lit-part--></shop-search
+          ><shop-mini-cart   slot="cart" data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
     @layer reset, tokens, base, components, theme;
     @layer components {
       :host {
@@ -919,7 +1124,54 @@ shop-checkout {
       </details>
     <!--/lit-part--></template></shop-mini-cart
         ></shop-header>
-        <main id="main" class="page" tabindex="-1"><!--lit-part 6BqdtDiI4hg=-->
+        <!--lit-part 4beU1UUCQrU=--><!--lit-node 0--><shop-consent   mode="banner" return-to="/order/GG-20261004-FXTURE/confirmation" data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part cld6gESxFdA=-->
+      <!--gyral:lit-node 0--><section
+        class="consent consent-banner"
+        data-region="consent"
+        aria-labelledby="consent-title"
+      >
+        <h2 id="consent-title"><!--gyral:lit-part-->Cookies on Gyral Goods<!--gyral:/lit-part--></h2>
+        <p>
+          We use strictly necessary cookies to run the store (your session, cart and security). With
+          your permission we also count page views and add-to-cart clicks to improve the store.
+          Nothing is shared with anyone.
+        </p>
+        <!--gyral:lit-node 4--><form method="post" action="/consent" data-intent="Choose">
+          <!--gyral:lit-node 5--><input type="hidden" name="return" value="/order/GG-20261004-FXTURE/confirmation" />
+          <div class="consent-actions" data-component="consent-actions">
+            <!--gyral:lit-node 7--><button type="submit" name="choice" value="accept" >
+              Accept all
+            </button>
+            <!--gyral:lit-node 8--><button type="submit" name="choice" value="reject" >
+              Reject non-essential
+            </button>
+          </div>
+          <!--gyral:lit-node 9--><details class="consent-custom" data-component="consent-custom" >
+            <summary>Customize</summary>
+            <fieldset>
+              <legend>Cookie categories</legend>
+              <label>
+                <input type="checkbox" checked disabled />
+                Strictly necessary <small>(always on)</small>
+              </label>
+              <label>
+                <!--gyral:lit-node 17--><input
+                  type="checkbox"
+                  name="analytics"
+                  
+                />
+                Analytics <small>(page views and add-to-cart clicks)</small>
+              </label>
+            </fieldset>
+            <!--gyral:lit-node 19--><button type="submit" name="choice" value="save" >
+              Save choices
+            </button>
+          </details>
+        </form>
+        <!--gyral:lit-part--><!--gyral:/lit-part-->
+      </section>
+    <!--gyral:/lit-part--></shop-consent><!--/lit-part-->
+        <main id="main" class="page" tabindex="-1"><!--lit-part NCTtx+t8oZE=-->
   <article class="confirmation" data-region="order-confirmation" aria-labelledby="title">
     <header>
       <h1 id="title">Thank you, your order is placed</h1>
@@ -936,62 +1188,65 @@ shop-checkout {
         <!--lit-node 12--><time datetime="2026-10-09"><!--lit-part-->Fri, Oct 9<!--/lit-part--></time> –
         <!--lit-node 14--><time datetime="2026-10-13"><!--lit-part-->Tue, Oct 13<!--/lit-part--></time>
       </p>
-      <address><!--lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Ada Lovelace<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->1 Analytical Way<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Albany, NY 12207<!--/lit-part--><br /><!--/lit-part--><!--/lit-part--></address>
+      <!--lit-part zQAv+wISgT4=--><address><!--lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Ada Lovelace<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->1 Analytical Way<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Albany, NY 12207<!--/lit-part--><br /><!--/lit-part--><!--/lit-part--></address><!--/lit-part-->
     </section>
 
-    <section data-region="order-lines" aria-labelledby="items-title">
-      <h2 id="items-title">Items</h2>
-      <table class="order-lines">
-        <thead>
-          <tr>
-            <th scope="col">Item</th>
-            <th scope="col">Qty</th>
-            <th scope="col">Price</th>
-            <th scope="col">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!--lit-part--><!--lit-part y/9UF1F1lSk=--><tr data-component="order-line">
-                <th scope="row">
-                  <!--lit-part-->LEGO<!--/lit-part--><!--lit-part--><!--/lit-part-->
-                </th>
-                <td><!--lit-part-->2<!--/lit-part--></td>
-                <td data-component="price"><!--lit-part-->$50.00<!--/lit-part--></td>
-                <td data-component="price"><!--lit-part-->$100.00<!--/lit-part--></td>
-              </tr><!--/lit-part--><!--/lit-part-->
-        </tbody>
-      </table>
-    </section>
-
-    <section class="totals" data-region="order-totals" aria-labelledby="totals-title">
-      <h2 id="totals-title">Summary</h2>
-      <dl>
-        <!--lit-part yibPaxTiLS4=--><div class="row">
+    <!--lit-part qKPOLsJM+sM=-->
+  <section data-region="order-lines" aria-labelledby="items-title">
+    <h2 id="items-title">Items</h2>
+    <table class="order-lines">
+      <thead>
+        <tr>
+          <th scope="col">Item</th>
+          <th scope="col">Qty</th>
+          <th scope="col">Price</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!--lit-part--><!--lit-part a2l9tDHGFxw=--><tr data-component="order-line">
+              <th scope="row">
+                <!--lit-part-->LEGO<!--/lit-part--><!--lit-part--><!--/lit-part-->
+              </th>
+              <td><!--lit-part-->2<!--/lit-part--></td>
+              <td data-component="price"><!--lit-part-->$50.00<!--/lit-part--></td>
+              <td data-component="price"><!--lit-part-->$100.00<!--/lit-part--></td>
+            </tr><!--/lit-part--><!--/lit-part-->
+      </tbody>
+    </table>
+  </section>
+<!--/lit-part--> <!--lit-part aw43dAvcf/8=-->
+  <section class="totals" data-region="order-totals" aria-labelledby="totals-title">
+    <h2 id="totals-title">Summary</h2>
+    <dl>
+      <!--lit-part yibPaxTiLS4=--><div class="row">
     <dt><!--lit-part-->Subtotal<!--/lit-part--></dt>
     <dd data-component="price"><!--lit-part-->$100.00<!--/lit-part--></dd>
   </div><!--/lit-part-->
-        <!--lit-part--><!--/lit-part-->
-        <!--lit-part yibPaxTiLS4=--><div class="row">
+      <!--lit-part--><!--/lit-part-->
+      <!--lit-part yibPaxTiLS4=--><div class="row">
     <dt><!--lit-part-->Shipping<!--/lit-part--></dt>
     <dd data-component="price"><!--lit-part-->$0.00<!--/lit-part--></dd>
   </div><!--/lit-part--> <!--lit-part yibPaxTiLS4=--><div class="row">
     <dt><!--lit-part-->Tax<!--/lit-part--></dt>
     <dd data-component="price"><!--lit-part-->$4.00<!--/lit-part--></dd>
   </div><!--/lit-part-->
-        <div class="row total">
-          <dt>Total charged</dt>
-          <dd data-component="price"><!--lit-part-->$104.00<!--/lit-part--></dd>
-        </div>
-      </dl>
-      <!--lit-part nQCu8u01NL4=--><p>
-              Paid with <!--lit-part-->Visa<!--/lit-part--> ending <!--lit-part-->4242<!--/lit-part-->.
-            </p><!--/lit-part-->
-    </section>
+      <div class="row total">
+        <dt>Total charged</dt>
+        <dd data-component="price"><!--lit-part-->$104.00<!--/lit-part--></dd>
+      </div>
+      <!--lit-part--><!--/lit-part-->
+    </dl>
+    <!--lit-part 3Q3WuQ0274U=--><p>
+            Paid with <!--lit-part-->Visa<!--/lit-part--> ending <!--lit-part-->4242<!--/lit-part-->.
+          </p><!--/lit-part-->
+  </section>
+<!--/lit-part-->
 
     <p class="next"><a href="/">Continue shopping</a></p>
   </article>
 <!--/lit-part--></main>
-        <!--lit-part STG64S/HenM=-->
+        <!--lit-part 72kieget6kI=-->
   <footer class="site-footer">
     <div class="page">
       <nav aria-label="Site">
@@ -1001,6 +1256,7 @@ shop-checkout {
           <li><a href="/contact">Contact</a></li>
           <li><a href="/terms">Terms</a></li>
           <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/consent">Cookie settings</a></li>
         </ul>
       </nav>
       <p>
