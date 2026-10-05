@@ -24,6 +24,10 @@ export const listingCss = `
     border-radius: var(--radius); text-decoration: none;
   }
   .category-grid a:hover { border-color: var(--brand); }
+  [data-component="category-tile"] img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover;
+    border-radius: var(--radius); margin-block-end: var(--space-2);
+  }
   .category-grid .name { font-weight: 600; }
   .category-grid .count { color: var(--ink-muted); font-size: 0.9rem; }
   .listing {

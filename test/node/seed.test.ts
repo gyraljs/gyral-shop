@@ -5,7 +5,7 @@ import { listDepartments, productCards } from '../../src/db/repos/catalog.js';
 import { products, promoCodes, reviews, users, variants } from '../../src/db/schema.js';
 import { generateCatalog } from '../../src/db/seed/generate.js';
 import { insertSeed } from '../../src/db/seed/insert.js';
-import { placeholderSvg } from '../../src/server/placeholder-image.js';
+import { labelWords, placeholderSvg } from '../../src/server/placeholder-image.js';
 
 describe('catalog generation', () => {
   const full = generateCatalog();
@@ -16,15 +16,25 @@ describe('catalog generation', () => {
     expect(again.reviews.length).toBe(full.reviews.length);
   });
 
-  it('builds a department store of about 600 products', () => {
+  it('builds a department store of about 700 products', () => {
     expect(full.departments).toHaveLength(8);
     for (const d of full.departments) {
       expect(d.categories.length).toBeGreaterThanOrEqual(3);
       expect(d.categories.length).toBeLessThanOrEqual(6);
     }
-    expect(full.products.length).toBeGreaterThan(550);
-    expect(full.products.length).toBeLessThan(650);
+    expect(full.products.length).toBeGreaterThan(600);
+    expect(full.products.length).toBeLessThan(800);
     expect(new Set(full.products.map((p) => p.slug)).size).toBe(full.products.length);
+  });
+
+  it('varies category sizes so several categories need more than one page', () => {
+    const perCategory = new Map<string, number>();
+    for (const p of full.products) {
+      perCategory.set(p.category, (perCategory.get(p.category) ?? 0) + 1);
+    }
+    const sizes = [...perCategory.values()];
+    expect(sizes.filter((n) => n > 24).length).toBeGreaterThanOrEqual(5);
+    expect(Math.min(...sizes)).toBeGreaterThanOrEqual(6);
   });
 
   it('has sales, sold-out SKUs, multi-variant products and consistent ratings', () => {
@@ -71,5 +81,13 @@ describe('placeholder images', () => {
     expect(svg).toBe(placeholderSvg('voltra-sleek-4k-tv-12', 1));
     expect(svg).toContain('<svg');
     expect(placeholderSvg('a-<script>-x', 1)).not.toContain('<script>');
+    // Multi-word brands: the label is the product name without the whole brand.
+    expect(labelWords('Oak & Iron Rustic Lamp', 'Oak & Iron')).toEqual(['Rustic', 'Lamp']);
+    const svg2 = placeholderSvg('oak-iron-rustic-lamp-3', 1, {
+      name: 'Oak & Iron Rustic Lamp',
+      brand: 'Oak & Iron',
+    });
+    expect(svg2).toContain('>RL<');
+    expect(svg2).toContain('>Rustic Lamp<');
   });
 });

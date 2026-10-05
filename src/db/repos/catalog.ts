@@ -237,3 +237,16 @@ export function productCards(db: Db, query: CardQuery): Promise<ProductCardRow[]
     .limit(query.limit)
     .offset(query.offset ?? 0);
 }
+
+/** A product's name and brand by slug (placeholder image labels), or undefined. */
+export async function productLabel(
+  db: Db,
+  slug: string,
+): Promise<{ name: string; brand: string } | undefined> {
+  const [row] = await db
+    .select({ name: products.name, brand: brands.name })
+    .from(products)
+    .innerJoin(brands, eq(brands.id, products.brandId))
+    .where(eq(products.slug, slug));
+  return row;
+}

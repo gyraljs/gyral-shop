@@ -24,6 +24,8 @@ export interface CategoryLink {
   readonly name: string;
   /** Number of listed (non-archived) products. */
   readonly count: number;
+  /** A representative product image (department page tiles only). */
+  readonly image?: { readonly url: string; readonly alt: string };
 }
 
 export interface DepartmentSummary {
@@ -58,7 +60,17 @@ export async function departmentPage(
 ): Promise<DepartmentPageData | undefined> {
   const found = await departmentWithCategories(db, slug);
   if (found === undefined) return undefined;
-  const { department, categories } = found;
+  const { department } = found;
+  // Each category's best-rated product image stands in for a category photo.
+  const covers = await Promise.all(
+    department.categories.map((c) =>
+      productCards(db, { categoryId: c.id, order: 'top-rated', limit: 1 }),
+    ),
+  );
+  const categories = found.categories.map((c, n) => {
+    const url = covers[n]?.[0]?.imageUrl;
+    return url == null ? c : { ...c, image: { url, alt: '' } };
+  });
   const [topRated, deals] = await Promise.all([
     productCards(db, {
       departmentId: department.id,

@@ -61,7 +61,9 @@ describe('department page', () => {
     expect(body).toContain('<title>Electronics — Gyral Goods</title>');
     expect(body).toContain('<h1>Electronics</h1>');
     expect(body).toContain('<link rel="canonical" href="http://localhost/d/electronics"');
-    expect(body).toMatch(/<a href="\/c\/electronics\/[a-z-]+">\s*<span class="name">/);
+    expect(body).toMatch(
+      /<li data-component="category-tile">\s*<a href="\/c\/electronics\/[a-z-]+">\s*<img\s+src="\/img\/p\/[^"]+"\s+alt=""[^>]*>\s*<span class="name">/,
+    );
     expect(body).toContain('2 products');
     expect(body).toContain('Top rated in Electronics');
     expect(body).toContain('aria-label="Breadcrumb"');

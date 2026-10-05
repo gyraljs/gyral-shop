@@ -1,7 +1,7 @@
 # Catalog
 
 Departments: Electronics, Home & Kitchen, Clothing, Toys & Games, Grocery, Beauty, Sports &
-Outdoors, Books. Each has 3–6 categories. Seed: about 600 products, deterministic.
+Outdoors, Books. Each has 3–6 categories. Seed: about 700 products, deterministic; categories vary from 6 to 32 products, so several paginate.
 
 - Top nav lists departments; each department page shows its categories and featured products.
 - Category listing (`/c/:department/:category`): product cards (image, name, price, sale price,
