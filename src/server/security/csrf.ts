@@ -39,7 +39,10 @@ function crossSite(request: Request, accepted: ReadonlySet<string>): boolean {
  * requests must prove they come from this site with `Origin` or `Sec-Fetch-Site` (OWASP's
  * standard-header verification); a request with neither is refused. ADR 0002 addendum.
  */
-export const ORIGIN_VERIFIED_PATHS: ReadonlySet<string> = new Set(['/consent']);
+export const ORIGIN_VERIFIED_PATHS: ReadonlySet<string> = new Set([
+  '/consent',
+  '/api/analytics/page-view', // page-view beacon of prerendered pages (shop-8c2)
+]);
 
 function provenSameOrigin(request: Request, accepted: ReadonlySet<string>): boolean {
   const origin = request.headers.get('origin');

@@ -2,8 +2,10 @@
 // A non-modal region, never a dialog: the page stays usable while it is open. Without
 // JavaScript it is a POST form to /consent that redirects back. With it, the same form is sent
 // with submitForm and the banner closes in place. Light DOM (theme contract, ADR 0006).
-import { define, defineForm, form, html, liveBoolean, nothing } from '@gyral/core';
-import { get, submitForm } from '@gyral/http';
+import { changed, define, defineForm, form, html, liveBoolean, nothing, send } from '@gyral/core';
+import { submitForm } from '@gyral/http';
+import { pageViewBeacon } from '../analytics/beacon.js';
+import { loadedMe, meStore } from '../me/store.js';
 import * as v from 'valibot';
 
 /** One schema for the browser and the server's formAction (Gyral ADR 0008). */
@@ -30,9 +32,6 @@ export interface ConsentProps {
 }
 
 /** Kept in sync with src/server/routes/me.ts (ui may not import server code). */
-const ME_PATH = '/api/me';
-const MeConsentSchema = v.object({ consentDecided: v.boolean() });
-
 export interface ConsentModel {
   readonly open: boolean;
   readonly saving: boolean;
@@ -42,12 +41,12 @@ export interface ConsentModel {
 export type ConsentMsg =
   | { readonly _tag: 'Choose'; readonly form: FormData }
   | { readonly _tag: 'Saved' }
-  | { readonly _tag: 'Failed' }
-  | { readonly _tag: 'Known'; readonly decided: boolean };
+  | { readonly _tag: 'Failed' };
 
 const FAILED = 'Your choice could not be saved. Please try again.';
 
 export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>('shop-consent', {
+  stores: [meStore],
   shadow: false,
   props: {
     mode: { type: String },
@@ -75,23 +74,20 @@ export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>('shop-c
         ? { ...s, saving: false, message: 'Your choices are saved.' }
         : { ...s, saving: false, open: false },
     Failed: (s) => ({ ...s, saving: false, message: FAILED }),
+    // Static pages (deferred): ask the shared visitor store (one /api/me per page, shop-7bj).
     Hydrated: (s, _m, { props }) =>
-      props.deferred === true
-        ? [
-            s,
-            [
-              get(ME_PATH, {
-                schema: MeConsentSchema,
-                onSuccess: ({ consentDecided }): ConsentMsg => ({
-                  _tag: 'Known',
-                  decided: consentDecided,
-                }),
-                key: 'consent-known',
-              }),
-            ],
-          ]
-        : s,
-    Known: (s, m) => ({ ...s, open: !m.decided }),
+      props.deferred === true ? [s, [send(meStore, { _tag: 'Load' })]] : s,
+    // Once known: open the banner only for visitors who haven't chosen, and count the page
+    // view of a static page when they accepted analytics (shop-8c2).
+    StoreChanged: (s, m, { props }) => {
+      const me =
+        props.deferred === true
+          ? loadedMe(changed(meStore, m)?.state ?? { status: 'idle' })
+          : undefined;
+      if (me === undefined) return s;
+      const next = { ...s, open: !me.consentDecided };
+      return me.analytics ? [next, [pageViewBeacon(location.pathname)]] : next;
+    },
     IntentRejected: (s) => ({ ...s, saving: false, message: FAILED }),
   },
   view: (s, i, { props }) => {

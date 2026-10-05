@@ -25,6 +25,7 @@ import { wishlistRoutes } from './routes/wishlist.js';
 import { searchRoutes } from './routes/search.js';
 import { reviewRoutes } from './routes/reviews.js';
 import { meRoutes } from './routes/me.js';
+import { analyticsRoutes } from './routes/analytics.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
 import { placeholderSvg } from './placeholder-image.js';
@@ -174,6 +175,7 @@ export function createApp({
   app.route('/', productRoutes({ db, render: page }));
   app.route('/', reviewRoutes({ db, render: page }));
   app.route('/', meRoutes());
+  app.route('/', analyticsRoutes(db));
   app.route('/', searchRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));
   app.route('/', cartPageRoutes({ render: page }));
