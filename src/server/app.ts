@@ -12,6 +12,8 @@ import { accountRoutes } from './routes/account.js';
 import { cartRoutes } from './routes/cart-api.js';
 import { catalogRoutes } from './routes/catalog.js';
 import { productRoutes } from './routes/product.js';
+import { cartPageRoutes } from './routes/cart-page.js';
+import { cartStoreFor } from './cart-seed.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
 import { placeholderSvg } from './placeholder-image.js';
@@ -29,7 +31,7 @@ export interface AppOptions {
 
 const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#c8102e"/><text x="16" y="22" font-family="system-ui,sans-serif" font-size="17" font-weight="800" text-anchor="middle" fill="#fff">G</text></svg>`;
 
-type PageOptions = Omit<ShellOptions, 'clientEntry' | 'departments' | 'account'>;
+type PageOptions = Omit<ShellOptions, 'clientEntry' | 'departments' | 'account' | 'stores'>;
 
 /** The signed-in member for the header, read from the current request (if any). */
 function accountSummary(): ShellOptions['account'] {
@@ -53,11 +55,21 @@ export function createApp({
   const nav = () => (departments ??= departmentLinks(db));
   const page = async (o: PageOptions) => {
     const account = accountSummary();
+    const c = tryGetContext<AppEnv>();
+    // The cart store is read by the header on every page (and by cart and product pages).
+    const [departmentList, cart] = await Promise.all([
+      nav(),
+      c === undefined ? undefined : cartStoreFor(db, c),
+    ]);
+    // Browser code reads the token from <meta> for JSON requests (e.g. the cart store).
+    const csrfToken = o.csrfToken ?? (c === undefined ? undefined : c.get('session')?.csrfToken);
     return shell({
       ...o,
       clientEntry,
-      departments: await nav(),
+      departments: departmentList,
       ...(account === undefined ? {} : { account }),
+      ...(csrfToken === undefined ? {} : { csrfToken }),
+      ...(cart === undefined ? {} : { stores: [cart] }),
     });
   };
   // Lets page() see the request's member without threading the context through every route.
@@ -107,6 +119,7 @@ export function createApp({
   );
   app.route('/', productRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));
+  app.route('/', cartPageRoutes({ render: page }));
   if (mode !== 'production') app.route('/dev/mail', devMailRoutes(createMailer(db), page));
 
   app.notFound(async (c) =>

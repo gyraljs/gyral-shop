@@ -45,4 +45,13 @@ button:focus-visible { outline: 3px solid var(--focus, currentColor); outline-of
   position: absolute; inline-size: 1px; block-size: 1px;
   overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
+.added:empty { display: none; }
+.added {
+  margin-block: var(--space-2) 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  background: var(--surface-sunken);
+  border-inline-start: 4px solid var(--ok);
+}
+.added.error { border-inline-start-color: var(--danger); }
 `;

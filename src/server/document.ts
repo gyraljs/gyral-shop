@@ -1,10 +1,11 @@
 // The server-only document shell: head, skip link, header, main, footer (lit-web-apps skill:
 // document.ts). Only the custom elements inside hydrate; the shell itself never does.
-import { html, nothing } from '@gyral/core';
+import { html, nothing, type AnyStoreInstance } from '@gyral/core';
 import { renderPage } from '@gyral/ssr';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
+import '../ui/cart/mini-cart.js'; // registers <shop-mini-cart>
 import { CSRF_META } from '../ui/forms/csrf.js';
 import { baseCss } from '../ui/styles/base.js';
 import { catalogCss } from '../ui/styles/catalog.js';
@@ -40,6 +41,8 @@ export interface ShellOptions {
   readonly account?: AccountSummary;
   /** Open Graph / Twitter `<meta property>` pairs (SEO spec), e.g. `['og:type', 'product']`. */
   readonly meta?: readonly (readonly [property: string, content: string])[];
+  /** Per-request store instances, read during the render and seeded for hydration. */
+  readonly stores?: readonly AnyStoreInstance[];
 }
 
 /** JSON for a <script> body: `<` is escaped so content can never close the element. */
@@ -95,11 +98,13 @@ export function shell(options: ShellOptions): Response {
           query=${options.query ?? ''}
           current=${options.currentDepartment ?? ''}
           .account=${options.account}
+          ><shop-mini-cart slot="cart"></shop-mini-cart
         ></shop-header>
         <main id="main" class="page" tabindex="-1">${options.main}</main>
         ${footer}
       `,
       scripts: [options.clientEntry],
+      stores: options.stores ?? [],
     },
     { status: options.status ?? 200 },
   );

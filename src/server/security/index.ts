@@ -29,6 +29,7 @@ export {
   csrfTokenFor,
   endSession,
   ensureSession,
+  queueCookie,
   SESSION_COOKIE,
   startMemberSession,
 } from './sessions.js';

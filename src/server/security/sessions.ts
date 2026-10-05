@@ -27,7 +27,8 @@ const SKIP = [/^\/img\//, /^\/favicon\.svg$/];
  */
 const pending = new WeakMap<Request, string[]>();
 
-function queueCookie(c: Context, header: string): void {
+/** Queues a `Set-Cookie` header for the final response (use instead of Hono's setCookie). */
+export function queueCookie(c: Context, header: string): void {
   // Appended in order, like Hono's own setCookie: browsers apply the last write.
   pending.set(c.req.raw, [...(pending.get(c.req.raw) ?? []), header]);
 }

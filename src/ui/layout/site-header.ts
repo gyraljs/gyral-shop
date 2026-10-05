@@ -28,7 +28,7 @@ export interface HeaderProps {
 /**
  * The site header: brand, search, account and cart entry points, department navigation.
  * Every part works without JavaScript (links, a GET form, a <details> account menu and a POST
- * sign-out form). The cart slot is a placeholder until the cart epic lands.
+ * sign-out form, a <details> mini-cart).
  */
 // A disclosure, not a popover: it opens and closes without JavaScript, and Baseline has
 // supported <details> for years (ADR 0003 in Gyral; popover is only newly widely available).
@@ -77,7 +77,10 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
         </search>
         <nav class="utility" aria-label="Account and cart">
           ${accountLinks(props.account)}
-          <a href="/cart">Cart</a>
+          <!-- The document shell slots <shop-mini-cart> here. It must stay in the light DOM:
+               Gyral components nested in another component's server-rendered shadow root get
+               defer-hydration, and Gyral then never wires their intents (Gyral bug, reported). -->
+          <slot name="cart"><a href="/cart">Cart</a></slot>
         </nav>
       </div>
       <nav class="departments" aria-label="Departments">

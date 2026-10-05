@@ -247,20 +247,20 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <!--lit-part--><!--/lit-part-->
     <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part-->
+    <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
-    <!--lit-part--><!--/lit-part-->
-    <!--lit-part--><!--/lit-part--><?><!--/lit-part-->
+    <!--lit-part--><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[],"itemCount":0,"canCheckout":false,"totals":{"subtotal":{"cents":0,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":0,"currency":"USD"}}},"inFlight":0}}</script>
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part ma8unLBnXLY=-->
+    <!--lit-part Ipjf6nOs0k8=-->
         <a class="skip-link" href="#main">Skip to content</a>
         <!--lit-node 1--><shop-header
           
           
           
           
-         query current data-gyral-seed="{&quot;state&quot;:{},&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;home-kitchen&quot;,&quot;name&quot;:&quot;Home &amp; Kitchen&quot;},{&quot;slug&quot;:&quot;clothing&quot;,&quot;name&quot;:&quot;Clothing&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;beauty&quot;,&quot;name&quot;:&quot;Beauty&quot;},{&quot;slug&quot;:&quot;sports-outdoors&quot;,&quot;name&quot;:&quot;Sports &amp; Outdoors&quot;},{&quot;slug&quot;:&quot;books&quot;,&quot;name&quot;:&quot;Books&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+           query current data-gyral-seed="{&quot;state&quot;:{},&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;home-kitchen&quot;,&quot;name&quot;:&quot;Home &amp; Kitchen&quot;},{&quot;slug&quot;:&quot;clothing&quot;,&quot;name&quot;:&quot;Clothing&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;beauty&quot;,&quot;name&quot;:&quot;Beauty&quot;},{&quot;slug&quot;:&quot;sports-outdoors&quot;,&quot;name&quot;:&quot;Sports &amp; Outdoors&quot;},{&quot;slug&quot;:&quot;books&quot;,&quot;name&quot;:&quot;Books&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
     :host {
       display: block;
       background: var(--brand);
@@ -407,7 +407,7 @@
       clip-path: inset(50%);
       white-space: nowrap;
     }
-  </style><!--lit-part MvQZgyN4DFg=-->
+  </style><!--lit-part NV46e2OdDB0=-->
     <header>
       <div class="bar">
         <a class="brand" href="/" aria-label="Gyral Goods home">Gyral <span>Goods</span></a>
@@ -427,7 +427,10 @@
         </search>
         <nav class="utility" aria-label="Account and cart">
           <!--lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--/lit-part-->
-          <a href="/cart">Cart</a>
+          <!-- The document shell slots <shop-mini-cart> here. It must stay in the light DOM:
+               Gyral components nested in another component's server-rendered shadow root get
+               defer-hydration, and Gyral then never wires their intents (Gyral bug, reported). -->
+          <slot name="cart"><a href="/cart">Cart</a></slot>
         </nav>
       </div>
       <nav class="departments" aria-label="Departments">
@@ -468,7 +471,120 @@
         </ul>
       </nav>
     </header>
-  <!--/lit-part--></template></shop-header>
+  <!--/lit-part--></template><shop-mini-cart  slot="cart" data-gyral-seed="{&quot;state&quot;:{},&quot;props&quot;:{}}"><template shadowroot="open" shadowrootmode="open"><style>
+    :host {
+      display: inline-block;
+      position: relative;
+    }
+    a,
+    summary {
+      color: inherit;
+    }
+    summary {
+      cursor: pointer;
+      list-style-position: inside;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+    .badge {
+      min-inline-size: 1.4em;
+      padding-inline: 0.35em;
+      border-radius: 1em;
+      background: var(--brand-ink);
+      color: var(--brand);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .panel {
+      position: absolute;
+      inset-inline-end: 0;
+      inset-block-start: calc(100% + var(--space-1));
+      z-index: 10;
+      inline-size: min(22rem, 90vw);
+      padding: var(--space-3);
+      background: var(--surface-raised);
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 0.5rem 1.5rem oklch(0% 0 0 / 0.15);
+    }
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: var(--space-2);
+    }
+    li {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: var(--space-2);
+      align-items: baseline;
+    }
+    li a {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .qty,
+    .more {
+      color: var(--ink-muted);
+    }
+    .amount,
+    .subtotal strong {
+      font-variant-numeric: tabular-nums;
+    }
+    .subtotal {
+      display: flex;
+      justify-content: space-between;
+      border-block-start: 1px solid var(--line);
+      padding-block-start: var(--space-2);
+    }
+    .actions {
+      display: flex;
+      gap: var(--space-2);
+      justify-content: flex-end;
+      margin-block-end: 0;
+    }
+    .actions a {
+      padding: var(--space-1) var(--space-3);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      text-decoration: none;
+    }
+    .actions a.primary {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: var(--brand-ink);
+    }
+    [aria-busy='true'] .panel {
+      opacity: 0.7;
+    }
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+    .visually-hidden {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  </style><!--lit-part 8jf8iKsTUso=-->
+      <!--lit-node 0--><details class="mini-cart" aria-busy="false">
+        <summary>
+          Cart<span class="badge" aria-hidden="true"><!--lit-part-->0<!--/lit-part--></span
+          ><span class="visually-hidden">, <!--lit-part-->0 items<!--/lit-part--></span>
+        </summary>
+        <div class="panel"><!--lit-part +G7B0qPP8mo=--><p>Your cart is empty.</p><!--/lit-part--></div>
+      </details>
+    <!--/lit-part--></template></shop-mini-cart
+        ></shop-header>
         <main id="main" class="page" tabindex="-1"><!--lit-part 6owaozYe2VE=-->
   <section class="auth" aria-labelledby="title">
     <h1 id="title">Sign in</h1>

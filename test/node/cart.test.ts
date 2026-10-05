@@ -1,6 +1,7 @@
 // Cart HTTP surface: no-JS forms (PRG + flash) and the JSON API (docs/product-specs/cart.md).
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Hono } from 'hono';
+import { sessionMiddleware } from '../../src/server/security/sessions.js';
 import { FLASH_COOKIE, takeFlash } from '../../src/server/flash.js';
 import { startMemberSession, type AppEnv } from '../../src/server/security/index.js';
 import { attachRuntime } from '../../src/server/security/runtime.js';
@@ -184,7 +185,9 @@ describe('login merges the guest cart', () => {
 
 describe('flash messages', () => {
   it('are read once', async () => {
+    // Behind the session middleware, like every real route: it flushes the queued clear.
     const app = new Hono();
+    app.use('*', sessionMiddleware());
     app.get('/', (c) => c.json(takeFlash(c) ?? null));
     const flash = encodeURIComponent(JSON.stringify({ kind: 'success', message: 'Hi' }));
     const response = await app.request('/', { headers: { cookie: `${FLASH_COOKIE}=${flash}` } });

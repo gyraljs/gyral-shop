@@ -124,7 +124,7 @@ describe('product page route', () => {
     const { slug, id, n } = await multiVariantProduct(db);
     await setStock(db, id);
     const body = text(await html(`/p/${slug}`));
-    expect(body).toMatch(/<form method="post" action="\/cart\/add">/);
+    expect(body).toMatch(/<form method="post" action="\/cart\/add"[^>]*>/);
     expect(body.match(/type="radio"\s+name="sku"/g)).toHaveLength(n);
     expect(body.match(/name="sku"[^>]*disabled/g)).toHaveLength(1);
     expect(body).toMatch(/<input type="hidden" name="_csrf" value="[\w-]{20,}"/);

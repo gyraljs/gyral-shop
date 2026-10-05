@@ -1,4 +1,4 @@
-import { define, html, nothing, unsafeCSS } from '@gyral/core';
+import { define, fieldErrors, form, html, nothing, send, unsafeCSS } from '@gyral/core';
 import { delay } from '@gyral/time';
 import { maxQuantity } from '../../domain/inventory.js';
 import { format, usd } from '../../domain/money.js';
@@ -13,6 +13,8 @@ import {
   variantLabel,
   type Selection,
 } from '../../domain/variants.js';
+import { AddForm } from '../cart/schemas.js';
+import { cartStore } from '../cart/store.js';
 import { csrfField } from '../forms/csrf.js';
 import { buyBoxCss } from '../styles/buy-box.js';
 
@@ -36,11 +38,14 @@ export interface BuyBoxState {
   readonly selection: Selection;
   /** False on the server and during hydration: the no-JS SKU list. True once interactive. */
   readonly enhanced: boolean;
+  /** A client-side validation error for the add-to-cart form. */
+  readonly formError: string | undefined;
 }
 
 export type BuyBoxMsg =
   | { readonly _tag: 'Enhanced' }
-  | { readonly _tag: 'Choose'; readonly axis: string; readonly value: string };
+  | { readonly _tag: 'Choose'; readonly axis: string; readonly value: string }
+  | { readonly _tag: 'Add'; readonly sku: string; readonly quantity: number };
 
 export const ADD_TO_CART_PATH = '/cart/add';
 
@@ -133,8 +138,9 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
   },
   // `Enhanced` runs on the client only: servers drop commands, and hydration starts init's
   // commands after the first (matching) render (Gyral ADR 0012).
+  stores: [cartStore],
   init: (props) => [
-    { selection: defaultSelection(props.variants ?? []), enhanced: false },
+    { selection: defaultSelection(props.variants ?? []), enhanced: false, formError: undefined },
     [delay<BuyBoxMsg>(0, { _tag: 'Enhanced' }, { key: 'buy-box-enhance' })],
   ],
   intent: {
@@ -142,6 +148,9 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
       const axis = target.getAttribute('data-axis');
       return axis === null || value === undefined ? undefined : { _tag: 'Choose', axis, value };
     },
+    // With JavaScript the form adds through the shared cart store (no navigation); without it,
+    // the browser posts the same fields to /cart/add.
+    Add: form(AddForm, (d) => ({ _tag: 'Add', sku: d.sku, quantity: d.quantity })),
   },
   update: {
     Enhanced: (s) => ({ ...s, enhanced: true }),
@@ -149,8 +158,15 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
       ...s,
       selection: choose(props.variants ?? [], s.selection, m.axis, m.value),
     }),
+    Add: (s, m) => [{ ...s, formError: undefined }, [send(cartStore, m)]],
+    IntentRejected: (s, m) => ({
+      ...s,
+      formError: Object.values(fieldErrors(m.issues))[0]?.[0] ?? 'Check your choice and quantity.',
+    }),
   },
-  view: (s, i, { props }) => {
+  view: (s, i, { props, read }) => {
+    const { notice, inFlight } = read(cartStore);
+    const added = notice?.op === 'add' ? notice : undefined;
     const variants = props.variants ?? [];
     const current = resolveVariant(variants, s.selection) ?? variants[0];
     if (current === undefined) return html`<p>This product is not available.</p>`;
@@ -163,7 +179,7 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
           current,
         )}
       </p>
-      <form method="post" action=${props.action ?? ADD_TO_CART_PATH}>
+      <form method="post" action=${props.action ?? ADD_TO_CART_PATH} data-intent=${i.Add}>
         ${props.csrf === undefined || props.csrf === '' ? nothing : csrfField(props.csrf)}
         ${
           !multiple
@@ -188,9 +204,14 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
           />
         </p>
         <button type="submit" ?disabled=${s.enhanced && max === 0}>
-          ${s.enhanced && max === 0 ? 'Out of stock' : 'Add to cart'}
+          ${s.enhanced && max === 0 ? 'Out of stock' : inFlight > 0 ? 'Adding…' : 'Add to cart'}
         </button>
       </form>
+      <p class="added ${s.formError === undefined ? (added?.kind ?? '') : 'error'}" role="status">
+        ${
+          s.formError ?? added?.message ?? ''
+        }${added?.kind === 'success' && s.formError === undefined ? html` <a href="/cart">View cart</a>` : nothing}
+      </p>
     `;
   },
   styles: unsafeCSS(buyBoxCss),
