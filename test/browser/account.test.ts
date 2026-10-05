@@ -32,7 +32,7 @@ async function mount(html: string, tag: 'shop-login' | 'shop-register') {
   await hydrated(page.root);
   const el = page.root.querySelector(tag);
   if (el === null || el.shadowRoot === null) throw new Error(`no ${tag}`);
-  const http = fakeDriver<HttpRequest, unknown>('http');
+  const http = fakeDriver<HttpRequest>('http');
   const location = fakeDriver(locationDriver, { impl: () => undefined });
   el.drivers = { http, location };
   const field = (name: string) => {

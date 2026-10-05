@@ -143,6 +143,26 @@ describe('sign in', () => {
   });
 });
 
+describe('a first visit, without test helpers', () => {
+  // Regression: page handlers return their own Response (renderPage), and Hono's setCookie()
+  // never reached it, so a guest's first page had a CSRF token but no session cookie.
+  it('sets the session cookie on the page that embeds its CSRF token, so the post succeeds', async () => {
+    const test = await withAda();
+    const page = await test.get('/account/login');
+    const sid = sessionCookie(page);
+    const token = /name="_csrf" value="([^"]+)"/.exec(await page.text())?.[1];
+    expect(sid).toBeDefined();
+    expect(token).toBeDefined();
+    const res = await test.get('/account/login', {
+      method: 'POST',
+      headers: { cookie: `${SESSION_COOKIE}=${sid ?? ''}` },
+      body: new URLSearchParams({ _csrf: token ?? '', email: ADA.email, password: ADA.password }),
+    });
+    expect(res.status).toBe(303);
+    expect(sessionCookie(res)).not.toBe(sid);
+  });
+});
+
 describe('register', () => {
   it('creates the account, signs in and lands on the account page', async () => {
     const test = await testApp();

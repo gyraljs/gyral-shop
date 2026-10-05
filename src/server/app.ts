@@ -9,6 +9,7 @@ import { notFoundPage, serverErrorPage } from '../ui/pages/errors.js';
 import type { DepartmentLink } from '../ui/layout/site-header.js';
 import { SECURITY_TITLES, securityErrorPage } from '../ui/pages/security-errors.js';
 import { accountRoutes } from './routes/account.js';
+import { cartRoutes } from './routes/cart-api.js';
 import { catalogRoutes } from './routes/catalog.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
@@ -103,6 +104,7 @@ export function createApp({
     '/',
     accountRoutes({ db, render: page, now: () => (clock?.() ?? new Date()).getTime() }),
   );
+  app.route('/', cartRoutes(db));
   if (mode !== 'production') app.route('/dev/mail', devMailRoutes(createMailer(db), page));
 
   app.notFound(async (c) =>
