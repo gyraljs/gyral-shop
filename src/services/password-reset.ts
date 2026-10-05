@@ -82,8 +82,8 @@ export async function completeReset(
   now: Date = new Date(),
 ): Promise<Result<SessionUser, ResetError>> {
   // Marking it used first, in one statement, means two concurrent submits can't both win.
-  const [claimed] = await lockedWrite(db, () =>
-    db
+  const [claimed] = await lockedWrite(db, (w) =>
+    w
       .update(passwordResets)
       .set({ usedAt: now })
       .where(live(token, now))

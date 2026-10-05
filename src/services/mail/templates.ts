@@ -192,3 +192,39 @@ ${paragraphs}`,
     ),
   };
 }
+
+export interface OrderCancelledInput {
+  readonly to: string;
+  readonly name: string;
+  readonly orderNumber: string;
+  readonly orderUrl: string;
+  /** The amount refunded, or undefined when the refund still has to be made by hand. */
+  readonly refunded: Money | undefined;
+}
+
+export function orderCancelledMail(input: OrderCancelledInput): MailMessage {
+  const subject = `Order ${input.orderNumber} cancelled`;
+  const refundText =
+    input.refunded === undefined
+      ? 'We could not refund your card automatically; our team will refund you within 2 business days.'
+      : `We refunded ${format(input.refunded)} to your card. It can take 5–10 business days to appear.`;
+  return {
+    to: input.to,
+    subject,
+    text: [
+      `Hi ${input.name},`,
+      '',
+      `Your order ${input.orderNumber} is cancelled.`,
+      refundText,
+      '',
+      `View your order: ${safeUrl(input.orderUrl)}`,
+    ].join('\n'),
+    html: layout(
+      subject,
+      `<h1>Your order is cancelled</h1>
+<p>Hi ${escapeHtml(input.name)}, order <strong>${escapeHtml(input.orderNumber)}</strong> is cancelled.</p>
+<p>${escapeHtml(refundText)}</p>
+${button(input.orderUrl, 'View your order')}`,
+    ),
+  };
+}

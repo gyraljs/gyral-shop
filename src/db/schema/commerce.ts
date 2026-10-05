@@ -9,6 +9,7 @@ import {
 import { users, sessions } from './accounts.js';
 import { departments, products, variants } from './catalog.js';
 import { bool, cents, createdAt, timestamp } from './columns.js';
+import type { OrderStatus } from '../../domain/orders.js';
 
 /** A cart belongs to a guest session or to a member (merged on login: cart spec). */
 export const carts = sqliteTable(
@@ -62,8 +63,15 @@ export const ORDER_STATUSES = [
   'fulfilled',
   'delivered',
   'cancelled',
+  'partially_refunded',
   'refunded',
-] as const;
+] as const satisfies readonly OrderStatus[];
+
+// The column must accept every status the domain state machine can produce.
+type MissingStatus = Exclude<OrderStatus, (typeof ORDER_STATUSES)[number]>;
+/** Fails to compile if the domain gains a status the column doesn't list. */
+export const ALL_ORDER_STATUSES_LISTED: [MissingStatus] extends [never] ? true : MissingStatus =
+  true;
 
 export interface ShippingAddress {
   readonly name: string;
@@ -115,6 +123,8 @@ export const orders = sqliteTable(
     shippingCents: cents('shipping_cents').notNull(),
     taxCents: cents('tax_cents').notNull(),
     totalCents: cents('total_cents').notNull(),
+    /** Sum of refunds so far (domain OrderState.refunded); drives partially_refunded. */
+    refundedCents: cents('refunded_cents').notNull().default(0),
     promoCode: text('promo_code'),
     /** Makes "place order" idempotent on double submit (checkout spec). */
     idempotencyKey: text('idempotency_key').notNull().unique(),
@@ -127,6 +137,22 @@ export const orders = sqliteTable(
 );
 
 /** Lines snapshot names and prices as charged, so history never changes. */
+/** An order's status history, shown as the timeline on the order page (orders spec). */
+export const orderEvents = sqliteTable(
+  'order_events',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    orderId: integer('order_id')
+      .notNull()
+      .references(() => orders.id, { onDelete: 'cascade' }),
+    status: text('status', { enum: ORDER_STATUSES }).notNull(),
+    /** Customer-facing detail, e.g. "Refunded $24.99 to Visa •••• 4242". */
+    note: text('note'),
+    createdAt: createdAt(),
+  },
+  (t) => [index('order_events_order').on(t.orderId)],
+);
+
 export const orderLines = sqliteTable(
   'order_lines',
   {

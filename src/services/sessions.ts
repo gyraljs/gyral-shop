@@ -6,6 +6,7 @@ import { eq, lt } from 'drizzle-orm';
 import type { Db } from '../db/client.js';
 import { sessions, users } from '../db/schema/accounts.js';
 import { carts } from '../db/schema/commerce.js';
+import { lockedWrite, writeTransaction } from '../db/tx.js';
 
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 /** Sliding expiry is written at most this often, so most requests don't write. */
@@ -69,14 +70,16 @@ export async function createSession(
     lastSeenAt: now,
     user,
   };
-  await db.insert(sessions).values({
-    id: session.id,
-    userId,
-    csrfToken: session.csrfToken,
-    createdAt: now,
-    expiresAt: session.expiresAt,
-    lastSeenAt: now,
-  });
+  await lockedWrite(db, (w) =>
+    w.insert(sessions).values({
+      id: session.id,
+      userId,
+      csrfToken: session.csrfToken,
+      createdAt: now,
+      expiresAt: session.expiresAt,
+      lastSeenAt: now,
+    }),
+  );
   return session;
 }
 
@@ -105,7 +108,9 @@ export async function loadSession(
   const expiresAt = stale ? expiry(now) : row.expiresAt;
   const lastSeenAt = stale ? now : row.lastSeenAt;
   if (stale) {
-    await db.update(sessions).set({ expiresAt, lastSeenAt }).where(eq(sessions.id, id));
+    await lockedWrite(db, (w) =>
+      w.update(sessions).set({ expiresAt, lastSeenAt }).where(eq(sessions.id, id)),
+    );
   }
   const session: Session = {
     id: row.id,
@@ -128,7 +133,7 @@ export async function rotateSession(
   oldId: string | undefined,
   options: { readonly userId?: number; readonly now?: Date } = {},
 ): Promise<Session> {
-  return db.transaction(async (tx) => {
+  return writeTransaction(db, async (tx) => {
     // A transaction has the same query API as the database for everything used here.
     const next = await createSession(tx as unknown as Db, options);
     if (oldId !== undefined) {
@@ -141,8 +146,10 @@ export async function rotateSession(
 
 /** Ends a session. A guest cart attached to it is detached (kept for the cart epic to purge). */
 export async function destroySession(db: Db, id: string): Promise<void> {
-  await db.update(carts).set({ sessionId: null }).where(eq(carts.sessionId, id));
-  await db.delete(sessions).where(eq(sessions.id, id));
+  await writeTransaction(db, async (tx) => {
+    await tx.update(carts).set({ sessionId: null }).where(eq(carts.sessionId, id));
+    await tx.delete(sessions).where(eq(sessions.id, id));
+  });
 }
 
 /** Ends every session of a member (password change, account disabled). */

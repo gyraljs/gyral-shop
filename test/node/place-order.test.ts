@@ -200,16 +200,22 @@ describe('placing an order', () => {
 });
 
 describe('who may see a confirmation', () => {
-  it('the placing browser, the member and admins; others get 404', async () => {
+  it('the placing browser, the member and admins; others are sent to the lookup form', async () => {
     const email = 'grace@example.com';
     await createMember(test, { email, name: 'Grace Hopper', password: 'correct-horse-battery-9' });
     const member = await loginAs(test, email);
     const res = await place(member, await toReview(member));
     const location = res.headers.get('location') ?? '';
     expect((await member.get(location)).status).toBe(200);
-    expect((await visitor.get(location)).status).toBe(404);
-    expect((await test.get(location)).status).toBe(404);
-    expect((await test.get('/order/GG-20261004-AAAAAA/confirmation')).status).toBe(404);
+    // Unknown and foreign orders answer alike, so numbers can't be probed (orders spec).
+    const toLookup = (res: Response) => [res.status, res.headers.get('location')];
+    const number = location.split('/')[2] ?? '';
+    expect(toLookup(await visitor.get(location))).toEqual([303, `/order/lookup?number=${number}`]);
+    expect(toLookup(await test.get(location))).toEqual([303, `/order/lookup?number=${number}`]);
+    expect(toLookup(await test.get('/order/GG-20261004-AAAAAA/confirmation'))).toEqual([
+      303,
+      '/order/lookup?number=GG-20261004-AAAAAA',
+    ]);
     const adminEmail = 'boss@example.com';
     await createMember(test, {
       email: adminEmail,
@@ -221,7 +227,7 @@ describe('who may see a confirmation', () => {
     const forged = await test.get(location, {
       headers: { cookie: `orders=${location.split('/')[2] ?? ''}.forged` },
     });
-    expect(forged.status).toBe(404);
+    expect(forged.status).toBe(303);
   });
 });
 

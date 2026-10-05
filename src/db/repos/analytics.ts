@@ -13,8 +13,8 @@ export interface AnalyticsEvent {
 }
 
 export function recordEvent(db: Db, event: AnalyticsEvent): Promise<void> {
-  return lockedWrite(db, async () => {
-    await db.insert(analyticsEvents).values({
+  return lockedWrite(db, async (w) => {
+    await w.insert(analyticsEvents).values({
       kind: event.kind,
       path: event.path,
       sessionId: event.sessionId ?? null,

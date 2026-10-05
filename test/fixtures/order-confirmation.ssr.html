@@ -352,16 +352,16 @@
 }
 </style><style>
 @layer components {
-  .confirmation {
+  .confirmation, .order-page {
     container: confirmation / inline-size;
     display: grid;
     gap: var(--space-4);
     max-inline-size: 48rem;
   }
-  .confirmation h1, .confirmation h2 { margin-block: 0; }
-  .confirmation header { display: grid; gap: var(--space-2); }
-  .confirmation header p { margin: 0; }
-  .confirmation section {
+  :is(.confirmation, .order-page) :is(h1, h2) { margin-block: 0; }
+  :is(.confirmation, .order-page) header { display: grid; gap: var(--space-2); }
+  :is(.confirmation, .order-page) header p { margin: 0; }
+  :is(.confirmation, .order-page) section {
     display: grid;
     gap: var(--space-2);
     padding: var(--space-3);
@@ -369,7 +369,7 @@
     border-radius: var(--radius);
     background: var(--surface-raised);
   }
-  .confirmation address { font-style: normal; }
+  :is(.confirmation, .order-page) address { font-style: normal; }
   .order-lines { inline-size: 100%; border-collapse: collapse; }
   .order-lines th, .order-lines td {
     padding-block: var(--space-1);
@@ -379,13 +379,78 @@
   .order-lines td { text-align: end; }
   .order-lines thead th:not(:first-child) { text-align: end; }
   .order-lines small { color: var(--ink-muted); }
-  .confirmation .totals dl { margin: 0; display: grid; gap: var(--space-1); }
-  .confirmation .row { display: flex; justify-content: space-between; gap: var(--space-3); }
-  .confirmation .row dd { margin: 0; font-variant-numeric: tabular-nums; }
-  .confirmation .row.total { font-weight: 700; border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-1); }
-  .confirmation .totals p { margin: 0; color: var(--ink-muted); }
+  :is(.confirmation, .order-page) .totals dl { margin: 0; display: grid; gap: var(--space-1); }
+  :is(.confirmation, .order-page) .row { display: flex; justify-content: space-between; gap: var(--space-3); }
+  :is(.confirmation, .order-page) .row dd { margin: 0; font-variant-numeric: tabular-nums; }
+  :is(.confirmation, .order-page) .row.total { font-weight: 700; border-block-start: 1px solid var(--line-strong); padding-block-start: var(--space-1); }
+  :is(.confirmation, .order-page) .totals p { margin: 0; color: var(--ink-muted); }
   @container confirmation (inline-size < 30rem) {
     .order-lines thead th:nth-child(3), .order-lines td:nth-child(3) { display: none; }
+  }
+  .order-page .row.refunded { color: var(--ok); }
+  .order-page .crumbs { font-size: 0.9rem; }
+  .order-page .crumbs a { color: var(--ink-muted); }
+  .order-status {
+    display: inline-block;
+    margin-inline-start: var(--space-1);
+    padding-block: 0.1em;
+    padding-inline: var(--space-2);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--surface-sunken);
+  }
+  .order-status:is([data-status='paid'], [data-status='delivered']) { color: var(--ok); }
+  .order-status:is([data-status='cancelled'], [data-status='refunded'], [data-status='partially_refunded']) {
+    color: var(--danger);
+  }
+  .order-table { inline-size: 100%; border-collapse: collapse; }
+  .order-table caption { text-align: start; color: var(--ink-muted); padding-block-end: var(--space-1); }
+  .order-table :is(th, td) {
+    padding-block: var(--space-2);
+    padding-inline-end: var(--space-2);
+    text-align: start;
+    border-block-end: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+  }
+  .order-table td:last-child, .order-table thead th:last-child { text-align: end; padding-inline-end: 0; }
+  .order-page .pager { display: flex; gap: var(--space-3); align-items: center; justify-content: space-between; }
+  .order-page .notice {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--surface-raised);
+  }
+  .order-page .notice[data-kind='error'] { border-color: var(--danger); color: var(--danger); }
+  .order-page .notice[data-kind='success'] { border-color: var(--ok); }
+  .timeline { margin: 0; padding-inline-start: var(--space-4); display: grid; gap: var(--space-1); }
+  .timeline time { color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+  .order-detail details { display: grid; gap: var(--space-2); }
+  .order-detail summary { cursor: pointer; color: var(--danger); font-weight: 600; }
+  :is(.order-detail, .order-lookup) button {
+    font: inherit;
+    padding-block: var(--space-2);
+    padding-inline: var(--space-3);
+    border: 0;
+    border-radius: var(--radius);
+    background: var(--brand);
+    color: var(--brand-ink);
+    cursor: pointer;
+  }
+  .order-detail [data-component='cancel-form'] button { background: var(--danger); }
+  .order-lookup form { display: grid; gap: var(--space-2); max-inline-size: 28rem; }
+  .order-lookup form p { margin: 0; display: grid; gap: var(--space-1); }
+  .order-lookup input {
+    font: inherit;
+    padding: var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+  }
+  @container confirmation (inline-size < 30rem) {
+    .order-table :is(thead th, td):nth-child(4) { display: none; }
   }
 }
 </style><style>
@@ -1048,7 +1113,7 @@ shop-checkout {
         <!--gyral:lit-part--><!--gyral:/lit-part-->
       </section>
     <!--gyral:/lit-part--></shop-consent><!--/lit-part-->
-        <main id="main" class="page" tabindex="-1"><!--lit-part 6BqdtDiI4hg=-->
+        <main id="main" class="page" tabindex="-1"><!--lit-part NCTtx+t8oZE=-->
   <article class="confirmation" data-region="order-confirmation" aria-labelledby="title">
     <header>
       <h1 id="title">Thank you, your order is placed</h1>
@@ -1065,57 +1130,60 @@ shop-checkout {
         <!--lit-node 12--><time datetime="2026-10-09"><!--lit-part-->Fri, Oct 9<!--/lit-part--></time> –
         <!--lit-node 14--><time datetime="2026-10-13"><!--lit-part-->Tue, Oct 13<!--/lit-part--></time>
       </p>
-      <address><!--lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Ada Lovelace<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->1 Analytical Way<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Albany, NY 12207<!--/lit-part--><br /><!--/lit-part--><!--/lit-part--></address>
+      <!--lit-part zQAv+wISgT4=--><address><!--lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Ada Lovelace<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->1 Analytical Way<!--/lit-part--><br /><!--/lit-part--><!--lit-part BIKGC1k/hws=--><!--lit-part-->Albany, NY 12207<!--/lit-part--><br /><!--/lit-part--><!--/lit-part--></address><!--/lit-part-->
     </section>
 
-    <section data-region="order-lines" aria-labelledby="items-title">
-      <h2 id="items-title">Items</h2>
-      <table class="order-lines">
-        <thead>
-          <tr>
-            <th scope="col">Item</th>
-            <th scope="col">Qty</th>
-            <th scope="col">Price</th>
-            <th scope="col">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!--lit-part--><!--lit-part y/9UF1F1lSk=--><tr data-component="order-line">
-                <th scope="row">
-                  <!--lit-part-->LEGO<!--/lit-part--><!--lit-part--><!--/lit-part-->
-                </th>
-                <td><!--lit-part-->2<!--/lit-part--></td>
-                <td data-component="price"><!--lit-part-->$50.00<!--/lit-part--></td>
-                <td data-component="price"><!--lit-part-->$100.00<!--/lit-part--></td>
-              </tr><!--/lit-part--><!--/lit-part-->
-        </tbody>
-      </table>
-    </section>
-
-    <section class="totals" data-region="order-totals" aria-labelledby="totals-title">
-      <h2 id="totals-title">Summary</h2>
-      <dl>
-        <!--lit-part yibPaxTiLS4=--><div class="row">
+    <!--lit-part qKPOLsJM+sM=-->
+  <section data-region="order-lines" aria-labelledby="items-title">
+    <h2 id="items-title">Items</h2>
+    <table class="order-lines">
+      <thead>
+        <tr>
+          <th scope="col">Item</th>
+          <th scope="col">Qty</th>
+          <th scope="col">Price</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!--lit-part--><!--lit-part a2l9tDHGFxw=--><tr data-component="order-line">
+              <th scope="row">
+                <!--lit-part-->LEGO<!--/lit-part--><!--lit-part--><!--/lit-part-->
+              </th>
+              <td><!--lit-part-->2<!--/lit-part--></td>
+              <td data-component="price"><!--lit-part-->$50.00<!--/lit-part--></td>
+              <td data-component="price"><!--lit-part-->$100.00<!--/lit-part--></td>
+            </tr><!--/lit-part--><!--/lit-part-->
+      </tbody>
+    </table>
+  </section>
+<!--/lit-part--> <!--lit-part aw43dAvcf/8=-->
+  <section class="totals" data-region="order-totals" aria-labelledby="totals-title">
+    <h2 id="totals-title">Summary</h2>
+    <dl>
+      <!--lit-part yibPaxTiLS4=--><div class="row">
     <dt><!--lit-part-->Subtotal<!--/lit-part--></dt>
     <dd data-component="price"><!--lit-part-->$100.00<!--/lit-part--></dd>
   </div><!--/lit-part-->
-        <!--lit-part--><!--/lit-part-->
-        <!--lit-part yibPaxTiLS4=--><div class="row">
+      <!--lit-part--><!--/lit-part-->
+      <!--lit-part yibPaxTiLS4=--><div class="row">
     <dt><!--lit-part-->Shipping<!--/lit-part--></dt>
     <dd data-component="price"><!--lit-part-->$0.00<!--/lit-part--></dd>
   </div><!--/lit-part--> <!--lit-part yibPaxTiLS4=--><div class="row">
     <dt><!--lit-part-->Tax<!--/lit-part--></dt>
     <dd data-component="price"><!--lit-part-->$4.00<!--/lit-part--></dd>
   </div><!--/lit-part-->
-        <div class="row total">
-          <dt>Total charged</dt>
-          <dd data-component="price"><!--lit-part-->$104.00<!--/lit-part--></dd>
-        </div>
-      </dl>
-      <!--lit-part nQCu8u01NL4=--><p>
-              Paid with <!--lit-part-->Visa<!--/lit-part--> ending <!--lit-part-->4242<!--/lit-part-->.
-            </p><!--/lit-part-->
-    </section>
+      <div class="row total">
+        <dt>Total charged</dt>
+        <dd data-component="price"><!--lit-part-->$104.00<!--/lit-part--></dd>
+      </div>
+      <!--lit-part--><!--/lit-part-->
+    </dl>
+    <!--lit-part 3Q3WuQ0274U=--><p>
+            Paid with <!--lit-part-->Visa<!--/lit-part--> ending <!--lit-part-->4242<!--/lit-part-->.
+          </p><!--/lit-part-->
+  </section>
+<!--/lit-part-->
 
     <p class="next"><a href="/">Continue shopping</a></p>
   </article>

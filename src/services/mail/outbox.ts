@@ -4,6 +4,7 @@ import { desc, eq } from 'drizzle-orm';
 import type { Db } from '../../db/client.js';
 import { outbox } from '../../db/schema.js';
 import type { MailMessage } from './templates.js';
+import { lockedWrite } from '../../db/tx.js';
 
 export interface StoredMail extends MailMessage {
   readonly id: number;
@@ -21,15 +22,17 @@ export interface Mailer {
 export function createMailer(db: Db): Mailer {
   return {
     send: async (message) => {
-      const [row] = await db
-        .insert(outbox)
-        .values({
-          to: message.to,
-          subject: message.subject,
-          text: message.text,
-          html: message.html,
-        })
-        .returning({ id: outbox.id });
+      const [row] = await lockedWrite(db, (w) =>
+        w
+          .insert(outbox)
+          .values({
+            to: message.to,
+            subject: message.subject,
+            text: message.text,
+            html: message.html,
+          })
+          .returning({ id: outbox.id }),
+      );
       if (row === undefined) throw new Error('outbox insert returned no row');
       return row.id;
     },
