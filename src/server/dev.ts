@@ -30,6 +30,7 @@ const ssr = getRequestListener(async (request) => {
       security: { dev: config.NODE_ENV === 'development' },
       services: {
         paymentLatencyMs: config.PAYMENT_LATENCY_MS,
+        timeZone: config.STORE_TIME_ZONE,
         ...(config.APP_SECRET === undefined ? {} : { secret: config.APP_SECRET }),
       },
     })

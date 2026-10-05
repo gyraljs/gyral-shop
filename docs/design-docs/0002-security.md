@@ -125,3 +125,19 @@ at start and then hourly it deletes expired sessions and the guest carts they or
 with neither a session nor a member can never be reached again; its lines and checkout draft
 cascade). Writes go through the write lock; a slow run never overlaps the next. `pnpm db:purge`
 runs it once by hand.
+
+## Addendum: origin checks behind a reverse proxy (shop-gsi, 2026-10-05)
+
+Behind a proxy the request URL is internal (`http://127.0.0.1:…`), so comparing the browser's
+`Origin` with it would refuse every legitimate form post. Both the CSRF origin check and the
+origin-verified consent POST accept an origin from `acceptedOrigins()`
+(`src/server/security/request.ts`):
+
+- the request URL's own origin (direct access, tests);
+- `SITE_ORIGIN` when configured (set it in production: it is the public origin);
+- only when `trustProxy` is set, the origin the proxy forwards (`X-Forwarded-Proto` +
+  `X-Forwarded-Host`). Never enable `trustProxy` unless a proxy you control sets these
+  headers: otherwise a client could claim any origin.
+
+Without `SITE_ORIGIN` or `trustProxy`, a public origin that differs from the request URL is
+refused (no guessing). Tests: `test/node/proxy-origin.test.ts`.

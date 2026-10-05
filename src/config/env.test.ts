@@ -44,4 +44,10 @@ describe('config', () => {
       }).SITE_ORIGIN,
     ).toBe('https://shop.example');
   });
+
+  it('validates STORE_TIME_ZONE as an IANA zone, defaulting to New York', () => {
+    expect(loadConfig({}).STORE_TIME_ZONE).toBe('America/New_York');
+    expect(loadConfig({ STORE_TIME_ZONE: 'Europe/Berlin' }).STORE_TIME_ZONE).toBe('Europe/Berlin');
+    expect(() => loadConfig({ STORE_TIME_ZONE: 'Eastern' })).toThrow(/STORE_TIME_ZONE/);
+  });
 });

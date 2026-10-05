@@ -22,3 +22,6 @@ export const dateTime = new Intl.DateTimeFormat('en-US', {
   timeStyle: 'short',
   timeZone: 'UTC',
 });
+
+/** A date without a time, for promo windows: "Nov 27, 2026". */
+export const dateOnly = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' });

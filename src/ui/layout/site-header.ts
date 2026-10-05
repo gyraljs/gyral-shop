@@ -1,8 +1,7 @@
-import { define, html, nothing, repeat } from '@gyral/core';
+import { define, html, nothing, repeat, send, type Stateless } from '@gyral/core';
 import '../cart/mini-cart.js';
 import './search-box.js';
-import { get } from '@gyral/http';
-import * as v from 'valibot';
+import { loadedMe, meStore } from '../me/store.js';
 import { csrfField } from '../forms/csrf.js';
 
 /** The signed-in member, as far as the header needs to know. */
@@ -34,20 +33,6 @@ export interface HeaderProps {
   readonly personalize?: boolean;
 }
 
-/** The account fetched on prerendered pages (undefined until known, null for a guest). */
-interface HeaderState {
-  readonly fetched: AccountSummary | null | undefined;
-}
-
-type HeaderMsg = { readonly _tag: 'Me'; readonly account: AccountSummary | null };
-
-const MeSchema = v.object({
-  account: v.nullable(v.object({ firstName: v.string(), csrfToken: v.string() })),
-});
-
-/** Kept in sync with src/server/routes/me.ts (ui may not import server code). */
-const ME_PATH = '/api/me';
-
 /**
  * The site header: brand, search, account and cart entry points, department navigation.
  * Every part works without JavaScript (links, a GET form, a <details> account menu and a POST
@@ -72,7 +57,8 @@ const accountLinks = (account: AccountSummary | undefined) =>
         </ul>
       </details>`;
 
-export const SiteHeader = define<HeaderState, HeaderMsg, HeaderProps>('shop-header', {
+export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
+  stores: [meStore],
   props: {
     departments: { attribute: false, default: [] },
     query: { type: String },
@@ -80,29 +66,17 @@ export const SiteHeader = define<HeaderState, HeaderMsg, HeaderProps>('shop-head
     account: { attribute: false },
     personalize: { type: Boolean },
   },
-  init: () => ({ fetched: undefined }),
   intent: {},
   update: {
+    // Static pages: ask the shared visitor store (one /api/me request per page, shop-7bj).
     Hydrated: (s, _m, { props }) =>
-      props.personalize === true
-        ? [
-            s,
-            [
-              get(ME_PATH, {
-                schema: MeSchema,
-                onSuccess: ({ account }): HeaderMsg => ({ _tag: 'Me', account }),
-                key: 'me',
-              }),
-            ],
-          ]
-        : s,
-    Me: (s, m) => ({ ...s, fetched: m.account }),
+      props.personalize === true ? [s, [send(meStore, { _tag: 'Load' })]] : s,
   },
   // Light DOM (ADR 0006 rule 5): themes re-lay out the header with document CSS
   // (src/ui/styles/header.ts). Search and mini-cart are nested components; Gyral hydrates
   // light-DOM children in place and keeps their seeds (Gyral ADR 0014 addendum).
   shadow: false,
-  view: (s, _i, { props }) => html`
+  view: (_s, _i, { props, read }) => html`
     <header data-region="header">
       <div class="bar" data-region="masthead">
         <a class="brand" href="/" aria-label="Gyral Goods home" data-component="brand"
@@ -110,7 +84,7 @@ export const SiteHeader = define<HeaderState, HeaderMsg, HeaderProps>('shop-head
         >
         <shop-search query=${props.query ?? ''}></shop-search>
         <nav class="utility" aria-label="Account and cart" data-region="account">
-          ${accountLinks(props.account ?? s.fetched ?? undefined)}
+          ${accountLinks(props.account ?? loadedMe(read(meStore))?.account ?? undefined)}
           <shop-mini-cart data-region="cart"></shop-mini-cart>
         </nav>
       </div>

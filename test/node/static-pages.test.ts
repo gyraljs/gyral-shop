@@ -54,6 +54,7 @@ describe('static (ssg) content pages', () => {
     expect(await res.json()).toEqual({
       account: { firstName: 'Grace', csrfToken: member.session.csrfToken },
       consentDecided: false,
+      analytics: false,
     });
   });
 });

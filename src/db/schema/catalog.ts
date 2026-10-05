@@ -7,6 +7,8 @@ export const departments = sqliteTable('departments', {
   name: text('name').notNull(),
   description: text('description').notNull().default(''),
   position: integer('position').notNull().default(0),
+  /** Hidden from shoppers (admin taxonomy); only allowed with no live products. */
+  archived: bool('archived').notNull().default(false),
 });
 
 export const categories = sqliteTable(
@@ -19,6 +21,7 @@ export const categories = sqliteTable(
     slug: text('slug').notNull(),
     name: text('name').notNull(),
     position: integer('position').notNull().default(0),
+    archived: bool('archived').notNull().default(false),
   },
   (t) => [uniqueIndex('categories_department_slug').on(t.departmentId, t.slug)],
 );
@@ -27,6 +30,7 @@ export const brands = sqliteTable('brands', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   slug: text('slug').notNull().unique(),
   name: text('name').notNull(),
+  archived: bool('archived').notNull().default(false),
 });
 
 export const products = sqliteTable(

@@ -50,6 +50,13 @@
       "when": 1791171056571,
       "tag": "0006_taxonomy_reindex",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1791173766200,
+      "tag": "0007_taxonomy_archive",
+      "breakpoints": true
     }
   ]
 }

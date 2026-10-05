@@ -27,6 +27,7 @@ beforeAll(async () => {
       ? JSON.stringify({
           account: { firstName: 'Grace', csrfToken: 'token-from-api' },
           consentDecided: true,
+          analytics: false,
         })
       : cartJson;
     return Promise.resolve(new Response(body, { headers: { 'content-type': 'application/json' } }));
@@ -50,7 +51,8 @@ describe('a prerendered page', () => {
       },
       { timeout: 3000 },
     );
-    // The header and the deferred consent banner both ask /api/me; Grace already chose.
+    // The header and the deferred consent banner share ONE /api/me request (shop-7bj).
+    expect(requests.filter((p) => p === '/api/me')).toHaveLength(1);
     expect([...new Set(requests)].sort()).toEqual(['/api/cart', '/api/me']);
     expect(
       page.root.querySelector('shop-consent')?.querySelector('[data-region="consent"]'),

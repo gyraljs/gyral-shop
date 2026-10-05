@@ -18,6 +18,7 @@ import { productRoutes } from './routes/product.js';
 import { cartPageRoutes } from './routes/cart-page.js';
 import { checkoutRoutes } from './routes/checkout.js';
 import { orderRoutes } from './routes/orders.js';
+import { adminShell } from './admin-document.js';
 import { adminRoutes } from './routes/admin.js';
 import { cartStoreFor } from './cart-seed.js';
 import { wishlistStoreFor } from './wishlist-seed.js';
@@ -25,6 +26,7 @@ import { wishlistRoutes } from './routes/wishlist.js';
 import { searchRoutes } from './routes/search.js';
 import { reviewRoutes } from './routes/reviews.js';
 import { meRoutes } from './routes/me.js';
+import { analyticsRoutes } from './routes/analytics.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
 import { placeholderSvg } from './placeholder-image.js';
@@ -79,9 +81,14 @@ export function createApp({
     db,
     now: () => clock?.() ?? new Date(),
   });
-  // Departments appear in every page's header; they change rarely, so load once per app.
-  let departments: Promise<readonly DepartmentLink[]> | undefined;
-  const nav = () => (departments ??= departmentLinks(db));
+  // Departments appear in every page's header; they change rarely, so load once per app and
+  // again only after an admin changes the catalog structure.
+  let departments: { version: number; list: Promise<readonly DepartmentLink[]> } | undefined;
+  const nav = () => {
+    const version = services.catalog.version();
+    if (departments?.version !== version) departments = { version, list: departmentLinks(db) };
+    return departments.list;
+  };
   const page = async (o: PageOptions) => {
     // Prerendered pages are the same for everyone: no account, token or cart in the HTML.
     if (o.static === true) return shell({ ...o, clientEntry, departments: await nav() });
@@ -174,13 +181,14 @@ export function createApp({
   app.route('/', productRoutes({ db, render: page }));
   app.route('/', reviewRoutes({ db, render: page }));
   app.route('/', meRoutes());
+  app.route('/', analyticsRoutes(db));
   app.route('/', searchRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));
   app.route('/', cartPageRoutes({ render: page }));
   app.route('/', checkoutRoutes({ db, render: page, services }));
   app.route('/', orderRoutes({ services, render: page }));
   app.route('/', wishlistRoutes({ db, render: page }));
-  app.route('/', adminRoutes({ services, render: page }));
+  app.route('/', adminRoutes({ services, render: (o) => adminShell({ ...o, clientEntry }) }));
   if (mode !== 'production') app.route('/dev/mail', devMailRoutes(services.mailer, page));
 
   app.notFound(async (c) =>

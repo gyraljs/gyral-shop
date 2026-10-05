@@ -3,15 +3,13 @@
 // IntentRejected (bad refund amount), or 409 `{ error: 'conflict', message }`.
 import { Hono, type Context } from 'hono';
 import { formAction, rejectWith } from '@gyral/ssr';
-import type { IntentRejected } from '@gyral/core';
 import * as v from 'valibot';
 import { OrderStatusSchema, parseDollars } from '../../domain/admin.js';
 import type { Services } from '../../services/container.js';
 import { adminOrder, changeOrder, listOrders } from '../../services/admin-orders.js';
 import { TransitionForm } from '../../ui/admin/schemas.js';
 import { requireAdmin, type AppEnv } from '../security/index.js';
-import { NO_STORE } from './admin-http.js';
-import { adminFailure } from './admin-products.js';
+import { adminFailure, asJson, NO_STORE } from './admin-http.js';
 
 type C = Context<AppEnv>;
 
@@ -26,12 +24,6 @@ const ListQuery = v.object({
 });
 
 const DAY_MS = 86_400_000;
-
-const asJson = (rejected: IntentRejected) =>
-  Response.json(
-    { _tag: rejected._tag, intent: rejected.intent, issues: rejected.issues },
-    { status: 422, headers: NO_STORE },
-  );
 
 export function adminOrderRoutes(services: Services): Hono<AppEnv> {
   const routes = new Hono<AppEnv>();

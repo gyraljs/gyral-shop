@@ -60,6 +60,24 @@ describe('admin access', () => {
     expect(home).toMatch(/<title>Dashboard — Admin — /);
     expect(home).toContain('aria-current="page"');
   });
+
+  it('uses the admin shell: no storefront header, cart, consent banner or footer', async () => {
+    const body = await (await admin.get('/admin/products')).text();
+    for (const storefront of ['<shop-header', '<shop-mini-cart', '<shop-consent', '<footer']) {
+      expect(body, storefront).not.toContain(storefront);
+    }
+    expect(body).toContain('data-region="admin-header"');
+    expect(body).toMatch(/Signed in as\s*(<!--[^>]*-->)?\s*Ada Admin/);
+    expect(body).toContain('href="/" data-component="admin-store-link"');
+    // Signing out is a real POST form with the session's CSRF token.
+    const token = /<meta name="csrf-token" content="([^"]+)"/.exec(body)?.[1] ?? '';
+    expect(token).not.toBe('');
+    expect(body).toMatch(/action="\/account\/logout"[^>]*data-component="admin-sign-out"/);
+    expect(body).toContain(`name="_csrf" value="${token}"`);
+    const out = await admin.postForm('/account/logout');
+    expect(out.status).toBe(303);
+    expect((await admin.get('/admin')).status).toBe(303);
+  });
 });
 
 describe('dashboard', () => {
@@ -102,5 +120,18 @@ describe('dashboard', () => {
     expect(d.sales.today).toEqual({ orders: 0, cents: 0 });
     expect(d.byStatus).toEqual([]);
     expect(d.topProducts).toEqual([]);
+  });
+
+  it('counts "today" from midnight in the store time zone, not UTC', async () => {
+    const number = await placeOrder(customer, { sku: SKU.lego, qty: 1 });
+    // 02:00Z on Oct 4 is 22:00 on Oct 3 in New York: today in UTC, yesterday for the store.
+    await test.db
+      .update(orders)
+      .set({ createdAt: new Date('2026-10-04T02:00:00Z') })
+      .where(eq(orders.number, number));
+    const body = v.parse(DashboardSchema, (await getJson(admin, '/api/admin/dashboard')).body);
+    expect(body.timeZone).toBe('America/New_York');
+    expect(body.sales.today.orders).toBe(0);
+    expect(body.sales.week.orders).toBe(1);
   });
 });

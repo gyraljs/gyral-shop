@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { isTimeZone } from '../domain/time-zone.js';
 
 /** An http(s) URL with nothing after the host (valibot keeps checking after a failed url()). */
 function isBareOrigin(s: string): boolean {
@@ -30,6 +31,11 @@ const Env = v.object({
       v.check(isBareOrigin, 'must be an http(s) origin without a path, e.g. https://shop.example'),
       v.transform((s) => new URL(s).origin),
     ),
+  ),
+  /** The store's IANA time zone: dashboard days and promo dates use its calendar. */
+  STORE_TIME_ZONE: v.optional(
+    v.pipe(v.string(), v.check(isTimeZone, 'Use an IANA time zone such as America/New_York.')),
+    'America/New_York',
   ),
   /** Signs values such as order-confirmation access cookies. Required in production. */
   APP_SECRET: v.optional(v.pipe(v.string(), v.minLength(32))),

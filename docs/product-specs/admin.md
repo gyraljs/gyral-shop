@@ -11,3 +11,16 @@
 - **Users**: list, search, promote/demote admin, disable account.
 - **Reviews**: hide/unhide.
 - Seed creates `admin@shop.test` (password printed by the seed script).
+
+## Implementation notes (shop-cw6.4 and follow-ups)
+
+- **Promo codes** (`/admin/promos`): status is computed (active, scheduled, expired, used up,
+  inactive); a usage limit can't drop below the times a code was used; only never-used codes can
+  be deleted, used ones are deactivated. Dates are store-time-zone days (ADR 0003 addendum).
+- **Users** (`/admin/users`): every change needs confirmation; admins can't demote or disable
+  themselves; the store always keeps an active admin (checked inside the write lock); role changes
+  and disabling end that member's sessions.
+- **Reviews** (`/admin/reviews`): hide or show; the product rating is recomputed.
+- **Departments & brands** (`/admin/taxonomy`): create, rename, archive, restore. Archived ones are
+  hidden from shoppers; archiving is refused while live products use them.
+- The admin has its own document shell (no storefront header, cart, consent banner or footer).

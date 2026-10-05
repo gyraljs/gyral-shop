@@ -7,15 +7,17 @@ import type { Services } from '../../services/container.js';
 import { adminDashboard } from '../../services/admin-dashboard.js';
 import { adminPageTitle } from '../../ui/admin/routes.js';
 import '../../ui/admin/app.js'; // registers <shop-admin> for the server render
-import type { RenderPage } from '../document.js';
+import type { AdminShellOptions } from '../admin-document.js';
 import { csrfTokenFor, requireAdmin, type AppEnv } from '../security/index.js';
 import { adminOrderRoutes } from './admin-orders.js';
+import { adminManageRoutes } from './admin-manage.js';
 import { adminProductRoutes } from './admin-products.js';
 import { forbidden, NO_STORE } from './admin-http.js';
 
 export interface AdminRoutesOptions {
   readonly services: Services;
-  readonly render: RenderPage;
+  /** The admin's own document shell (no storefront chrome); the app supplies the client entry. */
+  readonly render: (options: Omit<AdminShellOptions, 'clientEntry'>) => Response;
 }
 
 type C = Context<AppEnv>;
@@ -29,7 +31,7 @@ export function adminRoutes({ services, render }: AdminRoutesOptions): Hono<AppE
     const path = url.pathname + url.search;
     return render({
       title: adminPageTitle(path),
-      noindex: true,
+      name: c.get('user')?.name ?? 'admin',
       csrfToken: await csrfTokenFor(c),
       main: html`<noscript>
           <section class="admin-page" data-region="admin-nojs">
@@ -44,11 +46,17 @@ export function adminRoutes({ services, render }: AdminRoutesOptions): Hono<AppE
   routes.get('/admin/*', shell);
 
   routes.get('/api/admin/dashboard', async (c) => {
-    const result = await adminDashboard(services.db, c.get('user'), services.now());
+    const result = await adminDashboard(
+      services.db,
+      c.get('user'),
+      services.now(),
+      services.timeZone,
+    );
     return result.ok ? c.json(result.value, 200, NO_STORE) : forbidden(c);
   });
 
   routes.route('/', adminProductRoutes(services));
   routes.route('/', adminOrderRoutes(services));
+  routes.route('/', adminManageRoutes({ services }));
   return routes;
 }
