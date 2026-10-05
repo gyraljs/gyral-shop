@@ -2,7 +2,7 @@
 // is served by the real app (no client bundle in tests) and loaded in Chromium, so axe sees
 // the server-rendered markup (Declarative Shadow DOM included) that every visitor gets first.
 // Hydrated states are covered by the browser tests (test/browser/*), which also run axe.
-// Templates not covered here: /admin (client-rendered; covered by the admin suite) and
+// Templates not covered here: /admin (client-rendered; test/browser/admin*.test.ts run axe) and
 // /dev/mail (development tool, not a shopper page).
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
