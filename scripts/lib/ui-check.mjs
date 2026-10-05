@@ -82,6 +82,8 @@ export function validateScenario(name, scenario) {
     if (action === 'press' && typeof arg !== 'string') errors.push(`${at}: press takes a key name`);
     if (['click', 'fill', 'check', 'select', 'waitFor'].includes(action) && !isTarget(arg))
       errors.push(`${at}: ${action} takes a target with one of ${TARGET_KEYS.join(', ')}`);
+    if (step.viewport !== undefined && !VIEWPORTS.some((v) => v.name === step.viewport))
+      errors.push(`${at}: viewport must be one of ${VIEWPORTS.map((v) => v.name).join(', ')}`);
     if (['fill', 'select'].includes(action) && typeof step.value !== 'string')
       errors.push(`${at}: ${action} needs a string "value"`);
   });

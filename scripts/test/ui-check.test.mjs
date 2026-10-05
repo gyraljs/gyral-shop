@@ -45,6 +45,16 @@ describe('scenarios', () => {
     );
   });
 
+  it('accepts a per-step viewport limited to known viewports', () => {
+    const step = { click: { text: 'Filters' } };
+    expect(validateScenario('x', { path: '/', steps: [{ ...step, viewport: 'phone' }] })).toEqual(
+      [],
+    );
+    expect(
+      validateScenario('x', { path: '/', steps: [{ ...step, viewport: 'tablet' }] })[0],
+    ).toContain('viewport');
+  });
+
   it('resolves placeholders in paths, goto and fill values only', () => {
     const s = resolveScenario(
       {

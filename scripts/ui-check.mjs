@@ -277,7 +277,11 @@ async function checkPage(browser, p, base, runDir) {
         await page.goto(base + p.scenario.path, { waitUntil: 'networkidle' });
         const primary = viewport.name === PRIMARY.viewport && scheme === PRIMARY.scheme;
         if (primary || !p.scenario.once)
-          for (const step of p.scenario.steps) await runStep(page, base, step);
+          for (const step of p.scenario.steps) {
+            // A step may be limited to one viewport (e.g. opening a panel only phones collapse).
+            if (step.viewport === undefined || step.viewport === viewport.name)
+              await runStep(page, base, step);
+          }
         await page.waitForTimeout(250);
         shot.overflow = overflowFinding(await page.evaluate(measureOverflow));
         shot.axe = await runAxe(page);
