@@ -6,6 +6,7 @@ import { createServer as createViteServer } from 'vite';
 import { loadConfig } from '../config/env.js';
 import { openDb } from '../db/client.js';
 import { startPurgeSchedule } from '../services/maintenance.js';
+import { devAppOptions } from './dev-options.js';
 
 // One connection for the dev server's lifetime; run `pnpm db:reset` first.
 const config = loadConfig();
@@ -19,22 +20,12 @@ const vite = await createViteServer({
   appType: 'custom',
 });
 
+// Built once: per-request apps must share the secret (see dev-options.ts).
+const options = devAppOptions(config, db);
+
 const ssr = getRequestListener(async (request) => {
   const mod = (await vite.ssrLoadModule('/src/server/app.ts')) as typeof import('./app.js');
-  return mod
-    .createApp({
-      clientEntry: '/src/client/entry.ts',
-      db,
-      mode: config.NODE_ENV,
-      ...(config.SITE_ORIGIN === undefined ? {} : { siteOrigin: config.SITE_ORIGIN }),
-      security: { dev: config.NODE_ENV === 'development' },
-      services: {
-        paymentLatencyMs: config.PAYMENT_LATENCY_MS,
-        timeZone: config.STORE_TIME_ZONE,
-        ...(config.APP_SECRET === undefined ? {} : { secret: config.APP_SECRET }),
-      },
-    })
-    .fetch(request);
+  return mod.createApp(options).fetch(request);
 });
 
 http
