@@ -14,12 +14,13 @@ export const PRIMARY = { viewport: 'desktop', scheme: 'light' };
 /** Console messages that are expected in development and never fail a run. */
 export const IGNORED_CONSOLE = [/Lit is in dev mode/, /^\[vite\]/];
 
-const USAGE = `Usage: pnpm ui:check [page…] [--baseline] [--compare] [--threshold=0.1] [--max-diff=0.001] [--port=5800]
+const USAGE = `Usage: pnpm ui:check [page…] [--baseline] [--compare] [--threshold=0.1] [--max-diff=0.001] [--port=5800] [--theme=default]
   --baseline     save this run's screenshots as the baseline (.ui-check/baseline/)
   --compare      pixel-diff screenshots against the baseline; fail above --max-diff
   --threshold    per-pixel colour threshold for the diff, 0..1 (default 0.1)
   --max-diff     allowed ratio of differing pixels per screenshot (default 0.001)
-  --port         port for the shop dev server (default 5800, or UI_CHECK_PORT); HMR uses port+1`;
+  --port         port for the shop dev server (default 5800, or UI_CHECK_PORT); HMR uses port+1
+  --theme        run every page under this theme (sets the theme cookie; baselines are per theme)`;
 
 export function parseArgs(argv, env = {}) {
   const options = {
@@ -29,6 +30,7 @@ export function parseArgs(argv, env = {}) {
     threshold: 0.1,
     maxDiff: 0.001,
     port: Number(env['UI_CHECK_PORT'] ?? 5800),
+    theme: env['UI_CHECK_THEME'] ?? 'default',
   };
   const errors = [];
   for (const arg of argv) {
@@ -37,7 +39,11 @@ export function parseArgs(argv, env = {}) {
     else if (flag === '--baseline') options.baseline = true;
     else if (flag === '--compare') options.compare = true;
     else if (flag === '--help') errors.push('help');
-    else if (['--threshold', '--max-diff', '--port'].includes(flag ?? '')) {
+    else if (flag === '--theme') {
+      if (value === undefined || !/^[a-z0-9-]+$/.test(value))
+        errors.push(`${arg}: expects a theme name`);
+      else options.theme = value;
+    } else if (['--threshold', '--max-diff', '--port'].includes(flag ?? '')) {
       const n = Number(value);
       if (value === undefined || !Number.isFinite(n) || n < 0)
         errors.push(`${arg}: expects a number`);

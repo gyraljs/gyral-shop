@@ -119,3 +119,16 @@ describe('findings', () => {
     expect(report).toContain('![home desktop dark](home/desktop-dark.png)');
   });
 });
+
+describe('parseArgs --theme', () => {
+  it('defaults to the default theme and accepts a theme name', () => {
+    expect(parseArgs([], {}).options.theme).toBe('default');
+    expect(parseArgs(['--theme=supercenter'], {}).options.theme).toBe('supercenter');
+    expect(parseArgs([], { UI_CHECK_THEME: 'supercenter' }).options.theme).toBe('supercenter');
+  });
+
+  it('rejects a missing or malformed theme name', () => {
+    expect(parseArgs(['--theme'], {}).errors).toEqual(['--theme: expects a theme name']);
+    expect(parseArgs(['--theme=../x'], {}).errors).toHaveLength(1);
+  });
+});
