@@ -102,6 +102,38 @@ describe('database', () => {
     }
   });
 
+  it('opens file databases in WAL mode; reads proceed while a write transaction is open', async () => {
+    const dir = mkdtempSync(join(tmpdir(), 'shop-wal-'));
+    const url = `file:${join(dir, 'shop.db')}`;
+    try {
+      const db = await openDb(url);
+      await migrateDb(db);
+      expect((await db.run('PRAGMA journal_mode')).rows[0]?.[0]).toBe('wal');
+      expect((await db.run('PRAGMA synchronous')).rows[0]?.[0]).toBe(1); // NORMAL
+
+      let release: () => void = () => undefined;
+      const held = new Promise<void>((r) => {
+        release = r;
+      });
+      const writing = db.transaction(async (tx) => {
+        await tx.insert(brands).values({ slug: 'wal', name: 'WAL' });
+        await held; // keep the write transaction open while the reader runs
+      });
+      const reader = await openDb(url); // another connection, as another request might use
+      await expect(reader.select().from(brands)).resolves.toEqual([]); // the committed snapshot
+      release();
+      await writing;
+      expect(await reader.select().from(brands)).toHaveLength(1);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('keeps in-memory test databases in memory mode', async () => {
+    const db = await createTestDb();
+    expect((await db.run('PRAGMA journal_mode')).rows[0]?.[0]).toBe('memory');
+  });
+
   it('enforces foreign keys', async () => {
     const { db } = await smallCatalog();
     await expect(
