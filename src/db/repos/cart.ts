@@ -10,6 +10,7 @@ import {
   promoCodes,
   variants,
 } from '../schema.js';
+import { lockedWrite, writeTransaction } from '../tx.js';
 
 export interface CartRow {
   readonly id: number;
@@ -83,16 +84,23 @@ export async function createCart(
   db: Db,
   owner: { readonly sessionId: string } | { readonly userId: number },
 ): Promise<CartRow> {
-  const [row] = await db
-    .insert(carts)
-    .values('userId' in owner ? { userId: owner.userId } : { sessionId: owner.sessionId })
-    .returning(cartColumns);
-  if (row === undefined) throw new Error('createCart: insert returned no row');
+  // Idempotent: two concurrent first adds (a double click) for one owner must both get the
+  // same cart, not a unique-index error. The loser of the insert reads the winner's row.
+  const row = await lockedWrite(db, async (w) => {
+    const [inserted] = await w
+      .insert(carts)
+      .values('userId' in owner ? { userId: owner.userId } : { sessionId: owner.sessionId })
+      .onConflictDoNothing()
+      .returning(cartColumns);
+    if (inserted !== undefined) return inserted;
+    return 'userId' in owner ? findUserCart(w, owner.userId) : findSessionCart(w, owner.sessionId);
+  });
+  if (row === undefined) throw new Error('createCart: no cart after insert');
   return row;
 }
 
 export async function deleteCart(db: Db, cartId: number): Promise<void> {
-  await db.delete(carts).where(eq(carts.id, cartId));
+  await lockedWrite(db, (w) => w.delete(carts).where(eq(carts.id, cartId)));
 }
 
 /** Lines in the order they were added, joined with product, variant and first image. */
@@ -175,20 +183,22 @@ export async function putLine(
   variantId: number,
   quantity: number,
 ): Promise<void> {
-  if (quantity <= 0) {
-    await db
-      .delete(cartLines)
-      .where(and(eq(cartLines.cartId, cartId), eq(cartLines.variantId, variantId)));
-  } else {
-    await db
-      .insert(cartLines)
-      .values({ cartId, variantId, quantity })
-      .onConflictDoUpdate({
-        target: [cartLines.cartId, cartLines.variantId],
-        set: { quantity },
-      });
-  }
-  await db.update(carts).set({ updatedAt: new Date() }).where(eq(carts.id, cartId));
+  await writeTransaction(db, async (tx) => {
+    if (quantity <= 0) {
+      await tx
+        .delete(cartLines)
+        .where(and(eq(cartLines.cartId, cartId), eq(cartLines.variantId, variantId)));
+    } else {
+      await tx
+        .insert(cartLines)
+        .values({ cartId, variantId, quantity })
+        .onConflictDoUpdate({
+          target: [cartLines.cartId, cartLines.variantId],
+          set: { quantity },
+        });
+    }
+    await tx.update(carts).set({ updatedAt: new Date() }).where(eq(carts.id, cartId));
+  });
 }
 
 /** Replaces every line of a cart (used by the login merge). */
@@ -197,17 +207,18 @@ export async function replaceLines(
   cartId: number,
   lines: readonly { readonly variantId: number; readonly quantity: number }[],
 ): Promise<void> {
-  await db.delete(cartLines).where(eq(cartLines.cartId, cartId));
-  if (lines.length > 0) {
-    await db.insert(cartLines).values(lines.map((l) => ({ cartId, ...l })));
-  }
+  await writeTransaction(db, async (tx) => {
+    await tx.delete(cartLines).where(eq(cartLines.cartId, cartId));
+    if (lines.length > 0) {
+      await tx.insert(cartLines).values(lines.map((l) => ({ cartId, ...l })));
+    }
+  });
 }
 
 export async function setPromoCode(db: Db, cartId: number, code: string | null): Promise<void> {
-  await db
-    .update(carts)
-    .set({ promoCode: code, updatedAt: new Date() })
-    .where(eq(carts.id, cartId));
+  await lockedWrite(db, (w) =>
+    w.update(carts).set({ promoCode: code, updatedAt: new Date() }).where(eq(carts.id, cartId)),
+  );
 }
 
 export async function findPromo(db: Db, code: string): Promise<PromoRow | undefined> {

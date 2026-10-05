@@ -26,6 +26,8 @@ export interface OrderView {
     readonly tax: Money;
     readonly total: Money;
   };
+  /** Refunded so far (cancellations, admin refunds). */
+  readonly refunded: Money;
   readonly promoCode: string | null;
   readonly address: OrderRow['shippingAddress'];
   readonly shipping: {
@@ -64,6 +66,7 @@ export async function findOrderView(db: Db, number: string): Promise<OrderView |
       tax: usd(order.taxCents),
       total: usd(order.totalCents),
     },
+    refunded: usd(order.refundedCents),
     promoCode: order.promoCode,
     address: order.shippingAddress,
     shipping: { label, ...estimatedDelivery(method, order.createdAt) },

@@ -22,6 +22,7 @@ import { normalizeCode, promoErrorMessage } from '../domain/promos.js';
 import { err, ok, type Result } from '../domain/result.js';
 import { promoFromRow } from '../db/mapping.js';
 import { buildCartView, emptyCartView, type CartView } from './cart-view.js';
+import { writeTransaction } from '../db/tx.js';
 
 /** Who the cart belongs to: a member (by user) or a guest (by session). */
 export type CartOwner =
@@ -170,7 +171,7 @@ export async function mergeGuestCart(
   sessionId: string,
   userId: number,
 ): Promise<readonly MergeAdjustment[]> {
-  return db.transaction(async (txn) => {
+  return writeTransaction(db, async (txn) => {
     // A transaction has the same query API as the database for everything used here.
     const tx = txn as unknown as Db;
     const guest = await findSessionCart(tx, sessionId);
