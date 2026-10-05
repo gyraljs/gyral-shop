@@ -23,7 +23,7 @@ export const aboutPage = () =>
         ${SITE_NAME} is a demonstration department store. Everything from electronics to groceries
         is generated sample data; nothing is for sale and no order is ever shipped.
       </p>
-      <section aria-labelledby="why">
+      <section data-region="why" aria-labelledby="why">
         <h2 id="why">Why it exists</h2>
         <p>
           It shows a complete, realistic web application built with
@@ -32,7 +32,7 @@ export const aboutPage = () =>
           themeable interface.
         </p>
       </section>
-      <section aria-labelledby="how">
+      <section data-region="how" aria-labelledby="how">
         <h2 id="how">How it's built</h2>
         <ul>
           <li>Semantic HTML first; every page works with JavaScript turned off.</li>
@@ -91,21 +91,21 @@ export const termsPage = () =>
     html`<p>
         <small>Last updated <time datetime=${UPDATED}>4 October 2026</time></small>
       </p>
-      <section aria-labelledby="t-demo">
+      <section data-region="t-demo" aria-labelledby="t-demo">
         <h2 id="t-demo">A demonstration only</h2>
         <p>
           ${SITE_NAME} is a demonstration. Products, prices and reviews are generated. No contract
           of sale is formed and no goods or payments change hands.
         </p>
       </section>
-      <section aria-labelledby="t-accounts">
+      <section data-region="t-accounts" aria-labelledby="t-accounts">
         <h2 id="t-accounts">Accounts</h2>
         <p>
           Don't use a real password you use elsewhere. Accounts and data may be reset at any time
           without notice.
         </p>
       </section>
-      <section aria-labelledby="t-use">
+      <section data-region="t-use" aria-labelledby="t-use">
         <h2 id="t-use">Acceptable use</h2>
         <p>Please don't try to break the site for anyone else, or submit others' personal data.</p>
       </section>`,
@@ -117,7 +117,7 @@ export const privacyPage = () =>
     html`<p>
         <small>Last updated <time datetime=${UPDATED}>4 October 2026</time></small>
       </p>
-      <section aria-labelledby="p-collect">
+      <section data-region="p-collect" aria-labelledby="p-collect">
         <h2 id="p-collect">What we keep</h2>
         <dl>
           <dt>Account details</dt>
@@ -131,7 +131,7 @@ export const privacyPage = () =>
           </dd>
         </dl>
       </section>
-      <section aria-labelledby="p-share">
+      <section data-region="p-share" aria-labelledby="p-share">
         <h2 id="p-share">Sharing</h2>
         <p>Nothing is shared or sold. Emails are never sent: they stay in a local mailbox.</p>
       </section>`,

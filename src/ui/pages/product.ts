@@ -67,7 +67,7 @@ const ratingSummary = (view: ProductView) =>
 const specsTable = (specs: ProductView['specs']) =>
   specs.length === 0
     ? nothing
-    : html`<section aria-labelledby="specs-title" class="product-section">
+    : html`<section data-region="specs" aria-labelledby="specs-title" class="product-section">
         <h2 id="specs-title">Specifications</h2>
         <table class="specs">
           <tbody>
@@ -94,13 +94,18 @@ export interface ProductPageOptions {
 /** The product detail page: gallery, buy box, description, specs, reviews, related. */
 export const productPage = (view: ProductView, options: ProductPageOptions = {}) => html`
   ${breadcrumbs(productCrumbs(view))}
-  <div class="product">
-    <shop-gallery class="product-gallery" .images=${view.images}></shop-gallery>
-    <div class="product-info">
+  <div class="product" data-region="product">
+    <shop-gallery
+      class="product-gallery"
+      data-region="gallery"
+      .images=${view.images}
+    ></shop-gallery>
+    <div class="product-info" data-region="product-info">
       <p class="brand">${view.brand}</p>
       <h1>${view.name}</h1>
       ${ratingSummary(view)}
       <shop-buy-box
+        data-region="buy-box"
         .variants=${view.variants}
         action=${options.action ?? nothing}
         csrf=${options.csrf ?? nothing}
@@ -113,7 +118,7 @@ export const productPage = (view: ProductView, options: ProductPageOptions = {})
       ></shop-wish-toggle>
     </div>
   </div>
-  <section aria-labelledby="description-title" class="product-section">
+  <section data-region="description" aria-labelledby="description-title" class="product-section">
     <h2 id="description-title">About this item</h2>
     <p>${view.description}</p>
   </section>

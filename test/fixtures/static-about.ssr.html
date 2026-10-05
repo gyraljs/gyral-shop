@@ -234,7 +234,7 @@
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
   }
   .product-card {
-    container-type: inline-size;
+    container: card / inline-size;
     display: grid; align-content: start; gap: var(--space-1);
     /* No content-visibility here: card height depends on the column width, so any
        contain-intrinsic-size estimate is wrong somewhere, and skipped cards then overlap their
@@ -1466,11 +1466,11 @@ shop-checkout {
       <h1 id="title"><!--lit-part-->About Gyral Goods<!--/lit-part--></h1>
       <!--lit-part 2GOdZYhGUAk=--><p class="lead"><!--lit-part-->A store that is really a showcase.<!--/lit-part--></p><!--/lit-part-->
     </header>
-    <!--lit-part 4OgCJ0o5cY4=--><p>
+    <!--lit-part +ajAyEU/eBw=--><p>
         <!--lit-part-->Gyral Goods<!--/lit-part--> is a demonstration department store. Everything from electronics to groceries
         is generated sample data; nothing is for sale and no order is ever shipped.
       </p>
-      <section aria-labelledby="why">
+      <section data-region="why" aria-labelledby="why">
         <h2 id="why">Why it exists</h2>
         <p>
           It shows a complete, realistic web application built with
@@ -1479,7 +1479,7 @@ shop-checkout {
           themeable interface.
         </p>
       </section>
-      <section aria-labelledby="how">
+      <section data-region="how" aria-labelledby="how">
         <h2 id="how">How it's built</h2>
         <ul>
           <li>Semantic HTML first; every page works with JavaScript turned off.</li>

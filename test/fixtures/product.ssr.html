@@ -234,7 +234,7 @@
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
   }
   .product-card {
-    container-type: inline-size;
+    container: card / inline-size;
     display: grid; align-content: start; gap: var(--space-1);
     /* No content-visibility here: card height depends on the column width, so any
        contain-intrinsic-size estimate is wrong somewhere, and skipped cards then overlap their
@@ -1534,7 +1534,7 @@ shop-checkout {
         <!--gyral:lit-part--><!--gyral:/lit-part-->
       </section>
     <!--gyral:/lit-part--></shop-consent><!--/lit-part-->
-        <main id="main" class="page" tabindex="-1"><!--lit-part gNALB/UCcJQ=-->
+        <main id="main" class="page" tabindex="-1"><!--lit-part g6hFaV9r8kI=-->
   <!--lit-part 65Yp3GYlcSg=-->
   <nav class="breadcrumbs" aria-label="Breadcrumb">
     <ol>
@@ -1542,8 +1542,12 @@ shop-checkout {
     </ol>
   </nav>
 <!--/lit-part-->
-  <div class="product">
-    <!--lit-node 2--><shop-gallery   class="product-gallery" data-gyral-seed="{&quot;props&quot;:{&quot;images&quot;:[{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/1.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket&quot;},{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/2.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket, view 2&quot;},{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/3.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket, view 3&quot;},{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/4.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket, view 4&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+  <div class="product" data-region="product">
+    <!--lit-node 2--><shop-gallery
+      
+      
+      
+     class="product-gallery" data-region="gallery" data-gyral-seed="{&quot;props&quot;:{&quot;images&quot;:[{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/1.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket&quot;},{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/2.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket, view 2&quot;},{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/3.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket, view 3&quot;},{&quot;url&quot;:&quot;/img/p/fieldstone-fantastic-rain-jacket-27/4.svg&quot;,&quot;alt&quot;:&quot;Fieldstone Fantastic Rain Jacket, view 4&quot;}]}}"><template shadowroot="open" shadowrootmode="open"><style>
     @layer components {
       :host {
         display: block;
@@ -1625,11 +1629,11 @@ shop-checkout {
         white-space: nowrap;
       }
     }
-  </style><!--lit-part 7pfKujJKhLU=-->
-      <div class="gallery">
-        <div class="views">
-          <!--lit-part--><!--lit-part CT3/cC6ZjaY=-->
-              <figure class="view">
+  </style><!--lit-part 5XirEY99Yls=-->
+      <div part="gallery" class="gallery">
+        <div part="views" class="views">
+          <!--lit-part--><!--lit-part IL9ORmDEaf0=-->
+              <figure part="view" class="view">
                 <!--lit-node 1--><img
                   src="/img/p/fieldstone-fantastic-rain-jacket-27/1.svg"
                   alt="Fieldstone Fantastic Rain Jacket"
@@ -1640,8 +1644,8 @@ shop-checkout {
                   decoding="async"
                 />
               </figure>
-            <!--/lit-part--><!--lit-part CT3/cC6ZjaY=-->
-              <figure class="view">
+            <!--/lit-part--><!--lit-part IL9ORmDEaf0=-->
+              <figure part="view" class="view">
                 <!--lit-node 1--><img
                   src="/img/p/fieldstone-fantastic-rain-jacket-27/2.svg"
                   alt="Fieldstone Fantastic Rain Jacket, view 2"
@@ -1652,8 +1656,8 @@ shop-checkout {
                   decoding="async"
                 />
               </figure>
-            <!--/lit-part--><!--lit-part CT3/cC6ZjaY=-->
-              <figure class="view">
+            <!--/lit-part--><!--lit-part IL9ORmDEaf0=-->
+              <figure part="view" class="view">
                 <!--lit-node 1--><img
                   src="/img/p/fieldstone-fantastic-rain-jacket-27/3.svg"
                   alt="Fieldstone Fantastic Rain Jacket, view 3"
@@ -1664,8 +1668,8 @@ shop-checkout {
                   decoding="async"
                 />
               </figure>
-            <!--/lit-part--><!--lit-part CT3/cC6ZjaY=-->
-              <figure class="view">
+            <!--/lit-part--><!--lit-part IL9ORmDEaf0=-->
+              <figure part="view" class="view">
                 <!--lit-node 1--><img
                   src="/img/p/fieldstone-fantastic-rain-jacket-27/4.svg"
                   alt="Fieldstone Fantastic Rain Jacket, view 4"
@@ -1678,11 +1682,11 @@ shop-checkout {
               </figure>
             <!--/lit-part--><!--/lit-part-->
         </div>
-        <!--lit-part xzVNtboK32k=-->
-                <fieldset class="thumbs">
+        <!--lit-part 5usNnxq3Ygs=-->
+                <fieldset part="thumbs" class="thumbs">
                   <legend class="visually-hidden">Choose an image</legend>
-                  <!--lit-part--><!--lit-part 19oFIszHXWQ=-->
-                      <label class="thumb">
+                  <!--lit-part--><!--lit-part v0GtFujtfLY=-->
+                      <label part="thumb" class="thumb">
                         <!--lit-node 1--><input
                           type="radio"
                           name="view"
@@ -1692,8 +1696,8 @@ shop-checkout {
                         />
                         <!--lit-node 2--><img src="/img/p/fieldstone-fantastic-rain-jacket-27/1.svg" alt="Fieldstone Fantastic Rain Jacket" width="96" height="96" />
                       </label>
-                    <!--/lit-part--><!--lit-part 19oFIszHXWQ=-->
-                      <label class="thumb">
+                    <!--/lit-part--><!--lit-part v0GtFujtfLY=-->
+                      <label part="thumb" class="thumb">
                         <!--lit-node 1--><input
                           type="radio"
                           name="view"
@@ -1703,8 +1707,8 @@ shop-checkout {
                         />
                         <!--lit-node 2--><img src="/img/p/fieldstone-fantastic-rain-jacket-27/2.svg" alt="Fieldstone Fantastic Rain Jacket, view 2" width="96" height="96" />
                       </label>
-                    <!--/lit-part--><!--lit-part 19oFIszHXWQ=-->
-                      <label class="thumb">
+                    <!--/lit-part--><!--lit-part v0GtFujtfLY=-->
+                      <label part="thumb" class="thumb">
                         <!--lit-node 1--><input
                           type="radio"
                           name="view"
@@ -1714,8 +1718,8 @@ shop-checkout {
                         />
                         <!--lit-node 2--><img src="/img/p/fieldstone-fantastic-rain-jacket-27/3.svg" alt="Fieldstone Fantastic Rain Jacket, view 3" width="96" height="96" />
                       </label>
-                    <!--/lit-part--><!--lit-part 19oFIszHXWQ=-->
-                      <label class="thumb">
+                    <!--/lit-part--><!--lit-part v0GtFujtfLY=-->
+                      <label part="thumb" class="thumb">
                         <!--lit-node 1--><input
                           type="radio"
                           name="view"
@@ -1727,11 +1731,13 @@ shop-checkout {
                       </label>
                     <!--/lit-part--><!--/lit-part-->
                 </fieldset>
-                <p class="status" role="status">Image <!--lit-part-->1<!--/lit-part--> of <!--lit-part-->4<!--/lit-part--></p>
+                <p part="status" class="status" role="status">
+                  Image <!--lit-part-->1<!--/lit-part--> of <!--lit-part-->4<!--/lit-part-->
+                </p>
               <!--/lit-part-->
       </div>
     <!--/lit-part--></template></shop-gallery>
-    <div class="product-info">
+    <div class="product-info" data-region="product-info">
       <p class="brand"><!--lit-part-->Fieldstone<!--/lit-part--></p>
       <h1><!--lit-part-->Fieldstone Fantastic Rain Jacket<!--/lit-part--></h1>
       <!--lit-part kCODePOGng4=--><p class="rating-summary">
@@ -1748,7 +1754,8 @@ shop-checkout {
         
         
         
-       action="/cart/add" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;variants&quot;:[{&quot;sku&quot;:&quot;CLO0027-01&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-02&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:0},{&quot;sku&quot;:&quot;CLO0027-03&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-04&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-05&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-06&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-07&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-08&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-09&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-10&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-11&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-12&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-13&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-14&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-15&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+        
+       data-region="buy-box" action="/cart/add" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;variants&quot;:[{&quot;sku&quot;:&quot;CLO0027-01&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-02&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:0},{&quot;sku&quot;:&quot;CLO0027-03&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-04&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-05&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Sage&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-06&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-07&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-08&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-09&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-10&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Navy&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-11&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;XS&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-12&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;S&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-13&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;M&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-14&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;L&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20},{&quot;sku&quot;:&quot;CLO0027-15&quot;,&quot;options&quot;:{&quot;Color&quot;:&quot;Charcoal&quot;,&quot;Size&quot;:&quot;XL&quot;},&quot;priceCents&quot;:2399,&quot;salePriceCents&quot;:1799,&quot;stock&quot;:20}]}}"><template shadowroot="open" shadowrootmode="open"><style>
 @layer components {
 :host { display: grid; gap: var(--space-3); }
 p { margin: 0; }
@@ -1807,21 +1814,21 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
   }
   .added.error { border-inline-start-color: var(--danger); }
 }
-</style><!--lit-part bvWg7Wf7eWo=-->
-      <!--lit-part avUzt7kyZQQ=--><p class="price sale">
+</style><!--lit-part sB9vxZLUiA0=-->
+      <!--lit-part RcBKAfFusYM=--><p part="price" class="price sale">
         <ins><span class="visually-hidden">Sale price </span><!--lit-part-->$17.99<!--/lit-part--></ins>
         <del><span class="visually-hidden">Was </span><!--lit-part-->$23.99<!--/lit-part--></del>
       </p><!--/lit-part-->
-      <!--lit-node 1--><p class="stock " role="status">
+      <!--lit-node 1--><p part="stock" class="stock " role="status">
         <!--lit-part 2KEDyxgwfiA=--><span class="label"><!--lit-part-->Sage / XS<!--/lit-part-->: </span><!--/lit-part--><!--lit-part-->In stock<!--/lit-part-->
       </p>
       <!--lit-node 4--><form method="post" action="/cart/add" data-intent="Add">
         <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--/lit-part-->
-        <!--lit-part mjfx+srT1HM=-->
-  <fieldset class="choices">
+        <!--lit-part wOlcgeIpy8E=-->
+  <fieldset part="choices" class="choices">
     <legend>Choose an option</legend>
-    <!--lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+    <!--lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1833,8 +1840,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Sage / XS<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1846,8 +1853,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Sage / S<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->Out of stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1859,8 +1866,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Sage / M<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1872,8 +1879,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Sage / L<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1885,8 +1892,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Sage / XL<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1898,8 +1905,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Navy / XS<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1911,8 +1918,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Navy / S<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1924,8 +1931,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Navy / M<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1937,8 +1944,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Navy / L<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1950,8 +1957,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Navy / XL<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1963,8 +1970,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Charcoal / XS<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1976,8 +1983,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Charcoal / S<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -1989,8 +1996,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Charcoal / M<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -2002,8 +2009,8 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
           <span><!--lit-part-->Charcoal / L<!--/lit-part--></span>
           <span class="meta"><!--lit-part-->$17.99<!--/lit-part--> · <!--lit-part-->In stock<!--/lit-part--></span>
         </label>
-      <!--/lit-part--><!--lit-part ZKhEOrYVtVE=-->
-        <label class="sku">
+      <!--/lit-part--><!--lit-part bZabLnY4KhY=-->
+        <label part="option" class="sku">
           <!--lit-node 1--><input
             type="radio"
             name="sku"
@@ -2018,9 +2025,10 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
       <!--/lit-part--><!--/lit-part-->
   </fieldset>
 <!--/lit-part-->
-        <p class="quantity">
+        <p part="quantity" class="quantity">
           <label for="quantity">Quantity</label>
           <!--lit-node 9--><input
+            part="quantity-input"
             id="quantity"
             name="quantity"
             type="number"
@@ -2032,7 +2040,7 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
             
           />
         </p>
-        <!--lit-node 10--><button type="submit" >
+        <!--lit-node 10--><button part="add-button" type="submit" >
           <!--lit-part-->Add to cart<!--/lit-part-->
         </button>
       </form>
@@ -2055,11 +2063,11 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
       ><!--gyral:/lit-part--></shop-wish-toggle>
     </div>
   </div>
-  <section aria-labelledby="description-title" class="product-section">
+  <section data-region="description" aria-labelledby="description-title" class="product-section">
     <h2 id="description-title">About this item</h2>
     <p><!--lit-part-->Our parrot-friendly Bike ensures graceful comfort for your pets Subvenio sursum ascit quod deficio. Argentum vicinus sponte at accedo voluptatem cubicularis doloribus.<!--/lit-part--></p>
   </section>
-  <!--lit-part EPyELgaaWOE=--><section aria-labelledby="specs-title" class="product-section">
+  <!--lit-part kvdNrmo38jE=--><section data-region="specs" aria-labelledby="specs-title" class="product-section">
         <h2 id="specs-title">Specifications</h2>
         <table class="specs">
           <tbody>

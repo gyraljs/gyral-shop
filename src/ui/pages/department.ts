@@ -32,11 +32,11 @@ export const departmentPage = (view: DepartmentView) => {
   const { department } = view;
   return html`
     ${breadcrumbs(departmentCrumbs(view))}
-    <header class="page-intro">
+    <header class="page-intro" data-region="page-intro">
       <h1>${department.name}</h1>
       ${department.description === '' ? nothing : html`<p>${department.description}</p>`}
     </header>
-    <section aria-labelledby="categories-title" class="card-section">
+    <section data-region="categories" aria-labelledby="categories-title" class="card-section">
       <h2 id="categories-title">Shop by category</h2>
       <ul class="category-grid">
         ${view.categories.map(

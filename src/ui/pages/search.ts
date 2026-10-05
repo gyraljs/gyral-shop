@@ -51,7 +51,11 @@ export const searchListing = (view: SearchResultsView): ListingView => ({
 });
 
 const departmentLinks = (departments: readonly DepartmentLinkView[]) => html`
-  <section aria-labelledby="search-departments-title" class="card-section">
+  <section
+    data-region="search-departments"
+    aria-labelledby="search-departments-title"
+    class="card-section"
+  >
     <h2 id="search-departments-title">Browse departments</h2>
     <ul class="category-grid">
       ${departments.map(
@@ -75,7 +79,7 @@ const suggestionsBlock = (suggestions: SearchSuggestionsView) => html`
 
 /** `/search` without a query: ask for one, and offer departments. */
 export const searchPrompt = (suggestions: SearchSuggestionsView) => html`
-  <header class="page-intro">
+  <header class="page-intro" data-region="page-intro">
     <h1>Search</h1>
     <p>Type what you’re looking for in the search box above: a product, a brand or a category.</p>
   </header>
@@ -84,7 +88,7 @@ export const searchPrompt = (suggestions: SearchSuggestionsView) => html`
 
 /** A query that matched nothing (search spec: "no results" page). */
 export const noResults = (q: string, suggestions: SearchSuggestionsView) => html`
-  <header class="page-intro">
+  <header class="page-intro" data-region="page-intro">
     <h1>${resultsHeading(q)}</h1>
     <p role="status">No products match “${q}”.</p>
     <p>Check the spelling, try fewer or more general words, or browse a department.</p>

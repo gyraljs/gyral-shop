@@ -234,7 +234,7 @@
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
   }
   .product-card {
-    container-type: inline-size;
+    container: card / inline-size;
     display: grid; align-content: start; gap: var(--space-1);
     /* No content-visibility here: card height depends on the column width, so any
        contain-intrinsic-size estimate is wrong somewhere, and skipped cards then overlap their
@@ -1526,7 +1526,7 @@ shop-checkout {
         <!--gyral:lit-part--><!--gyral:/lit-part-->
       </section>
     <!--gyral:/lit-part--></shop-consent><!--/lit-part-->
-        <main id="main" class="page" tabindex="-1"><!--lit-part gNALB/UCcJQ=-->
+        <main id="main" class="page" tabindex="-1"><!--lit-part g6hFaV9r8kI=-->
   <!--lit-part 65Yp3GYlcSg=-->
   <nav class="breadcrumbs" aria-label="Breadcrumb">
     <ol>
@@ -1534,8 +1534,12 @@ shop-checkout {
     </ol>
   </nav>
 <!--/lit-part-->
-  <div class="product">
-    <!--lit-node 2--><shop-gallery   class="product-gallery" data-gyral-seed="{&quot;props&quot;:{&quot;images&quot;:[]}}"><template shadowroot="open" shadowrootmode="open"><style>
+  <div class="product" data-region="product">
+    <!--lit-node 2--><shop-gallery
+      
+      
+      
+     class="product-gallery" data-region="gallery" data-gyral-seed="{&quot;props&quot;:{&quot;images&quot;:[]}}"><template shadowroot="open" shadowrootmode="open"><style>
     @layer components {
       :host {
         display: block;
@@ -1617,8 +1621,8 @@ shop-checkout {
         white-space: nowrap;
       }
     }
-  </style><!--lit-part A/KXMmocRpg=--><p class="none">No image available</p><!--/lit-part--></template></shop-gallery>
-    <div class="product-info">
+  </style><!--lit-part ijeuS7xnelk=--><p part="empty" class="none">No image available</p><!--/lit-part--></template></shop-gallery>
+    <div class="product-info" data-region="product-info">
       <p class="brand"><!--lit-part-->Acme<!--/lit-part--></p>
       <h1><!--lit-part-->LEGO<!--/lit-part--></h1>
       <!--lit-part kCODePOGng4=--><p class="rating-summary">
@@ -1635,7 +1639,8 @@ shop-checkout {
         
         
         
-       action="/cart/add" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;variants&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;options&quot;:{},&quot;priceCents&quot;:5000,&quot;salePriceCents&quot;:null,&quot;stock&quot;:18}]}}"><template shadowroot="open" shadowrootmode="open"><style>
+        
+       data-region="buy-box" action="/cart/add" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;variants&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;options&quot;:{},&quot;priceCents&quot;:5000,&quot;salePriceCents&quot;:null,&quot;stock&quot;:18}]}}"><template shadowroot="open" shadowrootmode="open"><style>
 @layer components {
 :host { display: grid; gap: var(--space-3); }
 p { margin: 0; }
@@ -1694,17 +1699,18 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
   }
   .added.error { border-inline-start-color: var(--danger); }
 }
-</style><!--lit-part bvWg7Wf7eWo=-->
-      <!--lit-part 1YTh/CTWXgo=--><p class="price"><!--lit-part-->$50.00<!--/lit-part--></p><!--/lit-part-->
-      <!--lit-node 1--><p class="stock " role="status">
+</style><!--lit-part sB9vxZLUiA0=-->
+      <!--lit-part 0X72hKcrvuQ=--><p part="price" class="price"><!--lit-part-->$50.00<!--/lit-part--></p><!--/lit-part-->
+      <!--lit-node 1--><p part="stock" class="stock " role="status">
         <!--lit-part--><!--/lit-part--><!--lit-part-->In stock<!--/lit-part-->
       </p>
       <!--lit-node 4--><form method="post" action="/cart/add" data-intent="Add">
         <!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--/lit-part-->
         <!--lit-part cbBRSgQDB18=--><!--lit-node 0--><input type="hidden" name="sku" value="LEGO-1" /><!--/lit-part-->
-        <p class="quantity">
+        <p part="quantity" class="quantity">
           <label for="quantity">Quantity</label>
           <!--lit-node 9--><input
+            part="quantity-input"
             id="quantity"
             name="quantity"
             type="number"
@@ -1716,7 +1722,7 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
             
           />
         </p>
-        <!--lit-node 10--><button type="submit" >
+        <!--lit-node 10--><button part="add-button" type="submit" >
           <!--lit-part-->Add to cart<!--/lit-part-->
         </button>
       </form>
@@ -1753,7 +1759,7 @@ button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
     </form><!--gyral:/lit-part--></shop-wish-toggle>
     </div>
   </div>
-  <section aria-labelledby="description-title" class="product-section">
+  <section data-region="description" aria-labelledby="description-title" class="product-section">
     <h2 id="description-title">About this item</h2>
     <p><!--lit-part--><!--/lit-part--></p>
   </section>

@@ -44,13 +44,13 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gall
   },
   view: (s, i, { props }) => {
     const images = props.images.slice(0, MAX_IMAGES);
-    if (images.length === 0) return html`<p class="none">No image available</p>`;
+    if (images.length === 0) return html`<p part="empty" class="none">No image available</p>`;
     return html`
-      <div class="gallery">
-        <div class="views">
+      <div part="gallery" class="gallery">
+        <div part="views" class="views">
           ${images.map(
             (image, n) => html`
-              <figure class="view">
+              <figure part="view" class="view">
                 <img
                   src=${image.url}
                   alt=${image.alt}
@@ -68,11 +68,11 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gall
           images.length < 2
             ? ''
             : html`
-                <fieldset class="thumbs">
+                <fieldset part="thumbs" class="thumbs">
                   <legend class="visually-hidden">Choose an image</legend>
                   ${images.map(
                     (image, n) => html`
-                      <label class="thumb">
+                      <label part="thumb" class="thumb">
                         <input
                           type="radio"
                           name="view"
@@ -85,7 +85,9 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gall
                     `,
                   )}
                 </fieldset>
-                <p class="status" role="status">Image ${s.index + 1} of ${images.length}</p>
+                <p part="status" class="status" role="status">
+                  Image ${s.index + 1} of ${images.length}
+                </p>
               `
         }
       </div>

@@ -20,7 +20,7 @@ const messages = (rejected: IntentRejected | undefined) =>
   rejected === undefined ? [] : [rejected];
 
 export const loginPage = ({ csrfToken, next, rejected }: AuthPageData) => html`
-  <section class="auth" aria-labelledby="title">
+  <section class="auth" aria-labelledby="title" data-region="auth">
     <h1 id="title">Sign in</h1>
     <shop-login
       csrf-token=${csrfToken}
@@ -33,7 +33,7 @@ export const loginPage = ({ csrfToken, next, rejected }: AuthPageData) => html`
 `;
 
 export const registerPage = ({ csrfToken, next, rejected }: AuthPageData) => html`
-  <section class="auth" aria-labelledby="title">
+  <section class="auth" aria-labelledby="title" data-region="auth">
     <h1 id="title">Create an account</h1>
     <shop-register
       csrf-token=${csrfToken}
@@ -53,7 +53,7 @@ export interface AccountPageData {
 
 /** The member's account landing page. Later beads add profile, addresses and orders. */
 export const accountPage = ({ name, email, role, csrfToken }: AccountPageData) => html`
-  <section class="account" aria-labelledby="title">
+  <section class="account" aria-labelledby="title" data-region="account">
     <h1 id="title">Your account</h1>
     <dl class="account-details">
       <dt>Name</dt>

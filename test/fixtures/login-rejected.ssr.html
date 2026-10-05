@@ -234,7 +234,7 @@
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
   }
   .product-card {
-    container-type: inline-size;
+    container: card / inline-size;
     display: grid; align-content: start; gap: var(--space-1);
     /* No content-visibility here: card height depends on the column width, so any
        contain-intrinsic-size estimate is wrong somewhere, and skipped cards then overlap their
@@ -1534,8 +1534,8 @@ shop-checkout {
         <!--gyral:lit-part--><!--gyral:/lit-part-->
       </section>
     <!--gyral:/lit-part--></shop-consent><!--/lit-part-->
-        <main id="main" class="page" tabindex="-1"><!--lit-part edoLAxtl9aE=-->
-  <section class="auth" aria-labelledby="title">
+        <main id="main" class="page" tabindex="-1"><!--lit-part r6MewJ0mPOs=-->
+  <section class="auth" aria-labelledby="title" data-region="auth">
     <h1 id="title">Sign in</h1>
     <!--lit-node 2--><shop-login
       

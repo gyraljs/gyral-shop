@@ -45,7 +45,7 @@ export const catalogCss = `
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
   }
   .product-card {
-    container-type: inline-size;
+    container: card / inline-size;
     display: grid; align-content: start; gap: var(--space-1);
     /* No content-visibility here: card height depends on the column width, so any
        contain-intrinsic-size estimate is wrong somewhere, and skipped cards then overlap their

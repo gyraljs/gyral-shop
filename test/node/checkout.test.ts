@@ -8,6 +8,7 @@ import { parseCheckout } from '../../src/ui/checkout/model.js';
 import { CSRF_FIELD, CSRF_HEADER } from '../../src/ui/forms/csrf.js';
 import { testApp, type TestApp } from '../support/app.js';
 import { guest, loginAs, type TestSession } from '../support/auth.js';
+import { pinTokens } from '../support/fixtures.js';
 import { insertCartFixture, SKU, T0 } from '../support/cart-fixture.js';
 
 let test: TestApp;
@@ -118,7 +119,8 @@ describe('no-JS steps', () => {
       cvc: '987',
     });
     expect(bad.status).toBe(422);
-    const page = await bad.text();
+    // The CSRF token is random base64url and can contain "987" by chance: pin it first.
+    const page = pinTokens(await bad.text());
     expect(page).toContain('Enter a valid card number.');
     expect(page).not.toContain('4242 4242 4242 4241');
     expect(page).not.toContain('987');

@@ -60,8 +60,8 @@ export const categoryPage = (view: CategoryView) => {
   const { department, category } = view;
   return html`
     ${breadcrumbs(categoryCrumbs(view))}
-    <div class="listing">
-      <nav class="listing-nav" aria-labelledby="listing-nav-title">
+    <div class="listing" data-region="category">
+      <nav data-region="listing-nav" class="listing-nav" aria-labelledby="listing-nav-title">
         <h2 id="listing-nav-title">
           <a href="/d/${department.slug}">${department.name}</a>
         </h2>

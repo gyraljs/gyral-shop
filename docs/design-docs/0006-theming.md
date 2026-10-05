@@ -60,7 +60,7 @@ markup stays semantic and stable and every visual decision lives in CSS that a t
 
 | Hook                                                                                                                                                                                                                                                                                                                                       | Where                                                                                                                                                                   |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `data-region="header" / "nav" / "search" / "account" / "cart"`                                                                                                                                                                                                                                                                             | site header (to be added by the epic's light-DOM task)                                                                                                                  |
+| `data-region="header" / "masthead" / "nav" / "search" / "account" / "cart"`, `data-component="brand" / "account-menu"`; container `header`                                                                                                                                                                                                 | `<shop-header>`, light DOM (`src/ui/layout/site-header.ts`, styles `src/ui/styles/header.ts`); it renders `<shop-search>` and `<shop-mini-cart>` itself                 |
 | `data-component="product-card" / "price" / "rating"`                                                                                                                                                                                                                                                                                       | product cards (`src/ui/catalog/product-card.ts`)                                                                                                                        |
 | `data-region="listing" / "filters" / "results"`, `data-component="pager" / "filters-panel"` (a `<details>` with container name `filters`: collapsible below 36rem)                                                                                                                                                                         | `<shop-listing>`, light DOM (`src/ui/catalog/listing.ts`, `filters.ts`, `pager.ts`); state hook `shop-listing:state(loading)`                                           |
 | `data-region="cart"`                                                                                                                                                                                                                                                                                                                       | `<shop-mini-cart>` (header cart slot, `src/server/document.ts`) and `<shop-cart-page>` (`src/server/routes/cart-page.ts`)                                               |
@@ -80,15 +80,18 @@ markup stays semantic and stable and every visual decision lives in CSS that a t
 | `data-region="admin" / "admin-nav" / "admin-main" / "admin-nojs" / "admin-not-found" / "admin-dashboard" / "admin-sales" / "admin-orders-by-status" / "admin-low-stock" / "admin-top-products" / "admin-traffic"`, `data-component="stat" / "admin-table" / "notice" (with `data-kind`) / "empty" / "loading"`, `data-stock="out" / "low"` | client-rendered admin, light DOM (`src/ui/admin/app.ts`, `dashboard.ts`); container `admin`; state hook `shop-admin-dashboard:state(loading)`                           |
 | `data-region="admin-products" / "admin-product" / "admin-variants" / "admin-inventory-log" / "admin-archive"`, `data-component="product-search" / "product-row" / "product-form" / "field" / "variant" / "variant-form" / "stock-form" / "add-variant-form" / "archive-form" / "stock" / "pager"`                                          | admin products and inventory, light DOM (`src/ui/admin/products.ts`, `product-views.ts`, `fields.ts`, `table.ts`); sortable headers use `aria-sort`                     |
 | `data-region="admin-orders" / "admin-order" / "admin-order-actions" / "order-lines" / "order-totals" / "delivery" / "order-timeline"`, `data-component="order-filters" / "order-row" / "order-action" / "refund-form" / "order-line" / "order-event" / "order-status"`                                                                     | admin orders, light DOM (`src/ui/admin/orders.ts`, `order-detail.ts`); status badges reuse `src/ui/orders/parts.ts`                                                     |
+| `data-region="auth"`, `data-component="field" / "form-error"`                                                                                                                                                                                                                                                                              | `<shop-login>` / `<shop-register>`, light DOM (`src/ui/account/*`, styles `authCss`); field ids are prefixed `auth-`                                                    |
+| `data-component="notice" / "empty" / "cart-lines" / "checkout-link"`                                                                                                                                                                                                                                                                       | `<shop-cart-page>`, light DOM (former `::part`s; styles `src/ui/styles/cart.ts`, container `cart`)                                                                      |
+| `data-region="category" / "category-nav" / "page-intro" / "categories" / "product" / "product-info" / "gallery" / "buy-box" / "specs" / "description"`, plus a region named after each section's heading id                                                                                                                                | page templates in `src/ui/pages/*` (department, category, search, product, content)                                                                                     |
+| container `card` on `.product-card`                                                                                                                                                                                                                                                                                                        | product cards (`src/ui/styles/catalog.ts`)                                                                                                                              |
 
 ## Parts (keep current)
 
-| Widget                                             | Parts                                                                                            |
-| -------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `shop-mini-cart`                                   | `link` (no cart known), `disclosure`, `summary`, `badge`, `panel`, `line`, `subtotal`, `actions` |
-| `shop-cart-page`                                   | `notice`, `empty`, `lines`, `line`, `quantity`, `line-total`, `summary`, `promo`, `checkout`     |
-| `shop-buy-box`                                     | `added` (add-to-cart status)                                                                     |
-| _(more to be added by the light-DOM / parts task)_ |                                                                                                  |
+| Widget           | Parts                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------ |
+| `shop-mini-cart` | `link` (no cart known), `disclosure`, `summary`, `badge`, `panel`, `line`, `subtotal`, `actions` |
+| `shop-buy-box`   | `price`, `stock`, `choices`, `option`, `quantity`, `quantity-input`, `add-button`, `added`       |
+| `shop-gallery`   | `gallery`, `views`, `view`, `thumbs`, `thumb`, `status`, `empty`                                 |
 
 ## Consequences
 
@@ -97,3 +100,32 @@ markup stays semantic and stable and every visual decision lives in CSS that a t
 - Themes can be added without touching components.
 - Until the light-DOM task lands, themes can re-skin but not fully re-lay out
   shadow-rendered regions.
+
+## Addendum: the foundation (shop-2w6.2, 2026-10-05)
+
+**Inventory.** Page structure renders in light DOM; true widgets keep a shadow root and expose
+`::part`s (rules 5 and 6). Checked by `test/node/theme-hooks.test.ts`, which also proves page
+content (h1, product links, prices, forms) sits outside every `<template shadowrootmode>`.
+
+| Component                                                                                                           | DOM    | Why                                                                     |
+| ------------------------------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------- |
+| `<shop-header>` (+ nested `<shop-search>`)                                                                          | light  | page structure; themes re-lay out the masthead and nav                  |
+| `<shop-listing>`, `<shop-reviews>`, `<shop-checkout>`, `<shop-consent>`, `<shop-wish-toggle>`, `<shop-review-form>` | light  | already light before this task                                          |
+| `<shop-login>`, `<shop-register>`, `<shop-cart-page>`                                                               | light  | moved in this task                                                      |
+| `<shop-mini-cart>`                                                                                                  | shadow | widget: badge + disclosure panel; `::part`s above                       |
+| `<shop-buy-box>`, `<shop-gallery>`                                                                                  | shadow | widgets with their own interaction; `::part`s above                     |
+| `<shop-admin>` and admin views                                                                                      | light  | client-rendered admin (theme applies, but themes target the storefront) |
+
+**Layers and the default theme.** `base.ts` declares `@layer reset, tokens, base, components,
+theme`. `@layer tokens` holds system tokens (spacing, page width, type scale `--step-*`,
+`--brand-size`, `--font-display`) and component tokens derived from the palette
+(`--header-bg/-ink`, `--nav-bg/-ink`), with a neutral palette of CSS system colours as the
+fallback: without any theme the store is plain but usable and passes contrast. Today's look
+lives in `src/ui/themes/default.css.ts` (`@layer theme`), which is always loaded last by the
+document shell. Sibling themes define the same palette tokens and may re-lay out regions
+through the hooks above. Visual compare (shop `pnpm ui:check --compare`) shows the default
+theme pixel-identical to the pre-theme look on all 13 scenario pages.
+
+**Known issue (Gyral, reported to the coordinator).** In production builds, light-DOM
+components currently hydrate into two copies of their content (header, listing, cart page,
+consent); dev builds and tests are clean. A Gyral fix is in progress.

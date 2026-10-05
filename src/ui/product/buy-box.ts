@@ -49,8 +49,8 @@ export const ADD_TO_CART_PATH = '/cart/add';
 
 const priceView = (v: BuyBoxVariant) =>
   v.salePriceCents === null || v.salePriceCents >= v.priceCents
-    ? html`<p class="price">${format(usd(v.priceCents))}</p>`
-    : html`<p class="price sale">
+    ? html`<p part="price" class="price">${format(usd(v.priceCents))}</p>`
+    : html`<p part="price" class="price sale">
         <ins><span class="visually-hidden">Sale price </span>${format(usd(v.salePriceCents))}</ins>
         <del><span class="visually-hidden">Was </span>${format(usd(v.priceCents))}</del>
       </p>`;
@@ -72,11 +72,11 @@ const unitCents = (v: BuyBoxVariant) =>
 
 /** Without JavaScript: every SKU as one radio list (sold-out SKUs disabled). */
 const skuList = (variants: readonly BuyBoxVariant[], selected: string | undefined) => html`
-  <fieldset class="choices">
+  <fieldset part="choices" class="choices">
     <legend>Choose an option</legend>
     ${variants.map(
       (v) => html`
-        <label class="sku">
+        <label part="option" class="sku">
           <input
             type="radio"
             name="sku"
@@ -97,14 +97,14 @@ const skuList = (variants: readonly BuyBoxVariant[], selected: string | undefine
 const axisPickers = (variants: readonly BuyBoxVariant[], selection: Selection, intent: string) =>
   optionAxes(variants).map(
     (axis) => html`
-      <fieldset class="choices axis">
+      <fieldset part="choices" class="choices axis">
         <legend>${axis.name}: <strong>${selection[axis.name] ?? nothing}</strong></legend>
         ${axis.values.map((value) => {
           const state = choiceState(variants, selection, axis.name, value);
           const reason = choiceReason(state, axis.name, selection);
           const id = `opt-${axis.name}-${value}`.replace(/[^\w-]/g, '_');
           return html`
-            <label class="option">
+            <label part="option" class="option">
               <input
                 type="radio"
                 name=${`option-${axis.name}`}
@@ -173,7 +173,7 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
     const multiple = variants.length > 1;
     return html`
       ${priceView(current)}
-      <p class="stock ${current.stock <= 0 ? 'out' : ''}" role="status">
+      <p part="stock" class="stock ${current.stock <= 0 ? 'out' : ''}" role="status">
         ${multiple ? html`<span class="label">${variantLabel(current)}: </span>` : nothing}${stockText(
           current,
         )}
@@ -188,9 +188,10 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
                   <input type="hidden" name="sku" value=${current.sku} />`
               : skuList(variants, current.sku)
         }
-        <p class="quantity">
+        <p part="quantity" class="quantity">
           <label for="quantity">Quantity</label>
           <input
+            part="quantity-input"
             id="quantity"
             name="quantity"
             type="number"
@@ -202,7 +203,7 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
             ?disabled=${s.enhanced && max === 0}
           />
         </p>
-        <button type="submit" ?disabled=${s.enhanced && max === 0}>
+        <button part="add-button" type="submit" ?disabled=${s.enhanced && max === 0}>
           ${s.enhanced && max === 0 ? 'Out of stock' : inFlight > 0 ? 'Adding…' : 'Add to cart'}
         </button>
       </form>
