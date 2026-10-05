@@ -13,11 +13,12 @@ describe('vite.deps (pre-bundled browser dependencies)', () => {
     expect(importsOf(source)).toEqual(['lit', './local.js', 'side-effect', 'lazy-module']);
   });
 
-  it('covers the browser graph, including linked Gyral, and leaves server modules out', () => {
+  it('covers the browser graph and leaves server modules out', () => {
     const deps = optimizedDeps();
     expect(deps).toContain('valibot');
-    expect(deps).toContain('@lit-labs/ssr-client');
-    expect(deps).toContain('@gyral/core > effect');
+    expect(deps).toContain('@gyral/core');
+    expect(deps).toContain('@gyral/ssr/hydrate');
+    expect(deps).toContain('lit/directive.js');
     for (const serverOnly of [
       'hono',
       '@hono/node-server',

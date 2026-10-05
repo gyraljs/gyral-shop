@@ -14,7 +14,7 @@ system of record.
 
 | Command                     | What it does                                                                                                                               |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm install`              | Install (Gyral is linked from `../cyclejs-web-framework`)                                                                                  |
+| `pnpm install`              | Install (Gyral `@gyral/*` from npm)                                                                                                        |
 | `pnpm check`                | **The gate**: typecheck, lint, format, invariants, tests                                                                                   |
 | `pnpm dev`                  | Dev server with SSR + HMR: http://localhost:5200                                                                                           |
 | `pnpm build`                | Production client build + prerender static pages (needs a seeded DB)                                                                       |
@@ -55,7 +55,8 @@ system of record.
 - `lit-web-apps` (SSR, routing, testing), `modern-css` (all styles), `semantic-html` (all
   markup), `google-seo-fundamentals` (catalog/product/content pages), `beads`.
 - Do **not** load `effect-fp-skill`: app code has no Effect.
-- For framework behaviour, read Gyral's docs in `../cyclejs-web-framework/docs/design-docs/`.
+- For framework behaviour, read Gyral's docs at https://gyral.dev/docs/ and its ADRs in
+  https://github.com/gyraljs/gyral/tree/main/docs/design-docs.
 
 ## Hard rules (enforced by `pnpm check`)
 

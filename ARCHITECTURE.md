@@ -39,5 +39,5 @@ reaches it as props (SSR) or over HTTP.
 
 ## Gyral
 
-Linked from `../cyclejs-web-framework/packages/*` (`link:` dependencies) until Gyral is
-published (gyral bead "Publish Gyral packages"). Lit is deduped so exactly one copy runs.
+`@gyral/*` ^0.1.0 from npm (published with provenance). Lit is a peer dependency, so exactly
+one copy runs; `gyralVitePreset()` dedupes it in Vite as a guard.

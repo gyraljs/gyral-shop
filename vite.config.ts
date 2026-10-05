@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite';
 import { LIT_PACKAGES, optimizedDeps } from './vite.deps.js';
 
-// Gyral is linked from ../cyclejs-web-framework, which has its own node_modules. Exactly one
-// copy of Lit must run (ADR 0001): dedupe resolves these from this project's node_modules.
-// optimizeDeps lists every browser import up front so Vite never re-optimizes mid-run.
+// gyralVitePreset() (via vite.deps.ts): exactly one copy of Lit (ADR 0001). optimizeDeps lists
+// every browser import up front so Vite never re-optimizes mid-run.
 export default defineConfig({
   resolve: { dedupe: [...LIT_PACKAGES] },
   optimizeDeps: { include: optimizedDeps() },

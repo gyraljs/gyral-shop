@@ -3,7 +3,7 @@ import { playwright } from '@vitest/browser-playwright';
 
 import { LIT_PACKAGES, optimizedDeps } from './vite.deps.js';
 
-// Lit must be a single copy even though Gyral is linked from another repo (ADR 0001).
+// Exactly one copy of Lit (ADR 0001, gyralVitePreset()).
 const dedupe = [...LIT_PACKAGES];
 
 export default defineConfig({
@@ -12,7 +12,7 @@ export default defineConfig({
     projects: [
       {
         resolve: { dedupe },
-        // Every browser import, derived from shop and linked Gyral source (vite.deps.ts), plus axe:
+        // Every browser import, derived from the shop's source (vite.deps.ts), plus axe:
         // a new import changes this list, so Vite re-optimizes at startup instead of mid-run.
         optimizeDeps: { include: [...optimizedDeps(), 'axe-core'] },
         test: {

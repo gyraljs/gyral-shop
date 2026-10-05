@@ -13,11 +13,7 @@ valibot, Vitest (browser mode) + Playwright.
 
 ## Getting started
 
-Gyral is linked from a sibling checkout:
-
 ```sh
-git clone git@github.com:gyraljs/gyral.git cyclejs-web-framework   # next to this repo
-(cd cyclejs-web-framework && pnpm install)
 pnpm install
 pnpm exec playwright install chromium
 pnpm db:reset      # create data/shop.db, migrate, seed the catalog
