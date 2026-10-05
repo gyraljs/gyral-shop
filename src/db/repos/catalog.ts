@@ -112,6 +112,8 @@ export interface ProductFilter {
   readonly match?: string;
   /** Only products with at least this many reviews (top-rated lists). */
   readonly minReviews?: number;
+  /** Only these products (wishlists). */
+  readonly productIds?: readonly number[];
 }
 
 export type CardOrder =
@@ -156,6 +158,7 @@ function where(filter: ProductFilter): SQL | undefined {
   if (filter.minReviews !== undefined) {
     filters.push(sql`${products.ratingCount} >= ${filter.minReviews}`);
   }
+  if (filter.productIds !== undefined) filters.push(inArray(products.id, [...filter.productIds]));
   return and(...filters);
 }
 

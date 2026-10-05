@@ -20,3 +20,8 @@
   page views (status 200) and successful add-to-cart posts, only with `analytics` consent,
   written through the database write lock. Server-side recording works without JavaScript, so
   there is no client analytics driver.
+
+**Prerendered pages** (about, FAQ, terms, privacy; shop-2gz): the banner can't be decided at
+build time, so those pages carry `<shop-consent deferred>`, which starts closed and, once
+hydrated, opens only if `GET /api/me` reports `consentDecided: false`. Without JavaScript those
+four pages show no banner; every server-rendered page still does.

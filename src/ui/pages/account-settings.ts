@@ -25,7 +25,8 @@ export const notice = (n: Notice | undefined) =>
         ${n.message}
       </p>`;
 
-type Section = 'overview' | 'profile' | 'addresses' | 'password';
+export type AccountSection = 'overview' | 'profile' | 'addresses' | 'password' | 'wishlist';
+type Section = AccountSection;
 
 const SECTIONS: readonly { readonly id: Section; readonly href: string; readonly label: string }[] =
   [
@@ -33,10 +34,11 @@ const SECTIONS: readonly { readonly id: Section; readonly href: string; readonly
     { id: 'profile', href: '/account/profile', label: 'Name and email' },
     { id: 'addresses', href: '/account/addresses', label: 'Addresses' },
     { id: 'password', href: '/account/password', label: 'Password' },
+    { id: 'wishlist', href: '/account/wishlist', label: 'Wishlist' },
   ];
 
-/** The account section navigation and page frame. */
-const frame = (current: Section, title: string, body: unknown, flash?: Notice) => html`
+/** The account section navigation and page frame (also used by the wishlist page). */
+export const frame = (current: Section, title: string, body: unknown, flash?: Notice) => html`
   <div class="account-layout" data-region="account">
     <nav aria-label="Account" data-region="account-nav">
       <ul>

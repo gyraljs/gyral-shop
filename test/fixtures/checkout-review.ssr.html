@@ -139,7 +139,9 @@
   .product-card {
     container-type: inline-size;
     display: grid; align-content: start; gap: var(--space-1);
-    content-visibility: auto; contain-intrinsic-size: auto 22rem;
+    /* No content-visibility here: card height depends on the column width, so any
+       contain-intrinsic-size estimate is wrong somewhere, and skipped cards then overlap their
+       neighbours (axe target-size). Listings show at most 24 cards. */
   }
   .product-card > a { text-decoration: none; }
   .product-card > a:hover h3 { text-decoration: underline; }
@@ -291,10 +293,35 @@
   .distribution dd { display: contents; }
   .distribution meter { inline-size: 100%; block-size: 0.75rem; }
   .distribution .count { text-align: end; font-variant-numeric: tabular-nums; color: var(--ink-muted); }
-  .review-list { list-style: none; padding: 0; display: grid; gap: var(--space-4); }
-  .review-list article { border-block-start: 1px solid var(--line); padding-block-start: var(--space-3); }
-  .review-list h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
+  [data-component="review-list"] { list-style: none; padding: 0; display: grid; gap: var(--space-4); }
+  [data-component="review-list"][aria-busy="true"] { opacity: 0.6; }
+  [data-component="review"] { border-block-start: 1px solid var(--line); padding-block-start: var(--space-3); }
+  [data-component="review"] h3 { margin: 0 0 var(--space-1); font-size: 1.05rem; }
   .byline { color: var(--ink-muted); font-size: 0.9rem; margin-block: var(--space-1); }
+  [data-component="review-helpful"] {
+    display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+    color: var(--ink-muted); font-size: 0.9rem;
+  }
+  [data-component="review-helpful"] form { margin: 0; }
+  [data-component="review-helpful"] button {
+    font: inherit; padding: var(--space-1) var(--space-3); cursor: pointer;
+    border: 1px solid var(--line-strong); border-radius: var(--radius);
+    background: var(--surface-raised); color: var(--ink);
+  }
+  [data-component="review-helpful"] button:disabled { opacity: 0.6; cursor: progress; }
+  [data-component="review-cta"] { margin-block: var(--space-3); }
+  [data-component="review-notice"]:empty { display: none; }
+  [data-component="review-notice"] {
+    padding: var(--space-2) var(--space-3); border-inline-start: 4px solid var(--ok);
+    background: var(--surface-sunken);
+  }
+  [data-component="review-notice"].error { border-inline-start-color: var(--danger); }
+  [data-component="review-sort"] ul {
+    list-style: none; padding: 0; margin: var(--space-3) 0; display: flex; gap: var(--space-3);
+  }
+  [data-component="review-sort"] a[aria-current] { font-weight: 700; text-decoration-thickness: 2px; }
+  #reviews-title:focus:not(:focus-visible) { outline: none; }
+  .review-pager { display: flex; gap: var(--space-3); align-items: center; margin-block: var(--space-4); }
 }
 </style><style>
 @layer components {
@@ -608,6 +635,60 @@ shop-checkout {
 }
 </style><style>
 @layer components {
+  .wish-toggle { margin: 0; }
+  .wish-toggle button,
+  a.wish-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface-raised);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.9rem;
+    text-decoration: none;
+    cursor: pointer;
+    /* WCAG 2.5.8: at least 24px, even inside skipped (content-visibility) cards. */
+    min-block-size: 2rem;
+    min-inline-size: 2rem;
+    justify-self: start;
+  }
+  .wish-toggle button[aria-pressed='true'] .heart { color: var(--sale); }
+  .wish-toggle button:focus-visible,
+  a.wish-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .product-wish { display: block; margin-block-start: var(--space-3); }
+
+  [data-region='wishlist'] .count { color: var(--ink-muted); font-size: 1rem; font-weight: 400; }
+  .wishlist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  }
+  .wishlist > li { display: grid; gap: var(--space-2); align-content: start; }
+  .wishlist-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .wishlist-actions form { margin: 0; }
+  .wishlist-actions button {
+    font: inherit;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius);
+    border: 1px solid var(--line-strong);
+    background: var(--surface-raised);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .wishlist-actions .primary button {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-ink);
+  }
+}
+</style><style>
+@layer components {
   shop-search { display: block; flex: 1 1 18rem; min-inline-size: 0; }
   shop-search form { display: flex; position: relative; }
   shop-search .combo { flex: 1; position: relative; display: flex; min-inline-size: 0; }
@@ -712,13 +793,16 @@ shop-checkout {
     <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
     <!--lit-part--><!--/lit-part-->
-    <!--lit-part--><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[{"sku":"LEGO-1","quantity":1,"productName":"LEGO","href":"/p/lego","options":{},"unit":{"cents":5000,"currency":"USD"},"listPrice":{"cents":5000,"currency":"USD"},"onSale":false,"lineTotal":{"cents":5000,"currency":"USD"},"maxQuantity":10}],"itemCount":1,"canCheckout":true,"totals":{"subtotal":{"cents":5000,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":5000,"currency":"USD"}}},"inFlight":0}}</script>
+    <!--lit-part--><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[{"sku":"LEGO-1","quantity":1,"productName":"LEGO","href":"/p/lego","options":{},"unit":{"cents":5000,"currency":"USD"},"listPrice":{"cents":5000,"currency":"USD"},"onSale":false,"lineTotal":{"cents":5000,"currency":"USD"},"maxQuantity":10}],"itemCount":1,"canCheckout":true,"totals":{"subtotal":{"cents":5000,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":5000,"currency":"USD"}}},"inFlight":0},"wishlist":{"member":false,"slugs":[],"csrf":"","inFlight":0}}</script>
     <script type="module" src="/src/client/entry.ts"></script>
   </head>
   <body>
-    <!--lit-part c1TASRG0OaM=-->
-        <a class="skip-link" href="#main">Skip to content</a>
-        <!--lit-node 1--><shop-header
+    <!--lit-part 9F7SK2yT2mY=-->
+        <nav class="skip-links" aria-label="Skip links">
+          <a class="skip-link" href="#main">Skip to content</a>
+        </nav>
+        <!--lit-node 2--><shop-header
+          
           
           
           
@@ -920,7 +1004,7 @@ shop-checkout {
         </ul>
       </nav>
     </header>
-  <!--/lit-part--></template><!--lit-node 2--><shop-search   slot="search" query data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part zkDyF4njGhg=-->
+  <!--/lit-part--></template><!--lit-node 3--><shop-search   slot="search" query data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part zkDyF4njGhg=-->
     <search data-region="search">
       <!--gyral:lit-node 1--><form action="/search" method="get" role="search" data-intent="Submit">
         <label for="q" class="visually-hidden">Search products</label>

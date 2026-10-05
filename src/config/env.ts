@@ -18,9 +18,10 @@ const Env = v.object({
     '0',
   ),
   /**
-   * Public origin for absolute URLs (canonical links, sitemap, structured data, email links),
-   * e.g. `https://shop.example`. Behind a proxy the request URL is internal, so production
-   * requires it. Paths, queries and fragments are rejected.
+   * Public origin for absolute URLs: canonical links, sitemap, robots, structured data, email
+   * links, and pages prerendered at build time (where there is no request to take it from).
+   * Behind a proxy the request URL is internal, so production requires it. Bare http(s) origins
+   * only. Unset in development: requests use their own origin, prerendering uses localhost.
    */
   SITE_ORIGIN: v.optional(
     v.pipe(
