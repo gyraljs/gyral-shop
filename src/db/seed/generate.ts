@@ -142,7 +142,10 @@ export function generateCatalog(options: GenerateOptions = {}): SeedData {
   const f = new Faker({ locale: [en] });
   f.seed(options.seed ?? 2026);
   f.setDefaultRefDate(new Date('2026-10-01T00:00:00Z'));
-  const perCategory = options.productsPerCategory ?? 16;
+  // Categories vary in size (6–32 products) so several span more than one 24-item page;
+  // an explicit productsPerCategory (tests) gives every category the same count.
+  const sizeOf = (index: number) => options.productsPerCategory ?? 6 + ((index * 11) % 27);
+  let categoryIndex = 0;
 
   const users: SeedUser[] = [{ email: 'admin@shop.test', name: 'Store Admin', role: 'admin' }];
   for (let i = 1; i <= (options.customers ?? 40); i += 1) {
@@ -160,7 +163,9 @@ export function generateCatalog(options: GenerateOptions = {}): SeedData {
   const reviews: SeedReview[] = [];
   for (const department of DEPARTMENTS) {
     for (const category of department.categories) {
-      for (let n = 0; n < perCategory; n += 1) {
+      const size = sizeOf(categoryIndex);
+      categoryIndex += 1;
+      for (let n = 0; n < size; n += 1) {
         const brand = f.helpers.arrayElement(department.brands);
         const noun = f.helpers.arrayElement(category.nouns);
         const name = `${brand} ${f.commerce.productAdjective()} ${noun}`;

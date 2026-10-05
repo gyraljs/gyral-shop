@@ -12,6 +12,8 @@ import { catalogCss } from '../ui/styles/catalog.js';
 import { filtersCss } from '../ui/styles/filters.js';
 import { listingCss } from '../ui/styles/listing.js';
 import { accountCss } from '../ui/styles/account.js';
+import { memberFormCss } from '../ui/forms/member-form.js';
+import { contentCss } from '../ui/styles/content.js';
 import { productCss } from '../ui/styles/product.js';
 import { ordersCss } from '../ui/styles/orders.js';
 import { checkoutCss } from '../ui/styles/checkout.js';
@@ -79,6 +81,8 @@ const DOCUMENT_STYLES = [
   productCss,
   accountCss,
   ordersCss,
+  memberFormCss,
+  contentCss,
   checkoutCss,
 ];
 

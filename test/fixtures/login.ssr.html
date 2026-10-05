@@ -117,6 +117,16 @@
     text-decoration: none;
   }
   .department-grid a:hover { border-color: var(--brand); }
+  [data-component="department-tile"] { display: grid; gap: var(--space-1); align-content: start; }
+  [data-component="department-tile"] a { display: grid; gap: var(--space-2); padding: var(--space-2); }
+  [data-component="department-tile"] img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover;
+    border-radius: var(--radius);
+  }
+  [data-component="department-tile"] h3 { margin: 0; font-size: 1rem; }
+  [data-component="department-tile"] p {
+    margin: 0; color: var(--ink-muted); font-size: 0.9rem; text-align: center;
+  }
   .card-grid {
     display: grid; gap: var(--space-4);
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
@@ -171,6 +181,10 @@
     border-radius: var(--radius); text-decoration: none;
   }
   .category-grid a:hover { border-color: var(--brand); }
+  [data-component="category-tile"] img {
+    inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover;
+    border-radius: var(--radius); margin-block-end: var(--space-2);
+  }
   .category-grid .name { font-weight: 600; }
   .category-grid .count { color: var(--ink-muted); font-size: 0.9rem; }
   .listing {
@@ -288,6 +302,48 @@
   }
   .account-details dt { font-weight: 600; }
   .account-details dd { margin: 0; overflow-wrap: anywhere; }
+  .account-layout {
+    display: grid; gap: var(--space-4);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (width > 48rem) {
+    .account-layout { grid-template-columns: 14rem minmax(0, 1fr); }
+  }
+  [data-region="account-nav"] ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
+  [data-region="account-nav"] a { display: block; padding: var(--space-1) var(--space-2); border-radius: var(--radius); }
+  [data-region="account-nav"] a[aria-current="page"] { background: var(--surface-sunken); font-weight: 600; }
+  .account h2 { margin-block: var(--space-3) 0; font-size: 1.15rem; }
+  .account section { display: grid; gap: var(--space-2); }
+  .notice {
+    margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius);
+    border-inline-start: 4px solid var(--ok);
+    background: color-mix(in oklch, var(--ok) 10%, var(--surface-raised));
+  }
+  .notice[data-kind="error"] {
+    border-inline-start-color: var(--danger);
+    background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
+  }
+  .address-list {
+    list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  }
+  [data-component="address-card"] {
+    display: grid; gap: var(--space-2); align-content: start;
+    padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface-raised);
+  }
+  [data-component="address-card"][data-default] { border-color: var(--brand); }
+  [data-component="address-card"] address { font-style: normal; }
+  [data-component="address-card"] form, .address-actions { margin: 0; }
+  [data-component="badge"] {
+    margin: 0; justify-self: start; font-size: 0.8rem; font-weight: 700;
+    padding-inline: var(--space-2); border-radius: var(--radius);
+    background: var(--brand); color: var(--brand-ink);
+  }
+  .button-link {
+    font: inherit; padding: 0; border: 0; background: none; color: inherit;
+    text-decoration: underline; cursor: pointer;
+  }
 }
 </style><style>
 @layer components {
@@ -326,6 +382,69 @@
   @container confirmation (inline-size < 30rem) {
     .order-lines thead th:nth-child(3), .order-lines td:nth-child(3) { display: none; }
   }
+}
+</style><style>
+@layer components {
+  [data-component="member-form"] { display: grid; gap: var(--space-3); max-inline-size: 32rem; }
+  [data-component="member-form"] .field { display: grid; gap: var(--space-1); margin: 0; }
+  [data-component="member-form"] .field[data-kind="checkbox"] {
+    grid-template-columns: auto 1fr; align-items: center; column-gap: var(--space-2);
+  }
+  [data-component="member-form"] .field[data-kind="checkbox"] .error,
+  [data-component="member-form"] .field[data-kind="checkbox"] small { grid-column: 1 / -1; }
+  [data-component="member-form"] label { font-weight: 600; }
+  [data-component="member-form"] small { color: var(--ink-muted); }
+  [data-component="member-form"] :is(input:not([type="checkbox"]), select, textarea) {
+    font: inherit; padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--line-strong); border-radius: var(--radius);
+    background: var(--surface-raised); color: var(--ink);
+  }
+  [data-component="member-form"] :is(input, select, textarea):focus-visible {
+    outline: 2px solid var(--focus); outline-offset: 1px;
+  }
+  [data-component="member-form"] :is(input, select, textarea):is(:user-invalid, [aria-invalid="true"]) {
+    border-color: var(--danger);
+  }
+  [data-component="member-form"] .error { color: var(--danger); font-size: 0.9rem; }
+  [data-component="member-form"] .error:empty { display: none; }
+  [data-component="member-form"] .form-error {
+    margin: 0; padding: var(--space-2) var(--space-3);
+    border-inline-start: 4px solid var(--danger);
+    background: color-mix(in oklch, var(--danger) 10%, var(--surface-raised));
+  }
+  [data-component="member-form"] .form-actions { margin: 0; }
+  [data-component="member-form"] button { font: inherit; font-weight: 600; }
+  [data-component="member-form"] button:disabled { opacity: 0.6; cursor: progress; }
+}
+</style><style>
+@layer components {
+  .prose { max-inline-size: 42rem; display: grid; gap: var(--space-3); }
+  .prose header { display: grid; gap: var(--space-1); }
+  .prose h1, .prose h2 { margin: 0; text-wrap: balance; }
+  .prose h2 { font-size: 1.2rem; margin-block-start: var(--space-2); }
+  .prose p, .prose ul, .prose dl { margin: 0; text-wrap: pretty; }
+  .prose .lead { color: var(--ink-muted); font-size: 1.1rem; }
+  .prose section { display: grid; gap: var(--space-2); }
+  .prose dt { font-weight: 600; }
+  .prose dd { margin-inline-start: 0; margin-block-end: var(--space-2); }
+  [data-component="faq"] { display: grid; gap: var(--space-2); }
+  [data-component="faq"] details {
+    border: 1px solid var(--line); border-radius: var(--radius);
+    background: var(--surface-raised); padding: var(--space-2) var(--space-3);
+  }
+  [data-component="faq"] summary { cursor: pointer; font-weight: 600; }
+  [data-component="faq"] details[open] summary { margin-block-end: var(--space-2); }
+  [data-component="faq"] details::details-content {
+    transition: content-visibility 0.2s allow-discrete, opacity 0.2s;
+    opacity: 0;
+  }
+  [data-component="faq"] details[open]::details-content { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-component="faq"] details::details-content { transition: none; }
+  }
+  [data-region="error"] { display: grid; gap: var(--space-3); max-inline-size: 42rem; }
+  [data-region="error"] h1 { margin: 0; }
+  [data-region="error"] form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
 }
 </style><style>
 @layer reset, tokens, base, components, theme;
@@ -762,7 +881,7 @@ shop-checkout {
       </details>
     <!--/lit-part--></template></shop-mini-cart
         ></shop-header>
-        <main id="main" class="page" tabindex="-1"><!--lit-part 6owaozYe2VE=-->
+        <main id="main" class="page" tabindex="-1"><!--lit-part edoLAxtl9aE=-->
   <section class="auth" aria-labelledby="title">
     <h1 id="title">Sign in</h1>
     <!--lit-node 2--><shop-login
@@ -880,7 +999,8 @@ shop-checkout {
       <!--lit-node 4--><button ><!--lit-part-->Sign in<!--/lit-part--></button>
     </form>
   <!--/lit-part--></template></shop-login>
-    <p>New here? <!--lit-node 4--><a href="/account/register">Create an account</a></p>
+    <p><a href="/account/forgot">Forgot your password?</a></p>
+    <p>New here? <!--lit-node 6--><a href="/account/register">Create an account</a></p>
   </section>
 <!--/lit-part--></main>
         <!--lit-part STG64S/HenM=-->

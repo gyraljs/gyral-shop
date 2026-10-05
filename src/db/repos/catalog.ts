@@ -1,4 +1,5 @@
 // Catalog reads. Repositories return plain rows; services and pages shape them further.
+import { PRIOR_COUNT, PRIOR_MEAN } from '../../domain/ratings.js';
 import { and, asc, count, desc, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import type { Db } from '../client.js';
 import { brands, categories, departments, productImages, products, variants } from '../schema.js';
@@ -89,6 +90,8 @@ const totalStock = sql<number>`(select coalesce(sum(${variants.stock}), 0) from 
 /** The price a shopper pays: the sale price when there is one. */
 const paidPrice = sql<number>`coalesce(${products.salePriceCents}, ${products.priceCents})`;
 const averageRating = sql<number>`${products.ratingSum} * 1.0 / max(${products.ratingCount}, 1)`;
+/** domain/ratings.ts bayesianRating(), in SQL. */
+const bayesian = sql<number>`(${products.ratingSum} + ${PRIOR_MEAN * PRIOR_COUNT}) * 1.0 / (${products.ratingCount} + ${PRIOR_COUNT})`;
 
 /** Which products a listing contains (catalog spec: listing filters). */
 export interface ProductFilter {
@@ -106,9 +109,20 @@ export interface ProductFilter {
   readonly inStock?: boolean;
   /** An FTS5 expression from `ftsMatch()` (search.ts): only products matching it. */
   readonly match?: string;
+  /** Only products with at least this many reviews (top-rated lists). */
+  readonly minReviews?: number;
 }
 
-export type CardOrder = 'newest' | 'rating' | 'price-asc' | 'price-desc' | 'relevance';
+export type CardOrder =
+  | 'newest'
+  | 'rating'
+  | 'price-asc'
+  | 'price-desc'
+  | 'relevance'
+  /** Bayesian average (domain/ratings.ts), for top-rated lists. */
+  | 'top-rated'
+  /** Most reviewed first: the best-seller stand-in until enough orders exist. */
+  | 'popular';
 
 export interface CardQuery extends ProductFilter {
   /** `relevance` ranks by rating when browsing, and by search rank when `match` is set. */
@@ -138,6 +152,9 @@ function where(filter: ProductFilter): SQL | undefined {
   }
   if (filter.inStock === true) filters.push(sql`${totalStock} > 0`);
   if (filter.match !== undefined) filters.push(matchesSearch(filter.match));
+  if (filter.minReviews !== undefined) {
+    filters.push(sql`${products.ratingCount} >= ${filter.minReviews}`);
+  }
   return and(...filters);
 }
 
@@ -165,6 +182,10 @@ function orderBy(order: CardOrder | undefined, match: string | undefined): SQL[]
     case 'rating':
     case 'relevance':
       return [desc(averageRating), asc(products.id)];
+    case 'top-rated':
+      return [desc(bayesian), desc(products.ratingCount), asc(products.id)];
+    case 'popular':
+      return [desc(products.ratingCount), desc(bayesian), asc(products.id)];
     case 'price-asc':
       return [asc(paidPrice), asc(products.id)];
     case 'price-desc':
@@ -215,4 +236,17 @@ export function productCards(db: Db, query: CardQuery): Promise<ProductCardRow[]
     .orderBy(...order)
     .limit(query.limit)
     .offset(query.offset ?? 0);
+}
+
+/** A product's name and brand by slug (placeholder image labels), or undefined. */
+export async function productLabel(
+  db: Db,
+  slug: string,
+): Promise<{ name: string; brand: string } | undefined> {
+  const [row] = await db
+    .select({ name: products.name, brand: brands.name })
+    .from(products)
+    .innerJoin(brands, eq(brands.id, products.brandId))
+    .where(eq(products.slug, slug));
+  return row;
 }

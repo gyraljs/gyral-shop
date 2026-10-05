@@ -9,15 +9,34 @@ const hash = (text: string): number => {
 
 const escapeXml = (s: string) => s.replace(/[<>&'"]/g, (ch) => `&#${String(ch.charCodeAt(0))};`);
 
-/** `slug` like `voltra-sleek-4k-tv-12`, `view` 1..n. */
-export function placeholderSvg(slug: string, view: number): string {
+/** Product words for the label: the name with the brand removed (brands can be several words). */
+export function labelWords(name: string, brand: string): readonly string[] {
+  const rest = name.toLowerCase().startsWith(brand.toLowerCase()) ? name.slice(brand.length) : name;
+  return rest.split(/\s+/).filter((w) => w !== '');
+}
+
+/**
+ * `slug` like `voltra-sleek-4k-tv-12`, `view` 1..n. With the product's name and brand the label
+ * is exact; without them (unknown slug) it falls back to the slug minus its first word.
+ */
+export function placeholderSvg(
+  slug: string,
+  view: number,
+  product?: { readonly name: string; readonly brand: string },
+): string {
   const hue = (hash(slug) + view * 47) % 360;
-  const words = slug.split('-').filter((w) => !/^\d+$/.test(w));
+  const words =
+    product === undefined
+      ? slug
+          .split('-')
+          .filter((w) => !/^\d+$/.test(w))
+          .slice(1)
+      : labelWords(product.name, product.brand);
   const initials = words
-    .slice(1, 3)
+    .slice(0, 2)
     .map((w) => w.charAt(0).toUpperCase())
     .join('');
-  const label = escapeXml(words.slice(1).join(' ').slice(0, 28));
+  const label = escapeXml(words.join(' ').slice(0, 28));
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img">
 <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
 <stop offset="0" stop-color="hsl(${String(hue)} 70% 88%)"/><stop offset="1" stop-color="hsl(${String((hue + 40) % 360)} 60% 72%)"/>

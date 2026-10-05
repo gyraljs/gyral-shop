@@ -27,6 +27,7 @@ export const loginPage = ({ csrfToken, next, rejected }: AuthPageData) => html`
       next=${next}
       .initialMessages=${messages(rejected)}
     ></shop-login>
+    <p><a href="/account/forgot">Forgot your password?</a></p>
     <p>New here? <a href=${withNext('/account/register', next)}>Create an account</a></p>
   </section>
 `;

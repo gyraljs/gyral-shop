@@ -17,6 +17,7 @@ export default defineConfig({
           include: [
             'lit',
             'lit/directive.js',
+            'lit/static-html.js',
             'lit/directives/class-map.js',
             'lit/directives/keyed.js',
             'lit/directives/live.js',
