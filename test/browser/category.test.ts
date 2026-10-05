@@ -9,6 +9,12 @@ const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
 let page: MountedPage;
 
+const listing = () => {
+  const el = page.root.querySelector('shop-listing');
+  if (el === null || el.shadowRoot === null) throw new Error('no listing');
+  return el.shadowRoot;
+};
+
 const header = () => {
   const el = page.root.querySelector('shop-header');
   if (el === null || el.shadowRoot === null) throw new Error('no header');
@@ -25,9 +31,9 @@ afterAll(() => {
 
 describe('category page (page 2 of a 32-product listing)', () => {
   it('paints the listing, pager and breadcrumbs from server markup', () => {
-    expect(page.root.querySelectorAll('.listing-results .product-card')).toHaveLength(8);
-    expect(page.root.querySelector('.result-count')?.textContent).toContain('25–32 of 32');
-    const current = page.root.querySelector('.pager [aria-current="page"]');
+    expect(listing().querySelectorAll('.listing-results .product-card')).toHaveLength(8);
+    expect(listing().querySelector('.result-count')?.textContent).toContain('25–32 of 32');
+    const current = listing().querySelector('.pager [aria-current="page"]');
     expect(current?.textContent.trim()).toBe('2');
     expect(page.root.querySelector('.breadcrumbs [aria-current="page"]')).not.toBeNull();
   });
@@ -38,6 +44,9 @@ describe('category page (page 2 of a 32-product listing)', () => {
     await import('../../src/client/entry.js');
     await hydrated(page.root);
     expect(header().shadowRoot?.querySelector('nav.departments a[aria-current]')).toBe(link);
+    const card = listing().querySelector('.product-card');
+    await hydrated(page.root);
+    expect(listing().querySelector('.product-card')).toBe(card); // hydrated in place
     expect(errors).not.toHaveBeenCalled();
     expect(warnings).not.toHaveBeenCalled();
   });

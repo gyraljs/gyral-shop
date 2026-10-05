@@ -1,13 +1,21 @@
 // Department and category pages (catalog spec). Plain data, so it can seed components.
 import type { Db } from '../db/client.js';
 import {
+  brandFacets,
   categoryCounts,
   countProducts,
   findCategory,
   findDepartment,
   productCards,
+  type ProductFilter,
 } from '../db/repos/catalog.js';
-import { pageCount, pageOffset, PAGE_SIZE, type ListingState } from '../domain/listing.js';
+import {
+  isRefined,
+  pageCount,
+  pageOffset,
+  PAGE_SIZE,
+  type ListingState,
+} from '../domain/listing.js';
 import { toCard, type Card } from './catalog.js';
 
 export interface CategoryLink {
@@ -66,6 +74,32 @@ export async function departmentPage(
   };
 }
 
+export interface BrandFacet {
+  readonly slug: string;
+  readonly name: string;
+  readonly count: number;
+}
+
+/** The repository filter for a listing state (prices in the URL are whole dollars). */
+export const listingFilter = (state: ListingState): ProductFilter => ({
+  ...(state.minPrice === null ? {} : { minPriceCents: state.minPrice * 100 }),
+  ...(state.maxPrice === null ? {} : { maxPriceCents: state.maxPrice * 100 }),
+  ...(state.brands.length === 0 ? {} : { brandSlugs: state.brands }),
+  ...(state.rating === null ? {} : { minRating: state.rating }),
+  ...(state.inStock ? { inStock: true } : {}),
+  ...(state.onSale ? { onSale: true } : {}),
+});
+
+/**
+ * Brand facets plus any selected brand that no longer matches, so it can still be unchecked.
+ */
+const withSelected = (facets: readonly BrandFacet[], selected: readonly string[]): BrandFacet[] => [
+  ...facets,
+  ...selected
+    .filter((slug) => !facets.some((f) => f.slug === slug))
+    .map((slug) => ({ slug, name: slug, count: 0 })),
+];
+
 export interface CategoryPageData {
   readonly department: DepartmentSummary;
   readonly category: { readonly slug: string; readonly name: string };
@@ -75,6 +109,12 @@ export interface CategoryPageData {
   readonly page: number;
   readonly pageCount: number;
   readonly total: number;
+  /** The listing state shown (sort, filters, page). */
+  readonly state: ListingState;
+  /** Brands available with the current filters, for the brand filter. */
+  readonly brands: readonly BrandFacet[];
+  /** Sort or filters differ from the defaults (SEO: canonical to the base listing). */
+  readonly refined: boolean;
 }
 
 export type CategoryPageResult =
@@ -92,18 +132,19 @@ export async function categoryPage(
 ): Promise<CategoryPageResult> {
   const found = await findCategory(db, departmentSlug, categorySlug);
   if (found === undefined) return { _tag: 'NotFound' };
-  const filter = { categoryId: found.category.id };
+  const filter = { categoryId: found.category.id, ...listingFilter(state) };
   const total = await countProducts(db, filter);
   const pages = pageCount(total);
   if (state.page > pages) return { _tag: 'OutOfRange', lastPage: pages };
-  const [rows, siblings] = await Promise.all([
+  const [rows, siblings, facets] = await Promise.all([
     productCards(db, {
       ...filter,
-      order: 'rating',
+      order: state.sort,
       limit: PAGE_SIZE,
       offset: pageOffset(state.page),
     }),
     departmentWithCategories(db, departmentSlug),
+    brandFacets(db, filter),
   ]);
   const { department, category } = found;
   return {
@@ -120,6 +161,9 @@ export async function categoryPage(
       page: state.page,
       pageCount: pages,
       total,
+      state,
+      brands: withSelected(facets, state.brands),
+      refined: isRefined(state),
     },
   };
 }

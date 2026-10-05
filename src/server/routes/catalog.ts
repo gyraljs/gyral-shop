@@ -3,8 +3,10 @@ import { Hono } from 'hono';
 import type { Db } from '../../db/client.js';
 import { parseListing } from '../../domain/listing.js';
 import { categoryPage, departmentPage } from '../../services/departments.js';
+import { listingTitle, resultSummary } from '../../ui/catalog/listing-view.js';
 import {
   categoryCrumbs,
+  categoryListing,
   categoryPage as categoryView,
   categoryPath,
 } from '../../ui/pages/category.js';
@@ -41,26 +43,48 @@ export function catalogRoutes({ db, render }: CatalogRouteOptions): Hono {
   routes.get('/c/:department/:category', async (c) => {
     const department = c.req.param('department');
     const category = c.req.param('category');
-    const listing = parseListing(c.req.query());
+    const listing = parseListing(new URL(c.req.url).searchParams);
     if (!listing.ok) {
-      // One URL per listing page: `?page=1` and junk redirect to the canonical spelling.
-      return c.redirect(categoryPath(department, category, listing.error.state.page), 301);
+      // One URL per listing state: `?page=1`, empty form fields and junk redirect to the
+      // canonical spelling (a no-JS filter form submission lands here once).
+      return c.redirect(categoryPath(department, category, listing.error.state), 301);
     }
     const result = await categoryPage(db, department, category, listing.value);
     if (result._tag !== 'Found') return c.notFound(); // unknown slug or page past the end
     const { data } = result;
+    const view = categoryListing(data);
     const { origin } = new URL(c.req.url);
-    // Each page of a paginated listing is its own canonical URL (Google's guidance).
-    const path = categoryPath(data.department.slug, data.category.slug, data.page);
-    const pageSuffix = data.page > 1 ? ` (page ${String(data.page)})` : '';
+    // Pages of the plain listing are their own canonical URLs (Google's guidance). Sorted or
+    // filtered states point to the plain listing and stay out of the index (SEO spec).
+    const base = categoryPath(data.department.slug, data.category.slug);
+    const path = data.refined
+      ? base
+      : categoryPath(data.department.slug, data.category.slug, data.page);
     return render({
-      title: `${data.category.name} — ${data.department.name}${pageSuffix}`,
-      description: `Shop ${String(data.total)} ${data.category.name.toLowerCase()} products in ${data.department.name} at Gyral Goods.`,
+      title: listingTitle(view),
+      description: `Shop ${data.category.name.toLowerCase()} in ${data.department.name} at Gyral Goods. ${resultSummary(view)}.`,
       canonical: new URL(path, origin).href,
-      jsonLd: [breadcrumbJsonLd(origin, categoryCrumbs(data), path)],
+      noindex: data.refined,
+      jsonLd: [breadcrumbJsonLd(origin, categoryCrumbs(data), base)],
       currentDepartment: data.department.slug,
       main: categoryView(data),
     });
+  });
+
+  // The same listing as JSON, for <shop-listing> updates without a reload. Lenient: a
+  // non-canonical query is answered for its canonical state instead of redirected.
+  routes.get('/api/listing/c/:department/:category', async (c) => {
+    const parsed = parseListing(new URL(c.req.url).searchParams);
+    const state = parsed.ok ? parsed.value : parsed.error.state;
+    const result = await categoryPage(
+      db,
+      c.req.param('department'),
+      c.req.param('category'),
+      state,
+    );
+    if (result._tag !== 'Found') return c.json({ error: 'not_found' }, 404);
+    c.header('cache-control', 'no-store');
+    return c.json(categoryListing(result.data));
   });
 
   return routes;

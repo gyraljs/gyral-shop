@@ -1,8 +1,9 @@
 import { html, nothing } from '@gyral/core';
-import { listingSearch, pageRange } from '../../domain/listing.js';
+import type { ListingState } from '../../domain/listing.js';
 import { breadcrumbs, type Crumb } from '../catalog/breadcrumbs.js';
-import { pager } from '../catalog/pager.js';
-import { productCard, type ProductCard } from '../catalog/product-card.js';
+import '../catalog/listing.js'; // registers <shop-listing> (server render and hydration)
+import { listingHref, type BrandOption, type ListingView } from '../catalog/listing-view.js';
+import type { ProductCard } from '../catalog/product-card.js';
 import type { CategoryLinkView } from './department.js';
 
 export interface CategoryView {
@@ -13,11 +14,24 @@ export interface CategoryView {
   readonly page: number;
   readonly pageCount: number;
   readonly total: number;
+  readonly state: ListingState;
+  readonly brands: readonly BrandOption[];
 }
 
-/** The URL of a category listing page (canonical spelling). */
-export const categoryPath = (department: string, category: string, page = 1): string =>
-  `/c/${department}/${category}${listingSearch({ page })}`;
+/** The path of a category listing (no query). */
+export const categoryBase = (department: string, category: string): string =>
+  `/c/${department}/${category}`;
+
+/** The URL of a category listing state (canonical spelling). */
+export const categoryPath = (
+  department: string,
+  category: string,
+  state: number | Partial<ListingState> = {},
+): string =>
+  listingHref(
+    { basePath: categoryBase(department, category) },
+    typeof state === 'number' ? { page: state } : state,
+  );
 
 export const categoryCrumbs = (view: Pick<CategoryView, 'department' | 'category'>): Crumb[] => [
   { name: 'Home', path: '/' },
@@ -25,19 +39,29 @@ export const categoryCrumbs = (view: Pick<CategoryView, 'department' | 'category
   { name: view.category.name },
 ];
 
-const summary = (view: CategoryView) => {
-  const { first, last, total } = pageRange(view.page, view.total);
-  if (total === 0) return 'No products';
-  return `Showing ${String(first)}–${String(last)} of ${String(total)} product${total === 1 ? '' : 's'}`;
+/** The listing component's data for a category page (also the JSON endpoint's body). */
+export const categoryListing = (view: CategoryView): ListingView => {
+  const basePath = categoryBase(view.department.slug, view.category.slug);
+  return {
+    basePath,
+    api: `/api/listing${basePath}`,
+    heading: view.category.name,
+    context: view.department.name,
+    state: view.state,
+    cards: view.cards,
+    total: view.total,
+    pageCount: view.pageCount,
+    brands: view.brands,
+  };
 };
 
-/** A category listing: department side navigation, one page of product cards, a pager. */
+/** A category listing: department side navigation and the listing component. */
 export const categoryPage = (view: CategoryView) => {
   const { department, category } = view;
   return html`
     ${breadcrumbs(categoryCrumbs(view))}
     <div class="listing">
-      <aside class="listing-nav" aria-labelledby="listing-nav-title">
+      <nav class="listing-nav" aria-labelledby="listing-nav-title">
         <h2 id="listing-nav-title">
           <a href="/d/${department.slug}">${department.name}</a>
         </h2>
@@ -53,35 +77,8 @@ export const categoryPage = (view: CategoryView) => {
               </li>`,
           )}
         </ul>
-      </aside>
-      <section class="listing-results" aria-labelledby="listing-title">
-        <header class="listing-header">
-          <h1 id="listing-title">
-            ${category.name}${
-              view.page > 1
-                ? html`<span class="visually-hidden">, page ${view.page}</span>`
-                : nothing
-            }
-          </h1>
-          <p class="result-count">${summary(view)}</p>
-        </header>
-        <h2 class="visually-hidden">Products</h2>
-        ${
-          view.cards.length === 0
-            ? html`<p class="empty">
-                There are no products here yet. Try another
-                <a href="/d/${department.slug}">${department.name}</a> category.
-              </p>`
-            : html`<div class="card-grid">
-                ${view.cards.map((card, i) => productCard(card, view.page === 1 && i < 4))}
-              </div>`
-        }
-        ${pager({
-          page: view.page,
-          pageCount: view.pageCount,
-          href: (page) => categoryPath(department.slug, category.slug, page),
-        })}
-      </section>
+      </nav>
+      <shop-listing .view=${categoryListing(view)}></shop-listing>
     </div>
   `;
 };

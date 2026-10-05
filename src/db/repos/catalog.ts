@@ -1,5 +1,5 @@
 // Catalog reads. Repositories return plain rows; services and pages shape them further.
-import { and, asc, count, desc, eq, sql, type SQL } from 'drizzle-orm';
+import { and, asc, count, desc, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import type { Db } from '../client.js';
 import { brands, categories, departments, productImages, products, variants } from '../schema.js';
 
@@ -85,16 +85,31 @@ const firstImage = (column: 'url' | 'alt') =>
     order by ${productImages.position} limit 1)`;
 const totalStock = sql<number>`(select coalesce(sum(${variants.stock}), 0) from ${variants}
   where ${variants.productId} = ${products.id})`;
+/** The price a shopper pays: the sale price when there is one. */
+const paidPrice = sql<number>`coalesce(${products.salePriceCents}, ${products.priceCents})`;
+const averageRating = sql<number>`${products.ratingSum} * 1.0 / max(${products.ratingCount}, 1)`;
 
-/** Which products a listing contains. Filters (price, brand, rating…) extend this (t3l.2). */
+/** Which products a listing contains (catalog spec: listing filters). */
 export interface ProductFilter {
   readonly departmentId?: number;
   readonly categoryId?: number;
   readonly onSale?: boolean;
+  /** Bounds on the price a shopper pays (the sale price when there is one), inclusive. */
+  readonly minPriceCents?: number;
+  readonly maxPriceCents?: number;
+  /** Brand slugs; empty or absent means every brand. */
+  readonly brandSlugs?: readonly string[];
+  /** Minimum average rating; unrated products never match. */
+  readonly minRating?: number;
+  /** Only products with stock in at least one variant. */
+  readonly inStock?: boolean;
 }
 
+export type CardOrder = 'newest' | 'rating' | 'price-asc' | 'price-desc' | 'relevance';
+
 export interface CardQuery extends ProductFilter {
-  readonly order?: 'newest' | 'rating';
+  /** `relevance` ranks by rating for browsing; search ranks its own way. */
+  readonly order?: CardOrder;
   readonly limit: number;
   readonly offset?: number;
 }
@@ -106,6 +121,19 @@ function where(filter: ProductFilter): SQL | undefined {
     filters.push(eq(products.departmentId, filter.departmentId));
   if (filter.categoryId !== undefined) filters.push(eq(products.categoryId, filter.categoryId));
   if (filter.onSale === true) filters.push(sql`${products.salePriceCents} is not null`);
+  if (filter.minPriceCents !== undefined)
+    filters.push(sql`${paidPrice} >= ${filter.minPriceCents}`);
+  if (filter.maxPriceCents !== undefined)
+    filters.push(sql`${paidPrice} <= ${filter.maxPriceCents}`);
+  if (filter.brandSlugs !== undefined && filter.brandSlugs.length > 0) {
+    filters.push(
+      sql`${products.brandId} in (select ${brands.id} from ${brands} where ${inArray(brands.slug, [...filter.brandSlugs])})`,
+    );
+  }
+  if (filter.minRating !== undefined) {
+    filters.push(sql`${products.ratingCount} > 0 and ${averageRating} >= ${filter.minRating}`);
+  }
+  if (filter.inStock === true) filters.push(sql`${totalStock} > 0`);
   return and(...filters);
 }
 
@@ -125,11 +153,41 @@ export async function categoryCounts(db: Db, departmentId: number): Promise<Map<
   return new Map(rows.map((r) => [r.categoryId, r.n]));
 }
 
+function orderBy(order: CardOrder | undefined): SQL[] {
+  switch (order) {
+    case 'rating':
+    case 'relevance':
+      return [desc(averageRating), asc(products.id)];
+    case 'price-asc':
+      return [asc(paidPrice), asc(products.id)];
+    case 'price-desc':
+      return [desc(paidPrice), asc(products.id)];
+    case 'newest':
+    case undefined:
+      return [desc(products.createdAt), desc(products.id)];
+  }
+}
+
+export interface BrandFacetRow {
+  readonly slug: string;
+  readonly name: string;
+  /** Matching products of this brand, with every filter except brand applied. */
+  readonly count: number;
+}
+
+/** Brands present in a listing, for the brand filter. Ignores the brand filter itself. */
+export function brandFacets(db: Db, filter: ProductFilter): Promise<BrandFacetRow[]> {
+  return db
+    .select({ slug: brands.slug, name: brands.name, count: count() })
+    .from(products)
+    .innerJoin(brands, eq(brands.id, products.brandId))
+    .where(where({ ...filter, brandSlugs: [] }))
+    .groupBy(brands.id)
+    .orderBy(asc(brands.name));
+}
+
 export function productCards(db: Db, query: CardQuery): Promise<ProductCardRow[]> {
-  const order =
-    query.order === 'rating'
-      ? [desc(sql`${products.ratingSum} * 1.0 / max(${products.ratingCount}, 1)`), asc(products.id)]
-      : [desc(products.createdAt), desc(products.id)];
+  const order = orderBy(query.order);
   return db
     .select({
       id: products.id,

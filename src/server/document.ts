@@ -10,7 +10,9 @@ import { baseCss } from '../ui/styles/base.js';
 import { catalogCss } from '../ui/styles/catalog.js';
 import { listingCss } from '../ui/styles/listing.js';
 
-export const SITE_NAME = 'Gyral Goods';
+import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
+
+export { SITE_NAME };
 
 export interface ShellOptions {
   /** URL of the browser entry module (Vite dev: a source path; prod: a built asset). */
@@ -76,7 +78,7 @@ export function shell(options: ShellOptions): Response {
     ${structured === '' ? nothing : unsafeHTML(structured)}`;
   return renderPage(
     {
-      title: options.title === SITE_NAME ? SITE_NAME : `${options.title} — ${SITE_NAME}`,
+      title: documentTitle(options.title),
       ...(options.description === undefined ? {} : { description: options.description }),
       head,
       body: html`
