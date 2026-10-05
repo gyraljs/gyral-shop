@@ -2,3 +2,5 @@
 // (Gyral ADR 0012). Then every component that may appear on a server-rendered page.
 import '@gyral/ssr/hydrate';
 import '../ui/layout/site-header.js';
+import '../ui/product/buy-box.js';
+import '../ui/product/gallery.js';

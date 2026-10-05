@@ -9,6 +9,7 @@ import { CSRF_META } from '../ui/forms/csrf.js';
 import { baseCss } from '../ui/styles/base.js';
 import { catalogCss } from '../ui/styles/catalog.js';
 import { listingCss } from '../ui/styles/listing.js';
+import { productCss } from '../ui/styles/product.js';
 
 export const SITE_NAME = 'Gyral Goods';
 
@@ -32,6 +33,8 @@ export interface ShellOptions {
   readonly jsonLd?: readonly object[];
   /** Slug of the department this page belongs to, marked current in the header nav. */
   readonly currentDepartment?: string;
+  /** Open Graph / Twitter `<meta property>` pairs (SEO spec), e.g. `['og:type', 'product']`. */
+  readonly meta?: readonly (readonly [property: string, content: string])[];
 }
 
 /** JSON for a <script> body: `<` is escaped so content can never close the element. */
@@ -60,7 +63,7 @@ export function shell(options: ShellOptions): Response {
   const structured = (options.jsonLd ?? [])
     .map((data) => `<script type="application/ld+json">${scriptJson(data)}</script>`)
     .join('');
-  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}${listingCss}</style>`)}
+  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}${listingCss}${productCss}</style>`)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     ${
       options.canonical === undefined
@@ -73,6 +76,7 @@ export function shell(options: ShellOptions): Response {
         ? nothing
         : html`<meta name=${CSRF_META} content=${options.csrfToken} />`
     }
+    ${(options.meta ?? []).map(([property, content]) => html`<meta property=${property} content=${content} />`)}
     ${structured === '' ? nothing : unsafeHTML(structured)}`;
   return renderPage(
     {
