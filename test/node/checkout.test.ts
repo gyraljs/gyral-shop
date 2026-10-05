@@ -140,12 +140,16 @@ describe('no-JS steps', () => {
     expect(openStep(await (await visitor.get('/checkout?edit=payment')).text())).toBe('address');
   });
 
-  it('validates the review form, then stubs placing the order (501)', async () => {
+  it('validates the review form, then places the order (303 to the confirmation)', async () => {
     await fillToReview(visitor);
     const noTerms = await visitor.postForm('/checkout/place', {});
     expect(noTerms.status).toBe(422);
     expect(await noTerms.text()).toContain('Accept the terms to place your order.');
-    expect((await visitor.postForm('/checkout/place', { terms: 'on' })).status).toBe(501);
+    const page = await (await visitor.get('/checkout')).text();
+    const key = /name="key"\s+value="([^"]+)"/.exec(page)?.[1] ?? '';
+    const placed = await visitor.postForm('/checkout/place', { terms: 'on', key });
+    expect(placed.status).toBe(303);
+    expect(placed.headers.get('location')).toMatch(/^\/order\/GG-/);
   });
 });
 

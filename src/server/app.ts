@@ -14,6 +14,7 @@ import { catalogRoutes } from './routes/catalog.js';
 import { productRoutes } from './routes/product.js';
 import { cartPageRoutes } from './routes/cart-page.js';
 import { checkoutRoutes } from './routes/checkout.js';
+import { orderRoutes } from './routes/orders.js';
 import { cartStoreFor } from './cart-seed.js';
 import { searchRoutes } from './routes/search.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
@@ -128,7 +129,8 @@ export function createApp({
   app.route('/', searchRoutes({ db, render: page }));
   app.route('/', cartRoutes(db));
   app.route('/', cartPageRoutes({ render: page }));
-  app.route('/', checkoutRoutes({ db, render: page, payments: services.payments }));
+  app.route('/', checkoutRoutes({ db, render: page, services }));
+  app.route('/', orderRoutes({ services, render: page }));
   if (mode !== 'production') app.route('/dev/mail', devMailRoutes(services.mailer, page));
 
   app.notFound(async (c) =>

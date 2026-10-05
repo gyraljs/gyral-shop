@@ -15,10 +15,12 @@ import {
   type PaymentError,
   type PaymentState,
   type PaymentStatus,
+  updateAmount as updateAmountRule,
 } from '../domain/payments.js';
 import { err, ok, type Result } from '../domain/result.js';
 import type { Db } from '../db/client.js';
 import { payments } from '../db/schema.js';
+import { writeTransaction } from '../db/tx.js';
 
 /** What callers see. Never contains card digits. */
 export interface Payment {
@@ -51,6 +53,8 @@ export interface PaymentProvider {
     options: { readonly idempotencyKey: string },
   ) => Promise<Result<Payment, ProviderError>>;
   readonly capture: (ref: string) => Promise<Result<Payment, ProviderError>>;
+  /** Changes an unconfirmed intent's amount (the order total moved since the card step). */
+  readonly updateAmount: (ref: string, amount: Money) => Promise<Result<Payment, ProviderError>>;
   /** Refunds `amount`, or everything still refundable when omitted. */
   readonly refund: (ref: string, amount?: Money) => Promise<Result<Payment, ProviderError>>;
   readonly get: (ref: string) => Promise<Payment | undefined>;
@@ -91,6 +95,7 @@ const toState = (row: Row): PaymentState => ({
 
 const stateColumns = (state: PaymentState) => ({
   status: state.status,
+  amountCents: state.amount.cents,
   refundedCents: state.refunded.cents,
   attempts: state.attempts,
   failureCode: state.failureCode ?? null,
@@ -119,7 +124,7 @@ export function createPaymentProvider(db: Db, options: PaymentOptions = {}): Pay
     rule: (state: PaymentState) => Result<PaymentState, PaymentError>,
   ): Promise<Result<Payment, ProviderError>> => {
     await pause();
-    return db.transaction(async (tx) => {
+    return writeTransaction(db, async (tx) => {
       const row = await load(tx, ref);
       if (row === undefined) return err({ _tag: 'NotFound', ref });
       const next = rule(toState(row));
@@ -144,7 +149,6 @@ export function createPaymentProvider(db: Db, options: PaymentOptions = {}): Pay
         .values({
           providerRef: newRef(),
           orderId: orderId ?? null,
-          amountCents: amount.cents,
           brand: valid.value.brand,
           last4: valid.value.last4,
           expMonth: valid.value.expMonth,
@@ -159,7 +163,7 @@ export function createPaymentProvider(db: Db, options: PaymentOptions = {}): Pay
 
     confirm: async (ref, { idempotencyKey }) => {
       await pause();
-      return db.transaction(async (tx) => {
+      return writeTransaction(db, async (tx) => {
         const row = await load(tx, ref);
         if (row === undefined) return err({ _tag: 'NotFound', ref });
         const [holder] = await tx
@@ -190,6 +194,7 @@ export function createPaymentProvider(db: Db, options: PaymentOptions = {}): Pay
     },
 
     capture: (ref) => apply(ref, captureRule),
+    updateAmount: (ref, amount) => apply(ref, (state) => updateAmountRule(state, amount)),
     refund: (ref, amount) => apply(ref, (state) => refundRule(state, amount)),
     get: async (ref) => {
       const row = await load(db, ref);

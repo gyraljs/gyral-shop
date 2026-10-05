@@ -108,6 +108,10 @@ export const PlaceOrderForm = defineForm(
       v.optional(v.string(), ''),
       v.check((value) => value === 'on', 'Accept the terms to place your order.'),
     ),
+    /** The review page's place-order key (hidden). */
+    key: v.pipe(v.optional(v.string(), ''), v.minLength(1, 'Reload the page and try again.')),
+    /** The total shown on the review page, in cents (hidden); a change is caught server-side. */
+    expectedTotal: v.optional(v.pipe(v.string(), v.regex(/^\d{1,9}$/), v.transform(Number))),
   }),
 );
 

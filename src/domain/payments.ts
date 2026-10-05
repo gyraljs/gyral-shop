@@ -78,6 +78,21 @@ export function afterFailedConfirm(state: PaymentState, error: PaymentError): Pa
   return error._tag === 'ProcessingError' ? { ...state, attempts: state.attempts + 1 } : state;
 }
 
+/**
+ * Changes the amount before confirmation (the order total moved after the card was entered:
+ * a new address changed the tax, or a promo stopped applying). Like a real provider, only an
+ * unconfirmed intent can change.
+ */
+export function updateAmount(
+  state: PaymentState,
+  amount: Money,
+): Result<PaymentState, PaymentError> {
+  if (state.status !== 'requires_confirmation') {
+    return err({ _tag: 'InvalidState', action: 'update', status: state.status });
+  }
+  return amount.cents > 0 ? ok({ ...state, amount }) : err({ _tag: 'InvalidAmount' });
+}
+
 export function capture(state: PaymentState): Result<PaymentState, PaymentError> {
   return state.status === 'requires_capture'
     ? ok({ ...state, status: 'succeeded' })

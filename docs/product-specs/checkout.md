@@ -29,4 +29,27 @@ Steps on one page with progressive disclosure, or as separate pages without JS:
   confirms that intent and must update its amount if the total changed since.
 - Free shipping is judged after the promo discount; tax uses the address's state (and taxes
   shipping where the state does).
-- `/checkout/place` validates the terms checkbox, then answers 501 until shop-935.3.
+
+## Implementation notes (shop-935.3, place order)
+
+- `POST /checkout/place` (no-JS form and `submitForm`, one `formAction`) is Post/Redirect/Get on
+  both paths: success → `/order/:number/confirmation`; a failure → the step it concerns
+  (`?edit=payment`, `?edit=review`) or `/cart`, with a flash message the page shows on that
+  step. Only a missing terms checkbox is a 422 re-render.
+- The review page carries a hidden **place key** (an HMAC of cart + payment intent with
+  `APP_SECRET`) and the total it showed. The key makes placing idempotent (double clicks and
+  concurrent submits get the same order; a repeat after the cart is gone still finds it) and
+  proves the submit came from this checkout. A different total is refused with the new one.
+- One transaction reserves stock with conditional decrements (never below zero), increments the
+  promo's usage under its limit, and inserts the order (`pending_payment`) with line snapshots
+  and inventory-log rows. Then the intent's amount is updated if needed, confirmed and captured.
+  A failed charge releases everything (stock, promo usage, the pending order); a declined card
+  clears the saved card so the payment step reopens; a processing error keeps it for a retry.
+  Success marks the order `paid` (domain state machine), links the payment, deletes the cart
+  and draft, and queues the confirmation email.
+- Writes that must not fail take a process-wide write lock (`src/db/tx.ts`): libsql's native
+  driver is synchronous, so a busy timeout would block the event loop the open transaction
+  needs. Correctness doesn't depend on the lock but on the conditional updates: the race tests
+  in test/node/place-order-race.test.ts fail when those guards are removed.
+- The confirmation is visible to the member who placed it, admins, and the browser that placed
+  it (a signed `orders` cookie); anyone else gets 404.

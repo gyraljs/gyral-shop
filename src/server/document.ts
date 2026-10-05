@@ -13,6 +13,7 @@ import { filtersCss } from '../ui/styles/filters.js';
 import { listingCss } from '../ui/styles/listing.js';
 import { accountCss } from '../ui/styles/account.js';
 import { productCss } from '../ui/styles/product.js';
+import { ordersCss } from '../ui/styles/orders.js';
 
 import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
 
@@ -72,7 +73,7 @@ export function shell(options: ShellOptions): Response {
   const structured = (options.jsonLd ?? [])
     .map((data) => `<script type="application/ld+json">${scriptJson(data)}</script>`)
     .join('');
-  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}${listingCss}${filtersCss}${productCss}${accountCss}</style>`)}
+  const head = html`${unsafeHTML(`<style>${baseCss}${catalogCss}${listingCss}${filtersCss}${productCss}${accountCss}${ordersCss}</style>`)}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     ${
       options.canonical === undefined

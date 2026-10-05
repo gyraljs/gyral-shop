@@ -153,4 +153,16 @@ describe('mock payment provider', () => {
     expect(created.ok).toBe(true);
     expect(performance.now() - start).toBeGreaterThanOrEqual(35);
   });
+
+  it('updates an unconfirmed intent amount, then charges the new amount', async () => {
+    const { provider, intent } = await setup();
+    const created = await intent(CARDS.success, 2500);
+    const updated = paidValue(await provider.updateAmount(created.ref, usd(2799)));
+    expect(updated.amount).toEqual(usd(2799));
+    paidValue(await provider.confirm(created.ref, { idempotencyKey: 'k-update' }));
+    const captured = paidValue(await provider.capture(created.ref));
+    expect(captured).toMatchObject({ status: 'succeeded', amount: usd(2799) });
+    const late = await provider.updateAmount(created.ref, usd(100));
+    expect(late.ok).toBe(false);
+  });
 });
