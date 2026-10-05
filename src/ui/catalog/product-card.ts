@@ -83,6 +83,8 @@ export const cardGrid = (
 ) => html`
   <section aria-labelledby=${id} class="card-section">
     <h2 id=${id}>${heading}</h2>
-    <div class="card-grid">${cards.map((c, i) => productCard(c, i < eager))}</div>
+    <div class="card-grid" data-component="card-grid">
+      ${cards.map((c, i) => productCard(c, i < eager))}
+    </div>
   </section>
 `;

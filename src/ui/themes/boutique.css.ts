@@ -141,12 +141,12 @@ export const boutiqueThemeCss = `
   @container page (inline-size >= 52rem) {
     [data-region="departments"] ul { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     [data-region="departments"] [data-component="department-tile"]:first-child { grid-column: span 2; grid-row: span 2; }
-    [data-region="deals"] section > div { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    [data-region="deals"] [data-component="card-grid"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     [data-region="deals"] [data-component="product-card"]:first-child { grid-column: span 2; grid-row: span 2; }
   }
 
   /* Cards: image-led, no chrome; a small spaced brand label above a quiet name and price. */
-  main div:has(> [data-component="product-card"]) {
+  main [data-component="card-grid"] {
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
     gap: var(--space-5) var(--space-3);
   }

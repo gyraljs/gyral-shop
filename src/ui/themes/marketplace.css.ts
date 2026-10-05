@@ -119,7 +119,7 @@ export const marketplaceThemeCss = `
   [data-component="department-tile"] p { font-size: var(--step--1); }
 
   /* Product cards: small image, three-line title in link colour, rating above the price. */
-  main :is(section, div) > div:has(> [data-component="product-card"]) {
+  main [data-component="card-grid"] {
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
     gap: var(--space-4) var(--space-3);
   }

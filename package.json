@@ -28,7 +28,8 @@
     "start": "NODE_ENV=production tsx src/server/prod.ts",
     "ui:check": "node scripts/ui-check.mjs",
     "perf": "node scripts/perf.mjs",
-    "smoke:prod": "node scripts/smoke-prod.mjs"
+    "smoke:prod": "node scripts/smoke-prod.mjs",
+    "themes:check": "node scripts/themes-check.mjs"
   },
   "dependencies": {
     "@gyral/core": "link:../cyclejs-web-framework/packages/core",

@@ -90,6 +90,7 @@ markup stays semantic and stable and every visual decision lives in CSS that a t
 | `data-region="admin-taxonomy" / "admin-departments" / "admin-brands"`, `data-component="taxon" (with `data-kind`, `data-archived`) / "taxon-create" / "taxon-rename" / "taxon-archive"`                                                                                                                                                                                                                             | admin departments, categories and brands, light DOM (`src/ui/admin/taxonomy.ts`)                                                                                                                                   |
 | `data-region="admin-header"`, `data-component="admin-store-link" / "admin-account" / "admin-sign-out"`                                                                                                                                                                                                                                                                                                              | the admin document shell, server-only (`src/server/admin-document.ts`); no storefront header, cart, consent banner or footer                                                                                       |
 | `data-region="theme-switcher"`, `data-component="theme-option"`                                                                                                                                                                                                                                                                                                                                                     | `<shop-theme-switcher>`, light DOM, in every storefront footer and on `/theme` (`src/ui/theme/switcher.ts`, styles `src/ui/styles/theme-switcher.ts`); the theme stylesheet is `<link id="theme-css">` in the head |
+| `data-component="card-grid"`                                                                                                                                                                                                                                                                                                                                                                                        | the grid wrapping product cards (`src/ui/catalog/product-card.ts` cardGrid, listing results)                                                                                                                       |
 
 ## Parts (keep current)
 
@@ -180,3 +181,18 @@ relative colour syntax can't resolve it and the colour is lost (Boutique failed 
 Add a dedicated token in `@layer tokens` with a plain fallback and set it in every theme, per
 scheme where needed. New tokens: `--search-button-bg`, `--search-button-ink`, `--hero-glow`
 (`--nav-bg` now falls back to `--header-bg`). `scripts/check-styles.mjs` enforces the rule.
+
+## Addendum: theme quality matrix (2026-10-05)
+
+- `pnpm themes:check [page…]` runs `ui:check` once per registered theme (every page scenario ×
+  light/dark × desktop/phone, with axe including colour contrast, horizontal overflow and
+  console checks) and writes `.ui-check/themes/<run>/matrix.md`: themes × pages with pass/fail
+  and links to each run's screenshots. It exits 1 on any failure. It takes several minutes, so
+  it's not in `pnpm check`; run it before merging theme or shared-style changes.
+- `test/node/themes-contract.test.ts` (in `pnpm check`) checks every registered theme,
+  table-driven: registered, a single `@layer theme` block, every default token set, selectors
+  limited to documented hooks / parts / component tags / semantic elements (with a control
+  case), and pages link the theme's stylesheet when the cookie selects it. It replaces the
+  per-theme test files.
+- `data-component="card-grid"` was added so themes can lay out product grids without
+  targeting anonymous `div`s (Marketplace and Boutique did).

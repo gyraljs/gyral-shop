@@ -363,6 +363,24 @@ const run = options.baseline ? 'baseline saved' : options.compare ? 'compared wi
 const mode =
   options.theme === '' ? run : [`theme ${options.theme}`, run].filter(Boolean).join(', ');
 writeFileSync(join(runDir, 'report.md'), renderReport({ startedAt, mode, pages }));
+// Machine-readable results for `pnpm themes:check`, which combines one run per theme.
+writeFileSync(
+  join(runDir, 'results.json'),
+  JSON.stringify({
+    theme: options.theme === '' ? 'default' : options.theme,
+    startedAt,
+    pages: pages.map((p) => ({
+      name: p.name,
+      error: p.error ?? null,
+      shots: p.shots.map((shot) => ({
+        viewport: shot.viewport,
+        scheme: shot.scheme,
+        file: shot.file,
+        failures: shotFailures(shot),
+      })),
+    })),
+  }),
+);
 const failed = pages.filter(pageFailed);
 console.log(`\nReport: ${join(runDir, 'report.md')}`);
 console.log(`${String(pages.length - failed.length)}/${String(pages.length)} pages passed.`);

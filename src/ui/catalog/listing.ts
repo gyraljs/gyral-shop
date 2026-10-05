@@ -99,7 +99,7 @@ function loaded(s: ListingModel, view: ListingView): Next<ListingModel, ListingM
 
 const results = (view: ListingView) => {
   if (view.cards.length > 0) {
-    return html`<div class="card-grid">
+    return html`<div class="card-grid" data-component="card-grid">
       ${view.cards.map((card, n) => productCard(card, view.state.page === 1 && n < 4))}
     </div>`;
   }
