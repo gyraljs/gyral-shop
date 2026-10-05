@@ -98,7 +98,7 @@ const axisPickers = (variants: readonly BuyBoxVariant[], selection: Selection, i
   optionAxes(variants).map(
     (axis) => html`
       <fieldset class="choices axis">
-        <legend>${axis.name}: <strong>${selection[axis.name] ?? ''}</strong></legend>
+        <legend>${axis.name}: <strong>${selection[axis.name] ?? nothing}</strong></legend>
         ${axis.values.map((value) => {
           const state = choiceState(variants, selection, axis.name, value);
           const reason = choiceReason(state, axis.name, selection);
@@ -213,7 +213,7 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
         role="status"
       >
         ${
-          s.formError ?? added?.message ?? ''
+          s.formError ?? added?.message ?? nothing
         }${added?.kind === 'success' && s.formError === undefined ? html` <a href="/cart">View cart</a>` : nothing}
       </p>
     `;
