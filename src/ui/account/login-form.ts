@@ -18,43 +18,25 @@ import {
 import { LoginForm } from './schemas.js';
 
 export type LoginMsg =
-  | {
-      readonly _tag: 'Login';
-      readonly email: string;
-      readonly password: string;
-      readonly next: string;
-    }
-  | SignedIn
-  | Failed
-  | IntentRejected;
+  { readonly _tag: 'Login'; readonly form: FormData } | SignedIn | Failed | IntentRejected;
 
 const FIELDS: readonly FieldSpec[] = [
   { name: 'email', label: 'Email', type: 'email', autocomplete: 'email' },
   { name: 'password', label: 'Password', type: 'password', autocomplete: 'current-password' },
 ];
 
-/** Sign-in form: a POST to /account/login without JS, a JSON round trip with it. */
+/** Sign-in form: a POST to /account/login without JS, the same POST via submitForm with it. */
 export const LoginFormElement = define<AuthState, LoginMsg, AuthProps>('shop-login', {
   props: { csrfToken: { attribute: 'csrf-token' }, next: { type: String } },
   init: initialAuthState,
   intent: {
-    Login: form(LoginForm, (data) => ({
-      _tag: 'Login',
-      email: data.email,
-      password: data.password,
-      next: data.next,
-    })),
+    // Validated in the browser first; the raw FormData then goes to the server unchanged.
+    Login: form(LoginForm, (_data, raw) => ({ _tag: 'Login', form: raw })),
   },
   update: {
     Login: (s, m, { props }) => [
       { ...s, pending: true, errors: {} },
-      [
-        submit(
-          '/account/login',
-          { email: m.email, password: m.password, next: m.next },
-          props.csrfToken,
-        ),
-      ],
+      [submit('/account/login', m.form, props.csrfToken)],
     ],
     // Pending stays on: the page is about to reload with the member signed in.
     SignedIn: (s, m) => [s, [goTo(m.location)]],

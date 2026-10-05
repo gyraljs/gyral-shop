@@ -1,8 +1,10 @@
 // The cart JSON API as a Gyral driver (effects as data, Gyral ADR 0006). Requests are plain
 // data built by the cart store; this driver performs them. Tests substitute it by name.
 //
-// Not @gyral/http: its HttpStatusError drops the response body, but the cart API answers
-// 404/409/422 with the full cart plus an error, and the UI needs both (gyral-ud5.7).
+// A small dedicated driver rather than @gyral/http: every status (2xx and 404/409/422) carries
+// the same answer shape (the cart plus an optional error), requests are domain-shaped and
+// queued, and tests fake it by name. @gyral/http now exposes error bodies (Gyral gyral-ud5.7),
+// but routing both outcomes through it would add mapping without removing code.
 import { defineDriver } from '@gyral/core';
 import * as v from 'valibot';
 import { CSRF_HEADER, readCsrfToken } from '../forms/csrf.js';

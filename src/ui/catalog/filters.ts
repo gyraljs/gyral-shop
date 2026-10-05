@@ -1,9 +1,8 @@
 // The filter and sort form of a listing. A plain GET form to the listing's own URL, so it
 // works without JavaScript; with JavaScript the listing component parses the same form into
 // a listing state (intents named by the caller) and updates results without a reload.
-import { html, live, nothing } from '@gyral/core';
+import { html, live, liveBoolean, nothing } from '@gyral/core';
 import { RATINGS, SORT_LABELS, SORTS, type ListingState } from '../../domain/listing.js';
-import { liveChecked } from '../forms/live-checked.js';
 import { fixedParams, listingHref, type ListingView } from './listing-view.js';
 
 export interface FilterIntents {
@@ -37,7 +36,7 @@ const sortField = (state: ListingState, relevanceLabel: string | undefined) => h
     <select id="sort" name="sort" .value=${live(state.sort)}>
       ${SORTS.map(
         (sort) =>
-          html`<option value=${sort} ?selected=${sort === state.sort}>
+          html`<option value=${sort} ?selected=${liveBoolean(sort === state.sort)}>
             ${sort === 'relevance' && relevanceLabel !== undefined ? relevanceLabel : SORT_LABELS[sort]}
           </option>`,
       )}
@@ -59,8 +58,7 @@ const brandFieldset = (view: ListingView) =>
                     type="checkbox"
                     name="brand"
                     value=${brand.slug}
-                    ?checked=${view.state.brands.includes(brand.slug)}
-                    ${liveChecked(view.state.brands.includes(brand.slug))}
+                    ?checked=${liveBoolean(view.state.brands.includes(brand.slug))}
                   />
                   ${brand.name} <span class="count">(${brand.count})</span>
                 </label>
@@ -79,8 +77,7 @@ const ratingFieldset = (state: ListingState) => html`
             type="radio"
             name="rating"
             value=""
-            ?checked=${state.rating === null}
-            ${liveChecked(state.rating === null)}
+            ?checked=${liveBoolean(state.rating === null)}
           />
           Any rating</label
         >
@@ -93,8 +90,7 @@ const ratingFieldset = (state: ListingState) => html`
                 type="radio"
                 name="rating"
                 value=${rating}
-                ?checked=${state.rating === rating}
-                ${liveChecked(state.rating === rating)}
+                ?checked=${liveBoolean(state.rating === rating)}
               />
               ${rating} ${rating === 1 ? 'star' : 'stars'} &amp; up</label
             >
@@ -136,8 +132,7 @@ export const filtersForm = (view: ListingView, intents: FilterIntents) => {
                   type="checkbox"
                   name="stock"
                   value="1"
-                  ?checked=${state.inStock}
-                  ${liveChecked(state.inStock)}
+                  ?checked=${liveBoolean(state.inStock)}
                 />
                 In stock</label
               >
@@ -148,8 +143,7 @@ export const filtersForm = (view: ListingView, intents: FilterIntents) => {
                   type="checkbox"
                   name="sale"
                   value="1"
-                  ?checked=${state.onSale}
-                  ${liveChecked(state.onSale)}
+                  ?checked=${liveBoolean(state.onSale)}
                 />
                 On sale</label
               >

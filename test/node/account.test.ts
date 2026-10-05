@@ -96,25 +96,27 @@ describe('sign in', () => {
     const test = await withAda();
     const ok = await (
       await guest(test)
-    ).postJson('/account/login', {
+    ).submitForm('/account/login', {
       email: ADA.email,
       password: ADA.password,
       next: '',
     });
-    expect(await ok.json()).toEqual({ _tag: 'SignedIn', location: '/' });
+    // Gyral formAction: a redirect becomes 200 { _tag: 'Redirected', location }, cookies kept.
+    expect(ok.status).toBe(200);
+    expect(await ok.json()).toEqual({ _tag: 'Redirected', location: '/' });
     expect(sessionCookie(ok)).toBeDefined();
     const bad = await (
       await guest(test)
-    ).postJson('/account/login', {
+    ).submitForm('/account/login', {
       email: ADA.email,
       password: 'wrong-password',
     });
-    expect(bad.status).toBe(200);
+    // A 422 IntentRejected without values, so the password is never echoed.
+    expect(bad.status).toBe(422);
     expect(await bad.json()).toEqual({
       _tag: 'IntentRejected',
       intent: 'Login',
       issues: [{ path: '', message: 'That email and password do not match an account.' }],
-      values: { email: ADA.email },
     });
   });
 
@@ -220,12 +222,13 @@ describe('register', () => {
     const test = await testApp();
     const res = await (
       await guest(test)
-    ).postJson('/account/register', {
+    ).submitForm('/account/register', {
       name: 'Grace',
       email: 'grace@example.com',
       password: 'Password123',
       confirm: 'Password123',
     });
+    expect(res.status).toBe(422);
     const body = (await res.json()) as { issues: { path: string; message: string }[] };
     expect(body.issues).toContainEqual({
       path: 'password',

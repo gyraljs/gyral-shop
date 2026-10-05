@@ -19,17 +19,7 @@ import {
 import { RegisterForm } from './schemas.js';
 
 export type RegisterMsg =
-  | {
-      readonly _tag: 'Register';
-      readonly name: string;
-      readonly email: string;
-      readonly password: string;
-      readonly confirm: string;
-      readonly next: string;
-    }
-  | SignedIn
-  | Failed
-  | IntentRejected;
+  { readonly _tag: 'Register'; readonly form: FormData } | SignedIn | Failed | IntentRejected;
 
 const FIELDS: readonly FieldSpec[] = [
   {
@@ -56,24 +46,13 @@ export const RegisterFormElement = define<AuthState, RegisterMsg, AuthProps>('sh
   props: { csrfToken: { attribute: 'csrf-token' }, next: { type: String } },
   init: initialAuthState,
   intent: {
-    Register: form(RegisterForm, (data) => ({ _tag: 'Register', ...data })),
+    // Validated in the browser first; the raw FormData then goes to the server unchanged.
+    Register: form(RegisterForm, (_data, raw) => ({ _tag: 'Register', form: raw })),
   },
   update: {
     Register: (s, m, { props }) => [
       { ...s, pending: true, errors: {} },
-      [
-        submit(
-          '/account/register',
-          {
-            name: m.name,
-            email: m.email,
-            password: m.password,
-            confirm: m.confirm,
-            next: m.next,
-          },
-          props.csrfToken,
-        ),
-      ],
+      [submit('/account/register', m.form, props.csrfToken)],
     ],
     SignedIn: (s, m) => [s, [goTo(m.location)]],
     Failed: failed,

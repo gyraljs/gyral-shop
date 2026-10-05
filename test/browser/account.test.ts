@@ -58,7 +58,7 @@ describe('sign-in page', () => {
     expect(await a11yViolations(page.root)).toEqual([]);
   });
 
-  it('posts JSON with the CSRF header, shows rejections, then navigates on success', async () => {
+  it('submits the form with the CSRF header, shows a 422 rejection, then navigates', async () => {
     const { http, location, field, submit, alert } = await mount(loginHtml, 'shop-login');
     field('email').value = 'ada@example.com';
     field('password').value = 'wrong-password';
@@ -66,17 +66,31 @@ describe('sign-in page', () => {
     await vi.waitFor(() => {
       expect(http.inputs).toHaveLength(1);
     });
-    expect(http.inputs[0]).toMatchObject({
+    const sent = http.inputs[0];
+    expect(sent).toMatchObject({
       url: '/account/login',
       method: 'POST',
-      headers: { 'x-csrf-token': 'test-csrf-token', accept: 'application/json' },
-      body: { email: 'ada@example.com', password: 'wrong-password', next: '' },
+      headers: { 'x-csrf-token': 'test-csrf-token' },
     });
-    http.resolveNext({
+    // The same FormData a no-JS post would send (Gyral submitForm).
+    expect(sent?.body).toBeInstanceOf(FormData);
+    const body = sent?.body as FormData;
+    expect([body.get('email'), body.get('password')]).toEqual([
+      'ada@example.com',
+      'wrong-password',
+    ]);
+    const rejected = {
       _tag: 'IntentRejected',
       intent: 'Login',
       issues: [{ path: '', message: 'That email and password do not match an account.' }],
-      values: { email: 'ada@example.com' },
+    };
+    http.rejectNext({
+      _tag: 'HttpStatusError',
+      url: '/account/login',
+      status: 422,
+      statusText: '',
+      body: rejected,
+      detail: rejected,
     });
     await vi.waitFor(() => {
       expect(alert()).toBe('That email and password do not match an account.');
@@ -86,7 +100,7 @@ describe('sign-in page', () => {
     await vi.waitFor(() => {
       expect(http.inputs).toHaveLength(2);
     });
-    http.resolveNext({ _tag: 'SignedIn', location: '/d/books' });
+    http.resolveNext({ _tag: 'Redirected', location: '/d/books' });
     await vi.waitFor(() => {
       expect(location.inputs).toEqual(['/d/books']);
     });
@@ -105,6 +119,7 @@ describe('sign-in page', () => {
       url: '/account/login',
       status: 429,
       statusText: '',
+      body: undefined,
     });
     await vi.waitFor(() => {
       expect(alert()).toContain('Too many attempts');

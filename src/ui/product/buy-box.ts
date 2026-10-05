@@ -1,5 +1,4 @@
 import { define, fieldErrors, form, html, nothing, send, unsafeCSS } from '@gyral/core';
-import { delay } from '@gyral/time';
 import { maxQuantity } from '../../domain/inventory.js';
 import { format, usd } from '../../domain/money.js';
 import {
@@ -43,7 +42,6 @@ export interface BuyBoxState {
 }
 
 export type BuyBoxMsg =
-  | { readonly _tag: 'Enhanced' }
   | { readonly _tag: 'Choose'; readonly axis: string; readonly value: string }
   | { readonly _tag: 'Add'; readonly sku: string; readonly quantity: number };
 
@@ -136,13 +134,14 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
     action: { type: String },
     csrf: { type: String },
   },
-  // `Enhanced` runs on the client only: servers drop commands, and hydration starts init's
-  // commands after the first (matching) render (Gyral ADR 0012).
   stores: [cartStore],
-  init: (props) => [
-    { selection: defaultSelection(props.variants ?? []), enhanced: false, formError: undefined },
-    [delay<BuyBoxMsg>(0, { _tag: 'Enhanced' }, { key: 'buy-box-enhance' })],
-  ],
+  // The server and the first client render show the no-JS SKU list (hydration must match);
+  // Gyral's `Hydrated` message then switches to per-option choices (Gyral ADR 0012).
+  init: (props) => ({
+    selection: defaultSelection(props.variants ?? []),
+    enhanced: false,
+    formError: undefined,
+  }),
   intent: {
     Choose: ({ target, value }) => {
       const axis = target.getAttribute('data-axis');
@@ -153,7 +152,7 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
     Add: form(AddForm, (d) => ({ _tag: 'Add', sku: d.sku, quantity: d.quantity })),
   },
   update: {
-    Enhanced: (s) => ({ ...s, enhanced: true }),
+    Hydrated: (s) => ({ ...s, enhanced: true }),
     Choose: (s, m, { props }) => ({
       ...s,
       selection: choose(props.variants ?? [], s.selection, m.axis, m.value),
