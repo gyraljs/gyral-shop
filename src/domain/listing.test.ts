@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  activeFilterCount,
   DEFAULT_LISTING,
   isRefined,
   listingSearch,
@@ -189,5 +190,23 @@ describe('pagination math', () => {
         });
       }
     }
+  });
+});
+
+describe('activeFilterCount', () => {
+  it('counts filters, not sort or page, and each brand separately', () => {
+    expect(activeFilterCount(DEFAULT_LISTING)).toBe(0);
+    expect(activeFilterCount({ ...DEFAULT_LISTING, sort: 'price-asc', page: 3 })).toBe(0);
+    expect(
+      activeFilterCount({
+        ...DEFAULT_LISTING,
+        minPrice: 10,
+        maxPrice: 50,
+        brands: ['acme', 'zenith'],
+        rating: 4,
+        inStock: true,
+        onSale: true,
+      }),
+    ).toBe(7);
   });
 });

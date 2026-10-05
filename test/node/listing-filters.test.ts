@@ -124,6 +124,25 @@ describe('listing routes', () => {
     expect(body).not.toContain('checked="');
   });
 
+  it('wraps the filters in a disclosure, open with an active count only when filters apply', async () => {
+    const { db, get } = await testApp();
+    const { path } = await fixtureCategory(db);
+    const plain = text(await (await get(path)).text());
+    expect(plain).toMatch(/<details class="filters-panel" data-component="filters-panel"\s*>/);
+    expect(plain).toMatch(/<summary>\s*Filter and\s+sort\s*<\/summary>/);
+
+    // The form submits fields in its own order; the server redirects to the canonical query.
+    let res = await get(`${path}?brand=zenith&stock=1&sort=price-asc`);
+    const location = res.headers.get('location');
+    if (res.status === 301 && location !== null) res = await get(location);
+    expect(res.status).toBe(200);
+    const filtered = text(await res.text());
+    expect(filtered).toMatch(
+      /<details class="filters-panel" data-component="filters-panel"\s+open/,
+    );
+    expect(filtered).toContain('<span class="count">(2 active)</span>'); // sort isn't a filter
+  });
+
   it('keeps the query in pager links of a filtered listing', async () => {
     const { db, get } = await testApp();
     const { path } = await fixtureCategory(db);

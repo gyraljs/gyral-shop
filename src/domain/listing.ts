@@ -47,6 +47,18 @@ export const DEFAULT_LISTING: ListingState = {
   onSale: false,
 };
 
+/** How many filters (not sort or page) differ from the defaults: the "N active" badge. */
+export function activeFilterCount(state: ListingState): number {
+  return (
+    (state.minPrice === null ? 0 : 1) +
+    (state.maxPrice === null ? 0 : 1) +
+    state.brands.length +
+    (state.rating === null ? 0 : 1) +
+    (state.inStock ? 1 : 0) +
+    (state.onSale ? 1 : 0)
+  );
+}
+
 /** The query string carries a different spelling of a valid state: redirect to `state`. */
 export interface Noncanonical {
   readonly _tag: 'Noncanonical';
