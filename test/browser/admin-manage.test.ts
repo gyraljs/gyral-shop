@@ -104,6 +104,10 @@ function api(req: FakeRequest): unknown {
   if (url.pathname === '/api/admin/promos' && !post) return promos;
   if (url.pathname === '/api/admin/promos/new') return newPromo;
   if (url.pathname === '/api/admin/promos' && post) return { _tag: 'Saved', id: 7 };
+  // After saving, the editor opens the new code: answer its detail request too.
+  if (url.pathname === '/api/admin/promos/7' && !post) {
+    return { promo: { ...welcome, id: 7, code: 'SUMMER' }, departments: newPromo.departments };
+  }
   if (url.pathname === '/api/admin/users' && !post) return users;
   if (url.pathname === '/api/admin/users/2' && post) {
     return { _tag: 'UserUpdated', id: 2, role: 'customer', disabled: true };
