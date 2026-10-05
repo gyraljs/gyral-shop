@@ -1,22 +1,14 @@
 // ORDER IS LOAD-BEARING: hydrate support must load before anything that imports Lit
-// (Gyral ADR 0012). Then every component that may appear on a server-rendered page.
+// (Gyral ADR 0012). Then the shell components that every page renders; page-specific
+// components load on demand (./lazy.ts, shop-bha).
 import '@gyral/ssr/hydrate';
 import '../ui/layout/site-header.js';
-import '../ui/catalog/listing.js';
-import '../ui/account/login-form.js';
-import '../ui/account/register-form.js';
-import '../ui/product/buy-box.js';
-import '../ui/product/gallery.js';
 import '../ui/cart/mini-cart.js';
 import '../ui/layout/search-box.js';
 import '../ui/consent/consent.js';
-import '../ui/cart/cart-page.js';
-import '../ui/checkout/checkout-page.js';
-import '../ui/account/settings-forms.js';
-import '../ui/content/contact.js';
-import '../ui/product/reviews.js';
-import '../ui/product/review-form.js';
-import '../ui/wishlist/toggle.js';
+import { loadComponentsIn, watchForComponents } from './lazy.js';
 
-// The admin app is client-rendered and admin-only: load it only on /admin pages.
-if (document.querySelector('shop-admin') !== null) void import('../ui/admin/app.js');
+// Top-level await: importing this module finishes once the page's components are defined,
+// which tests rely on (`await import(entry)` then `hydrated(page)`).
+await loadComponentsIn(document);
+watchForComponents(document.body);

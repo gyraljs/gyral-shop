@@ -42,3 +42,25 @@ export function safeNext(next: string | undefined): string {
   if (next.includes('\\') || hasControl) return '/';
   return next;
 }
+
+/**
+ * Origins a same-site request may claim. The request URL's own origin always counts; behind a
+ * reverse proxy that URL is internal, so the configured SITE_ORIGIN counts too, and, only when
+ * `trustProxy` is set, the origin the proxy forwards (X-Forwarded-Proto/Host).
+ */
+export function acceptedOrigins(
+  request: Request,
+  siteOrigin: string | undefined,
+  trustProxy: boolean,
+): ReadonlySet<string> {
+  const origins = new Set([new URL(request.url).origin]);
+  if (siteOrigin !== undefined) origins.add(siteOrigin);
+  if (trustProxy) {
+    const host = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim();
+    const proto = request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim() ?? 'https';
+    if (host !== undefined && host !== '' && /^https?$/.test(proto)) {
+      origins.add(`${proto}://${host}`);
+    }
+  }
+  return origins;
+}

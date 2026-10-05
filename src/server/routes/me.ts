@@ -18,8 +18,11 @@ export function meRoutes(): Hono<AppEnv> {
       user === undefined || session === undefined
         ? null
         : { firstName: firstName(user.name), csrfToken: session.csrfToken };
-    const consentDecided = readConsent(c) !== undefined;
-    return c.json({ account, consentDecided }, 200, { 'cache-control': 'no-store' });
+    const consent = readConsent(c);
+    const consentDecided = consent !== undefined;
+    // Lets a prerendered page decide whether to send its page-view beacon (shop-8c2).
+    const analytics = consent?.analytics === true;
+    return c.json({ account, consentDecided, analytics }, 200, { 'cache-control': 'no-store' });
   });
   return app;
 }

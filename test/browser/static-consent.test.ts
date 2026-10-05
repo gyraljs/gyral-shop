@@ -12,7 +12,8 @@ const banner = () => page.root.querySelector('shop-consent [data-region="consent
 beforeAll(async () => {
   vi.spyOn(window, 'fetch').mockImplementation((input) => {
     const url = new URL(input instanceof Request ? input.url : String(input), location.href);
-    const body = url.pathname === '/api/me' ? { account: null, consentDecided: false } : {};
+    const body =
+      url.pathname === '/api/me' ? { account: null, consentDecided: false, analytics: false } : {};
     return Promise.resolve(Response.json(body));
   });
   page = mountSsr(serverHtml);
