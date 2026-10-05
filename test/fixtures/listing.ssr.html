@@ -788,7 +788,8 @@ shop-checkout {
     gap: var(--space-2);
   }
   .admin-top-list span, .admin-status-list data { color: var(--ink-muted); font-variant-numeric: tabular-nums; }
-  .admin-table-wrap { overflow-x: auto; }
+  /* Positioned so visually hidden text in cells scrolls with the table, not the page. */
+  .admin-table-wrap { position: relative; overflow-x: auto; }
   .admin-table-wrap:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   .admin-variant { display: grid; gap: var(--space-2); padding-block: var(--space-2); border-block-start: 1px solid var(--line); }
   .admin-variant h3 { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: baseline; }
