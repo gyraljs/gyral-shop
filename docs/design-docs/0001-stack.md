@@ -88,3 +88,30 @@ published.
   part tables, and hydration is its own 2.8 KiB chunk (preloaded by server-rendered pages).
 - Server rendering is 2.6–3.7× faster (median, production server, same machine and run
   conditions): category 12.1 → 3.3 ms, product 15.9 → 6.1 ms, home 24.8 → 7.9 ms.
+
+### 0.3.0-next.5 (2026-10-06)
+
+Same tarball setup, now `0.3.0-next.5` (Gyral b2ae8e5). Production client build, gzip -9, both
+columns measured by one script on the same machine (its next.3 initial and all-chunks figures
+are 2.5–2.8 KiB above the counts in the bullets above, which used another method); per page =
+every script a cold load fetches:
+
+| Measure               | next.3     | next.5     |
+| --------------------- | ---------- | ---------- |
+| Entry                 | 8.0 KiB    | 7.9 KiB    |
+| Initial (entry graph) | 31.8 KiB   | 31.6 KiB   |
+| All chunks (raw)      | 92.6 (273) | 91.0 (246) |
+| Home, department      | 36.7       | 36.5       |
+| Category, search      | 44.4       | 44.1       |
+| Product               | 46.2       | 45.8       |
+| Cart, checkout        | 38.9       | 38.6       |
+| Sign-in               | 37.8       | 37.5       |
+| About (prerendered)   | 34.9       | 34.7       |
+
+Compact templates and no template ids in production take 10% off the raw JS (273 → 246 KiB)
+but only 0.2–0.4 KiB gzip per page. Server rendering is unchanged within noise (median of 400
+sequential requests, alternating runs: category 3.0 → 3.15 ms, product 5.6 → 5.5 ms, home 7.6
+→ 7.7 ms). Pages now also preload their route chunks, the entry first (`route-chunks.ts`): the
+page's lazily loaded component is defined 80–310 ms sooner (product buy box 827 → 698 ms at
+10 Mbps, 1628 → 1321 ms at 1.6 Mbps; CPU 4x, 150 ms RTT). `scripts/perf-baseline.json`, which
+dated from 0.1 (75–83 KiB per page), is re-recorded.
