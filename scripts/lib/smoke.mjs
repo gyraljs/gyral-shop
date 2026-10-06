@@ -1,4 +1,4 @@
-/* global document -- markServerNodes runs in the browser (page.addInitScript) */
+/* global document, window -- markServerNodes and lostNodes run in the browser */
 // Pure checks for `pnpm smoke:prod` (scripts/smoke-prod.mjs): compare what the server sent with
 // what the production build shows after hydration. Ported from Gyral's scripts/lib/smoke.mjs
 // and extended with region counts and stuck `defer-hydration`. Tested in
@@ -80,25 +80,52 @@ export function compareSummaries(path, server, live, errors, allow = {}) {
   return problems;
 }
 
-/** Console messages that are not problems in a production build (none known yet). */
+/**
+ * Console messages that are not problems in a production build (none known yet). Errors and
+ * warnings both count: a production hydration mismatch is a warning (Gyral view/07).
+ */
 export const ignoredConsole = (text) => text.startsWith('[vite]');
 
 /**
  * Init script (page.addInitScript): when parsing finishes, before deferred/module scripts run
  * (readyState "interactive"), tag every element the server sent, inside declarative shadow
- * roots too. Hydrating in place keeps these nodes; a fresh client render replaces them.
+ * roots too. Hydrating in place keeps these nodes; a fresh client render replaces them. Each
+ * one is also listed (`window.__smokeServerNodes`) with the custom elements around it, so
+ * `lostNodes` can tell which ones left the page.
  */
 export function markServerNodes() {
   document.addEventListener('readystatechange', () => {
     if (document.readyState !== 'interactive') return;
-    const mark = (node) => {
+    const nodes = [];
+    const mark = (node, hosts) => {
       for (const el of node.querySelectorAll('*')) {
         el.__smokeServerNode = true;
-        if (el.shadowRoot) mark(el.shadowRoot);
+        const around = [];
+        for (let n = el.parentNode; n !== null; n = n.parentNode ?? n.host ?? null) {
+          if (n.nodeType === 1 && n.localName.includes('-')) around.push(n.localName);
+        }
+        // A declarative shadow root's <style> is replaced by the shared sheet on hydration.
+        const dsdStyle = el.localName === 'style' && el.parentNode === node && node !== document;
+        if (!dsdStyle) nodes.push({ el, hosts: [...around, ...hosts] });
+        if (el.shadowRoot) mark(el.shadowRoot, [el.localName, ...around, ...hosts]);
       }
     };
-    mark(document);
+    mark(document, []);
+    window.__smokeServerNodes = nodes;
   });
+}
+
+/**
+ * After hydration: server elements that are no longer in the page, as `tag` names (Gyral 0.3
+ * hydration adopts every node the parser built; only a shadow root's server <style> goes, for
+ * the shared sheet). Elements inside `allow.hosts` (components that re-render on purpose once
+ * hydrated) are skipped. Runs in the browser, so it is self-contained.
+ */
+export function lostNodes(allow) {
+  const hosts = new Set(allow?.hosts ?? []);
+  return (window.__smokeServerNodes ?? [])
+    .filter(({ el, hosts: around }) => !el.isConnected && !around.some((h) => hosts.has(h)))
+    .map(({ el }) => el.localName);
 }
 
 /**
