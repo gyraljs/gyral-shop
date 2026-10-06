@@ -14,7 +14,7 @@ system of record.
 
 | Command                     | What it does                                                                                                                               |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm install`              | Install (Gyral `@gyral/*` from npm)                                                                                                        |
+| `pnpm install`              | Install (Gyral `@gyral/*` 0.3 prerelease tarballs from `../gyral-tarballs`, ADR 0001)                                                      |
 | `pnpm check`                | **The gate**: typecheck, lint, format, invariants, tests                                                                                   |
 | `pnpm dev`                  | Dev server with SSR + HMR: http://localhost:5200                                                                                           |
 | `pnpm build`                | Production client build + prerender static pages (needs a seeded DB)                                                                       |
@@ -52,7 +52,8 @@ system of record.
 
 ## Skills to load
 
-- `lit-web-apps` (SSR, routing, testing), `modern-css` (all styles), `semantic-html` (all
+- `gyral` (components, views, forms, SSR, testing; Gyral's own skill, `skills/gyral` in the
+  Gyral repo), `modern-css` (all styles), `semantic-html` (all
   markup), `google-seo-fundamentals` (catalog/product/content pages), `beads`.
 - Do **not** load `effect-fp-skill`: app code has no Effect.
 - For framework behaviour, read Gyral's docs at https://gyral.dev/docs/ and its ADRs in
@@ -66,6 +67,10 @@ system of record.
   colour, font, radius and shadow from a token (no literals, no literal `var()` fallbacks;
   `scripts/check-styles.mjs`), widgets expose `::part()`s, and the ADR's hook and part tables
   are updated when you add hooks or parts.
+- Views follow Gyral's template rules and keep `each` rows pure (`@gyral/core/eslint` and
+  `vite build` check both). No `style` attributes: the CSP allows hashed `<style>` only
+  (ADR 0002). Form state is live, so a form's model keeps what the user submitted (see
+  ARCHITECTURE.md, "Gyral").
 - Money is integer cents (`domain/money.ts`), never floats.
 - Every external input is parsed with valibot at the boundary (forms, JSON, env, DB seeds).
 - Workflows trigger on `workflow_dispatch` only. Files ≤ 300 lines. No `any`, no `!`.

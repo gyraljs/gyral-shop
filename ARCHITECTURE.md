@@ -25,7 +25,7 @@ browser ── HTTP ──► server (Hono) ──► services (use-cases) ─�
 `ui/` ships to the browser, so it never imports db, services, config or server code. Data
 reaches it as props (SSR) or over HTTP.
 
-## Rendering modes per route (lit-web-apps skill)
+## Rendering modes per route
 
 - **ssr:** catalog, search, product pages, cart, checkout, account, orders. Personalized or
   live data, SEO matters for catalog pages.
@@ -39,5 +39,17 @@ reaches it as props (SSR) or over HTTP.
 
 ## Gyral
 
-`@gyral/*` ^0.2.0 from npm (lit-html pinned to 3.3.0, see ADR 0001) (published with provenance). Lit is a peer dependency, so exactly
-one copy runs; `gyralVitePreset()` dedupes it in Vite as a guard.
+`@gyral/*` 0.3 (prerelease tarballs from `../gyral-tarballs` until 0.3.0 is published; ADR
+0001). Gyral renders with its own view layer (Gyral ADR 0018): `html`, `css`, `each`, `raw`,
+the `invalid`/`labelledBy` hooks and the `prop.*` builders come from `@gyral/core`; there is no
+Lit. `gyralVitePreset()` adds the template compiler to `vite build` (templates precompiled and
+checked against Gyral's template rules); `@gyral/core/eslint` reports the same rules in the
+editor. The server renders with `@gyral/core/server` (via `@gyral/ssr`'s `renderPage`), each
+component hydrates on its own in the browser (no hydration import, no module-order rules), and
+production pages preload the entry's chunks and Gyral's lazily loaded hydration chunk.
+
+Form state is live: every render writes the model's value into `value=`, `?checked=`,
+`?selected=`, `<textarea>` content and `?open`. So a component's model holds what the user
+submitted until the server answers (`submitting()` in `ui/account/auth-form.ts`, checkout's
+`post()`, the admin's per-form drafts in `ui/admin/fields.ts`), and a disclosure the user may
+toggle follows its `toggle` event (listing filters, the consent box).

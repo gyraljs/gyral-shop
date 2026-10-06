@@ -8,7 +8,7 @@ It exists to show a complete, realistic project, not a toy.
 login, password reset), cart, checkout with shipping, tax and promo codes, mock payments,
 order history, wishlist and reviews, content pages, SEO, a consent banner, and an admin UI.
 
-**Stack:** TypeScript (no Effect in app code), Gyral + Lit, Hono, Drizzle ORM + SQLite,
+**Stack:** TypeScript (no Effect in app code), Gyral 0.3 (its own view layer), Hono, Drizzle ORM + SQLite,
 valibot, Vitest (browser mode) + Playwright.
 
 ## Getting started

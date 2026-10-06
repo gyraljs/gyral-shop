@@ -4,12 +4,12 @@ Status: **accepted** (2026-10-04)
 
 Three kinds of test, each with a helper in `test/support/`:
 
-| Kind       | Where                                     | Runs in                        | Helper                                                                                                                                                                                                                                                                                                                      |
-| ---------- | ----------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Unit       | `src/**/x.test.ts` (domain, services, db) | Node                           | plain Vitest                                                                                                                                                                                                                                                                                                                |
-| Route      | `test/node/*.test.ts`                     | Node                           | `testApp()`: the real Hono app over a migrated in-memory SQLite with a small deterministic seed (2 products per category). `get()`, `html()`                                                                                                                                                                                |
-| Page       | `test/browser/*.test.ts`                  | Chromium (Vitest browser mode) | `mountSsr(fixture)` from `@gyral/testing` puts real server output in the document (DSD parsed like a page load, store seed and metas restored), then `import` the client entry and `await hydrated(page)` (fails on console errors/warnings and waits for nested components); `a11yViolations(root)` runs axe (WCAG 2.2 AA) |
-| End to end | `test/node/*.test.ts`                     | Node + Playwright              | `listen(testApp)` serves over HTTP; `openPage({ javaScript: false })` proves no-JS paths                                                                                                                                                                                                                                    |
+| Kind       | Where                                     | Runs in                        | Helper                                                                                                                                                                                                                                                                                                             |
+| ---------- | ----------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Unit       | `src/**/x.test.ts` (domain, services, db) | Node                           | plain Vitest                                                                                                                                                                                                                                                                                                       |
+| Route      | `test/node/*.test.ts`                     | Node                           | `testApp()`: the real Hono app over a migrated in-memory SQLite with a small deterministic seed (2 products per category). `get()`, `html()`                                                                                                                                                                       |
+| Page       | `test/browser/*.test.ts`                  | Chromium (Vitest browser mode) | `mountSsr(fixture)` from `@gyral/testing` puts real server output in the document (DSD parsed like a page load, store seed and metas restored), then `import` the client entry and `await hydrated(page)` (fails on console errors/warnings, waits for `settled()`); `a11yViolations(root)` runs axe (WCAG 2.2 AA) |
+| End to end | `test/node/*.test.ts`                     | Node + Playwright              | `listen(testApp)` serves over HTTP; `openPage({ javaScript: false })` proves no-JS paths                                                                                                                                                                                                                           |
 
 ## Golden fixtures connect server and browser
 
@@ -84,7 +84,33 @@ page.
 
 **Rolldown `strictExecutionOrder`: not adopted.** It restores import-order evaluation, so Lit's
 hydrate support patches LitElement (verified), but it added 8.5–28 KiB gzip per page (category
-+35%), over the JS budget. Gyral's `define()` hydrates correctly without the patch, and the
-shop has no raw LitElement code; an ESLint rule (`NO_RAW_LIT`) keeps it that way. If raw Lit
-components are ever needed, load `@gyral/ssr/hydrate` as its own module script before the entry
-instead (Gyral ADR 0012).
++35%), over the JS budget. Superseded by Gyral 0.3 (addendum below): hydration no longer depends
+on module order at all.
+
+## Addendum: Gyral 0.3 (2026-10-06)
+
+Gyral 0.3 renders, server-renders and hydrates with its own view layer (Gyral ADR 0018), so the
+Lit-specific parts above are history: there is no Lit development build, no
+`@gyral/ssr/hydrate` import and no module-order hazard. Each component adopts the server's nodes
+on its own; a mismatch throws `HydrationMismatch` in development and, in production, warns and
+re-renders only that component.
+
+- **Waiting for renders:** `await settled()` (from `@gyral/core`) replaces
+  `el.updateComplete`; `hydrated(page)` waits for it too.
+- **Golden fixtures:** development output carries `<!--gyral:ID-->` markers and `<!---->`
+  anchors; seeds are single-quoted JSON. Gyral writes a tag's static attributes before its
+  bound ones and escapes only `&` and `"` in attribute values (the HTML spec's minimum), so
+  node tests match tags with `startTag()` (any attribute order) and check for injected markup
+  with `outsideAttributes()` (both in `test/support/fixtures.ts`).
+- **smoke:prod** also fails on console warnings (a production mismatch is one) and on any
+  element the parser built that is no longer in the page after hydration (islands included,
+  after scrolling them into view; only a shadow root's server `<style>`, replaced by its shared
+  sheet, may go). Every checked page passes.
+- **Development SSR** (`pnpm dev`, `ui:check`) renders development output, so `ui:check` runs
+  Gyral's development hydration checks against development markup.
+- **Form state is live** (Gyral view/02-bindings.md): every render writes the model's value
+  into the control. Tests that type into a field and then trigger any render (a rejection, a
+  pending submit) prove the model kept the input (`account.test.ts`, `admin-manage.test.ts`).
+- Removed: `scripts/check-templates.mjs` (Lit couldn't hydrate an empty text part, so text
+  bindings had to render `nothing` instead of `''`; Gyral 0.3 can) and `NO_RAW_LIT` (ESLint now
+  bans Lit imports outright and runs `@gyral/core/eslint`'s template rules).
