@@ -26,7 +26,7 @@ const idOf = async (email: string) => {
   return row.id;
 };
 
-/** Page text without Lit's comment markers. */
+/** Page text without comments (Gyral's anchors and markers). */
 const visible = (html: string) => html.replace(/<!--[\s\S]*?-->/g, '');
 
 const jsonLd = (html: string): unknown[] =>

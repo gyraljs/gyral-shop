@@ -21,6 +21,7 @@ const errorsOf = (s: ProductEditState, key: string): Errors => s.errors[key] ?? 
 function productForm(s: ProductEditState, i: I, taxonomy: Taxonomy) {
   const p = s.edit?.product;
   const errors = errorsOf(s, formKey('SaveProduct'));
+  const draft = s.drafts[formKey('SaveProduct')];
   const f = 'product';
   const departments = taxonomy.departments.map((d) => ({ value: String(d.id), label: d.name }));
   const deptName = new Map(taxonomy.departments.map((d) => [d.id, d.name]));
@@ -35,36 +36,38 @@ function productForm(s: ProductEditState, i: I, taxonomy: Taxonomy) {
     ${formError(errors)}
     <fieldset>
       <legend>Details</legend>
-      ${textField({ form: f, name: 'name', label: 'Name', errors, value: p?.name ?? '', required: true })}
+      ${textField({ form: f, name: 'name', label: 'Name', errors, draft, value: p?.name ?? '', required: true })}
       ${textField({
         form: f,
         name: 'slug',
         label: 'URL slug',
         hint: 'Lowercase words joined by hyphens; the product page is /p/<slug>.',
         errors,
+        draft,
         value: p?.slug ?? '',
         required: true,
       })}
-      ${textArea({ form: f, name: 'description', label: 'Description', errors, value: p?.description ?? '', rows: 5, required: true })}
+      ${textArea({ form: f, name: 'description', label: 'Description', errors, draft, value: p?.description ?? '', rows: 5, required: true })}
     </fieldset>
     <fieldset>
       <legend>Placement</legend>
       <div class="admin-row">
-        ${selectField({ form: f, name: 'departmentId', label: 'Department', errors, value: p === undefined ? '' : String(p.departmentId), choices: departments, required: true })}
-        ${selectField({ form: f, name: 'categoryId', label: 'Category', errors, value: p === undefined ? '' : String(p.categoryId), choices: categories, required: true })}
-        ${selectField({ form: f, name: 'brandId', label: 'Brand', errors, value: p === undefined ? '' : String(p.brandId), choices: brands, required: true })}
+        ${selectField({ form: f, name: 'departmentId', label: 'Department', errors, draft, value: p === undefined ? '' : String(p.departmentId), choices: departments, required: true })}
+        ${selectField({ form: f, name: 'categoryId', label: 'Category', errors, draft, value: p === undefined ? '' : String(p.categoryId), choices: categories, required: true })}
+        ${selectField({ form: f, name: 'brandId', label: 'Brand', errors, draft, value: p === undefined ? '' : String(p.brandId), choices: brands, required: true })}
       </div>
     </fieldset>
     <fieldset>
       <legend>Pricing</legend>
       <div class="admin-row">
-        ${textField({ form: f, name: 'price', label: 'Price (USD)', errors, value: p === undefined ? '' : dollarsText(p.priceCents), inputmode: 'decimal', required: true })}
+        ${textField({ form: f, name: 'price', label: 'Price (USD)', errors, draft, value: p === undefined ? '' : dollarsText(p.priceCents), inputmode: 'decimal', required: true })}
         ${textField({
           form: f,
           name: 'salePrice',
           label: 'Sale price (USD)',
           hint: 'Leave empty when not on sale.',
           errors,
+          draft,
           value: p === undefined || p.salePriceCents === null ? '' : dollarsText(p.salePriceCents),
           inputmode: 'decimal',
         })}
@@ -78,6 +81,7 @@ function productForm(s: ProductEditState, i: I, taxonomy: Taxonomy) {
         label: 'Image URLs',
         hint: 'One per line: a URL, then optionally | alt text.',
         errors,
+        draft,
         value: imagesText(s.edit?.images ?? []),
         rows: 3,
       })}
@@ -129,9 +133,9 @@ function variantForms(s: ProductEditState, i: I, variant: ProductEdit['variants'
       <input type="hidden" name="variantId" value=${id} />
       ${formError(editErrors)}
       <div class="admin-row">
-        ${textField({ form: `v${id}`, name: 'sku', label: 'SKU', errors: editErrors, value: variant.sku, required: true })}
-        ${textField({ form: `v${id}`, name: 'options', label: 'Options', hint: 'e.g. Size=M; Color=Navy', errors: editErrors, value: optionsText(variant.options) })}
-        ${textField({ form: `v${id}`, name: 'price', label: 'Price override (USD)', errors: editErrors, value: variant.priceCents === null ? '' : dollarsText(variant.priceCents), inputmode: 'decimal' })}
+        ${textField({ form: `v${id}`, name: 'sku', label: 'SKU', errors: editErrors, draft: s.drafts[formKey('SaveVariant', variant.id)], value: variant.sku, required: true })}
+        ${textField({ form: `v${id}`, name: 'options', label: 'Options', hint: 'e.g. Size=M; Color=Navy', errors: editErrors, draft: s.drafts[formKey('SaveVariant', variant.id)], value: optionsText(variant.options) })}
+        ${textField({ form: `v${id}`, name: 'price', label: 'Price override (USD)', errors: editErrors, draft: s.drafts[formKey('SaveVariant', variant.id)], value: variant.priceCents === null ? '' : dollarsText(variant.priceCents), inputmode: 'decimal' })}
       </div>
       <div class="admin-actions">
         <button
@@ -147,8 +151,8 @@ function variantForms(s: ProductEditState, i: I, variant: ProductEdit['variants'
       <input type="hidden" name="variantId" value=${id} />
       ${formError(stockErrors)}
       <div class="admin-row">
-        ${textField({ form: `s${id}`, name: 'delta', label: 'Add or remove units', hint: 'Negative numbers remove stock.', errors: stockErrors, value: '', inputmode: 'numeric', required: true })}
-        ${textField({ form: `s${id}`, name: 'reason', label: 'Reason', hint: 'e.g. Delivery, Damaged, Stock count', errors: stockErrors, value: '', required: true })}
+        ${textField({ form: `s${id}`, name: 'delta', label: 'Add or remove units', hint: 'Negative numbers remove stock.', errors: stockErrors, draft: s.drafts[formKey('Adjust', variant.id)], value: '', inputmode: 'numeric', required: true })}
+        ${textField({ form: `s${id}`, name: 'reason', label: 'Reason', hint: 'e.g. Delivery, Damaged, Stock count', errors: stockErrors, draft: s.drafts[formKey('Adjust', variant.id)], value: '', required: true })}
       </div>
       <div class="admin-actions">
         <button type="submit" ?disabled=${s.pending === formKey('Adjust', variant.id)}>
@@ -161,6 +165,7 @@ function variantForms(s: ProductEditState, i: I, variant: ProductEdit['variants'
 
 function addVariantForm(s: ProductEditState, i: I) {
   const errors = errorsOf(s, formKey('AddVariant'));
+  const draft = s.drafts[formKey('AddVariant')];
   return html`<form
     class="admin-form"
     data-intent=${i.AddVariant}
@@ -169,9 +174,9 @@ function addVariantForm(s: ProductEditState, i: I) {
     <h3>Add a variant</h3>
     ${formError(errors)}
     <div class="admin-row">
-      ${textField({ form: 'new-variant', name: 'sku', label: 'SKU', errors, value: '', required: true })}
-      ${textField({ form: 'new-variant', name: 'options', label: 'Options', hint: 'e.g. Size=M; Color=Navy', errors, value: '' })}
-      ${textField({ form: 'new-variant', name: 'price', label: 'Price override (USD)', errors, value: '', inputmode: 'decimal' })}
+      ${textField({ form: 'new-variant', name: 'sku', label: 'SKU', errors, draft, value: '', required: true })}
+      ${textField({ form: 'new-variant', name: 'options', label: 'Options', hint: 'e.g. Size=M; Color=Navy', errors, draft, value: '' })}
+      ${textField({ form: 'new-variant', name: 'price', label: 'Price override (USD)', errors, draft, value: '', inputmode: 'decimal' })}
     </div>
     <div class="admin-actions">
       <button type="submit" data-variant="quiet" ?disabled=${s.pending === formKey('AddVariant')}>

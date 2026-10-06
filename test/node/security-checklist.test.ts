@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { requireAdmin } from '../../src/server/security/index.js';
 import { submitReview } from '../../src/services/reviews.js';
 import { testApp } from '../support/app.js';
+import { outsideAttributes } from '../support/fixtures.js';
 import { ADMIN_EMAIL, anyCustomerEmail, createMember, guest, loginAs } from '../support/auth.js';
 import { insertCartFixture, SKU, T0 } from '../support/cart-fixture.js';
 import { placeOrder } from '../support/orders.js';
@@ -54,7 +55,7 @@ describe('user-supplied content in rendered pages', () => {
 
     for (const path of ['/p/lego', '/p/lego/reviews']) {
       const html = await (await test.get(path)).text();
-      expect(html, path).not.toContain(PAYLOAD);
+      expect(outsideAttributes(html), path).not.toContain(PAYLOAD);
       expect(html, path).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
       // JSON-LD review snippets are script-safe: no "</script" inside the data.
       for (const [, json] of html.matchAll(

@@ -2,7 +2,7 @@
 // (docs/product-specs/admin.md, "Products" and "Inventory"). Each form validates in the browser
 // with the shared schema (form()), then posts with submitForm; the API answers with JSON or a
 // 422 IntentRejected that lands in the same error state as a browser-side rejection.
-import { define, fieldErrors, form, type IntentRejected, type Next } from '@gyral/core';
+import { define, fieldErrors, form, prop, type IntentRejected, type Next } from '@gyral/core';
 import { get, submitForm, type HttpError } from '@gyral/http';
 import { navigate } from '@gyral/router';
 import * as v from 'valibot';
@@ -15,7 +15,7 @@ import {
   type Taxonomy,
 } from '../../domain/admin.js';
 import { adminDrivers } from './drivers.js';
-import { formKey, type Errors } from './fields.js';
+import { draftOf, formKey, type Drafts, type Errors } from './fields.js';
 import { loadError } from './format.js';
 import { productEditView } from './product-views.js';
 import { AdjustForm, ArchiveForm, ProductForm, VariantForm } from './schemas.js';
@@ -35,6 +35,8 @@ export interface ProductEditState {
   readonly errors: Readonly<Record<string, Errors>>;
   /** The form whose request is in flight (its key), for disabling buttons and server 422s. */
   readonly pending: string | null;
+  /** What each form last sent, keyed like `errors`, until the product reloads. */
+  readonly drafts: Drafts;
 }
 
 type Submit<T extends string> = {
@@ -108,7 +110,7 @@ function submit(
   const key = formKey(m._tag, m._tag === 'SaveVariant' || m._tag === 'Adjust' ? m.variantId : '');
   const errors = Object.fromEntries(Object.entries(s.errors).filter(([k]) => k !== key));
   return [
-    { ...s, pending: key, errors, notice: null },
+    { ...s, pending: key, errors, notice: null, drafts: { ...s.drafts, [key]: draftOf(m.form) } },
     [
       submitForm(urlOf(s, m), m.form, {
         onSuccess: (body): ProductEditMsg | undefined => {
@@ -133,14 +135,15 @@ function rejected(s: ProductEditState, m: IntentRejected): ProductEditState {
     typeof fromBrowser === 'string'
       ? formKey(m.intent, fromBrowser)
       : (s.pending ?? formKey(m.intent));
-  return { ...s, pending: null, errors: { ...s.errors, [key]: fieldErrors(m.issues) } };
+  const drafts = m.values === undefined ? s.drafts : { ...s.drafts, [key]: m.values };
+  return { ...s, pending: null, errors: { ...s.errors, [key]: fieldErrors(m.issues) }, drafts };
 }
 
 export const AdminProductEdit = define<ProductEditState, ProductEditMsg, ProductEditProps>(
   'shop-admin-product',
   {
     shadow: false,
-    props: { productId: { type: Number, default: 0 } },
+    props: { productId: prop.number({ default: 0 }) },
     init: (props) => [
       {
         id: props.productId,
@@ -150,6 +153,7 @@ export const AdminProductEdit = define<ProductEditState, ProductEditMsg, Product
         notice: null,
         errors: {},
         pending: null,
+        drafts: {},
       },
       [props.productId === 0 ? loadTaxonomy() : loadProduct(props.productId)],
     ],
@@ -166,7 +170,13 @@ export const AdminProductEdit = define<ProductEditState, ProductEditMsg, Product
       AddVariant: submit,
       SaveVariant: submit,
       Adjust: submit,
-      Loaded: (s, m) => ({ ...s, edit: m.edit, taxonomy: m.edit.taxonomy, error: null }),
+      Loaded: (s, m) => ({
+        ...s,
+        edit: m.edit,
+        taxonomy: m.edit.taxonomy,
+        error: null,
+        drafts: {},
+      }),
       TaxonomyLoaded: (s, m) => ({ ...s, taxonomy: m.taxonomy, error: null }),
       // A new product moves to its own edit page; anything else reloads the current one.
       Saved: (s, m) =>

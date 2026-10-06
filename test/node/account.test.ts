@@ -166,7 +166,7 @@ describe('register', () => {
     const page = await (await test.get('/account', asCookie(sessionCookie(res) ?? ''))).text();
     expect(page).toContain('grace@example.com');
     const home = await (await test.get('/', asCookie(sessionCookie(res) ?? ''))).text();
-    expect(home).toMatch(/Hi, <!--(?:gyral:)?lit-part-->Grace/);
+    expect(home).toContain('Hi, Grace</summary>');
   });
 
   it('re-renders validation errors, keeping the name and email but never passwords', async () => {

@@ -27,7 +27,7 @@ describe('/dev/mail', () => {
     const viewHtml = await view.text();
     expect(view.status).toBe(200);
     expect(viewHtml).toContain('sandbox="allow-top-navigation-by-user-activation allow-popups"');
-    expect(viewHtml).toContain('&lt;base target=&quot;_top&quot;&gt;'); // srcdoc is escaped
+    expect(viewHtml).toContain('<base target=&quot;_top&quot;>'); // srcdoc is escaped
     expect(viewHtml).toMatch(/<a href="http:\/\/localhost:5200\/account\/reset\?token=t1"/);
   });
 

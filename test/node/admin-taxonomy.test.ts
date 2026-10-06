@@ -162,8 +162,6 @@ describe('taxonomy admin', () => {
     ).toBe(200);
     const home = await (await test.get('/')).text();
     // The header's department links come from its hydration seed.
-    expect(home).toContain(
-      '&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys&quot;',
-    );
+    expect(home).toContain('"slug":"toys-games","name":"Toys"');
   });
 });

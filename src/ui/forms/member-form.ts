@@ -10,8 +10,8 @@ import {
   form,
   html,
   invalid,
-  liveBoolean,
   nothing,
+  prop,
   type FormFields,
   type IntentRejected,
 } from '@gyral/core';
@@ -20,13 +20,14 @@ import {
   formError,
   rejected,
   submit,
+  submitting,
   type AuthState,
   type Failed,
   type SignedIn,
 } from '../account/auth-form.js';
-import { html as staticHtml, unsafeStatic } from 'lit/static-html.js';
 import { goTo } from '../drivers/location.js';
 import { CSRF_FIELD } from './csrf.js';
+import * as v from 'valibot';
 
 interface FieldBase {
   readonly name: string;
@@ -77,9 +78,6 @@ export interface MemberFormSpec {
 type Msg =
   { readonly _tag: 'Submit'; readonly form: FormData } | SignedIn | Failed | IntentRejected;
 
-const escapeText = (text: string): string =>
-  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
 const valueOf = (values: FormFields, name: string): string => {
   const value = values[name];
   return typeof value === 'string' ? value : '';
@@ -91,26 +89,20 @@ function fieldView(s: AuthState, f: MemberField, id: (name: string) => string) {
     .filter((x) => x !== '')
     .join(' ');
   const value = valueOf(s.values, f.name);
-  const common = {
-    id: id(f.name),
-    describedBy,
-    invalidAttr: errors === undefined ? nothing : 'true',
-  };
+  const common = { id: id(f.name), describedBy };
   const control = (() => {
     switch (f.kind) {
       case 'textarea':
-        // Lit can't bind inside <textarea> (raw text), so the initial text is a static,
-        // escaped part of the template: the server render and the first client render match.
-        return staticHtml`<textarea
+        return html`<textarea
           id=${common.id}
           name=${f.name}
           rows=${f.rows ?? 5}
           maxlength=${f.maxlength ?? nothing}
           ?required=${f.required ?? true}
           aria-describedby=${common.describedBy}
-          aria-invalid=${common.invalidAttr}
           ${invalid(errors)}
-        >${unsafeStatic(escapeText(value))}</textarea>`;
+        >
+${value}</textarea>`;
       case 'select':
         return html`<select
           id=${common.id}
@@ -118,15 +110,12 @@ function fieldView(s: AuthState, f: MemberField, id: (name: string) => string) {
           autocomplete=${f.autocomplete ?? nothing}
           ?required=${f.required ?? true}
           aria-describedby=${common.describedBy}
-          aria-invalid=${common.invalidAttr}
           ${invalid(errors)}
         >
-          <option value="" ?selected=${liveBoolean(value === '')}>Choose…</option>
+          <option value="" ?selected=${value === ''}>Choose…</option>
           ${f.options.map(
             (o) =>
-              html`<option value=${o.value} ?selected=${liveBoolean(value === o.value)}>
-                ${o.label}
-              </option>`,
+              html`<option value=${o.value} ?selected=${value === o.value}>${o.label}</option>`,
           )}
         </select>`;
       case 'checkbox':
@@ -134,7 +123,7 @@ function fieldView(s: AuthState, f: MemberField, id: (name: string) => string) {
           id=${common.id}
           name=${f.name}
           type="checkbox"
-          ?checked=${liveBoolean(value === 'on')}
+          ?checked=${value === 'on'}
           aria-describedby=${common.describedBy}
         />`;
       default:
@@ -147,8 +136,6 @@ function fieldView(s: AuthState, f: MemberField, id: (name: string) => string) {
           maxlength=${f.maxlength ?? nothing}
           ?required=${f.required ?? true}
           aria-describedby=${common.describedBy}
-          aria-invalid=${common.invalidAttr}
-          .value=${f.kind === 'password' ? '' : value}
           value=${f.kind === 'password' ? nothing : value}
           ${invalid(errors)}
         />`;
@@ -164,6 +151,9 @@ function fieldView(s: AuthState, f: MemberField, id: (name: string) => string) {
   </p>`;
 }
 
+/** Initial field values: strings (checkboxes `'on'`), as `formFields()` produces them. */
+const FormFieldsSchema = v.record(v.string(), v.union([v.string(), v.array(v.string())]));
+
 /** Defines (and registers) one light-DOM member form element. */
 export function defineMemberForm(spec: MemberFormSpec) {
   const secret = new Set([...(spec.secret ?? []), CSRF_FIELD]);
@@ -172,10 +162,10 @@ export function defineMemberForm(spec: MemberFormSpec) {
   return define<AuthState, Msg, MemberFormProps>(spec.tag, {
     shadow: false,
     props: {
-      csrfToken: { attribute: 'csrf-token' },
-      values: { attribute: false },
-      hiddenFields: { attribute: false },
-      action: { type: String },
+      csrfToken: prop.string(),
+      values: prop.value(FormFieldsSchema),
+      hiddenFields: prop.value(v.record(v.string(), v.string())),
+      action: prop.string(),
     },
     init: (props) => ({ values: props.values ?? {}, errors: {}, pending: false }),
     intent: {
@@ -184,7 +174,7 @@ export function defineMemberForm(spec: MemberFormSpec) {
     },
     update: {
       Submit: (s, m, { props }) => [
-        { ...s, pending: true, errors: {} },
+        submitting(s, m.form, secret),
         [submit(props.action ?? spec.action, m.form, props.csrfToken)],
       ],
       // Pending stays on: the server's page (with its flash message) is about to load.

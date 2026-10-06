@@ -1,6 +1,6 @@
 // <shop-admin-reviews>: review moderation (docs/product-specs/admin.md, "Reviews"). Hiding a
 // review removes it from the product page and the product's rating; showing it restores both.
-import { define, fieldErrors, form, html, liveBoolean, nothing, type Next } from '@gyral/core';
+import { define, fieldErrors, form, html, nothing, prop, type Next } from '@gyral/core';
 import { get, submitForm, type HttpError } from '@gyral/http';
 import { navigate } from '@gyral/router';
 import * as v from 'valibot';
@@ -126,7 +126,7 @@ function card(r: AdminReviewList['rows'][number], s: ReviewsState, i: { Moderate
 
 export const AdminReviews = define<ReviewsState, ReviewsMsg, ReviewsProps>('shop-admin-reviews', {
   shadow: false,
-  props: { search: { type: String, default: '' } },
+  props: { search: prop.string({ default: '' }) },
   init: (props) => [
     { search: props.search, list: null, error: null, notice: null, errors: {}, pending: null },
     [load(props.search)],
@@ -169,15 +169,13 @@ export const AdminReviews = define<ReviewsState, ReviewsMsg, ReviewsProps>('shop
         role="search"
         data-component="review-search"
       >
-        <label>Search product or title <input type="search" name="q" .value=${q.q} /></label>
+        <label>Search product or title <input type="search" name="q" value=${q.q} /></label>
         <label
           >Show
           <select name="filter">
-            <option value="all" ?selected=${liveBoolean(q.filter === 'all')}>All reviews</option>
-            <option value="visible" ?selected=${liveBoolean(q.filter === 'visible')}>
-              Visible
-            </option>
-            <option value="hidden" ?selected=${liveBoolean(q.filter === 'hidden')}>Hidden</option>
+            <option value="all" ?selected=${q.filter === 'all'}>All reviews</option>
+            <option value="visible" ?selected=${q.filter === 'visible'}>Visible</option>
+            <option value="hidden" ?selected=${q.filter === 'hidden'}>Hidden</option>
           </select>
         </label>
         <button type="submit">Search</button>

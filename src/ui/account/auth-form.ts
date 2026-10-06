@@ -4,9 +4,12 @@
 // answers JSON (Gyral ADR 0008, "Round trip").
 import {
   fieldErrors,
+  formDataToObject,
+  formFields,
   html,
   invalid,
   nothing,
+  prop,
   redirectedTo,
   type Command,
   type FormFields,
@@ -30,6 +33,9 @@ export interface AuthProps {
   readonly next?: string;
 }
 
+/** The props of the sign-in and registration elements. */
+export const authProps = { csrfToken: prop.string(), next: prop.string() };
+
 export type SignedIn = { readonly _tag: 'SignedIn'; readonly location: string };
 export type Failed = { readonly _tag: 'Failed'; readonly message: string };
 
@@ -38,8 +44,26 @@ export const initialAuthState = (): AuthState => ({ values: {}, errors: {}, pend
 const refill = (values: FormFields = {}): FormFields =>
   Object.fromEntries(Object.entries(values).filter(([key]) => !SECRET_FIELDS.has(key)));
 
+/**
+ * A submission is on its way: the model keeps what was sent (never passwords). Form state is
+ * live in Gyral 0.3 (view/02-bindings.md): the pending render writes the model's values into
+ * the fields, so without this it would put back what the form held before the user typed.
+ */
+export const submitting = (
+  s: AuthState,
+  form: FormData,
+  secret: ReadonlySet<string> = SECRET_FIELDS,
+): AuthState => ({
+  values: Object.fromEntries(
+    Object.entries(formFields(formDataToObject(form))).filter(([key]) => !secret.has(key)),
+  ),
+  errors: {},
+  pending: true,
+});
+
 export const rejected = (s: AuthState, m: IntentRejected): AuthState => ({
-  values: refill(m.values),
+  // A server rejection may carry no values: keep what was sent (see `submitting`).
+  values: m.values === undefined ? s.values : refill(m.values),
   errors: fieldErrors(m.issues),
   pending: false,
 });
@@ -116,10 +140,8 @@ export const fieldView = (s: AuthState, f: FieldSpec) => {
       minlength=${f.minlength ?? nothing}
       maxlength=${f.maxlength ?? nothing}
       required
-      .value=${f.type === 'password' ? '' : text(s.values, f.name)}
       value=${f.type === 'password' ? nothing : text(s.values, f.name)}
       aria-describedby=${described}
-      aria-invalid=${errors === undefined ? nothing : 'true'}
       ${invalid(errors)}
     />
     <span id=${`${id}-error`} class="error">${errors?.join(' ') ?? nothing}</span>

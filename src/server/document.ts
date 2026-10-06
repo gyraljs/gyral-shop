@@ -1,8 +1,7 @@
-// The server-only document shell: head, skip link, header, main, footer (lit-web-apps skill:
-// document.ts). Only the custom elements inside hydrate; the shell itself never does.
-import { html, nothing, type AnyStoreInstance } from '@gyral/core';
+// The server-only document shell: head, skip link, header, main, footer. Only the custom
+// elements inside hydrate; the shell itself never does.
+import { html, nothing, raw, type AnyStoreInstance } from '@gyral/core';
 import { renderPage } from '@gyral/ssr';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
 import '../ui/consent/consent.js'; // registers <shop-consent>
@@ -40,7 +39,7 @@ export interface ShellOptions {
   readonly description?: string;
   readonly departments: readonly DepartmentLink[];
   readonly query?: string;
-  /** The page's main content (a Lit template, usually one page component). */
+  /** The page's main content (an `html` template, usually one page component). */
   readonly main: unknown;
   readonly status?: number;
   /** Account, cart, checkout and admin pages are not for search engines (SEO spec). */
@@ -173,7 +172,7 @@ export function shell(options: ShellOptions): Response {
     }
     ${(options.meta ?? []).map(([property, content]) => html`<meta property=${property} content=${content} />`)}
     ${(options.metaNames ?? []).map(([name, content]) => html`<meta name=${name} content=${content} />`)}
-    ${structured === '' ? nothing : unsafeHTML(structured)}`;
+    ${structured === '' ? nothing : raw(structured)}`;
   return renderPage(
     {
       title: documentTitle(options.title),

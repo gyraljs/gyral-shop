@@ -7,6 +7,8 @@ import {
   form,
   html,
   nothing,
+  prop,
+  type FormFields,
   type IntentRejected,
   type Next,
 } from '@gyral/core';
@@ -16,7 +18,7 @@ import * as v from 'valibot';
 import { dollarsText } from '../../domain/admin.js';
 import { PromoEditSchema, promoAmountText, type PromoEdit } from '../../domain/admin-manage.js';
 import { adminDrivers } from './drivers.js';
-import { formError, selectField, textField, type Errors } from './fields.js';
+import { draftOf, formError, selectField, textField, type Errors } from './fields.js';
 import { loadError } from './format.js';
 import { PromoDeleteForm, PromoForm } from './manage-schemas.js';
 
@@ -32,6 +34,8 @@ export interface PromoEditState {
   readonly notice: string | null;
   readonly errors: Readonly<Record<'SavePromo' | 'DeletePromo', Errors>>;
   readonly pending: 'SavePromo' | 'DeletePromo' | null;
+  /** What the promo form last sent, until the record reloads (fields.ts `Drafts`). */
+  readonly draft: FormFields | undefined;
 }
 
 export type PromoEditMsg =
@@ -58,7 +62,13 @@ const Saved = v.object({ _tag: v.literal('Saved'), id: v.number() });
 function save(s: PromoEditState, data: FormData): Next<PromoEditState, PromoEditMsg> {
   const url = s.id === 0 ? '/api/admin/promos' : `/api/admin/promos/${String(s.id)}`;
   return [
-    { ...s, pending: 'SavePromo', notice: null, errors: { ...s.errors, SavePromo: {} } },
+    {
+      ...s,
+      pending: 'SavePromo',
+      notice: null,
+      errors: { ...s.errors, SavePromo: {} },
+      draft: draftOf(data),
+    },
     [
       submitForm(url, data, {
         onSuccess: (body): PromoEditMsg | undefined => {
@@ -87,12 +97,14 @@ function remove(s: PromoEditState, data: FormData): Next<PromoEditState, PromoEd
 
 const rejected = (s: PromoEditState, m: IntentRejected): PromoEditState => {
   const key = m.intent === 'DeletePromo' ? 'DeletePromo' : 'SavePromo';
-  return { ...s, pending: null, errors: { ...s.errors, [key]: fieldErrors(m.issues) } };
+  const draft = key === 'SavePromo' ? (m.values ?? s.draft) : s.draft;
+  return { ...s, pending: null, errors: { ...s.errors, [key]: fieldErrors(m.issues) }, draft };
 };
 
 function promoForm(s: PromoEditState, i: { SavePromo: string }, edit: PromoEdit) {
   const p = edit.promo;
   const errors = s.errors.SavePromo;
+  const draft = s.draft;
   const f = 'promo';
   const kind = p?.kind ?? 'percent';
   return html`<form class="admin-form" data-intent=${i.SavePromo} data-component="promo-form">
@@ -100,12 +112,13 @@ function promoForm(s: PromoEditState, i: { SavePromo: string }, edit: PromoEdit)
     <fieldset>
       <legend>Code and discount</legend>
       <div class="admin-row">
-        ${textField({ form: f, name: 'code', label: 'Code', hint: 'Shoppers type this at checkout.', errors, value: p?.code ?? '', required: true })}
+        ${textField({ form: f, name: 'code', label: 'Code', hint: 'Shoppers type this at checkout.', errors, draft, value: p?.code ?? '', required: true })}
         ${selectField({
           form: f,
           name: 'kind',
           label: 'Discount type',
           errors,
+          draft,
           value: kind,
           emptyLabel: null,
           choices: [
@@ -114,32 +127,34 @@ function promoForm(s: PromoEditState, i: { SavePromo: string }, edit: PromoEdit)
           ],
           required: true,
         })}
-        ${textField({ form: f, name: 'amount', label: 'Discount', hint: 'e.g. 15 for 15%, or 5.00 for $5 off.', errors, value: p === null ? '' : promoAmountText(p.kind, p.amount), inputmode: 'decimal', required: true })}
+        ${textField({ form: f, name: 'amount', label: 'Discount', hint: 'e.g. 15 for 15%, or 5.00 for $5 off.', errors, draft, value: p === null ? '' : promoAmountText(p.kind, p.amount), inputmode: 'decimal', required: true })}
       </div>
     </fieldset>
     <fieldset>
       <legend>Rules</legend>
       <div class="admin-row">
-        ${textField({ form: f, name: 'minSubtotal', label: 'Minimum subtotal (USD)', hint: 'Leave empty for no minimum.', errors, value: p === null || p.minSubtotalCents === 0 ? '' : dollarsText(p.minSubtotalCents), inputmode: 'decimal' })}
+        ${textField({ form: f, name: 'minSubtotal', label: 'Minimum subtotal (USD)', hint: 'Leave empty for no minimum.', errors, draft, value: p === null || p.minSubtotalCents === 0 ? '' : dollarsText(p.minSubtotalCents), inputmode: 'decimal' })}
         ${selectField({
           form: f,
           name: 'departmentId',
           label: 'Department',
           errors,
+          draft,
           value: p?.departmentId === null || p === null ? '' : String(p.departmentId),
           emptyLabel: 'All departments',
           choices: edit.departments.map((d) => ({ value: String(d.id), label: d.name })),
         })}
-        ${textField({ form: f, name: 'usageLimit', label: 'Usage limit', hint: 'Total orders allowed; empty for no limit.', errors, value: p?.usageLimit === null || p === null ? '' : String(p.usageLimit), inputmode: 'numeric' })}
+        ${textField({ form: f, name: 'usageLimit', label: 'Usage limit', hint: 'Total orders allowed; empty for no limit.', errors, draft, value: p?.usageLimit === null || p === null ? '' : String(p.usageLimit), inputmode: 'numeric' })}
       </div>
       <div class="admin-row">
-        ${textField({ form: f, name: 'startsOn', label: 'First day', hint: 'Optional.', errors, value: p?.startsOn ?? '', type: 'date' })}
-        ${textField({ form: f, name: 'endsOn', label: 'Last day', hint: 'Optional; the code works all of this day.', errors, value: p?.endsOn ?? '', type: 'date' })}
+        ${textField({ form: f, name: 'startsOn', label: 'First day', hint: 'Optional.', errors, draft, value: p?.startsOn ?? '', type: 'date' })}
+        ${textField({ form: f, name: 'endsOn', label: 'Last day', hint: 'Optional; the code works all of this day.', errors, draft, value: p?.endsOn ?? '', type: 'date' })}
         ${selectField({
           form: f,
           name: 'active',
           label: 'Can be used',
           errors,
+          draft,
           value: p === null || p.active ? 'yes' : 'no',
           emptyLabel: null,
           choices: [
@@ -184,7 +199,7 @@ export const AdminPromoEdit = define<PromoEditState, PromoEditMsg, PromoEditProp
   'shop-admin-promo',
   {
     shadow: false,
-    props: { promoId: { type: Number, default: 0 } },
+    props: { promoId: prop.number({ default: 0 }) },
     init: (props) => [
       {
         id: props.promoId,
@@ -193,6 +208,7 @@ export const AdminPromoEdit = define<PromoEditState, PromoEditMsg, PromoEditProp
         notice: null,
         errors: NO_ERRORS,
         pending: null,
+        draft: undefined,
       },
       [load(props.promoId)],
     ],
@@ -203,7 +219,7 @@ export const AdminPromoEdit = define<PromoEditState, PromoEditMsg, PromoEditProp
     update: {
       SavePromo: (s, m) => save(s, m.form),
       DeletePromo: (s, m) => remove(s, m.form),
-      Loaded: (s, m) => ({ ...s, edit: m.edit, error: null }),
+      Loaded: (s, m) => ({ ...s, edit: m.edit, error: null, draft: undefined }),
       // A new code moves to its own edit page; an edit reloads to show the saved state.
       Saved: (s, m) =>
         s.id === 0

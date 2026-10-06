@@ -1,9 +1,25 @@
 // Labelled form controls for admin forms: errors linked with aria-describedby and mirrored to
 // native validity with Gyral's invalid() (ADR 0008). Ids are prefixed per form so several
 // forms can sit on one page (one per variant, for example).
-import { html, invalid, liveBoolean, nothing } from '@gyral/core';
+import { formDataToObject, formFields, html, invalid, nothing, type FormFields } from '@gyral/core';
 
 export type Errors = Readonly<Record<string, readonly string[]>>;
+
+/**
+ * What each form last sent (or the browser rejected), keyed like errors. Form state is live in
+ * Gyral 0.3 (view/02-bindings.md): every render writes the model's value into the control, so
+ * until the server's answer reloads the record, the model keeps the admin's own input.
+ */
+export type Drafts = Readonly<Record<string, FormFields>>;
+
+/** A form submission's text fields, for `Drafts`. */
+export const draftOf = (data: FormData): FormFields => formFields(formDataToObject(data));
+
+/** The drafted value of `name`, else the record's. */
+export const drafted = (draft: FormFields | undefined, name: string, value: string): string => {
+  const sent = draft?.[name];
+  return typeof sent === 'string' ? sent : value;
+};
 
 /** The key a form's errors live under: its intent, plus a record id for per-row forms. */
 export const formKey = (intent: string, id: number | string = ''): string =>
@@ -14,6 +30,8 @@ interface Common {
   readonly name: string;
   readonly label: string;
   readonly errors: Errors;
+  /** The form's draft (`Drafts`): it wins over `value` until the record reloads. */
+  readonly draft?: FormFields | undefined;
   readonly hint?: string;
   readonly required?: boolean;
 }
@@ -58,10 +76,9 @@ export function textField(
         type=${c.type ?? 'text'}
         inputmode=${c.inputmode ?? nothing}
         autocomplete=${c.autocomplete ?? 'off'}
-        .value=${c.value}
+        value=${drafted(c.draft, c.name, c.value)}
         ?required=${c.required ?? false}
         aria-describedby=${described}
-        aria-invalid=${errors === undefined ? nothing : 'true'}
         ${invalid(errors)}
       />`,
     )}
@@ -71,7 +88,6 @@ export function textField(
 export function textArea(c: Common & { readonly value: string; readonly rows?: number }) {
   const { id, described } = ids(c);
   const errors = c.errors[c.name];
-  // Client-rendered only (the admin is CSR), so a property binding sets the text.
   return html`<div class="admin-field" data-component="field">
     ${frame(
       c,
@@ -79,12 +95,11 @@ export function textArea(c: Common & { readonly value: string; readonly rows?: n
         id=${id}
         name=${c.name}
         rows=${c.rows ?? 4}
-        .value=${c.value}
         ?required=${c.required ?? false}
         aria-describedby=${described}
-        aria-invalid=${errors === undefined ? nothing : 'true'}
         ${invalid(errors)}
-      ></textarea>`,
+      >
+${drafted(c.draft, c.name, c.value)}</textarea>`,
     )}
   </div>`;
 }
@@ -105,10 +120,9 @@ export function selectField(
 ) {
   const { id, described } = ids(c);
   const errors = c.errors[c.name];
+  const value = drafted(c.draft, c.name, c.value);
   const option = (o: Choice) =>
-    html`<option value=${o.value} ?selected=${liveBoolean(o.value === c.value)}>
-      ${o.label}
-    </option>`;
+    html`<option value=${o.value} ?selected=${o.value === value}>${o.label}</option>`;
   const groups = [...new Set(c.choices.map((o) => o.group))];
   return html`<div class="admin-field" data-component="field">
     ${frame(
@@ -118,15 +132,12 @@ export function selectField(
         name=${c.name}
         ?required=${c.required ?? false}
         aria-describedby=${described}
-        aria-invalid=${errors === undefined ? nothing : 'true'}
         ${invalid(errors)}
       >
         ${
           c.emptyLabel === null
             ? nothing
-            : html`<option value="" ?selected=${liveBoolean(c.value === '')}>
-                ${c.emptyLabel ?? 'Choose…'}
-              </option>`
+            : html`<option value="" ?selected=${value === ''}>${c.emptyLabel ?? 'Choose…'}</option>`
         }
         ${groups.map((group) =>
           group === undefined

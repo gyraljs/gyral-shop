@@ -10,7 +10,6 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { gyralVitePreset } from '@gyral/core/vite';
 
 const root = dirname(fileURLToPath(import.meta.url));
 
@@ -56,12 +55,12 @@ function resolvesFrom(dir: string, spec: string): boolean {
 }
 
 /**
- * Every module to pre-bundle: Gyral's Lit list plus each bare import reachable from the browser
- * entry points, following relative imports. Installed packages (including `@gyral/*`) are
+ * Every module to pre-bundle: each bare import reachable from the browser entry points,
+ * following relative imports. Installed packages (including `@gyral/*`) are
  * pre-bundled with their own dependencies, so the walk stops at them.
  */
 export function optimizedDeps(): string[] {
-  const include = new Set(gyralVitePreset().optimizeDeps.include);
+  const include = new Set<string>();
   const seen = new Set<string>();
   const queue = ENTRY_DIRS.flatMap((d) => files(join(root, d)));
   while (queue.length > 0) {
@@ -81,5 +80,3 @@ export function optimizedDeps(): string[] {
   }
   return [...include].sort();
 }
-
-export const LIT_PACKAGES: readonly string[] = gyralVitePreset().resolve.dedupe;

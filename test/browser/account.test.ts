@@ -1,5 +1,3 @@
-// ORDER IS LOAD-BEARING: hydrate support before anything that imports Lit (Gyral ADR 0012).
-import '@gyral/ssr/hydrate';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { fakeDriver } from '@gyral/testing';
 import type { HttpRequest } from '@gyral/http';
@@ -10,6 +8,7 @@ import { locationDriver } from '../../src/ui/drivers/location.js';
 import { a11yViolations } from '../support/axe.js';
 import { loadComponentsIn } from '../../src/client/lazy.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { settled } from '@gyral/core';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
@@ -44,8 +43,7 @@ async function mount(html: string, tag: 'shop-login' | 'shop-register') {
   };
   const submit = async () => {
     el.querySelector('form')?.requestSubmit();
-    await vi.waitFor(() => el.updateComplete);
-    await el.updateComplete;
+    await settled();
   };
   const alert = () => el.querySelector('[role="alert"]')?.textContent.trim();
   return { el, http, location, field, submit, alert };

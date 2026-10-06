@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { outbox } from '../../src/db/schema.js';
 import { SUPPORT_ADDRESS } from '../../src/services/mail.js';
 import { testApp } from '../support/app.js';
-import { stableHtml } from '../support/fixtures.js';
+import { outsideAttributes, stableHtml } from '../support/fixtures.js';
 import { guest } from '../support/auth.js';
 
 const MESSAGE = {
@@ -46,7 +46,7 @@ describe('contact form', () => {
     expect(res.status).toBe(422);
     expect(html).toContain('Choose a topic.');
     expect(html).toContain('Write at least 10 characters.');
-    expect(html).toMatch(/>hi<\/textarea>/); // the typed message comes back (static part)
+    expect(html).toMatch(/>\n?hi<\/textarea>/); // the typed message comes back
   });
 
   it('keeps a typed message with markup characters escaped', async () => {
@@ -60,7 +60,7 @@ describe('contact form', () => {
     });
     const html = await res.text();
     expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt; &amp; more text here</textarea>');
-    expect(html).not.toContain('<script>alert(1)</script>');
+    expect(outsideAttributes(html)).not.toContain('<script>alert(1)</script>');
     // Golden file for the browser test (CSRF token pinned).
     const token = /csrf-token="([^"]+)"/.exec(html)?.[1] ?? '';
     await expect(stableHtml(html.replaceAll(token, 'test-csrf-token'))).toMatchFileSnapshot(

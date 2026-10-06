@@ -1,20 +1,16 @@
-import { define, html, nothing, repeat, send, type Stateless } from '@gyral/core';
+import { define, each, html, prop, send, type Stateless } from '@gyral/core';
+import * as v from 'valibot';
 import '../cart/mini-cart.js';
 import './search-box.js';
 import { loadedMe, meStore } from '../me/store.js';
 import { csrfField } from '../forms/csrf.js';
 
-/** The signed-in member, as far as the header needs to know. */
-export interface AccountSummary {
-  readonly firstName: string;
-  /** For the sign-out form. */
-  readonly csrfToken: string;
-}
+/** The signed-in member, as far as the header needs to know (`csrfToken`: the sign-out form). */
+const AccountSummarySchema = v.object({ firstName: v.string(), csrfToken: v.string() });
+export type AccountSummary = v.InferOutput<typeof AccountSummarySchema>;
 
-export interface DepartmentLink {
-  readonly slug: string;
-  readonly name: string;
-}
+const DepartmentLinkSchema = v.object({ slug: v.string(), name: v.string() });
+export type DepartmentLink = v.InferOutput<typeof DepartmentLinkSchema>;
 
 // Optional: a custom element's props are unset until the parent (or the hydration seed)
 // provides them, so the view must cope with undefined.
@@ -57,14 +53,20 @@ const accountLinks = (account: AccountSummary | undefined) =>
         </ul>
       </details>`;
 
+/** One department link: a pure `each` row (view/03-lists.md). */
+const departmentItem = (d: DepartmentLink, current: boolean) =>
+  html`<li>
+    <a href="/d/${d.slug}" aria-current=${current ? 'true' : undefined}>${d.name}</a>
+  </li>`;
+
 export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
   stores: [meStore],
   props: {
-    departments: { attribute: false, default: [] },
-    query: { type: String },
-    current: { type: String },
-    account: { attribute: false },
-    personalize: { type: Boolean },
+    departments: prop.value(v.array(DepartmentLinkSchema), { default: [] }),
+    query: prop.string(),
+    current: prop.string(),
+    account: prop.value(AccountSummarySchema),
+    personalize: prop.boolean(),
   },
   intent: {},
   update: {
@@ -73,8 +75,8 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
       props.personalize === true ? [s, [send(meStore, { _tag: 'Load' })]] : s,
   },
   // Light DOM (ADR 0006 rule 5): themes re-lay out the header with document CSS
-  // (src/ui/styles/header.ts). Search and mini-cart are nested components; Gyral hydrates
-  // light-DOM children in place and keeps their seeds (Gyral ADR 0014 addendum).
+  // (src/ui/styles/header.ts). Search and mini-cart are nested components; each hydrates on
+  // its own (Gyral view/07-hydration.md).
   shadow: false,
   view: (_s, _i, { props, read }) => html`
     <header data-region="header">
@@ -90,15 +92,11 @@ export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
       </div>
       <nav class="departments" aria-label="Departments" data-region="nav">
         <ul>
-          ${repeat(
+          ${each(
             props.departments,
             (d) => d.slug,
-            (d) =>
-              html`<li>
-                <a href="/d/${d.slug}" aria-current=${d.slug === props.current ? 'true' : nothing}
-                  >${d.name}</a
-                >
-              </li>`,
+            departmentItem,
+            (d) => d.slug === props.current,
           )}
         </ul>
       </nav>

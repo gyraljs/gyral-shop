@@ -1,20 +1,16 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 
-import { LIT_PACKAGES, optimizedDeps } from './vite.deps.js';
-
-// Exactly one copy of Lit (ADR 0001, gyralVitePreset()).
-const dedupe = [...LIT_PACKAGES];
+import { gyralVitePreset } from '@gyral/core/vite';
+import { optimizedDeps } from './vite.deps.js';
 
 export default defineConfig({
-  resolve: { dedupe },
   test: {
     projects: [
       {
-        resolve: { dedupe },
         // Every browser import, derived from the shop's source (vite.deps.ts), plus axe:
         // a new import changes this list, so Vite re-optimizes at startup instead of mid-run.
-        optimizeDeps: { include: [...optimizedDeps(), 'axe-core'] },
+        ...gyralVitePreset({ optimize: [...optimizedDeps(), 'axe-core'] }),
         test: {
           name: 'browser',
           include: ['src/ui/**/*.test.ts', 'test/browser/**/*.test.ts'],

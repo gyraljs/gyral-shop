@@ -1,7 +1,16 @@
 // <shop-admin-order>: one order with its lines, totals, address, payment and timeline, and the
 // actions the state machine allows now: ship, mark delivered, cancel and refund, or refund an
 // amount (docs/product-specs/admin.md, "Orders").
-import { define, fieldErrors, form, html, nothing, type IntentRejected } from '@gyral/core';
+import {
+  define,
+  fieldErrors,
+  form,
+  html,
+  nothing,
+  prop,
+  type FormFields,
+  type IntentRejected,
+} from '@gyral/core';
 import { get, submitForm, type HttpError } from '@gyral/http';
 import * as v from 'valibot';
 import {
@@ -14,7 +23,7 @@ import {
 import { format, usd } from '../../domain/money.js';
 import { statusBadge } from '../orders/parts.js';
 import { adminDrivers } from './drivers.js';
-import { formError, textField, type Errors } from './fields.js';
+import { draftOf, formError, textField, type Errors } from './fields.js';
 import { dateTime, loadError, statusLabel } from './format.js';
 import { TransitionForm } from './schemas.js';
 
@@ -29,6 +38,8 @@ export interface OrderState {
   readonly notice: string | null;
   readonly errors: Errors;
   readonly pending: OrderAction | null;
+  /** What the refund form last sent, until the order reloads (fields.ts `Drafts`). */
+  readonly draft: FormFields | undefined;
 }
 
 export type OrderMsg =
@@ -96,6 +107,7 @@ function actions(s: OrderState, o: AdminOrder, i: { readonly Transition: 'Transi
               label: 'Refund amount (USD)',
               hint: `Up to ${money(o.refundableCents)} can still be refunded.`,
               errors: s.errors,
+              draft: s.draft,
               value: dollarsText(o.refundableCents),
               inputmode: 'decimal',
               required: true,
@@ -177,9 +189,17 @@ function details(o: AdminOrder) {
 
 export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>('shop-admin-order', {
   shadow: false,
-  props: { number: { type: String, required: true } },
+  props: { number: prop.string({ required: true }) },
   init: (props) => [
-    { number: props.number, order: null, error: null, notice: null, errors: {}, pending: null },
+    {
+      number: props.number,
+      order: null,
+      error: null,
+      notice: null,
+      errors: {},
+      pending: null,
+      draft: undefined,
+    },
     [load(props.number)],
   ],
   intent: {
@@ -191,7 +211,7 @@ export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>('shop-a
   },
   update: {
     Transition: (s, m) => [
-      { ...s, pending: m.action, errors: {}, notice: null, error: null },
+      { ...s, pending: m.action, errors: {}, notice: null, error: null, draft: draftOf(m.form) },
       [
         submitForm(`/api/admin/orders/${encodeURIComponent(s.number)}/transition`, m.form, {
           onSuccess: (body): OrderMsg | undefined => {
@@ -203,7 +223,7 @@ export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>('shop-a
         }),
       ],
     ],
-    Loaded: (s, m) => ({ ...s, order: m.order }),
+    Loaded: (s, m) => ({ ...s, order: m.order, draft: undefined }),
     Transitioned: (s, m) => [{ ...s, pending: null, notice: m.notice }, [load(s.number)]],
     // A failed action reloads too: the order may have changed underneath.
     Failed: (s, m) =>
@@ -214,6 +234,7 @@ export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>('shop-a
       ...s,
       pending: null,
       errors: fieldErrors(m.issues),
+      draft: m.values ?? s.draft,
     }),
   },
   drivers: adminDrivers,

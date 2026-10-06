@@ -1,27 +1,26 @@
-import { css, define, html, nothing, repeat, send, type Stateless } from '@gyral/core';
+import { css, define, each, html, nothing, send, type Stateless } from '@gyral/core';
 import { format } from '../../domain/money.js';
-import type { CartClient } from './model.js';
+import type { CartClient, CartLine } from './model.js';
 import { cartStore } from './store.js';
 
 const SHOWN_LINES = 5;
 
 const itemsLabel = (n: number) => `${String(n)} item${n === 1 ? '' : 's'}`;
 
+/** One line of the panel: a pure `each` row (Gyral view/03-lists.md). */
+const panelLine = (l: CartLine) =>
+  html`<li data-component="cart-line" part="line">
+    <a href=${l.href}>${l.productName}</a>
+    <span class="qty">× ${l.quantity}</span>
+    <span class="amount" data-component="price">${format(l.lineTotal)}</span>
+  </li>`;
+
 const panel = (cart: CartClient) =>
   cart.lines.length === 0
     ? html`<p>Your cart is empty.</p>`
     : html`
         <ul>
-          ${repeat(
-            cart.lines.slice(0, SHOWN_LINES),
-            (l) => l.sku,
-            (l) =>
-              html`<li data-component="cart-line" part="line">
-                <a href=${l.href}>${l.productName}</a>
-                <span class="qty">× ${l.quantity}</span>
-                <span class="amount" data-component="price">${format(l.lineTotal)}</span>
-              </li>`,
-          )}
+          ${each(cart.lines.slice(0, SHOWN_LINES), (l) => l.sku, panelLine)}
         </ul>
         ${
           cart.lines.length > SHOWN_LINES

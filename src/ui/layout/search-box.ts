@@ -3,7 +3,7 @@
 // (debounced; each request cancels the previous one), arrow keys move through them, Enter opens
 // the highlighted one (or searches), Escape and leaving the field close the list.
 // Light DOM (theme contract ADR 0006, Gyral ADR 0014): document styles in styles/search.ts.
-import { define, html, live, nothing, repeat, type IntentNames, type Next } from '@gyral/core';
+import { define, each, html, intents, nothing, prop, type Next } from '@gyral/core';
 import { get } from '@gyral/http';
 import { debounce, delay } from '@gyral/time';
 import { normalizeQuery, searchQueryString } from '../../domain/search.js';
@@ -137,9 +137,12 @@ function statusText(s: SearchModel) {
 
 const optionId = (n: number) => `search-option-${String(n)}`;
 
+/** Intent names as a module constant, so list rows stay pure (Gyral view/03-lists.md). */
+const i = intents<SearchMsg>();
+
 export const SearchBox = define<SearchModel, SearchMsg, SearchProps>('shop-search', {
   shadow: false,
-  props: { query: { type: String } },
+  props: { query: prop.string() },
   init: (props) => ({
     query: props.query ?? '',
     suggestions: null,
@@ -177,7 +180,7 @@ export const SearchBox = define<SearchModel, SearchMsg, SearchProps>('shop-searc
     Dismiss: (s) => closed(s),
     Hydrated: (s) => ({ ...s, enhanced: true }),
   },
-  view: (s, i) => html`
+  view: (s) => html`
     <search data-region="search">
       <form action="/search" method="get" role="search" data-intent=${i.Submit}>
         <label for="q" class="visually-hidden">Search products</label>
@@ -195,11 +198,10 @@ export const SearchBox = define<SearchModel, SearchMsg, SearchProps>('shop-searc
               aria-expanded=${s.enhanced ? (s.open ? 'true' : 'false') : nothing}
               aria-activedescendant=${s.highlighted === undefined ? nothing : optionId(s.highlighted)}
               value=${s.query}
-              .value=${live(s.query)}
               data-intent=${i.Typed}
             />
           </span>
-          ${s.enhanced ? suggestionList(s, i) : nothing}
+          ${s.enhanced ? suggestionList(s) : nothing}
         </span>
         <button type="submit">Search</button>
         ${
@@ -210,7 +212,25 @@ export const SearchBox = define<SearchModel, SearchMsg, SearchProps>('shop-searc
   `,
 });
 
-const suggestionList = (s: SearchModel, i: IntentNames<SearchMsg>) =>
+/** One suggestion: a pure `each` row; `n` is its position, for ids and the Pick intent. */
+const suggestion = (
+  { option: o, n }: { readonly option: Option; readonly n: number },
+  highlighted: boolean,
+) =>
+  html`<li
+    id=${optionId(n)}
+    role="option"
+    aria-selected=${highlighted ? 'true' : 'false'}
+    data-component="search-suggestion"
+    data-kind=${o.kind}
+    data-index=${n}
+    data-intent=${i.Pick}
+  >
+    <span class="label">${o.label}</span>
+    <span class="detail">${o.detail}</span>
+  </li>`;
+
+const suggestionList = (s: SearchModel) =>
   html`<ul
     id="search-suggestions"
     role="listbox"
@@ -218,22 +238,11 @@ const suggestionList = (s: SearchModel, i: IntentNames<SearchMsg>) =>
     data-component="search-suggestions"
     ?hidden=${!s.open}
   >
-    ${repeat(
-      options(s),
-      (o) => o.href,
-      (o, n) =>
-        html`<li
-          id=${optionId(n)}
-          role="option"
-          aria-selected=${n === s.highlighted ? 'true' : 'false'}
-          data-component="search-suggestion"
-          data-kind=${o.kind}
-          data-index=${n}
-          data-intent=${i.Pick}
-        >
-          <span class="label">${o.label}</span>
-          <span class="detail">${o.detail}</span>
-        </li>`,
+    ${each(
+      options(s).map((option, n) => ({ option, n })),
+      (o) => o.option.href,
+      suggestion,
+      (o) => o.n === s.highlighted,
     )}
   </ul>`;
 

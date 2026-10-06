@@ -1,5 +1,3 @@
-// ORDER IS LOAD-BEARING: hydrate support before anything that imports Lit (Gyral ADR 0012).
-import '@gyral/ssr/hydrate';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/home.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';

@@ -1,6 +1,7 @@
 import { define, form, html, type IntentRejected } from '@gyral/core';
 import { goTo } from '../drivers/location.js';
 import {
+  authProps,
   failed,
   fieldView,
   formError,
@@ -8,6 +9,7 @@ import {
   initialAuthState,
   rejected,
   submit,
+  submitting,
   type AuthProps,
   type AuthState,
   type Failed,
@@ -26,7 +28,7 @@ const FIELDS: readonly FieldSpec[] = [
 
 /** Sign-in form: a POST to /account/login without JS, the same POST via submitForm with it. */
 export const LoginFormElement = define<AuthState, LoginMsg, AuthProps>('shop-login', {
-  props: { csrfToken: { attribute: 'csrf-token' }, next: { type: String } },
+  props: authProps,
   init: initialAuthState,
   intent: {
     // Validated in the browser first; the raw FormData then goes to the server unchanged.
@@ -34,7 +36,7 @@ export const LoginFormElement = define<AuthState, LoginMsg, AuthProps>('shop-log
   },
   update: {
     Login: (s, m, { props }) => [
-      { ...s, pending: true, errors: {} },
+      submitting(s, m.form),
       [submit('/account/login', m.form, props.csrfToken)],
     ],
     // Pending stays on: the page is about to reload with the member signed in.

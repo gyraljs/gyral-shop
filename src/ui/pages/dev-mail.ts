@@ -53,7 +53,7 @@ export const devMailListPage = (messages: readonly MailSummary[]) => html`
 
 const URL_PATTERN = /(https?:\/\/[^\s<>"]+)/g;
 
-/** Plain text with http(s) URLs turned into links. Lit escapes everything else. */
+/** Plain text with http(s) URLs turned into links. Gyral's `html` escapes everything else. */
 const linkified = (text: string) =>
   text
     .split(URL_PATTERN)

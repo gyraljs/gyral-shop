@@ -1,7 +1,7 @@
 // <shop-admin-products>: searchable, sortable, paginated product table
 // (docs/product-specs/admin.md, "Products"). The URL holds the query (q, archived, sort, dir,
 // page): intents navigate, the root passes the new search string down, and the table reloads.
-import { define, form, html, liveBoolean, nothing, type Next } from '@gyral/core';
+import { define, form, html, nothing, prop, type Next } from '@gyral/core';
 import { get, type HttpError } from '@gyral/http';
 import { navigate } from '@gyral/router';
 import * as v from 'valibot';
@@ -117,7 +117,7 @@ export const AdminProducts = define<ProductsState, ProductsMsg, ProductsProps>(
   'shop-admin-products',
   {
     shadow: false,
-    props: { search: { type: String, default: '' } },
+    props: { search: prop.string({ default: '' }) },
     init: (props) => [{ search: props.search, list: null, error: null }, [load(props.search)]],
     intent: {
       Search: form(SearchForm, (data) => ({
@@ -162,14 +162,12 @@ export const AdminProducts = define<ProductsState, ProductsMsg, ProductsProps>(
           role="search"
           data-component="product-search"
         >
-          <label>Search name, slug or SKU <input type="search" name="q" .value=${query.q} /></label>
+          <label>Search name, slug or SKU <input type="search" name="q" value=${query.q} /></label>
           <label
             >Show
             <select name="archived">
-              <option value="no" ?selected=${liveBoolean(!query.archived)}>Live products</option>
-              <option value="yes" ?selected=${liveBoolean(query.archived)}>
-                Archived products
-              </option>
+              <option value="no" ?selected=${!query.archived}>Live products</option>
+              <option value="yes" ?selected=${query.archived}>Archived products</option>
             </select>
           </label>
           <button type="submit">Search</button>

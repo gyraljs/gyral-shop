@@ -1,11 +1,10 @@
-// ORDER IS LOAD-BEARING: hydrate support before anything that imports Lit (Gyral ADR 0012).
-import '@gyral/ssr/hydrate';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import baseJson from '../fixtures/listing-base.json?raw';
 import serverHtml from '../fixtures/listing.ssr.html?raw';
 import saleJson from '../fixtures/listing-sale.json?raw';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { settled } from '@gyral/core';
 
 const { basePath } = JSON.parse(baseJson) as { basePath: string };
 // A second page of the same listing, for the paging test.
@@ -87,7 +86,7 @@ describe('category listing with filters', () => {
     (window as unknown as Record<symbol, boolean>)[marker] = true;
     saleBox().click();
     // While the new results load, the control keeps the shopper's choice (no flicker back).
-    await page.root.querySelector('shop-listing')?.updateComplete;
+    await settled();
     expect(saleBox().checked).toBe(true);
     await vi.waitFor(() => {
       expect(count()).toBe('Showing 1–3 of 3 products');

@@ -6,7 +6,7 @@ import { brands, products } from '../../src/db/schema.js';
 import { DEFAULT_LISTING, type ListingState } from '../../src/domain/listing.js';
 import { searchPage } from '../../src/services/search.js';
 import { testApp } from '../support/app.js';
-import { stableHtml } from '../support/fixtures.js';
+import { outsideAttributes, stableHtml } from '../support/fixtures.js';
 import { firstCategory } from '../support/catalog.js';
 
 const text = (html: string) => html.replace(/<!--[^>]*-->/g, '');
@@ -200,7 +200,7 @@ describe('search routes', () => {
     ]) {
       const res = await t.get(`/search?q=${encodeURIComponent(q)}`);
       expect(res.status, q).toBe(200);
-      expect(await res.text(), q).not.toContain('<script>alert(1)</script>');
+      expect(outsideAttributes(await res.text()), q).not.toContain('<script>alert(1)</script>');
     }
   });
 

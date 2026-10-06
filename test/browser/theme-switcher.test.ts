@@ -8,6 +8,7 @@ import { ThemeSwitcher, type ThemeChoice } from '../../src/ui/theme/switcher.js'
 import { baseCss } from '../../src/ui/styles/base.js';
 import { themeSwitcherCss } from '../../src/ui/styles/theme-switcher.js';
 import { a11yViolations } from '../support/axe.js';
+import { settled } from '@gyral/core';
 
 const style = document.createElement('style');
 style.textContent = `${baseCss}${themeSwitcherCss}`;
@@ -47,11 +48,11 @@ async function mount(answer: () => unknown = () => ({ _tag: 'Redirected', locati
   const http = fakeDriver<Sent>('http', { impl: answer });
   el.drivers = { http };
   document.body.append(el);
-  await el.updateComplete;
+  await settled();
   await vi.waitFor(() => {
     expect(el.state.enhanced).toBe(true);
   });
-  await el.updateComplete;
+  await settled();
   const radio = (label: string) => {
     const found = [...el.querySelectorAll('label')].find((l) => l.textContent.trim() === label);
     const input = found?.querySelector('input');

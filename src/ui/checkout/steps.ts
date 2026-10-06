@@ -1,7 +1,7 @@
 // The checkout steps' markup: a summary with an Edit link when done, the form when open, a
 // heading only when locked. The server renders the same markup, so the no-JS flow is the same
 // page reloaded after each step.
-import { html, invalid, liveBoolean, nothing, type IntentNames } from '@gyral/core';
+import { html, invalid, nothing, type IntentNames } from '@gyral/core';
 import { addressLines, cardLabel, type CheckoutStep } from '../../domain/checkout.js';
 import { format } from '../../domain/money.js';
 import { STATE_CODES } from '../../domain/tax.js';
@@ -26,14 +26,18 @@ const value = (s: CheckoutState, field: string, fallback = ''): string => {
 
 const errorsOf = (s: CheckoutState, intent: string, field: string) => s.errors[intent]?.[field];
 
-/** A labelled input with its error message (aria-invalid also as an attribute for no-JS). */
+/**
+ * A labelled input with its error message. `value: undefined` leaves the value unbound (card
+ * fields): form state is live (Gyral view/02-bindings.md), so a bound '' would clear what the
+ * customer typed on every render, e.g. while the step is being sent.
+ */
 function field(
   s: CheckoutState,
   intent: string,
   f: {
     readonly name: string;
     readonly label: string;
-    readonly value: string;
+    readonly value: string | undefined;
     readonly type?: string;
     readonly autocomplete?: string;
     readonly required?: boolean;
@@ -43,24 +47,37 @@ function field(
 ) {
   const errors = errorsOf(s, intent, f.name);
   const id = `${intent}-${f.name}`;
+  const input =
+    f.value === undefined
+      ? html`<input
+          id=${id}
+          name=${f.name}
+          type=${f.type ?? 'text'}
+          autocomplete=${f.autocomplete}
+          inputmode=${f.inputmode}
+          placeholder=${f.placeholder}
+          ?required=${f.required === true}
+          aria-describedby=${`${id}-error`}
+          ${invalid(errors)}
+        />`
+      : html`<input
+          id=${id}
+          name=${f.name}
+          type=${f.type ?? 'text'}
+          autocomplete=${f.autocomplete}
+          inputmode=${f.inputmode}
+          placeholder=${f.placeholder}
+          ?required=${f.required === true}
+          value=${f.value}
+          aria-describedby=${`${id}-error`}
+          ${invalid(errors)}
+        />`;
   return html`<p class="field">
     <label for=${id}
       >${f.label}${f.required === true ? nothing : html` <small>(optional)</small>`}</label
     >
-    <input
-      id=${id}
-      name=${f.name}
-      type=${f.type ?? 'text'}
-      autocomplete=${f.autocomplete ?? nothing}
-      inputmode=${f.inputmode ?? nothing}
-      placeholder=${f.placeholder ?? nothing}
-      ?required=${f.required === true}
-      value=${f.value}
-      aria-describedby=${`${id}-error`}
-      aria-invalid=${errors === undefined ? nothing : 'true'}
-      ${invalid(errors)}
-    />
-    <span id=${`${id}-error`} class="error">${errors?.join(' ') ?? nothing}</span>
+    ${input}
+    <span id=${`${id}-error`} class="error">${errors?.join(' ')}</span>
   </p>`;
 }
 
@@ -121,18 +138,13 @@ function addressForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string)
                     type="radio"
                     name="addressId"
                     value=${String(saved.id)}
-                    ?checked=${liveBoolean(chosen === String(saved.id))}
+                    ?checked=${chosen === String(saved.id)}
                   />
                   <span>${addressLines(saved).join(', ')}</span>
                 </label>`,
             )}
             <label class="choice">
-              <input
-                type="radio"
-                name="addressId"
-                value="new"
-                ?checked=${liveBoolean(chosen === 'new')}
-              />
+              <input type="radio" name="addressId" value="new" ?checked=${chosen === 'new'} />
               <span>A new address (below)</span>
             </label>
           </fieldset>`
@@ -146,10 +158,9 @@ function addressForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string)
       <p class="field">
         <label for="Address-state">State</label>
         <select id="Address-state" name="state" autocomplete="shipping address-level1">
-          <option value="" ?selected=${liveBoolean(state === '')}>Choose…</option>
+          <option value="" ?selected=${state === ''}>Choose…</option>
           ${STATE_CODES.map(
-            (code) =>
-              html`<option value=${code} ?selected=${liveBoolean(state === code)}>${code}</option>`,
+            (code) => html`<option value=${code} ?selected=${state === code}>${code}</option>`,
           )}
         </select>
         <span id="Address-state-error" class="error"
@@ -185,12 +196,7 @@ function shippingForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string
       ${view.shippingOptions.map(
         (o) =>
           html`<label class="choice" data-component="shipping-option">
-            <input
-              type="radio"
-              name="method"
-              value=${o.method}
-              ?checked=${liveBoolean(chosen === o.method)}
-            />
+            <input type="radio" name="method" value=${o.method} ?checked=${chosen === o.method} />
             <span class="label">${o.label}</span>
             <span class="estimate">${days(o.days)}</span>
             <span class="amount">${o.price.cents === 0 ? 'Free' : format(o.price)}</span>
@@ -213,10 +219,10 @@ function paymentForm(s: CheckoutState, i: I, csrf: string) {
     <p class="hint">
       This store is a demo: use the test card 4242 4242 4242 4242, any future date and any 3 digits.
     </p>
-    ${field(s, 'Payment', { name: 'number', label: 'Card number', autocomplete: 'cc-number', inputmode: 'numeric', required: true, value: '' })}
+    ${field(s, 'Payment', { name: 'number', label: 'Card number', autocomplete: 'cc-number', inputmode: 'numeric', required: true, value: undefined })}
     <div class="row">
-      ${field(s, 'Payment', { name: 'expiry', label: 'Expiry (MM/YY)', autocomplete: 'cc-exp', placeholder: 'MM/YY', required: true, value: '' })}
-      ${field(s, 'Payment', { name: 'cvc', label: 'Security code', autocomplete: 'cc-csc', inputmode: 'numeric', required: true, value: '' })}
+      ${field(s, 'Payment', { name: 'expiry', label: 'Expiry (MM/YY)', autocomplete: 'cc-exp', placeholder: 'MM/YY', required: true, value: undefined })}
+      ${field(s, 'Payment', { name: 'cvc', label: 'Security code', autocomplete: 'cc-csc', inputmode: 'numeric', required: true, value: undefined })}
     </div>
     ${formError(s, 'Payment')} ${submit(s, 'Continue to review')}
   </form>`;
@@ -241,7 +247,7 @@ function reviewForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string) 
         name="terms"
         required
         aria-describedby="PlaceOrder-terms-error"
-        aria-invalid=${errors === undefined ? nothing : 'true'}
+        ${invalid(errors)}
       />
       <span>I accept the <a href="/terms">terms of sale</a>.</span></label
     >

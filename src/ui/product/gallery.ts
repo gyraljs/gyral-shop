@@ -1,9 +1,8 @@
-import { define, html } from '@gyral/core';
+import { define, html, prop } from '@gyral/core';
+import * as v from 'valibot';
 
-export interface GalleryImage {
-  readonly url: string;
-  readonly alt: string;
-}
+const GalleryImageSchema = v.object({ url: v.string(), alt: v.string() });
+export type GalleryImage = v.InferOutput<typeof GalleryImageSchema>;
 
 export interface GalleryProps {
   readonly images: readonly GalleryImage[];
@@ -31,7 +30,7 @@ const viewRules = Array.from(
  * matching view. The component adds an "Image n of m" status as the selection changes.
  */
 export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gallery', {
-  props: { images: { attribute: false, default: [] } },
+  props: { images: prop.value(v.array(GalleryImageSchema), { default: [] }) },
   init: () => ({ index: 0 }),
   intent: {
     Show: ({ value }) => {

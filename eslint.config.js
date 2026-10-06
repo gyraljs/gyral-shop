@@ -4,36 +4,34 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import compat from 'eslint-plugin-compat';
 import globals from 'globals';
+import gyral from '@gyral/core/eslint';
 
 const NO_EFFECT = {
   group: ['effect', 'effect/*', '@effect/*'],
   message:
     'gyral-shop app code does not use Effect (docs/design-docs/0001-stack.md). Use plain TypeScript: tagged unions for errors, Promises for async.',
 };
-const NO_DIRECT_LIT_INTERNALS = {
+const NO_DIRECT_GYRAL_INTERNALS = {
   group: ['@gyral/*/src/*'],
   message: 'Import Gyral packages by their public entry point (@gyral/core, …), never src/ paths.',
 };
 
-// Lit is used only through Gyral (@gyral/core re-exports html, css, directives). Raw LitElement
-// components are unsafe in production builds: the client entry's top-level await lets Rolldown
-// evaluate Lit before '@gyral/ssr/hydrate', so Lit's hydrate support never patches LitElement.
-// Gyral's define() hydrates by itself; raw Lit would render a second copy (gyral-czi.41).
-const RAW_LIT_MESSAGE =
-  "Build components with @gyral/core define() and import html/css/directives through it. Raw LitElement components break hydration in production builds (docs/design-docs/0005-testing.md, 'Production builds').";
-/** The bare 'lit' module exports LitElement; matched by exact name (patterns are gitignore-style). */
-const NO_RAW_LIT_PATH = { name: 'lit', message: RAW_LIT_MESSAGE };
-const NO_RAW_LIT = {
-  // Modules that export LitElement/ReactiveElement or decorators; directives such as
-  // lit/directives/* and lit/static-html.js are fine.
+// Gyral 0.3 has its own view layer (Gyral ADR 0018): html, css, nothing, each, raw and the hooks
+// come from @gyral/core. Lit is not a dependency; a Lit import would add a second renderer.
+const NO_LIT_MESSAGE =
+  'Import html, css, nothing, each, raw and the element hooks from @gyral/core (Gyral 0.3 has its own view layer; Lit is not a dependency).';
+const NO_LIT_PATH = { name: 'lit', message: NO_LIT_MESSAGE };
+const NO_LIT = {
   group: [
-    'lit/decorators*',
+    'lit/*',
+    'lit-html',
+    'lit-html/*',
     'lit-element',
     'lit-element/*',
-    '@lit/reactive-element',
-    '@lit/reactive-element/*',
+    '@lit/*',
+    '@lit-labs/*',
   ],
-  message: RAW_LIT_MESSAGE,
+  message: NO_LIT_MESSAGE,
 };
 
 /** Layer rule: files in `layer` may not import from the listed layers. */
@@ -43,11 +41,11 @@ const layer = (name, forbidden, why) => ({
     'no-restricted-imports': [
       'error',
       {
-        paths: [NO_RAW_LIT_PATH],
+        paths: [NO_LIT_PATH],
         patterns: [
           NO_EFFECT,
-          NO_DIRECT_LIT_INTERNALS,
-          NO_RAW_LIT,
+          NO_DIRECT_GYRAL_INTERNALS,
+          NO_LIT,
           ...forbidden.map((f) => ({
             // Relative paths only, so npm packages that happen to share a layer name
             // (e.g. `@libsql/client`) are not caught.
@@ -80,21 +78,11 @@ export default tseslint.config(
     },
     rules: {
       'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }],
-      'no-restricted-syntax': [
-        'error',
-        {
-          // Lit SSR serializes `.checked=${false}` as checked="false", which checks the box.
-          selector:
-            'TaggedTemplateExpression[tag.name=/^(html|serverHtml)$/] TemplateElement[value.raw=/\\.(checked|selected|open|indeterminate|defaultChecked)=$/]',
-          message:
-            'Bind boolean form state with ?checked=${liveBoolean(x)} (from @gyral/core), not a .checked property binding: server rendering turns .checked=${false} into checked="false" (Gyral ADR 0012).',
-        },
-      ],
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
       'no-restricted-imports': [
         'error',
-        { paths: [NO_RAW_LIT_PATH], patterns: [NO_EFFECT, NO_DIRECT_LIT_INTERNALS, NO_RAW_LIT] },
+        { paths: [NO_LIT_PATH], patterns: [NO_EFFECT, NO_DIRECT_GYRAL_INTERNALS, NO_LIT] },
       ],
     },
   },
@@ -121,6 +109,9 @@ export default tseslint.config(
     ['config', 'db', 'services', 'server'],
     'the browser bundle must not contain server code',
   ),
+  // Gyral's template rules (view/09-template-rules.md) and pure `each` rows (view/03-lists.md),
+  // with the same messages as `vite build`'s template compiler.
+  { files: ['src/**/*.ts', 'test/**/*.ts'], ...gyral.configs.recommended },
   {
     files: ['src/ui/**/*.ts', 'src/client/**/*.ts'],
     plugins: { compat },
