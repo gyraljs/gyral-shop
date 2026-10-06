@@ -74,7 +74,7 @@ export function textField(
         id=${id}
         name=${c.name}
         type=${c.type ?? 'text'}
-        inputmode=${c.inputmode ?? nothing}
+        inputmode=${c.inputmode}
         autocomplete=${c.autocomplete ?? 'off'}
         value=${drafted(c.draft, c.name, c.value)}
         ?required=${c.required ?? false}

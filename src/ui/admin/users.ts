@@ -231,7 +231,7 @@ export const AdminUsers = define<UsersState, UsersMsg, UsersProps>('shop-admin-u
       </form>
       ${s.error === null ? nothing : html`<p role="alert" data-component="notice" data-kind="error">${s.error}</p>`}
       <p role="status" data-component="notice" data-kind="success" ?hidden=${s.notice === null}>
-        ${s.notice ?? nothing}
+        ${s.notice}
       </p>
       ${confirmPanel(s, i)}
       ${

@@ -137,14 +137,14 @@ export const fieldView = (s: AuthState, f: FieldSpec) => {
       name=${f.name}
       type=${f.type}
       autocomplete=${f.autocomplete}
-      minlength=${f.minlength ?? nothing}
-      maxlength=${f.maxlength ?? nothing}
+      minlength=${f.minlength}
+      maxlength=${f.maxlength}
       required
       value=${f.type === 'password' ? nothing : text(s.values, f.name)}
       aria-describedby=${described}
       ${invalid(errors)}
     />
-    <span id=${`${id}-error`} class="error">${errors?.join(' ') ?? nothing}</span>
+    <span id=${`${id}-error`} class="error">${errors?.join(' ')}</span>
   </p>`;
 };
 

@@ -247,7 +247,7 @@ export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>('shop-a
       ${s.order === null ? nothing : html`<p>Placed <time datetime=${s.order.placedAt}>${dateTime.format(new Date(s.order.placedAt))}</time></p>`}
       ${s.error === null ? nothing : html`<p role="alert" data-component="notice" data-kind="error">${s.error}</p>`}
       <p role="status" data-component="notice" data-kind="success" ?hidden=${s.notice === null}>
-        ${s.notice ?? nothing}
+        ${s.notice}
       </p>
       ${
         s.order === null

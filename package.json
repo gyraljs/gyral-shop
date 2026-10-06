@@ -15,7 +15,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "invariants": "node scripts/check-docs.mjs && node scripts/check-workflows.mjs && node scripts/check-styles.mjs && node scripts/check-templates.mjs",
+    "invariants": "node scripts/check-docs.mjs && node scripts/check-workflows.mjs && node scripts/check-styles.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",

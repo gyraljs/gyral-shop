@@ -1,7 +1,7 @@
 // The cart page (docs/product-specs/cart.md). Server-rendered from the seeded cart store; every
 // control is a POST form. With JavaScript, the same forms become intents that send messages
 // to the shared store, which updates optimistically and reconciles with the JSON API.
-import { define, fieldErrors, form, html, nothing, prop, send } from '@gyral/core';
+import { define, fieldErrors, form, html, prop, send } from '@gyral/core';
 import * as v from 'valibot';
 import { cartLines } from './cart-lines.js';
 import { cartSummary } from './cart-summary.js';
@@ -65,7 +65,7 @@ export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>('shop-
     const { cart, notice, inFlight } = read(cartStore);
     const csrf = props.csrf ?? '';
     const shown = notice !== undefined && PAGE_OPS.includes(notice.op) ? notice : props.flash;
-    const message = shown?.message ?? nothing;
+    const message = shown?.message;
     return html`
       <h1>Your cart</h1>
       <p data-component="notice" class="notice ${shown?.kind ?? ''}" role="status">${message}</p>

@@ -164,7 +164,7 @@ function addressForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string)
           )}
         </select>
         <span id="Address-state-error" class="error"
-          >${errorsOf(s, 'Address', 'state')?.join(' ') ?? nothing}</span
+          >${errorsOf(s, 'Address', 'state')?.join(' ')}</span
         >
       </p>
       ${field(s, 'Address', { name: 'postalCode', label: 'ZIP code', autocomplete: 'shipping postal-code', inputmode: 'numeric', value: v('postalCode', a?.postalCode), required: true })}
@@ -251,7 +251,7 @@ function reviewForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string) 
       />
       <span>I accept the <a href="/terms">terms of sale</a>.</span></label
     >
-    <span id="PlaceOrder-terms-error" class="error">${errors?.join(' ') ?? nothing}</span>
+    <span id="PlaceOrder-terms-error" class="error">${errors?.join(' ')}</span>
     ${formError(s, 'PlaceOrder')} ${submit(s, 'Place order')}
   </form>`;
 }
@@ -260,7 +260,7 @@ function reviewForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string) 
 function stepSummary(step: CheckoutStep, view: CheckoutClient) {
   switch (step) {
     case 'contact':
-      return html`<p>${view.email ?? nothing}</p>`;
+      return html`<p>${view.email}</p>`;
     case 'address':
       return view.address === undefined
         ? nothing

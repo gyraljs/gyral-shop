@@ -233,7 +233,7 @@ export function productEditView(s: ProductEditState, i: I) {
     ${p === undefined ? nothing : html`<p><a href=${`/p/${p.slug}`}>View in the store</a></p>`}
     ${s.error === null ? nothing : html`<p role="alert" data-component="notice" data-kind="error">${s.error}</p>`}
     <p role="status" data-component="notice" data-kind="success" ?hidden=${s.notice === null}>
-      ${s.notice ?? nothing}
+      ${s.notice}
     </p>
     ${
       s.taxonomy === null || (s.id !== 0 && s.edit === null)

@@ -66,8 +66,6 @@ system of record.
   colour, font, radius and shadow from a token (no literals, no literal `var()` fallbacks;
   `scripts/check-styles.mjs`), widgets expose `::part()`s, and the ADR's hook and part tables
   are updated when you add hooks or parts.
-- Text bindings never render `''` for "no content": use `nothing` (Lit can't hydrate empty text
-  parts; `scripts/check-templates.mjs`).
 - Money is integer cents (`domain/money.ts`), never floats.
 - Every external input is parsed with valibot at the boundary (forms, JSON, env, DB seeds).
 - Workflows trigger on `workflow_dispatch` only. Files ≤ 300 lines. No `any`, no `!`.

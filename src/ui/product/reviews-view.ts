@@ -166,7 +166,7 @@ export function reviewsSection(s: ReviewsRender, i: Intents) {
   >
     ${title} ${summary(s.view)}
     <p data-component="review-cta">${callToAction(s.view)}</p>
-    <p data-component="review-notice" role="status" class=${s.notice?.kind ?? nothing}>
+    <p data-component="review-notice" role="status" class=${s.notice?.kind}>
       ${s.notice === undefined ? nothing : s.notice.message}
     </p>
     ${

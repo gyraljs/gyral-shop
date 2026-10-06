@@ -97,7 +97,7 @@ function fieldView(s: AuthState, f: MemberField, id: (name: string) => string) {
           id=${common.id}
           name=${f.name}
           rows=${f.rows ?? 5}
-          maxlength=${f.maxlength ?? nothing}
+          maxlength=${f.maxlength}
           ?required=${f.required ?? true}
           aria-describedby=${common.describedBy}
           ${invalid(errors)}
@@ -107,7 +107,7 @@ ${value}</textarea>`;
         return html`<select
           id=${common.id}
           name=${f.name}
-          autocomplete=${f.autocomplete ?? nothing}
+          autocomplete=${f.autocomplete}
           ?required=${f.required ?? true}
           aria-describedby=${common.describedBy}
           ${invalid(errors)}
@@ -132,8 +132,8 @@ ${value}</textarea>`;
           name=${f.name}
           type=${f.kind}
           autocomplete=${f.autocomplete}
-          minlength=${f.minlength ?? nothing}
-          maxlength=${f.maxlength ?? nothing}
+          minlength=${f.minlength}
+          maxlength=${f.maxlength}
           ?required=${f.required ?? true}
           aria-describedby=${common.describedBy}
           value=${f.kind === 'password' ? nothing : value}

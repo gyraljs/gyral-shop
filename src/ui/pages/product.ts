@@ -107,8 +107,8 @@ export const productPage = (view: ProductView, options: ProductPageOptions = {})
       <shop-buy-box
         data-region="buy-box"
         .variants=${view.variants}
-        action=${options.action ?? nothing}
-        csrf=${options.csrf ?? nothing}
+        action=${options.action}
+        csrf=${options.csrf}
       ></shop-buy-box>
       <shop-wish-toggle
         class="product-wish"

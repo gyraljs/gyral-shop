@@ -2,17 +2,7 @@
 // Without JavaScript it is a POST form to /theme that redirects back with the theme cookie set;
 // the next page links the chosen stylesheet. With it, picking a theme swaps the stylesheet in
 // place (View Transition when allowed) and saves the choice with submitForm.
-import {
-  changed,
-  define,
-  defineForm,
-  form,
-  html,
-  nothing,
-  prop,
-  send,
-  type Next,
-} from '@gyral/core';
+import { changed, define, defineForm, form, html, prop, send, type Next } from '@gyral/core';
 import { submitForm } from '@gyral/http';
 import * as v from 'valibot';
 import { loadedMe, meStore } from '../me/store.js';
@@ -153,7 +143,7 @@ export const ThemeSwitcher = define<ThemeSwitcherState, ThemeSwitcherMsg, ThemeS
         </fieldset>
         <input type="hidden" name="return" value=${props.returnTo ?? '/'} />
         <button type="submit" ?hidden=${s.enhanced}>Apply theme</button>
-        <p class="theme-status" role="status">${s.message ?? nothing}</p>
+        <p class="theme-status" role="status">${s.message}</p>
       </form>
     `,
   },
