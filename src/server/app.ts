@@ -39,7 +39,7 @@ import { analyticsMiddleware } from './analytics.js';
 import { organizationJsonLd, twitterCard, websiteJsonLd } from './seo.js';
 import { publicOrigin } from './origin.js';
 import { pageCsp } from './csp.js';
-import { CARD_CHUNKS, entryFirst, type Preload } from './route-chunks.js';
+import { CARD_CHUNKS, type Preload } from './route-chunks.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
@@ -97,7 +97,7 @@ export function createApp({
   const assets = {
     clientEntry,
     modulepreload,
-    ...(preload === undefined ? {} : { preload: entryFirst(clientEntry, preload) }),
+    ...(preload === undefined ? {} : { preload }),
     csp: pageCsp({ dev: security?.dev ?? false }),
   };
   const clock = security?.now;

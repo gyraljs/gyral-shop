@@ -97,8 +97,9 @@ describe('production build', () => {
     };
     const [product] = smallCatalog().products;
     const productPage = await preloads(`/p/${product?.slug ?? ''}`);
-    // The entry first, so route chunks never queue it behind them (route-chunks.ts entryFirst).
+    // The entry first, so route chunks never queue it behind them (Gyral 0.3.0-next.6).
     expect(productPage[0]).toBe(chunk('src/client/entry.ts'));
+    expect(productPage.filter((href) => href === productPage[0])).toHaveLength(1);
     expect(productPage).toContain(chunk(ROUTE_CHUNKS.buyBox));
     expect(productPage).toContain(chunk(ROUTE_CHUNKS.gallery));
     expect(productPage).not.toContain(chunk(ROUTE_CHUNKS.listing));

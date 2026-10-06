@@ -115,3 +115,11 @@ sequential requests, alternating runs: category 3.0 → 3.15 ms, product 5.6 →
 page's lazily loaded component is defined 80–310 ms sooner (product buy box 827 → 698 ms at
 10 Mbps, 1628 → 1321 ms at 1.6 Mbps; CPU 4x, 150 ms RTT). `scripts/perf-baseline.json`, which
 dated from 0.1 (75–83 KiB per page), is re-recorded.
+
+### 0.3.0-next.6 (2026-10-06)
+
+Now `0.3.0-next.6` (Gyral 2cc2704). Gyral itself puts the entry first in `modulepreload`
+whenever anything else is preloaded (`clientAssets`, `productionServer`'s `preload`), the fix
+for the queueing described above, so the shop's own `entryFirst` wrapper is gone; pages still
+preload their route chunks. First interaction is unchanged (median of 9 cold loads, 10 Mbps,
+150 ms RTT, CPU 4x): product buy box 705 ms (698 with `entryFirst`), category 776, login 695.

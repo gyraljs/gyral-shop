@@ -24,20 +24,10 @@ export type RouteChunk = (typeof ROUTE_CHUNKS)[keyof typeof ROUTE_CHUNKS];
 
 /**
  * Production's `preload(modules)` from `productionServer`: the entry's preloads plus these
- * modules and their static imports.
+ * modules and their static imports, the entry itself first (Gyral 0.3.0-next.6), so route
+ * chunks never queue it behind them on HTTP/1.1.
  */
 export type Preload = (modules: readonly RouteChunk[]) => readonly string[];
-
-/**
- * `preload` with the entry itself first. Gyral writes every `modulepreload` link before the
- * entry's `<script>`, so with route chunks the entry was requested last and, over HTTP/1.1 (six
- * connections a host, as `pnpm start` serves), waited behind them: the entry evaluated
- * 655 → 946 ms after navigation on a product page (10 Mbps, 150 ms RTT, CPU 4x), and the buy
- * box was defined later than with no route preloads at all. Entry first: buy box 827 → 698 ms.
- */
-export const entryFirst =
-  (entry: string, preload: Preload): Preload =>
-  (modules) => [entry, ...preload(modules)];
 
 const { listing, wishToggle, buyBox, gallery, reviews } = ROUTE_CHUNKS;
 
