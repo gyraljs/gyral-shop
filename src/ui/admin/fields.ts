@@ -1,37 +1,41 @@
 // Labelled form controls for admin forms: errors linked with aria-describedby and mirrored to
 // native validity with Gyral's invalid() (ADR 0008). Ids are prefixed per form so several
 // forms can sit on one page (one per variant, for example).
-import { formDataToObject, formFields, html, invalid, nothing, type FormFields } from '@gyral/core';
+import { each, html, invalid, nothing, type ChildValue } from '@gyral/core';
 
 export type Errors = Readonly<Record<string, readonly string[]>>;
-
-/**
- * What each form last sent (or the browser rejected), keyed like errors. Form state is live in
- * Gyral 0.3 (view/02-bindings.md): every render writes the model's value into the control, so
- * until the server's answer reloads the record, the model keeps the admin's own input.
- */
-export type Drafts = Readonly<Record<string, FormFields>>;
-
-/** A form submission's text fields, for `Drafts`. */
-export const draftOf = (data: FormData): FormFields => formFields(formDataToObject(data));
-
-/** The drafted value of `name`, else the record's. */
-export const drafted = (draft: FormFields | undefined, name: string, value: string): string => {
-  const sent = draft?.[name];
-  return typeof sent === 'string' ? sent : value;
-};
 
 /** The key a form's errors live under: its intent, plus a record id for per-row forms. */
 export const formKey = (intent: string, id: number | string = ''): string =>
   `${intent}${String(id)}`;
+
+/** How many times each form (by `formKey`) has been saved. */
+export type Saves = Readonly<Record<string, number>>;
+
+/** `saves` with one more success for the form `key` (none when no form was pending). */
+export const savedOnce = (saves: Saves, key: string | null): Saves =>
+  key === null ? saves : { ...saves, [key]: (saves[key] ?? 0) + 1 };
+
+/**
+ * A form whose fields start empty again after each success (a stock adjustment, a new variant
+ * or taxon). Gyral writes a control only when the model's value for it changes, and these
+ * fields have no model value, so a success re-creates the form instead: a one-row keyed list
+ * whose key counts the form's successes (Gyral view/02-bindings.md "Putting a control back").
+ * Until then, what the admin typed stays, through rejections and failures alike.
+ */
+export const freshAfterSave = (key: string, saves: Saves, form: () => ChildValue) =>
+  each(
+    [`${key}#${String(saves[key] ?? 0)}`],
+    (k) => k,
+    (_k, render: () => ChildValue) => render(),
+    () => form,
+  );
 
 interface Common {
   readonly form: string;
   readonly name: string;
   readonly label: string;
   readonly errors: Errors;
-  /** The form's draft (`Drafts`): it wins over `value` until the record reloads. */
-  readonly draft?: FormFields | undefined;
   readonly hint?: string;
   readonly required?: boolean;
 }
@@ -76,7 +80,7 @@ export function textField(
         type=${c.type ?? 'text'}
         inputmode=${c.inputmode}
         autocomplete=${c.autocomplete ?? 'off'}
-        value=${drafted(c.draft, c.name, c.value)}
+        value=${c.value}
         ?required=${c.required ?? false}
         aria-describedby=${described}
         ${invalid(errors)}
@@ -99,7 +103,7 @@ export function textArea(c: Common & { readonly value: string; readonly rows?: n
         aria-describedby=${described}
         ${invalid(errors)}
       >
-${drafted(c.draft, c.name, c.value)}</textarea>`,
+${c.value}</textarea>`,
     )}
   </div>`;
 }
@@ -120,9 +124,8 @@ export function selectField(
 ) {
   const { id, described } = ids(c);
   const errors = c.errors[c.name];
-  const value = drafted(c.draft, c.name, c.value);
   const option = (o: Choice) =>
-    html`<option value=${o.value} ?selected=${o.value === value}>${o.label}</option>`;
+    html`<option value=${o.value} ?selected=${o.value === c.value}>${o.label}</option>`;
   const groups = [...new Set(c.choices.map((o) => o.group))];
   return html`<div class="admin-field" data-component="field">
     ${frame(
@@ -137,7 +140,9 @@ export function selectField(
         ${
           c.emptyLabel === null
             ? nothing
-            : html`<option value="" ?selected=${value === ''}>${c.emptyLabel ?? 'Choose…'}</option>`
+            : html`<option value="" ?selected=${c.value === ''}>
+                ${c.emptyLabel ?? 'Choose…'}
+              </option>`
         }
         ${groups.map((group) =>
           group === undefined

@@ -15,7 +15,7 @@ import {
   type Taxonomy,
 } from '../../domain/admin.js';
 import { adminDrivers } from './drivers.js';
-import { draftOf, formKey, type Drafts, type Errors } from './fields.js';
+import { formKey, savedOnce, type Errors, type Saves } from './fields.js';
 import { loadError } from './format.js';
 import { productEditView } from './product-views.js';
 import { AdjustForm, ArchiveForm, ProductForm, VariantForm } from './schemas.js';
@@ -35,8 +35,8 @@ export interface ProductEditState {
   readonly errors: Readonly<Record<string, Errors>>;
   /** The form whose request is in flight (its key), for disabling buttons and server 422s. */
   readonly pending: string | null;
-  /** What each form last sent, keyed like `errors`, until the product reloads. */
-  readonly drafts: Drafts;
+  /** Successes per form, keyed like `errors`: one-shot forms start empty after one. */
+  readonly saves: Saves;
 }
 
 type Submit<T extends string> = {
@@ -110,7 +110,7 @@ function submit(
   const key = formKey(m._tag, m._tag === 'SaveVariant' || m._tag === 'Adjust' ? m.variantId : '');
   const errors = Object.fromEntries(Object.entries(s.errors).filter(([k]) => k !== key));
   return [
-    { ...s, pending: key, errors, notice: null, drafts: { ...s.drafts, [key]: draftOf(m.form) } },
+    { ...s, pending: key, errors, notice: null },
     [
       submitForm(urlOf(s, m), m.form, {
         onSuccess: (body): ProductEditMsg | undefined => {
@@ -135,8 +135,7 @@ function rejected(s: ProductEditState, m: IntentRejected): ProductEditState {
     typeof fromBrowser === 'string'
       ? formKey(m.intent, fromBrowser)
       : (s.pending ?? formKey(m.intent));
-  const drafts = m.values === undefined ? s.drafts : { ...s.drafts, [key]: m.values };
-  return { ...s, pending: null, errors: { ...s.errors, [key]: fieldErrors(m.issues) }, drafts };
+  return { ...s, pending: null, errors: { ...s.errors, [key]: fieldErrors(m.issues) } };
 }
 
 export const AdminProductEdit = define<ProductEditState, ProductEditMsg, ProductEditProps>(
@@ -153,7 +152,7 @@ export const AdminProductEdit = define<ProductEditState, ProductEditMsg, Product
         notice: null,
         errors: {},
         pending: null,
-        drafts: {},
+        saves: {},
       },
       [props.productId === 0 ? loadTaxonomy() : loadProduct(props.productId)],
     ],
@@ -170,19 +169,16 @@ export const AdminProductEdit = define<ProductEditState, ProductEditMsg, Product
       AddVariant: submit,
       SaveVariant: submit,
       Adjust: submit,
-      Loaded: (s, m) => ({
-        ...s,
-        edit: m.edit,
-        taxonomy: m.edit.taxonomy,
-        error: null,
-        drafts: {},
-      }),
+      Loaded: (s, m) => ({ ...s, edit: m.edit, taxonomy: m.edit.taxonomy, error: null }),
       TaxonomyLoaded: (s, m) => ({ ...s, taxonomy: m.taxonomy, error: null }),
       // A new product moves to its own edit page; anything else reloads the current one.
       Saved: (s, m) =>
         s.id === 0
           ? [s, [navigate(`/admin/products/${String(m.id)}`)]]
-          : [{ ...s, pending: null, notice: m.notice }, [loadProduct(s.id)]],
+          : [
+              { ...s, pending: null, notice: m.notice, saves: savedOnce(s.saves, s.pending) },
+              [loadProduct(s.id)],
+            ],
       Failed: (s, m) => ({ ...s, pending: null, error: loadError(m.error) }),
       IntentRejected: rejected,
     },

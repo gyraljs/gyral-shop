@@ -4,8 +4,6 @@
 // answers JSON (Gyral ADR 0008, "Round trip").
 import {
   fieldErrors,
-  formDataToObject,
-  formFields,
   html,
   invalid,
   nothing,
@@ -45,24 +43,14 @@ const refill = (values: FormFields = {}): FormFields =>
   Object.fromEntries(Object.entries(values).filter(([key]) => !SECRET_FIELDS.has(key)));
 
 /**
- * A submission is on its way: the model keeps what was sent (never passwords). Form state is
- * live in Gyral 0.3 (view/02-bindings.md): the pending render writes the model's values into
- * the fields, so without this it would put back what the form held before the user typed.
+ * A submission is on its way. The fields keep what the user typed: Gyral writes a control only
+ * when the model's value for it changes (view/02-bindings.md "Live form state").
  */
-export const submitting = (
-  s: AuthState,
-  form: FormData,
-  secret: ReadonlySet<string> = SECRET_FIELDS,
-): AuthState => ({
-  values: Object.fromEntries(
-    Object.entries(formFields(formDataToObject(form))).filter(([key]) => !secret.has(key)),
-  ),
-  errors: {},
-  pending: true,
-});
+export const submitting = (s: AuthState): AuthState => ({ ...s, errors: {}, pending: true });
 
 export const rejected = (s: AuthState, m: IntentRejected): AuthState => ({
-  // A server rejection may carry no values: keep what was sent (see `submitting`).
+  // The server's copy of what was sent (never passwords). A rejection without one changes no
+  // value, so what the user typed stays in the fields.
   values: m.values === undefined ? s.values : refill(m.values),
   errors: fieldErrors(m.issues),
   pending: false,

@@ -12,8 +12,6 @@ import {
   define,
   fieldErrors,
   form,
-  formDataToObject,
-  formFields,
   html,
   prop,
   redirectedTo,
@@ -82,15 +80,14 @@ const refill = (values: FormFields = {}): FormFields =>
   Object.fromEntries(Object.entries(values).filter(([key]) => !SECRET_FIELDS.has(key)));
 
 /**
- * Posts a step; the server answers with the new view, a redirect, or a 422 rejection. The model
- * keeps what was sent (never card fields): form state is live (Gyral view/02-bindings.md), so
- * the pending render must not put the saved values back over what the customer typed.
+ * Posts a step; the server answers with the new view, a redirect, or a 422 rejection. The
+ * fields keep what the customer typed meanwhile: Gyral writes a control only when the model's
+ * value for it changes (view/02-bindings.md "Live form state").
  */
 function post(s: CheckoutState, step: FormStep, data: FormData) {
   const errors = Object.fromEntries(Object.entries(s.errors).filter(([intent]) => intent !== step));
-  const values = refill(formFields(formDataToObject(data)));
   return [
-    { ...s, errors, values, pending: step, status: '' },
+    { ...s, errors, pending: step, status: '' },
     [
       submitForm<CheckoutMsg, CheckoutMsg>(URLS[step], data, {
         csrf: { meta: CSRF_META },

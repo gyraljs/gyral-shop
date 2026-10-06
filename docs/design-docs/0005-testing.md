@@ -109,9 +109,11 @@ re-renders only that component.
   sheet, may go). Every checked page passes.
 - **Development SSR** (`pnpm dev`, `ui:check`) renders development output, so `ui:check` runs
   Gyral's development hydration checks against development markup.
-- **Form state is live** (Gyral view/02-bindings.md): every render writes the model's value
-  into the control. Tests that type into a field and then trigger any render (a rejection, a
-  pending submit) prove the model kept the input (`account.test.ts`, `admin-manage.test.ts`).
+- **Form state is live** (Gyral view/02-bindings.md): since 0.3.0-next.5 a control is written
+  only when the model's value for it changes. Tests type into fields, then trigger renders that
+  change no value (a pending submit, a rejection, a failed save) and expect the input to stay
+  (`account.test.ts`, `admin-products.test.ts`, `admin-taxonomy.test.ts`, `consent.test.ts`),
+  and expect one-shot admin forms to start empty after a success (`freshAfterSave`).
 - Removed: `scripts/check-templates.mjs` (Lit couldn't hydrate an empty text part, so text
   bindings had to render `nothing` instead of `''`; Gyral 0.3 can) and `NO_RAW_LIT` (ESLint now
   bans Lit imports outright and runs `@gyral/core/eslint`'s template rules).

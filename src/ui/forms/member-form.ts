@@ -174,7 +174,7 @@ export function defineMemberForm(spec: MemberFormSpec) {
     },
     update: {
       Submit: (s, m, { props }) => [
-        submitting(s, m.form, secret),
+        submitting(s),
         [submit(props.action ?? spec.action, m.form, props.csrfToken)],
       ],
       // Pending stays on: the server's page (with its flash message) is about to load.

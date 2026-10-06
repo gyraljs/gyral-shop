@@ -69,8 +69,9 @@ system of record.
   are updated when you add hooks or parts.
 - Views follow Gyral's template rules and keep `each` rows pure (`@gyral/core/eslint` and
   `vite build` check both). No `style` attributes: the CSP allows hashed `<style>` only
-  (ADR 0002). Form state is live, so a form's model keeps what the user submitted (see
-  ARCHITECTURE.md, "Gyral").
+  (ADR 0002). Form state is written only when the model's value changes, so models never
+  copy what the user typed; to clear or restore a control, change the model (ARCHITECTURE.md,
+  "Gyral").
 - Money is integer cents (`domain/money.ts`), never floats.
 - Every external input is parsed with valibot at the boundary (forms, JSON, env, DB seeds).
 - Workflows trigger on `workflow_dispatch` only. Files ≤ 300 lines. No `any`, no `!`.

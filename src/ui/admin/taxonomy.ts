@@ -22,14 +22,14 @@ import {
 } from '../../domain/admin-manage.js';
 import { adminDrivers } from './drivers.js';
 import {
-  drafted,
-  draftOf,
   formError,
   formKey,
+  freshAfterSave,
+  savedOnce,
   selectField,
   textField,
-  type Drafts,
   type Errors,
+  type Saves,
 } from './fields.js';
 import { loadError } from './format.js';
 import { TaxonArchiveForm, TaxonCreateForm } from './manage-schemas.js';
@@ -41,8 +41,8 @@ export interface TaxonomyState {
   /** Errors per form: `Create`, or `Rename`/`Archive` plus kind and id. */
   readonly errors: Readonly<Record<string, Errors>>;
   readonly pending: string | null;
-  /** What each form last sent, keyed like `errors`, until the tree reloads. */
-  readonly drafts: Drafts;
+  /** Successes per form, keyed like `errors`: the create form starts empty after one. */
+  readonly saves: Saves;
 }
 
 type Submit<T extends string> = { readonly _tag: T; readonly form: FormData; readonly key: string };
@@ -95,13 +95,7 @@ const DONE: Readonly<Record<string, string>> = {
 function send(s: TaxonomyState, m: Submit<string>): Next<TaxonomyState, TaxonomyMsg> {
   const errors = Object.fromEntries(Object.entries(s.errors).filter(([k]) => k !== m.key));
   return [
-    {
-      ...s,
-      pending: m.key,
-      errors,
-      notice: null,
-      drafts: { ...s.drafts, [m.key]: draftOf(m.form) },
-    },
+    { ...s, pending: m.key, errors, notice: null },
     [
       submitForm(urlOf(m), m.form, {
         onSuccess: (body): TaxonomyMsg | undefined =>
@@ -122,8 +116,7 @@ function rejected(s: TaxonomyState, m: IntentRejected): TaxonomyState {
     (typeof kind === 'string' && typeof id === 'string' && m.intent !== 'CreateTaxon'
       ? formKey(m.intent, `${kind}${id}`)
       : formKey(m.intent));
-  const drafts = m.values === undefined ? s.drafts : { ...s.drafts, [key]: m.values };
-  return { ...s, pending: null, errors: { ...s.errors, [key]: fieldErrors(m.issues) }, drafts };
+  return { ...s, pending: null, errors: { ...s.errors, [key]: fieldErrors(m.issues) } };
 }
 
 type I = { Rename: string; ArchiveTaxon: string; CreateTaxon: string };
@@ -147,12 +140,7 @@ function item(s: TaxonomyState, i: I, kind: TaxonKindName, t: Taxon, extra: unkn
         <input type="hidden" name="id" value=${String(t.id)} />
         <label>
           <span class="visually-hidden">New name for ${t.name}</span>
-          <input
-            name="name"
-            value=${drafted(s.drafts[formKey('Rename', tag)], 'name', t.name)}
-            required
-            ${invalid(renameErrors['name'])}
-          />
+          <input name="name" value=${t.name} required ${invalid(renameErrors['name'])} />
         </label>
         <button
           type="submit"
@@ -180,9 +168,9 @@ function item(s: TaxonomyState, i: I, kind: TaxonKindName, t: Taxon, extra: unkn
   </li>`;
 }
 
+/** Starts empty again after each addition (fields.ts `freshAfterSave`). */
 function createForm(s: TaxonomyState, i: I, tree: TaxonomyAdmin) {
   const errors = s.errors[formKey('CreateTaxon')] ?? {};
-  const draft = s.drafts[formKey('CreateTaxon')];
   const f = 'taxon';
   return html`<form class="admin-form" data-intent=${i.CreateTaxon} data-component="taxon-create">
     <h2>Add a department, category or brand</h2>
@@ -193,7 +181,6 @@ function createForm(s: TaxonomyState, i: I, tree: TaxonomyAdmin) {
         name: 'kind',
         label: 'Add a',
         errors,
-        draft,
         value: 'brand',
         emptyLabel: null,
         choices: [
@@ -203,14 +190,13 @@ function createForm(s: TaxonomyState, i: I, tree: TaxonomyAdmin) {
         ],
         required: true,
       })}
-      ${textField({ form: f, name: 'name', label: 'Name', errors, draft, value: '', required: true })}
-      ${textField({ form: f, name: 'slug', label: 'URL slug', hint: 'Optional; made from the name.', errors, draft, value: '' })}
+      ${textField({ form: f, name: 'name', label: 'Name', errors, value: '', required: true })}
+      ${textField({ form: f, name: 'slug', label: 'URL slug', hint: 'Optional; made from the name.', errors, value: '' })}
       ${selectField({
         form: f,
         name: 'departmentId',
         label: 'Department (for a category)',
         errors,
-        draft,
         value: '',
         emptyLabel: 'Not a category',
         choices: tree.departments
@@ -235,7 +221,7 @@ const submitted =
 export const AdminTaxonomy = define<TaxonomyState, TaxonomyMsg>('shop-admin-taxonomy', {
   shadow: false,
   init: () => [
-    { tree: null, error: null, notice: null, errors: {}, pending: null, drafts: {} },
+    { tree: null, error: null, notice: null, errors: {}, pending: null, saves: {} },
     [load()],
   ],
   intent: {
@@ -247,29 +233,35 @@ export const AdminTaxonomy = define<TaxonomyState, TaxonomyMsg>('shop-admin-taxo
     CreateTaxon: send,
     Rename: send,
     ArchiveTaxon: send,
-    Done: (s, m) => [{ ...s, pending: null, notice: m.notice }, [load()]],
-    Loaded: (s, m) => ({ ...s, tree: m.tree, error: null, drafts: {} }),
+    Done: (s, m) => [
+      { ...s, pending: null, notice: m.notice, saves: savedOnce(s.saves, s.pending) },
+      [load()],
+    ],
+    Loaded: (s, m) => ({ ...s, tree: m.tree, error: null }),
     Failed: (s, m) => ({ ...s, pending: null, error: loadError(m.error) }),
     IntentRejected: rejected,
   },
   drivers: adminDrivers,
-  view: (s, i) =>
-    html`<section class="admin-page" data-region="admin-taxonomy">
+  view: (s, i) => {
+    const tree = s.tree;
+    return html`<section class="admin-page" data-region="admin-taxonomy">
       <h1 tabindex="-1">Departments &amp; brands</h1>
       ${s.error === null ? nothing : html`<p role="alert" data-component="notice" data-kind="error">${s.error}</p>`}
       <p role="status" data-component="notice" data-kind="success" ?hidden=${s.notice === null}>
         ${s.notice}
       </p>
       ${
-        s.tree === null
+        tree === null
           ? s.error === null
             ? html`<p role="status" data-component="loading">Loading…</p>`
             : nothing
-          : html`<section aria-label="Add">${createForm(s, i, s.tree)}</section>
+          : html`<section aria-label="Add">
+                ${freshAfterSave(formKey('CreateTaxon'), s.saves, () => createForm(s, i, tree))}
+              </section>
               <section aria-labelledby="departments-heading" data-region="admin-departments">
                 <h2 id="departments-heading">Departments and categories</h2>
                 <ul class="admin-taxa">
-                  ${s.tree.departments.map((d) =>
+                  ${tree.departments.map((d) =>
                     item(
                       s,
                       i,
@@ -285,11 +277,12 @@ export const AdminTaxonomy = define<TaxonomyState, TaxonomyMsg>('shop-admin-taxo
               <section aria-labelledby="brands-heading" data-region="admin-brands">
                 <h2 id="brands-heading">Brands</h2>
                 <ul class="admin-taxa">
-                  ${s.tree.brands.map((b) => item(s, i, 'brand', b))}
+                  ${tree.brands.map((b) => item(s, i, 'brand', b))}
                 </ul>
               </section>`
       }
-    </section>`,
+    </section>`;
+  },
 });
 
 declare global {

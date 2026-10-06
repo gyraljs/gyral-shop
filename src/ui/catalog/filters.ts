@@ -105,8 +105,10 @@ const ratingFieldset = (state: ListingState) => html`
 
 /**
  * Filter and sort controls for a listing view. `open` is the disclosure as the shopper left it
- * (`undefined`: not touched yet). Gyral 0.3's `?open` is live (view/02-bindings.md): every
- * render writes the model's value, so the model has to follow the shopper's own toggles.
+ * (`undefined`: not touched yet). Gyral writes `?open` whenever its value changes
+ * (view/02-bindings.md), so without the shopper's own toggles in the model, unticking the last
+ * filter (active count 1 → 0) would close the panel under their hand, and going Back to a
+ * filtered URL would reopen a panel they had closed.
  */
 export const filtersForm = (
   view: ListingView,

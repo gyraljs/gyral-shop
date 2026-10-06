@@ -92,6 +92,23 @@ describe('<shop-consent>', () => {
     expect(el.querySelector('section')).not.toBeNull();
   });
 
+  it('leaves the Customize panel and the analytics box as the visitor set them', async () => {
+    const { el, button } = await mount('banner', () => {
+      throw new Error('offline');
+    });
+    const details = el.querySelector('details');
+    const box = el.querySelector('input[name="analytics"]');
+    if (details === null || !(box instanceof HTMLInputElement)) throw new Error('no controls');
+    details.open = true;
+    box.checked = true;
+    button('Save choices').click();
+    await vi.waitFor(() => {
+      expect(el.querySelector('[role="status"]')?.textContent).toContain('could not be saved');
+    });
+    // Saving and failing re-rendered the form; neither control's binding changed.
+    expect([details.open, box.checked]).toEqual([true, true]);
+  });
+
   it('confirms on the settings page instead of closing', async () => {
     const { el, button } = await mount('page');
     button('Accept all').click();

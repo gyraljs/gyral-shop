@@ -52,7 +52,7 @@ export const RegisterFormElement = define<AuthState, RegisterMsg, AuthProps>('sh
   },
   update: {
     Register: (s, m, { props }) => [
-      submitting(s, m.form),
+      submitting(s),
       [submit('/account/register', m.form, props.csrfToken)],
     ],
     SignedIn: (s, m) => [s, [goTo(m.location)]],

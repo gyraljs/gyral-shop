@@ -36,7 +36,7 @@ export const LoginFormElement = define<AuthState, LoginMsg, AuthProps>('shop-log
   },
   update: {
     Login: (s, m, { props }) => [
-      submitting(s, m.form),
+      submitting(s),
       [submit('/account/login', m.form, props.csrfToken)],
     ],
     // Pending stays on: the page is about to reload with the member signed in.

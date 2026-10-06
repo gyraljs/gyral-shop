@@ -30,7 +30,7 @@ export interface ListingModel {
   readonly want: ListingState | null;
   readonly status: 'idle' | 'loading' | 'error';
   readonly focusPending: boolean;
-  /** The filter disclosure as the shopper left it; `null` until they toggle it. */
+  /** The filter disclosure as the shopper left it; `null` until they toggle it (filters.ts). */
   readonly filtersOpen: boolean | null;
 }
 

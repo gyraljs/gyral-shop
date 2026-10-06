@@ -50,8 +50,12 @@ production pages preload the entry's chunks, Gyral's lazily loaded hydration chu
 page's own route chunks: each page lists the lazily loaded modules its components need
 (`chunks`, from `src/server/route-chunks.ts`, kept in step with `src/client/lazy.ts` by a test).
 
-Form state is live: every render writes the model's value into `value=`, `?checked=`,
-`?selected=`, `<textarea>` content and `?open`. So a component's model holds what the user
-submitted until the server answers (`submitting()` in `ui/account/auth-form.ts`, checkout's
-`post()`, the admin's per-form drafts in `ui/admin/fields.ts`), and a disclosure the user may
-toggle follows its `toggle` event (listing filters, the consent box).
+Form state is live, and written only when the model's value changes (Gyral view/02-bindings.md
+"Live form state"): `value=`, `?checked=`, `?selected=`, `<textarea>` content and `?open` take
+the model's value when it changes, even over an edit, and any other render (a pending submit, a
+rejection, another field's message) leaves the control as the user left it. So models hold
+records and server answers, not copies of what the user typed. To put a control back, change
+the model: a form that must start empty after a success is a keyed row whose key counts its
+successes (`freshAfterSave` in `ui/admin/fields.ts`: stock adjustments, new variants and taxa).
+A disclosure whose `?open` follows a count the user can change under it follows its `toggle`
+event instead (listing filters).

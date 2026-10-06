@@ -36,18 +36,10 @@ export interface ConsentModel {
   readonly open: boolean;
   readonly saving: boolean;
   readonly message: string | null;
-  /**
-   * The analytics box and the "Customize" disclosure. Form state is live in Gyral 0.3
-   * (view/02-bindings.md), so the model holds what the visitor chose: a render while saving
-   * must not untick the box or close the disclosure.
-   */
-  readonly analytics: boolean;
-  readonly customizing: boolean;
 }
 
 export type ConsentMsg =
   | { readonly _tag: 'Choose'; readonly form: FormData }
-  | { readonly _tag: 'Customize'; readonly open: boolean }
   | { readonly _tag: 'Saved' }
   | { readonly _tag: 'Failed' };
 
@@ -62,22 +54,15 @@ export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>('shop-c
     returnTo: prop.string(),
     deferred: prop.boolean(),
   },
-  init: (props) => ({
-    open: props.deferred !== true,
-    saving: false,
-    message: null,
-    analytics: props.analytics === true,
-    customizing: props.mode === 'page',
-  }),
+  init: (props) => ({ open: props.deferred !== true, saving: false, message: null }),
   intent: {
     Choose: form(ConsentForm, (_data, raw) => ({ _tag: 'Choose', form: raw })),
-    Customize: ({ target }) =>
-      target instanceof HTMLDetailsElement ? { _tag: 'Customize', open: target.open } : undefined,
   },
   update: {
-    Customize: (s, m) => ({ ...s, customizing: m.open }),
+    // The box and the disclosure stay as the visitor left them while saving: their bindings
+    // below never change, so Gyral never writes them again (view/02-bindings.md).
     Choose: (s, m) => [
-      { ...s, saving: true, message: null, analytics: m.form.get('analytics') === 'on' },
+      { ...s, saving: true, message: null },
       [
         submitForm<ConsentMsg, ConsentMsg>('/consent', m.form, {
           onSuccess: () => ({ _tag: 'Saved' }),
@@ -132,13 +117,7 @@ export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>('shop-c
               Reject non-essential
             </button>
           </div>
-          <details
-            class="consent-custom"
-            data-component="consent-custom"
-            ?open=${s.customizing}
-            data-intent=${i.Customize}
-            data-intent-on="toggle"
-          >
+          <details class="consent-custom" data-component="consent-custom" ?open=${page}>
             <summary>Customize</summary>
             <fieldset>
               <legend>Cookie categories</legend>
@@ -147,7 +126,7 @@ export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>('shop-c
                 Strictly necessary <small>(always on)</small>
               </label>
               <label>
-                <input type="checkbox" name="analytics" ?checked=${s.analytics} />
+                <input type="checkbox" name="analytics" ?checked=${props.analytics === true} />
                 Analytics <small>(page views and add-to-cart clicks)</small>
               </label>
             </fieldset>

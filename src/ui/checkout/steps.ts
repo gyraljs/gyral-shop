@@ -26,18 +26,14 @@ const value = (s: CheckoutState, field: string, fallback = ''): string => {
 
 const errorsOf = (s: CheckoutState, intent: string, field: string) => s.errors[intent]?.[field];
 
-/**
- * A labelled input with its error message. `value: undefined` leaves the value unbound (card
- * fields): form state is live (Gyral view/02-bindings.md), so a bound '' would clear what the
- * customer typed on every render, e.g. while the step is being sent.
- */
+/** A labelled input with its error message. */
 function field(
   s: CheckoutState,
   intent: string,
   f: {
     readonly name: string;
     readonly label: string;
-    readonly value: string | undefined;
+    readonly value: string;
     readonly type?: string;
     readonly autocomplete?: string;
     readonly required?: boolean;
@@ -47,36 +43,22 @@ function field(
 ) {
   const errors = errorsOf(s, intent, f.name);
   const id = `${intent}-${f.name}`;
-  const input =
-    f.value === undefined
-      ? html`<input
-          id=${id}
-          name=${f.name}
-          type=${f.type ?? 'text'}
-          autocomplete=${f.autocomplete}
-          inputmode=${f.inputmode}
-          placeholder=${f.placeholder}
-          ?required=${f.required === true}
-          aria-describedby=${`${id}-error`}
-          ${invalid(errors)}
-        />`
-      : html`<input
-          id=${id}
-          name=${f.name}
-          type=${f.type ?? 'text'}
-          autocomplete=${f.autocomplete}
-          inputmode=${f.inputmode}
-          placeholder=${f.placeholder}
-          ?required=${f.required === true}
-          value=${f.value}
-          aria-describedby=${`${id}-error`}
-          ${invalid(errors)}
-        />`;
   return html`<p class="field">
     <label for=${id}
       >${f.label}${f.required === true ? nothing : html` <small>(optional)</small>`}</label
     >
-    ${input}
+    <input
+      id=${id}
+      name=${f.name}
+      type=${f.type ?? 'text'}
+      autocomplete=${f.autocomplete}
+      inputmode=${f.inputmode}
+      placeholder=${f.placeholder}
+      ?required=${f.required === true}
+      value=${f.value}
+      aria-describedby=${`${id}-error`}
+      ${invalid(errors)}
+    />
     <span id=${`${id}-error`} class="error">${errors?.join(' ')}</span>
   </p>`;
 }
@@ -219,10 +201,10 @@ function paymentForm(s: CheckoutState, i: I, csrf: string) {
     <p class="hint">
       This store is a demo: use the test card 4242 4242 4242 4242, any future date and any 3 digits.
     </p>
-    ${field(s, 'Payment', { name: 'number', label: 'Card number', autocomplete: 'cc-number', inputmode: 'numeric', required: true, value: undefined })}
+    ${field(s, 'Payment', { name: 'number', label: 'Card number', autocomplete: 'cc-number', inputmode: 'numeric', required: true, value: '' })}
     <div class="row">
-      ${field(s, 'Payment', { name: 'expiry', label: 'Expiry (MM/YY)', autocomplete: 'cc-exp', placeholder: 'MM/YY', required: true, value: undefined })}
-      ${field(s, 'Payment', { name: 'cvc', label: 'Security code', autocomplete: 'cc-csc', inputmode: 'numeric', required: true, value: undefined })}
+      ${field(s, 'Payment', { name: 'expiry', label: 'Expiry (MM/YY)', autocomplete: 'cc-exp', placeholder: 'MM/YY', required: true, value: '' })}
+      ${field(s, 'Payment', { name: 'cvc', label: 'Security code', autocomplete: 'cc-csc', inputmode: 'numeric', required: true, value: '' })}
     </div>
     ${formError(s, 'Payment')} ${submit(s, 'Continue to review')}
   </form>`;
