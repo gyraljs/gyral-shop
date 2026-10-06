@@ -1,7 +1,7 @@
 // The server-only document shell: head, skip link, header, main, footer. Only the custom
 // elements inside hydrate; the shell itself never does.
 import { html, nothing, raw, type AnyStoreInstance } from '@gyral/core';
-import { renderPage } from '@gyral/ssr';
+import { renderPage, type CspOptions } from '@gyral/ssr';
 import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
 import '../ui/consent/consent.js'; // registers <shop-consent>
@@ -20,6 +20,8 @@ export interface ShellOptions {
   readonly clientEntry: string;
   /** Modules to preload with the entry (production; see AppOptions.modulepreload). */
   readonly modulepreload?: readonly string[];
+  /** The Content-Security-Policy, built when the page renders (csp.ts `pageCsp`). */
+  readonly csp?: CspOptions;
   readonly title: string;
   readonly description?: string;
   readonly departments: readonly DepartmentLink[];
@@ -158,6 +160,7 @@ export function shell(options: ShellOptions): Response {
       scripts: [options.clientEntry],
       modulepreload: options.modulepreload ?? [],
       stores: options.stores ?? [],
+      ...(options.csp === undefined ? {} : { csp: options.csp }),
     },
     { status: options.status ?? 200 },
   );

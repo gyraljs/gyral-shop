@@ -1,7 +1,8 @@
-// Security headers (docs/design-docs/0002-security.md). The Content-Security-Policy itself is
-// built in ../csp.ts (style hashes need the page stylesheets and Gyral's component registry).
+// Security headers (docs/design-docs/0002-security.md). The Content-Security-Policy comes from
+// ../csp.ts: pages carry their own (renderPage builds it with the style hashes), every other
+// response gets the same directives without hashes here.
 import type { MiddlewareHandler } from 'hono';
-import { pagePolicy } from '../csp.js';
+import { basePolicy } from '../csp.js';
 import type { AppEnv } from './context.js';
 import { isHttps } from './request.js';
 
@@ -11,7 +12,7 @@ import { isHttps } from './request.js';
  */
 export function securityHeaderValues(options: {
   readonly https: boolean;
-  /** The Content-Security-Policy header value (../csp.ts pagePolicy). */
+  /** The Content-Security-Policy header value (../csp.ts). */
   readonly csp: string;
 }): Readonly<Record<string, string>> {
   return {
@@ -31,9 +32,9 @@ export const securityHeaders =
   async (c, next) => {
     await next();
     const headers = c.res.headers;
-    const csp = await pagePolicy({ dev: options.dev });
+    const csp = basePolicy({ dev: options.dev });
     for (const [name, value] of Object.entries(securityHeaderValues({ https: isHttps(c), csp }))) {
-      // A route may set a content security policy of its own (e.g. the dev mail preview).
+      // Pages set their own, with the style hashes of what they render (renderPage's `csp`).
       if (name === 'content-security-policy' && headers.has(name)) continue;
       headers.set(name, value);
     }

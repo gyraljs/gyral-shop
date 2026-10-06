@@ -2,7 +2,7 @@
 // consent banner or footer, just an admin header with a link back to the store and sign-out.
 // The page itself is the client-rendered <shop-admin> app; the shell is server-only.
 import { html } from '@gyral/core';
-import { renderPage } from '@gyral/ssr';
+import { renderPage, type CspOptions } from '@gyral/ssr';
 import { CSRF_META, csrfField } from '../ui/forms/csrf.js';
 import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
 import { ADMIN_STYLES } from './page-styles.js';
@@ -10,6 +10,8 @@ import { ADMIN_STYLES } from './page-styles.js';
 export interface AdminShellOptions {
   readonly clientEntry: string;
   readonly modulepreload?: readonly string[];
+  /** The Content-Security-Policy, built when the page renders (csp.ts `pageCsp`). */
+  readonly csp?: CspOptions;
   readonly title: string;
   readonly csrfToken: string;
   /** The signed-in admin's name, shown in the header. */
@@ -49,6 +51,7 @@ export function adminShell(options: AdminShellOptions): Response {
       `,
       scripts: [options.clientEntry],
       modulepreload: options.modulepreload ?? [],
+      ...(options.csp === undefined ? {} : { csp: options.csp }),
     },
     { status: options.status ?? 200 },
   );

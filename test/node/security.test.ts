@@ -99,6 +99,29 @@ describe('headers', () => {
     }
   });
 
+  it('builds each page header when it renders, so components registered later are hashed', async () => {
+    await test.get('/'); // headers existed before the component below did
+    const { define, html } = await import('@gyral/core');
+    const css = ':host { display: block; }';
+    define<object, never>('shop-late-probe', {
+      init: () => ({}),
+      intent: {},
+      update: {},
+      view: () => html`<p>late</p>`,
+      styles: css,
+    });
+    const hash = `'sha256-${createHash('sha256').update(css).digest('base64')}'`;
+    expect((await test.get('/')).headers.get('content-security-policy')).toContain(hash);
+  });
+
+  it('gives responses that are not pages the same directives, without style hashes', async () => {
+    const res = await test.get('/api/me');
+    const policy = res.headers.get('content-security-policy') ?? '';
+    expect(policy).toContain("script-src 'self'");
+    expect(policy).toContain("frame-ancestors 'none'");
+    expect(policy).toMatch(/(?:^|; )style-src 'self'(?:;|$)/);
+  });
+
   it('allows the HMR websocket only in development; HSTS only over HTTPS', async () => {
     const dev = await testApp({ dev: true });
     expect((await dev.get('/')).headers.get('content-security-policy')).toContain('ws:');

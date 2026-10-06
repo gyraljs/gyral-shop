@@ -112,7 +112,7 @@ Keep this table current: a new security rule lands with a test and a row here.
 | Output escaping of user content (HTML and JSON-LD)              | `security-checklist.test.ts` › "is escaped in HTML and cannot break out of JSON-LD"                                                                                                                                                                                                                                 |
 | Script-safe JSON                                                | `src/server/security/json.test.ts` › scriptSafeJson                                                                                                                                                                                                                                                                 |
 | Safe `next` targets                                             | `json.test.ts` › safeNext; `account.test.ts` › "ignores an off-site next target"                                                                                                                                                                                                                                    |
-| CSP, HSTS, security headers                                     | `security.test.ts` › "sends a strict CSP…", "allows every <style> by hash…", "…HSTS only over HTTPS"; `prod.test.ts` (production responses and files from disk)                                                                                                                                                     |
+| CSP, HSTS, security headers                                     | `security.test.ts` › "sends a strict CSP…", "allows every <style> by hash…", "builds each page header when it renders…", "gives responses that are not pages…", "…HSTS only over HTTPS"; `prod.test.ts` (production responses and files from disk)                                                                  |
 | Static pages never personalized                                 | `test/node/static-pages.test.ts`                                                                                                                                                                                                                                                                                    |
 | Production secrets required                                     | `src/config/env.test.ts`; `prod.test.ts`                                                                                                                                                                                                                                                                            |
 | Path traversal refused (production files)                       | `prod.test.ts`                                                                                                                                                                                                                                                                                                      |
@@ -144,9 +144,12 @@ refused (no guessing). Tests: `test/node/proxy-origin.test.ts`.
 
 ## Addendum: strict `style-src` with Gyral 0.3 (gyral-g1r.14, 2026-10-06)
 
-Gyral 0.3 hashes styles for us (`contentSecurityPolicy()` in `@gyral/ssr`), so `style-src`
-drops `'unsafe-inline'`. `src/server/csp.ts` builds one policy per variant (production,
-development, the mail preview) on first use and caches it:
+Gyral 0.3 hashes styles for us (`@gyral/ssr`), so `style-src` drops `'unsafe-inline'`.
+Since 0.3.0-next.5 every page passes `renderPage({ csp: pageCsp(…) })` (`src/server/csp.ts`,
+one options object per variant: production, development, the mail preview) and Gyral builds
+the header when the page renders, with every component registered by then. (Before, the shop
+built one header per variant on its first request and cached it, so that every component
+module had been imported first: a header built earlier silently lacked a component's hash.)
 
 - `style-src 'self'` plus the hash of each global stylesheet the shells write as `<style>`
   (`src/server/page-styles.ts`: the storefront's and the admin's) and of each shadow
@@ -155,11 +158,14 @@ development, the mail preview) on first use and caches it:
   which `style-src` doesn't govern.
 - No `style` attributes in views: star ratings carry a `data-rating` step (`0.0`–`5.0`) that
   `ratingCss` (51 rules) maps to `--rating`; the mail preview frame is sized by `contentCss`.
-- Prerendered files served from disk get the same header (`prod-app.ts`).
+- Prerendered files served from disk get the storefront shell's header, built once at startup
+  after the app has imported its components (`staticPolicy()`, `prod-app.ts`).
+- Responses that are not pages (JSON, redirects, images) get the same directives without style
+  hashes (`basePolicy()`, set by `securityHeaders` when the route set none).
 - `/dev/mail/:id` (development only) adds `style-src-attr 'unsafe-inline'`: mail HTML is styled
   with attributes, and the preview's `srcdoc` frame inherits the page's policy.
 
 What remains outside the policy: nothing on storefront or admin pages. The theme stylesheet is a
 same-origin `<link>`. A new `<style>` text (a stylesheet added to `page-styles.ts` or a shadow
-component) is hashed automatically; a `style` attribute in a view would be blocked, and
-`test/node/security.test.ts` fails on one.
+component, even one imported after startup) is hashed automatically; a `style` attribute in a
+view would be blocked, and `test/node/security.test.ts` fails on one.

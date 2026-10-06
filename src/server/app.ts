@@ -38,6 +38,7 @@ import { themeRoutes } from './routes/themes.js';
 import { analyticsMiddleware } from './analytics.js';
 import { organizationJsonLd, twitterCard, websiteJsonLd } from './seo.js';
 import { publicOrigin } from './origin.js';
+import { pageCsp } from './csp.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
@@ -85,7 +86,8 @@ export function createApp({
   siteOrigin,
 }: AppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
-  const assets = { clientEntry, modulepreload };
+  // Pages build their Content-Security-Policy when they render (a route may pass its own).
+  const assets = { clientEntry, modulepreload, csp: pageCsp({ dev: security?.dev ?? false }) };
   const clock = security?.now;
   const services: Services = createServices({
     ...serviceOptions,
@@ -102,7 +104,7 @@ export function createApp({
   };
   const page = async (o: PageOptions) => {
     // Prerendered pages are the same for everyone: no account, token or cart in the HTML.
-    if (o.static === true) return shell({ ...o, ...assets, departments: await nav() });
+    if (o.static === true) return shell({ ...assets, ...o, departments: await nav() });
     const account = accountSummary();
     const c = tryGetContext<AppEnv>();
     // The cart store is read by the header on every page (and by cart and product pages).
@@ -114,8 +116,8 @@ export function createApp({
     // Browser code reads the token from <meta> for JSON requests (e.g. the cart store).
     const csrfToken = o.csrfToken ?? (c === undefined ? undefined : c.get('session')?.csrfToken);
     return shell({
-      ...o,
       ...assets,
+      ...o,
       departments: departmentList,
       ...(account === undefined ? {} : { account }),
       ...(csrfToken === undefined ? {} : { csrfToken }),

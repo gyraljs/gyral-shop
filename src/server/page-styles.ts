@@ -1,5 +1,6 @@
-// The documents' global CSS (each sheet declares its layers; ADR 0006 rule 3). One module, so
-// the Content-Security-Policy (csp.ts) hashes exactly what the shells write as <style>.
+// The documents' global CSS (each sheet declares its layers; ADR 0006 rule 3). renderPage hashes
+// what a shell writes as <style> into its Content-Security-Policy; prerendered pages get the
+// storefront shell's hashes from csp.ts staticPolicy().
 import { accountCss } from '../ui/styles/account.js';
 import { adminCss } from '../ui/styles/admin.js';
 import { authCss } from '../ui/account/auth-form.js';
@@ -83,6 +84,3 @@ function adminShellCss(): string {
   }
 }`;
 }
-
-/** Every global stylesheet a page can carry, for the CSP's style hashes. */
-export const PAGE_STYLES: readonly string[] = [...new Set([...DOCUMENT_STYLES, ...ADMIN_STYLES])];
