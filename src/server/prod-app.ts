@@ -6,6 +6,7 @@ import { productionServer, type FetchApp } from '@gyral/ssr/static';
 import type { Config } from '../config/env.js';
 import type { Db } from '../db/client.js';
 import { createApp } from './app.js';
+import { pagePolicy } from './csp.js';
 import { securityHeaderValues } from './security/headers.js';
 
 export const CLIENT_ENTRY_SOURCE = 'src/client/entry.ts';
@@ -53,7 +54,8 @@ export async function createProdApp(options: ProdOptions): Promise<FetchApp> {
       if (response.headers.has('content-security-policy')) return response; // came from the app
       const headers = new Headers(response.headers);
       const https = new URL(request.url).protocol === 'https:';
-      for (const [name, value] of Object.entries(securityHeaderValues({ dev: false, https }))) {
+      const csp = await pagePolicy({ dev: false });
+      for (const [name, value] of Object.entries(securityHeaderValues({ https, csp }))) {
         headers.set(name, value);
       }
       return new Response(response.body, { status: response.status, headers });

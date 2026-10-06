@@ -201,7 +201,9 @@ export function createApp({
   app.route('/', orderRoutes({ services, render: page }));
   app.route('/', wishlistRoutes({ db, render: page }));
   app.route('/', adminRoutes({ services, render: (o) => adminShell({ ...o, ...assets }) }));
-  if (mode !== 'production') app.route('/dev/mail', devMailRoutes(services.mailer, page));
+  if (mode !== 'production') {
+    app.route('/dev/mail', devMailRoutes(services.mailer, page, security?.dev ?? false));
+  }
 
   app.notFound(async (c) =>
     page({

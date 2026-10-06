@@ -81,7 +81,6 @@ export const devMailMessagePage = (message: MailDetail) => html`
         title="HTML body of “${message.subject}”"
         sandbox="allow-top-navigation-by-user-activation allow-popups"
         srcdoc=${framed(message.html)}
-        style="inline-size: 100%; block-size: 32rem; border: 1px solid currentColor;"
       ></iframe>
     </section>
     <section aria-labelledby="mail-text">

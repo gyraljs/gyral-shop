@@ -1,4 +1,6 @@
 // Styles for catalog markup rendered in the light DOM of <main> (cards, grids, hero).
+import { ratingCss } from '../catalog/rating.js';
+
 export const catalogCss = `
 @layer components {
   .visually-hidden {
@@ -64,6 +66,7 @@ export const catalogCss = `
   .price.sale ins { color: var(--sale); text-decoration: none; }
   .price.sale del { color: var(--ink-muted); font-weight: 400; font-size: 0.9rem; margin-inline-start: var(--space-1); }
   .rating { display: flex; align-items: center; gap: var(--space-1); font-size: 0.9rem; }
+  ${ratingCss}
   .stars {
     --pct: calc(var(--rating) / 5 * 100%);
     inline-size: 5.5em; block-size: 1em;

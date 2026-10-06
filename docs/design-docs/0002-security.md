@@ -15,8 +15,8 @@ Status: **accepted** (2026-10-04)
   (in-memory sliding window; fine for local).
 - **Password reset:** single-use, hashed tokens with a 30-minute expiry, delivered through
   the mock mail outbox. Responses never reveal whether an email exists.
-- **Output:** Lit escapes by default; JSON in pages uses script-safe serialization; strict CSP
-  header (no inline scripts except hashed hydration seeds if needed).
+- **Output:** Gyral's `html` escapes by default; JSON in pages uses script-safe serialization;
+  strict CSP header (no inline scripts, no inline styles except hashed `<style>` elements).
 
 ## Implementation (shop-1k5.2, 2026-10-04)
 
@@ -46,10 +46,10 @@ Details worth knowing:
   guest cart to the new id; destroy detaches it (`session_id = null`).
 - Sliding expiry is written at most every 5 minutes (`TOUCH_AFTER_MS`); the cookie is re-sent
   then.
-- CSP: `script-src 'self'` with no inline scripts (Gyral's seeds are JSON data blocks, which
-  CSP does not execute). `style-src` needs `'unsafe-inline'` for `<style>` inside Declarative
-  Shadow DOM templates and the shell's global styles. Development adds `connect-src ws:` for
-  Vite HMR. HSTS only over HTTPS.
+- CSP: `script-src 'self'` with no inline scripts (Gyral's seeds are JSON data blocks and
+  attributes, which CSP does not execute). `style-src 'self'` plus the SHA-256 hash of every
+  `<style>` a page can carry (see the 2026-10-06 addendum), never `'unsafe-inline'`.
+  Development adds `connect-src ws:` for Vite HMR. HSTS only over HTTPS.
 - Rate limiting is per process and in memory (`SlidingWindowLimiter`); `ip(c)` trusts
   `x-forwarded-for` only with `trustProxy`.
 
@@ -112,7 +112,7 @@ Keep this table current: a new security rule lands with a test and a row here.
 | Output escaping of user content (HTML and JSON-LD)              | `security-checklist.test.ts` › "is escaped in HTML and cannot break out of JSON-LD"                                                                                                                                                                                                                                 |
 | Script-safe JSON                                                | `src/server/security/json.test.ts` › scriptSafeJson                                                                                                                                                                                                                                                                 |
 | Safe `next` targets                                             | `json.test.ts` › safeNext; `account.test.ts` › "ignores an off-site next target"                                                                                                                                                                                                                                    |
-| CSP, HSTS, security headers                                     | `security.test.ts` › "sends a strict CSP…", "…HSTS only over HTTPS"; `prod.test.ts` (production responses)                                                                                                                                                                                                          |
+| CSP, HSTS, security headers                                     | `security.test.ts` › "sends a strict CSP…", "allows every <style> by hash…", "…HSTS only over HTTPS"; `prod.test.ts` (production responses and files from disk)                                                                                                                                                     |
 | Static pages never personalized                                 | `test/node/static-pages.test.ts`                                                                                                                                                                                                                                                                                    |
 | Production secrets required                                     | `src/config/env.test.ts`; `prod.test.ts`                                                                                                                                                                                                                                                                            |
 | Path traversal refused (production files)                       | `prod.test.ts`                                                                                                                                                                                                                                                                                                      |
@@ -141,3 +141,25 @@ origin-verified consent POST accept an origin from `acceptedOrigins()`
 
 Without `SITE_ORIGIN` or `trustProxy`, a public origin that differs from the request URL is
 refused (no guessing). Tests: `test/node/proxy-origin.test.ts`.
+
+## Addendum: strict `style-src` with Gyral 0.3 (gyral-g1r.14, 2026-10-06)
+
+Gyral 0.3 hashes styles for us (`contentSecurityPolicy()` in `@gyral/ssr`), so `style-src`
+drops `'unsafe-inline'`. `src/server/csp.ts` builds one policy per variant (production,
+development, the mail preview) on first use and caches it:
+
+- `style-src 'self'` plus the hash of each global stylesheet the shells write as `<style>`
+  (`src/server/page-styles.ts`: the storefront's and the admin's) and of each shadow
+  component's declarative-shadow-root `<style>` (mini-cart, buy box, gallery; Gyral's
+  registry). Once a component hydrates, Gyral swaps its `<style>` for a constructed sheet,
+  which `style-src` doesn't govern.
+- No `style` attributes in views: star ratings carry a `data-rating` step (`0.0`–`5.0`) that
+  `ratingCss` (51 rules) maps to `--rating`; the mail preview frame is sized by `contentCss`.
+- Prerendered files served from disk get the same header (`prod-app.ts`).
+- `/dev/mail/:id` (development only) adds `style-src-attr 'unsafe-inline'`: mail HTML is styled
+  with attributes, and the preview's `srcdoc` frame inherits the page's policy.
+
+What remains outside the policy: nothing on storefront or admin pages. The theme stylesheet is a
+same-origin `<link>`. A new `<style>` text (a stylesheet added to `page-styles.ts` or a shadow
+component) is hashed automatically; a `style` attribute in a view would be blocked, and
+`test/node/security.test.ts` fails on one.

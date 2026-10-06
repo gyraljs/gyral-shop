@@ -5,28 +5,11 @@ import { renderPage } from '@gyral/ssr';
 import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
 import '../ui/consent/consent.js'; // registers <shop-consent>
-import { consentCss } from '../ui/styles/consent.js';
 import { currentConsent, currentPath } from './consent.js';
-import { searchCss } from '../ui/styles/search.js';
 import { CSRF_META } from '../ui/forms/csrf.js';
-import { baseCss } from '../ui/styles/base.js';
-import { headerCss } from '../ui/styles/header.js';
-import { authCss } from '../ui/account/auth-form.js';
-import { cartCss } from '../ui/styles/cart.js';
+import { DOCUMENT_STYLES } from './page-styles.js';
 import '../ui/theme/switcher.js'; // registers <shop-theme-switcher>
-import { themeSwitcherCss } from '../ui/styles/theme-switcher.js';
 import { CURRENT_THEME_PATH, currentTheme, themeHref, themeOptions } from './theme.js';
-import { catalogCss } from '../ui/styles/catalog.js';
-import { filtersCss } from '../ui/styles/filters.js';
-import { listingCss } from '../ui/styles/listing.js';
-import { accountCss } from '../ui/styles/account.js';
-import { memberFormCss } from '../ui/forms/member-form.js';
-import { contentCss } from '../ui/styles/content.js';
-import { productCss } from '../ui/styles/product.js';
-import { ordersCss } from '../ui/styles/orders.js';
-import { checkoutCss } from '../ui/styles/checkout.js';
-import { wishlistCss } from '../ui/styles/wishlist.js';
-import { adminCss } from '../ui/styles/admin.js';
 
 import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
 
@@ -98,30 +81,6 @@ const footer = (prerendered: boolean) => html`
     </div>
   </footer>
 `;
-
-/** Document CSS, in cascade order (each sheet declares its layers; ADR 0006 rule 3). */
-const DOCUMENT_STYLES = [
-  baseCss,
-  headerCss,
-  catalogCss,
-  listingCss,
-  filtersCss,
-  productCss,
-  accountCss,
-  authCss,
-  cartCss,
-  ordersCss,
-  memberFormCss,
-  contentCss,
-  checkoutCss,
-  wishlistCss,
-  adminCss,
-  searchCss,
-  consentCss,
-  themeSwitcherCss,
-  // The theme is not inline: <link id="theme-css"> in the head (themeLink below). It only
-  // writes to @layer theme, which wins by layer order wherever the sheet appears.
-];
 
 /**
  * The theme stylesheet (ADR 0006 rule 8). A render-blocking <link>, so the right theme paints

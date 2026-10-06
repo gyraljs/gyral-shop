@@ -65,6 +65,9 @@ describe('production build', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('cache-control')).toBe('public, max-age=0, must-revalidate');
     expect(res.headers.get('content-security-policy')).toContain("script-src 'self'");
+    // Files from disk get the same hashed style-src as rendered pages (no 'unsafe-inline').
+    expect(res.headers.get('content-security-policy')).toMatch(/style-src 'self' 'sha256-/);
+    expect(res.headers.get('content-security-policy')).not.toContain('unsafe-inline');
     expect(res.headers.get('x-content-type-options')).toBe('nosniff');
     expect(await res.text()).toBe(
       readFileSync(join(dist, 'static', 'about', 'index.html'), 'utf8'),
