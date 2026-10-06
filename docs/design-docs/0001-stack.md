@@ -2,10 +2,10 @@
 
 Status: **accepted** (2026-10-04)
 
-- **TypeScript, strict, no Effect in app code.** Gyral uses Effect internally; that is its
+- **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing) from npm, `^0.1.0` (see the 2026-10-05
+- **Gyral** (core, http, router, time, ssr, testing) from npm, `^0.2.0` (see the 2026-10-05
   addendum). Lit is a peer dependency and deduped (Vite `resolve.dedupe` via
   `gyralVitePreset()`) so the app and Gyral share one copy; the app imports Lit helpers
   through `@gyral/core`.
@@ -56,3 +56,17 @@ on a sibling `../cyclejs-web-framework` checkout are gone (bead shop-3g0). Remov
 second checkout in `ci.yml`, the clone step in the README, and the part of `vite.deps.ts` that
 walked into linked Gyral source. Installed `@gyral/*` packages are pre-bundled by Vite with
 their own dependencies, so `optimizedDeps()` now follows only the shop's own browser graph.
+
+## Addendum 2026-10-06: Gyral 0.2.0
+
+Upgraded to `@gyral/*` ^0.2.0 (bead shop-1tc). Gyral no longer bundles Effect, so the main
+entry's static graph dropped from 69.8 to 32.4 KiB gzip and all client JS from 124.0 to 85.3 kB.
+`package.json` pins `lit-html` to 3.3.0 through `pnpm.overrides` until lit/lit#5298 (a
+`repeat()` comment-node leak in 3.3.1+) is fixed upstream; remove the override then.
+
+Gyral 0.2.0 also strips indentation whitespace from `html` templates, which changed every SSR
+golden fixture (regenerated with `pnpm test -u`). One visible effect, a fix: the empty review
+notice (`[data-component="review-notice"]:empty { display: none }`) was never empty before,
+because the indentation around its binding counted as text, so it showed as a bar on every
+product page. Tests that read `textContent` across sibling elements get no spaces between them
+any more; read per element instead (see `test/browser/admin-manage.test.ts`).

@@ -39,5 +39,5 @@ reaches it as props (SSR) or over HTTP.
 
 ## Gyral
 
-`@gyral/*` ^0.1.0 from npm (published with provenance). Lit is a peer dependency, so exactly
+`@gyral/*` ^0.2.0 from npm (lit-html pinned to 3.3.0, see ADR 0001) (published with provenance). Lit is a peer dependency, so exactly
 one copy runs; `gyralVitePreset()` dedupes it in Vite as a guard.

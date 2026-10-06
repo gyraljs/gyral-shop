@@ -4,25 +4,28 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  lit-html: 3.3.0
+
 importers:
 
   .:
     dependencies:
       '@gyral/core':
-        specifier: ^0.1.0
-        version: 0.1.0(lit@3.3.3)
+        specifier: ^0.2.0
+        version: 0.2.0(lit@3.3.3)
       '@gyral/http':
-        specifier: ^0.1.0
-        version: 0.1.0(lit@3.3.3)
+        specifier: ^0.2.0
+        version: 0.2.0(lit@3.3.3)
       '@gyral/router':
-        specifier: ^0.1.0
-        version: 0.1.0(lit@3.3.3)
+        specifier: ^0.2.0
+        version: 0.2.0(lit@3.3.3)
       '@gyral/ssr':
-        specifier: ^0.1.0
-        version: 0.1.0(@lit-labs/ssr-client@1.1.8)(@lit-labs/ssr@4.1.0(@types/node@24.19.1))(lit@3.3.3)
+        specifier: ^0.2.0
+        version: 0.2.0(@lit-labs/ssr-client@1.1.8)(@lit-labs/ssr@4.1.0(@types/node@24.19.1))(lit@3.3.3)
       '@gyral/time':
-        specifier: ^0.1.0
-        version: 0.1.0(lit@3.3.3)
+        specifier: ^0.2.0
+        version: 0.2.0(lit@3.3.3)
       '@hono/node-server':
         specifier: 2.1.3
         version: 2.1.3(hono@4.13.13)
@@ -58,8 +61,8 @@ importers:
         specifier: 10.6.0
         version: 10.6.0
       '@gyral/testing':
-        specifier: ^0.1.0
-        version: 0.1.0(lit@3.3.3)
+        specifier: ^0.2.0
+        version: 0.2.0(lit@3.3.3)
       '@types/node':
         specifier: 24.19.1
         version: 24.19.1
@@ -623,34 +626,34 @@ packages:
     resolution: {integrity: sha512-3RQHgEtvL1Frl/d1cSreo7qhJ3Gk1OdNUai/CtZ8G+wYeRQnJih3s9xJ9/kgYekPQRdwgh0HXRPqMlzWGwivIQ==}
     engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
-  '@gyral/core@0.1.0':
-    resolution: {integrity: sha512-bmRucaZQgmCJHd6+3CVtzuVZ2Fwa87wTPlUXBe07cfzKrX1DHWPi2hOz0l5OYaZ9zUM8JnG8TJQVYrV2TsqlxA==}
+  '@gyral/core@0.2.0':
+    resolution: {integrity: sha512-b55rDInpMBt3j7rThc8DJLzmZAWrWXx9If4+Qz4SuyUAdyvBVGqaDIvY+lUxUfOUQBTXEzVDl+b2ukT8QNkb/w==}
     peerDependencies:
       lit: ^3.3.0
 
-  '@gyral/http@0.1.0':
-    resolution: {integrity: sha512-d22RTVmFF6s20qrzxRWnxuvvjQoNvmrbpmxdPgHswM2WUkBN8ndhCz40w/W13xbIoXJgcezsA7WscwCRkK7ntQ==}
+  '@gyral/http@0.2.0':
+    resolution: {integrity: sha512-M80jvZqbph2w8SJwTYlSKxIV1qCqcqTVC6TrqysMBmiFPFqsWx6YqVNIDGwptQCVQXpS2oPaqhR3ERZ8LpyY1g==}
 
-  '@gyral/router@0.1.0':
-    resolution: {integrity: sha512-cH83nIh/Rp1Mk6+wwwVndfaWGXhCByN/l5+hmJ+/j8FQvABPN0u/p0NpfHbHJiGUC04E0fumpj2iyv/FLMjL3A==}
+  '@gyral/router@0.2.0':
+    resolution: {integrity: sha512-in903+UF/C3utgEN7Yxu82g3ABCBg98hW01fL2ZwuTvkK5EiVoFuGvDTgUfRQxNapWKPOqZ7kh6INK+gCUK+6A==}
 
-  '@gyral/ssr@0.1.0':
-    resolution: {integrity: sha512-A2kD8cO+ZhUKO7HxFAbZEjzMG6QWAB8vwwh++flxtdJFNTse4rI5bvgzMY5jgZBbZF6hKPlozG2HSvHAJ1aXwQ==}
+  '@gyral/ssr@0.2.0':
+    resolution: {integrity: sha512-slO2xetgO39iMeXUaV+IFzl8XI22eprol8I1AKgWxy3cNRYGrtjlJJEPr/cWdOYdwLE/F9iF6fBStDfxJUOV1Q==}
     peerDependencies:
       '@lit-labs/ssr': ^4.1.0
       '@lit-labs/ssr-client': ^1.1.8
       lit: ^3.3.0
 
-  '@gyral/testing@0.1.0':
-    resolution: {integrity: sha512-XSg+FYjcsuvTaAAYX+QTPPPaoRmXHoDZ5rrQlb3T++H0znOWRwn2ZtP6pXTzwLpLVQp4uKobxvHifNSlTdjaog==}
+  '@gyral/testing@0.2.0':
+    resolution: {integrity: sha512-JmOua5YYwycVzdH3KdcDfVeYNrW728jM6yMpiCKRz64mqggdwpCpjaVKa2H1ZTolh5sds/yazKu3W7pAJmtzVg==}
     peerDependencies:
       fast-check: ^4.0.0
     peerDependenciesMeta:
       fast-check:
         optional: true
 
-  '@gyral/time@0.1.0':
-    resolution: {integrity: sha512-o+iPXyG9xM4iGXw+OZcxaRtFgX2lbE+Poex/FIzF21N7UxwJG1DO6KK33IEHP2A5Emjx6ES+1qJDmYi66gNbMg==}
+  '@gyral/time@0.2.0':
+    resolution: {integrity: sha512-1+4Fs1L5TXV86J246ebLL6ckZDFPWZKNp2h144IAVGZjTfeURkuFYzBr4uyNxaFaMPf7dDL1lbFoIVbw5W4A6w==}
 
   '@hono/node-server@2.1.3':
     resolution: {integrity: sha512-TA//nWMqPhbfdfneACk6t5a9eqbS9lABEPyKn0/xZTah3H3U2XaVg85rJFl0/Fyit0I552YDHgXGVSf3GwqbUw==}
@@ -1202,9 +1205,6 @@ packages:
       sqlite3:
         optional: true
 
-  effect@3.22.2:
-    resolution: {integrity: sha512-fm1CQXCs7GTMwpadZxwU5rnAb2bN6mbQpknq/pXBGCzSKkosNYb9k0wsoL0TfB10rSa5xOEZJjo77u/KLXSANg==}
-
   electron-to-chromium@1.5.444:
     resolution: {integrity: sha512-5ss/uJfoDYDHT0lfJzT6FbcskIzROIOPf0BbbFkGcvDzoJU7i//9GDrwwIHQVmIsrAGiF3ihpADBRIsrEFt1rQ==}
 
@@ -1296,10 +1296,6 @@ packages:
   expect-type@1.4.0:
     resolution: {integrity: sha512-KfYbmpRm0VbLjEvVa9yGwCi9GI34xvi7A/HXYWQO65CSD2u3MczUJSuwXKFIxlGsgBQizV9q5J9NHj4VG0n+pA==}
     engines: {node: '>=12.0.0'}
-
-  fast-check@3.23.2:
-    resolution: {integrity: sha512-h5+1OzzfCC3Ef7VbtKdcv7zsstUQwUDlYpUTvjeUsJAssPgLn7QzbboPtL5ro04Mq0rPOsMzl7q5hIbRs2wD1A==}
-    engines: {node: '>=8.0.0'}
 
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
@@ -1501,8 +1497,8 @@ packages:
   lit-element@4.2.2:
     resolution: {integrity: sha512-aFKhNToWxoyhkNDmWZwEva2SlQia+jfG0fjIWV//YeTaWrVnOxD89dPKfigCUspXFmjzOEUQpOkejH5Ly6sG0w==}
 
-  lit-html@3.3.3:
-    resolution: {integrity: sha512-el8M6jK2o3RXBnrSHX3ZKrsN8zEV63pSExTO1wYJz7QndGYZ8353e2a5PPX+qHe2aGayfnchQmkAojaWAREOIA==}
+  lit-html@3.3.0:
+    resolution: {integrity: sha512-RHoswrFAxY2d8Cf2mm4OZ1DgzCoBKUKSPvA1fhtSELxUERq2aQQ2h05pO9j81gS1o7RIRJ+CePLogfyahwmynw==}
 
   lit@3.3.3:
     resolution: {integrity: sha512-fycuvZg/hkpozL00lm1pEJH5nN/lr9ZXd6mJI2HSN4+Bzc+LDNdEApJ6HFbPkdFNHLvOplIIuJvxkS4XUxqirw==}
@@ -1623,9 +1619,6 @@ packages:
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
-
-  pure-rand@6.1.0:
-    resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
 
   qified@0.10.1:
     resolution: {integrity: sha512-+Owyggi9IxT1ePKGafcI87ubSmxol6smwJ+RAHDQlx9+9cPwFWDiKFFCPuWhr9ignlGpZ9vDQLw67N4dcTVFEA==}
@@ -2154,44 +2147,43 @@ snapshots:
 
   '@faker-js/faker@10.6.0': {}
 
-  '@gyral/core@0.1.0(lit@3.3.3)':
+  '@gyral/core@0.2.0(lit@3.3.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
-      effect: 3.22.2
       lit: 3.3.3
 
-  '@gyral/http@0.1.0(lit@3.3.3)':
+  '@gyral/http@0.2.0(lit@3.3.3)':
     dependencies:
-      '@gyral/core': 0.1.0(lit@3.3.3)
+      '@gyral/core': 0.2.0(lit@3.3.3)
       '@standard-schema/spec': 1.1.0
     transitivePeerDependencies:
       - lit
 
-  '@gyral/router@0.1.0(lit@3.3.3)':
+  '@gyral/router@0.2.0(lit@3.3.3)':
     dependencies:
-      '@gyral/core': 0.1.0(lit@3.3.3)
+      '@gyral/core': 0.2.0(lit@3.3.3)
     transitivePeerDependencies:
       - lit
 
-  '@gyral/ssr@0.1.0(@lit-labs/ssr-client@1.1.8)(@lit-labs/ssr@4.1.0(@types/node@24.19.1))(lit@3.3.3)':
+  '@gyral/ssr@0.2.0(@lit-labs/ssr-client@1.1.8)(@lit-labs/ssr@4.1.0(@types/node@24.19.1))(lit@3.3.3)':
     dependencies:
-      '@gyral/core': 0.1.0(lit@3.3.3)
+      '@gyral/core': 0.2.0(lit@3.3.3)
       '@lit-labs/ssr': 4.1.0(@types/node@24.19.1)
       '@lit-labs/ssr-client': 1.1.8
       '@standard-schema/spec': 1.1.0
       lit: 3.3.3
 
-  '@gyral/testing@0.1.0(lit@3.3.3)':
+  '@gyral/testing@0.2.0(lit@3.3.3)':
     dependencies:
-      '@gyral/core': 0.1.0(lit@3.3.3)
+      '@gyral/core': 0.2.0(lit@3.3.3)
       '@sinonjs/fake-timers': 15.4.0
       '@standard-schema/spec': 1.1.0
     transitivePeerDependencies:
       - lit
 
-  '@gyral/time@0.1.0(lit@3.3.3)':
+  '@gyral/time@0.2.0(lit@3.3.3)':
     dependencies:
-      '@gyral/core': 0.1.0(lit@3.3.3)
+      '@gyral/core': 0.2.0(lit@3.3.3)
     transitivePeerDependencies:
       - lit
 
@@ -2294,7 +2286,7 @@ snapshots:
     dependencies:
       '@lit/reactive-element': 2.1.2
       lit: 3.3.3
-      lit-html: 3.3.3
+      lit-html: 3.3.0
 
   '@lit-labs/ssr-dom-shim@1.6.0': {}
 
@@ -2307,7 +2299,7 @@ snapshots:
       enhanced-resolve: 5.26.0
       lit: 3.3.3
       lit-element: 4.2.2
-      lit-html: 3.3.3
+      lit-html: 3.3.0
       node-fetch: 3.3.2
       parse5: 7.3.0
     optionalDependencies:
@@ -2646,11 +2638,6 @@ snapshots:
     optionalDependencies:
       '@libsql/client': 0.18.0
 
-  effect@3.22.2:
-    dependencies:
-      '@standard-schema/spec': 1.1.0
-      fast-check: 3.23.2
-
   electron-to-chromium@1.5.444: {}
 
   enhanced-resolve@5.26.0:
@@ -2830,10 +2817,6 @@ snapshots:
 
   expect-type@1.4.0: {}
 
-  fast-check@3.23.2:
-    dependencies:
-      pure-rand: 6.1.0
-
   fast-deep-equal@3.1.3: {}
 
   fast-json-stable-stringify@2.1.0: {}
@@ -2996,9 +2979,9 @@ snapshots:
     dependencies:
       '@lit-labs/ssr-dom-shim': 1.6.0
       '@lit/reactive-element': 2.1.2
-      lit-html: 3.3.3
+      lit-html: 3.3.0
 
-  lit-html@3.3.3:
+  lit-html@3.3.0:
     dependencies:
       '@types/trusted-types': 2.0.7
 
@@ -3006,7 +2989,7 @@ snapshots:
     dependencies:
       '@lit/reactive-element': 2.1.2
       lit-element: 4.2.2
-      lit-html: 3.3.3
+      lit-html: 3.3.0
 
   locate-path@6.0.0:
     dependencies:
@@ -3098,8 +3081,6 @@ snapshots:
   promise-limit@2.7.0: {}
 
   punycode@2.3.1: {}
-
-  pure-rand@6.1.0: {}
 
   qified@0.10.1:
     dependencies:

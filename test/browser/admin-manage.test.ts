@@ -130,8 +130,11 @@ describe('promo codes', () => {
     await vi.waitFor(() => {
       expect(el.querySelectorAll('[data-component="promo-row"]')).toHaveLength(2);
     });
+    // Cell by cell: templates are whitespace-minified, so no text sits between the cells.
     const rows = [...el.querySelectorAll('[data-component="promo-row"]')].map((r) =>
-      r.textContent.replace(/\s+/g, ' ').trim(),
+      [...r.querySelectorAll('td')]
+        .map((td) => td.textContent.replace(/\s+/g, ' ').trim())
+        .join(' '),
     );
     expect(rows[0]).toContain('10% off');
     expect(rows[1]).toMatch(
