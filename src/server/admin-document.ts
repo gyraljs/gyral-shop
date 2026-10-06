@@ -11,6 +11,7 @@ import { ordersCss } from '../ui/styles/orders.js';
 
 export interface AdminShellOptions {
   readonly clientEntry: string;
+  readonly modulepreload?: readonly string[];
   readonly title: string;
   readonly csrfToken: string;
   /** The signed-in admin's name, shown in the header. */
@@ -90,6 +91,7 @@ export function adminShell(options: AdminShellOptions): Response {
         <main id="main" class="page" tabindex="-1">${options.main}</main>
       `,
       scripts: [options.clientEntry],
+      modulepreload: options.modulepreload ?? [],
     },
     { status: options.status ?? 200 },
   );

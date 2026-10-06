@@ -18,10 +18,16 @@ export interface ProdOptions {
     Partial<Pick<Config, 'STORE_TIME_ZONE'>>;
 }
 
+/** The built entry and the modules to preload with it (from the Vite manifest). */
+export interface ClientAssets {
+  readonly clientEntry: string;
+  readonly modulepreload: readonly string[];
+}
+
 /** The app as production runs it, shared by `pnpm start` and the prerender step. */
-export const productionApp = (options: Omit<ProdOptions, 'distDir'>, clientEntry: string) =>
+export const productionApp = (options: Omit<ProdOptions, 'distDir'>, assets: ClientAssets) =>
   createApp({
-    clientEntry,
+    ...assets,
     db: options.db,
     mode: 'production',
     security: { dev: false },
@@ -39,7 +45,7 @@ export async function createProdApp(options: ProdOptions): Promise<FetchApp> {
   const served = await productionServer({
     distDir: options.distDir,
     entry: CLIENT_ENTRY_SOURCE,
-    createApp: ({ clientEntry }) => productionApp(options, clientEntry),
+    createApp: (assets) => productionApp(options, assets),
   });
   return {
     fetch: async (request) => {

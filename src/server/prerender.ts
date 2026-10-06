@@ -2,7 +2,7 @@
 // Needs a migrated, seeded database (the header lists departments): `pnpm db:reset` first.
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { clientEntryFromManifest, prerender } from '@gyral/ssr/static';
+import { clientAssetsFromManifest, prerender } from '@gyral/ssr/static';
 import { loadConfig, type Config } from '../config/env.js';
 import { openDb, type Db } from '../db/client.js';
 import { CLIENT_ENTRY_SOURCE, productionApp } from './prod-app.js';
@@ -16,12 +16,12 @@ export async function prerenderSite(
   db: Db,
   config: Pick<Config, 'PAYMENT_LATENCY_MS' | 'APP_SECRET' | 'SITE_ORIGIN'>,
 ): Promise<readonly string[]> {
-  const clientEntry = await clientEntryFromManifest(
+  const { entry, modulepreload } = await clientAssetsFromManifest(
     join(distDir, 'client', '.vite', 'manifest.json'),
     CLIENT_ENTRY_SOURCE,
   );
   const pages = await prerender({
-    app: productionApp({ db, config }, clientEntry),
+    app: productionApp({ db, config }, { clientEntry: entry, modulepreload }),
     paths: STATIC_PATHS,
     outDir: join(distDir, 'static'),
     origin: config.SITE_ORIGIN ?? DEV_ORIGIN,

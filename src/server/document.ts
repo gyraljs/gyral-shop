@@ -35,6 +35,8 @@ export { SITE_NAME };
 export interface ShellOptions {
   /** URL of the browser entry module (Vite dev: a source path; prod: a built asset). */
   readonly clientEntry: string;
+  /** Modules to preload with the entry (production; see AppOptions.modulepreload). */
+  readonly modulepreload?: readonly string[];
   readonly title: string;
   readonly description?: string;
   readonly departments: readonly DepartmentLink[];
@@ -195,6 +197,7 @@ export function shell(options: ShellOptions): Response {
         ${footer(options.static === true)}
       `,
       scripts: [options.clientEntry],
+      modulepreload: options.modulepreload ?? [],
       stores: options.stores ?? [],
     },
     { status: options.status ?? 200 },
@@ -203,5 +206,5 @@ export function shell(options: ShellOptions): Response {
 
 /** Renders a page inside the shell; created per app so the header's departments are loaded. */
 export type RenderPage = (
-  options: Omit<ShellOptions, 'clientEntry' | 'departments'>,
+  options: Omit<ShellOptions, 'clientEntry' | 'modulepreload' | 'departments'>,
 ) => Promise<Response>;

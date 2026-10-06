@@ -17,7 +17,7 @@ import { forbidden, NO_STORE } from './admin-http.js';
 export interface AdminRoutesOptions {
   readonly services: Services;
   /** The admin's own document shell (no storefront chrome); the app supplies the client entry. */
-  readonly render: (options: Omit<AdminShellOptions, 'clientEntry'>) => Response;
+  readonly render: (options: Omit<AdminShellOptions, 'clientEntry' | 'modulepreload'>) => Response;
 }
 
 type C = Context<AppEnv>;
