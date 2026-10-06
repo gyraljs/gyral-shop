@@ -28,6 +28,8 @@ describe('/dev/mail', () => {
     expect(view.status).toBe(200);
     expect(viewHtml).toContain('sandbox="allow-top-navigation-by-user-activation allow-popups"');
     expect(viewHtml).toContain('<base target=&quot;_top&quot;>'); // srcdoc is escaped
+    // Mail HTML styles itself with attributes; only this page allows them (ADR 0002).
+    expect(view.headers.get('content-security-policy')).toContain("style-src-attr 'unsafe-inline'");
     expect(viewHtml).toMatch(/<a href="http:\/\/localhost:5200\/account\/reset\?token=t1"/);
   });
 
