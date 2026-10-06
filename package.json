@@ -32,11 +32,11 @@
     "themes:check": "node scripts/themes-check.mjs"
   },
   "dependencies": {
-    "@gyral/core": "file:../gyral-tarballs/gyral-core-0.3.0-next.3.tgz",
-    "@gyral/http": "file:../gyral-tarballs/gyral-http-0.3.0-next.3.tgz",
-    "@gyral/router": "file:../gyral-tarballs/gyral-router-0.3.0-next.3.tgz",
-    "@gyral/ssr": "file:../gyral-tarballs/gyral-ssr-0.3.0-next.3.tgz",
-    "@gyral/time": "file:../gyral-tarballs/gyral-time-0.3.0-next.3.tgz",
+    "@gyral/core": "file:../gyral-tarballs/gyral-core-0.3.0-next.5.tgz",
+    "@gyral/http": "file:../gyral-tarballs/gyral-http-0.3.0-next.5.tgz",
+    "@gyral/router": "file:../gyral-tarballs/gyral-router-0.3.0-next.5.tgz",
+    "@gyral/ssr": "file:../gyral-tarballs/gyral-ssr-0.3.0-next.5.tgz",
+    "@gyral/time": "file:../gyral-tarballs/gyral-time-0.3.0-next.5.tgz",
     "@hono/node-server": "2.1.3",
     "@libsql/client": "0.18.0",
     "drizzle-orm": "0.45.3",
@@ -47,7 +47,7 @@
     "@axe-core/playwright": "4.13.0",
     "@eslint/js": "10.0.1",
     "@faker-js/faker": "10.6.0",
-    "@gyral/testing": "file:../gyral-tarballs/gyral-testing-0.3.0-next.3.tgz",
+    "@gyral/testing": "file:../gyral-tarballs/gyral-testing-0.3.0-next.5.tgz",
     "@types/node": "24.19.1",
     "@vitest/browser-playwright": "5.0.3",
     "axe-core": "4.13.0",
@@ -68,13 +68,13 @@
   },
   "pnpm": {
     "overrides": {
-      "@gyral/core": "file:../gyral-tarballs/gyral-core-0.3.0-next.3.tgz",
-      "@gyral/http": "file:../gyral-tarballs/gyral-http-0.3.0-next.3.tgz",
-      "@gyral/router": "file:../gyral-tarballs/gyral-router-0.3.0-next.3.tgz",
-      "@gyral/ssr": "file:../gyral-tarballs/gyral-ssr-0.3.0-next.3.tgz",
-      "@gyral/time": "file:../gyral-tarballs/gyral-time-0.3.0-next.3.tgz",
-      "@gyral/testing": "file:../gyral-tarballs/gyral-testing-0.3.0-next.3.tgz",
-      "@gyral/devtools": "file:../gyral-tarballs/gyral-devtools-0.3.0-next.3.tgz"
+      "@gyral/core": "file:../gyral-tarballs/gyral-core-0.3.0-next.5.tgz",
+      "@gyral/http": "file:../gyral-tarballs/gyral-http-0.3.0-next.5.tgz",
+      "@gyral/router": "file:../gyral-tarballs/gyral-router-0.3.0-next.5.tgz",
+      "@gyral/ssr": "file:../gyral-tarballs/gyral-ssr-0.3.0-next.5.tgz",
+      "@gyral/time": "file:../gyral-tarballs/gyral-time-0.3.0-next.5.tgz",
+      "@gyral/testing": "file:../gyral-tarballs/gyral-testing-0.3.0-next.5.tgz",
+      "@gyral/devtools": "file:../gyral-tarballs/gyral-devtools-0.3.0-next.5.tgz"
     }
   }
 }

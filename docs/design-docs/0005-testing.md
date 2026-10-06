@@ -99,9 +99,10 @@ re-renders only that component.
   `el.updateComplete`; `hydrated(page)` waits for it too.
 - **Golden fixtures:** development output carries `<!--gyral:ID-->` markers and `<!---->`
   anchors; seeds are single-quoted JSON. Gyral writes a tag's static attributes before its
-  bound ones and escapes only `&` and `"` in attribute values (the HTML spec's minimum), so
-  node tests match tags with `startTag()` (any attribute order) and check for injected markup
-  with `outsideAttributes()` (both in `test/support/fixtures.ts`).
+  bound ones, so node tests match tags with `startTag()` (any attribute order,
+  `test/support/fixtures.ts`). Since 0.3.0-next.5 attribute values and seeds escape `<` and
+  `>` too, so "no injected markup" is a plain `not.toContain('<script>…')` on the whole page
+  (the `outsideAttributes()` helper that stripped attribute values first is gone).
 - **smoke:prod** also fails on console warnings (a production mismatch is one) and on any
   element the parser built that is no longer in the page after hydration (islands included,
   after scrolling them into view; only a shadow root's server `<style>`, replaced by its shared

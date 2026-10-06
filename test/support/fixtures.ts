@@ -20,14 +20,6 @@ export function pinAssets(html: string): string {
   return html.replace(/\/themes\/([a-z0-9-]+)\.[A-Za-z0-9_-]{6,}\.css/g, '/themes/$1.css');
 }
 
-/**
- * The markup with every quoted attribute value removed. Attribute values may hold `<` as is
- * (the HTML spec only needs `&` and the quote escaped there, and Gyral writes them that way),
- * so "no raw `<script>` in the page" is asserted on what is left: element and text content.
- */
-export const outsideAttributes = (html: string): string =>
-  html.replace(/="[^"]*"/g, '=""').replace(/='[^']*'/g, "=''");
-
 const escapeRegExp = (text: string): string => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
