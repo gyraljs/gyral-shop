@@ -46,7 +46,9 @@ Lit. `gyralVitePreset()` adds the template compiler to `vite build` (templates p
 checked against Gyral's template rules); `@gyral/core/eslint` reports the same rules in the
 editor. The server renders with `@gyral/core/server` (via `@gyral/ssr`'s `renderPage`), each
 component hydrates on its own in the browser (no hydration import, no module-order rules), and
-production pages preload the entry's chunks and Gyral's lazily loaded hydration chunk.
+production pages preload the entry's chunks, Gyral's lazily loaded hydration chunk and the
+page's own route chunks: each page lists the lazily loaded modules its components need
+(`chunks`, from `src/server/route-chunks.ts`, kept in step with `src/client/lazy.ts` by a test).
 
 Form state is live: every render writes the model's value into `value=`, `?checked=`,
 `?selected=`, `<textarea>` content and `?open`. So a component's model holds what the user

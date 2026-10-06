@@ -8,6 +8,7 @@ import '../ui/consent/consent.js'; // registers <shop-consent>
 import { currentConsent, currentPath } from './consent.js';
 import { CSRF_META } from '../ui/forms/csrf.js';
 import { DOCUMENT_STYLES } from './page-styles.js';
+import type { Preload, RouteChunk } from './route-chunks.js';
 import '../ui/theme/switcher.js'; // registers <shop-theme-switcher>
 import { CURRENT_THEME_PATH, currentTheme, themeHref, themeOptions } from './theme.js';
 
@@ -20,6 +21,10 @@ export interface ShellOptions {
   readonly clientEntry: string;
   /** Modules to preload with the entry (production; see AppOptions.modulepreload). */
   readonly modulepreload?: readonly string[];
+  /** Production: `modulepreload` plus route chunks (see AppOptions.preload). */
+  readonly preload?: Preload;
+  /** The lazily loaded modules this page's components need, preloaded in production. */
+  readonly chunks?: readonly RouteChunk[];
   /** The Content-Security-Policy, built when the page renders (csp.ts `pageCsp`). */
   readonly csp?: CspOptions;
   readonly title: string;
@@ -158,7 +163,10 @@ export function shell(options: ShellOptions): Response {
         ${footer(options.static === true)}
       `,
       scripts: [options.clientEntry],
-      modulepreload: options.modulepreload ?? [],
+      modulepreload:
+        options.chunks === undefined || options.preload === undefined
+          ? (options.modulepreload ?? [])
+          : options.preload(options.chunks),
       stores: options.stores ?? [],
       ...(options.csp === undefined ? {} : { csp: options.csp }),
     },
@@ -168,5 +176,5 @@ export function shell(options: ShellOptions): Response {
 
 /** Renders a page inside the shell; created per app so the header's departments are loaded. */
 export type RenderPage = (
-  options: Omit<ShellOptions, 'clientEntry' | 'modulepreload' | 'departments'>,
+  options: Omit<ShellOptions, 'clientEntry' | 'modulepreload' | 'preload' | 'departments'>,
 ) => Promise<Response>;

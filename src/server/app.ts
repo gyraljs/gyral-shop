@@ -39,6 +39,7 @@ import { analyticsMiddleware } from './analytics.js';
 import { organizationJsonLd, twitterCard, websiteJsonLd } from './seo.js';
 import { publicOrigin } from './origin.js';
 import { pageCsp } from './csp.js';
+import { CARD_CHUNKS, entryFirst, type Preload } from './route-chunks.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
@@ -48,6 +49,11 @@ export interface AppOptions {
    * entry (`clientAssetsFromManifest` in @gyral/ssr/static). Empty in development.
    */
   readonly modulepreload?: readonly string[];
+  /**
+   * Production: `modulepreload` plus a page's route chunks and their imports
+   * (`productionServer`'s `preload`, route-chunks.ts). Absent in development.
+   */
+  readonly preload?: Preload;
   readonly db: Db;
   /** `production` disables development tools such as /dev/mail. Default `development`. */
   readonly mode?: 'development' | 'test' | 'production';
@@ -63,7 +69,7 @@ const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><re
 
 type PageOptions = Omit<
   ShellOptions,
-  'clientEntry' | 'modulepreload' | 'departments' | 'account' | 'stores'
+  'clientEntry' | 'modulepreload' | 'preload' | 'departments' | 'account' | 'stores'
 >;
 
 /** The signed-in member for the header, read from the current request (if any). */
@@ -79,6 +85,7 @@ function accountSummary(): ShellOptions['account'] {
 export function createApp({
   clientEntry,
   modulepreload = [],
+  preload,
   db,
   mode = 'development',
   security,
@@ -87,7 +94,12 @@ export function createApp({
 }: AppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   // Pages build their Content-Security-Policy when they render (a route may pass its own).
-  const assets = { clientEntry, modulepreload, csp: pageCsp({ dev: security?.dev ?? false }) };
+  const assets = {
+    clientEntry,
+    modulepreload,
+    ...(preload === undefined ? {} : { preload: entryFirst(clientEntry, preload) }),
+    csp: pageCsp({ dev: security?.dev ?? false }),
+  };
   const clock = security?.now;
   const services: Services = createServices({
     ...serviceOptions,
@@ -179,6 +191,7 @@ export function createApp({
         ['og:url', canonical],
       ],
       metaNames: twitterCard(undefined),
+      chunks: CARD_CHUNKS,
       main: homePage(data),
     });
   });

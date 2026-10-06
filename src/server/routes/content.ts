@@ -16,6 +16,7 @@ import {
 import type { RenderPage } from '../document.js';
 import { limitedResponse, overLimit } from '../limited-form.js';
 import { csrfTokenFor, ip, LIMITS, SlidingWindowLimiter, type AppEnv } from '../security/index.js';
+import { ROUTE_CHUNKS } from '../route-chunks.js';
 
 export interface ContentRouteOptions {
   readonly render: RenderPage;
@@ -71,6 +72,7 @@ export function contentRoutes({
       description: 'Send the store a message about an order, a product or your account.',
       canonical: new URL('/contact', c.req.url).href,
       status,
+      chunks: [ROUTE_CHUNKS.contact],
       main: contactPage(await csrfTokenFor(c), rejected),
     });
     response.headers.set('cache-control', 'no-store');

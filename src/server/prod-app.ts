@@ -7,6 +7,7 @@ import type { Config } from '../config/env.js';
 import type { Db } from '../db/client.js';
 import { createApp } from './app.js';
 import { staticPolicy } from './csp.js';
+import type { Preload } from './route-chunks.js';
 import { securityHeaderValues } from './security/headers.js';
 
 export const CLIENT_ENTRY_SOURCE = 'src/client/entry.ts';
@@ -23,6 +24,11 @@ export interface ProdOptions {
 export interface ClientAssets {
   readonly clientEntry: string;
   readonly modulepreload: readonly string[];
+  /**
+   * `modulepreload` plus route chunks (src/server/route-chunks.ts). The prerender step has none:
+   * the static content pages render no lazily loaded component.
+   */
+  readonly preload?: Preload;
 }
 
 /** The app as production runs it, shared by `pnpm start` and the prerender step. */

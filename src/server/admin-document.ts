@@ -6,10 +6,13 @@ import { renderPage, type CspOptions } from '@gyral/ssr';
 import { CSRF_META, csrfField } from '../ui/forms/csrf.js';
 import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
 import { ADMIN_STYLES } from './page-styles.js';
+import { ROUTE_CHUNKS, type Preload } from './route-chunks.js';
 
 export interface AdminShellOptions {
   readonly clientEntry: string;
   readonly modulepreload?: readonly string[];
+  /** Production: `modulepreload` plus route chunks; the admin page preloads the admin app. */
+  readonly preload?: Preload;
   /** The Content-Security-Policy, built when the page renders (csp.ts `pageCsp`). */
   readonly csp?: CspOptions;
   readonly title: string;
@@ -50,7 +53,7 @@ export function adminShell(options: AdminShellOptions): Response {
         <main id="main" class="page" tabindex="-1">${options.main}</main>
       `,
       scripts: [options.clientEntry],
-      modulepreload: options.modulepreload ?? [],
+      modulepreload: options.preload?.([ROUTE_CHUNKS.admin]) ?? options.modulepreload ?? [],
       ...(options.csp === undefined ? {} : { csp: options.csp }),
     },
     { status: options.status ?? 200 },

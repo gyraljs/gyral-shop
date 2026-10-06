@@ -22,6 +22,7 @@ import {
   wantsJson,
   type AppEnv,
 } from '../security/index.js';
+import { ROUTE_CHUNKS } from '../route-chunks.js';
 
 export interface AccountRouteOptions {
   readonly db: Db;
@@ -80,6 +81,7 @@ export function accountRoutes({ db, render, now = Date.now }: AccountRouteOption
         title: kind === 'login' ? 'Sign in' : 'Create an account',
         noindex: true,
         status: rejected === undefined ? 200 : 422,
+        chunks: [kind === 'login' ? ROUTE_CHUNKS.login : ROUTE_CHUNKS.register],
         main: kind === 'login' ? loginPage(data) : registerPage(data),
       }),
     );

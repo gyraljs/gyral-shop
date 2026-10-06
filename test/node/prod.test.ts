@@ -10,8 +10,10 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { FetchApp } from '@gyral/ssr/static';
 import { createTestDb, type Db } from '../../src/db/client.js';
 import { insertSeed } from '../../src/db/seed/insert.js';
+import * as v from 'valibot';
 import { prerenderSite } from '../../src/server/prerender.js';
 import { createProdApp } from '../../src/server/prod-app.js';
+import { ROUTE_CHUNKS } from '../../src/server/route-chunks.js';
 import { SESSION_COOKIE } from '../../src/server/security/index.js';
 import { createSession } from '../../src/services/sessions.js';
 import { CSRF_FIELD } from '../../src/ui/forms/csrf.js';
@@ -79,6 +81,30 @@ describe('production build', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('cache-control')).toBe('no-cache');
     expect(await res.text()).toMatch(/src="\/assets\/entry-[\w-]+\.js"/);
+  });
+
+  it("preloads each page's route chunks with the entry, and only those", async () => {
+    const manifest = v.parse(
+      v.record(v.string(), v.object({ file: v.string() })),
+      JSON.parse(readFileSync(join(dist, 'client', '.vite', 'manifest.json'), 'utf8')),
+    );
+    const chunk = (key: string) => `/${manifest[key]?.file ?? `missing ${key}`}`;
+    const preloads = async (path: string) => {
+      const html = await (await req(path)).text();
+      return [...html.matchAll(/<link rel="modulepreload" href="([^"]+)"/g)].map(
+        ([, href]) => href,
+      );
+    };
+    const [product] = smallCatalog().products;
+    const productPage = await preloads(`/p/${product?.slug ?? ''}`);
+    // The entry first, so route chunks never queue it behind them (route-chunks.ts entryFirst).
+    expect(productPage[0]).toBe(chunk('src/client/entry.ts'));
+    expect(productPage).toContain(chunk(ROUTE_CHUNKS.buyBox));
+    expect(productPage).toContain(chunk(ROUTE_CHUNKS.gallery));
+    expect(productPage).not.toContain(chunk(ROUTE_CHUNKS.listing));
+    const login = await preloads('/account/login');
+    expect(login).toContain(chunk(ROUTE_CHUNKS.login));
+    expect(login).not.toContain(chunk(ROUTE_CHUNKS.buyBox));
   });
 
   it('serves hashed assets as immutable JavaScript', async () => {
