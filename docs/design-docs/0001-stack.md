@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.0 (see the Gyral 0.3 addendum). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.1 (see the Gyral 0.3 addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** on Node (`@hono/node-server`): routes, middleware, SSR via `@gyral/ssr`.
@@ -179,3 +179,32 @@ code left out (the shop names neither) and the delay-only time driver. (Developm
 grow instead, initial 31.6 → 33.0 KiB: they carry the new messages and source locations.)
 Server rendering is unchanged (median of three alternating runs of 400 sequential requests
 each): category 3.04 → 2.96 ms, product 5.60 → 5.56 ms, home 7.54 → 7.50 ms.
+
+### 0.3.1-next.1 (2026-10-07)
+
+Now `0.3.1-next.1`, packed from Gyral branch `next` (bd2acc9); the same six tarballs, vendored
+the same way. Only the build-time compiler changed (`@gyral/core/vite`): the scan that decides
+which optional runtime features a build carries now reads only app code and packages that
+depend on `@gyral/*`, on parsed source instead of raw text. Under next.0 the text
+`states` in the import path `../../domain/us-states.js` turned on the custom-states feature
+for `settings-forms.ts`, so the account pages (profile, password, addresses) fetched the
+custom-states chunk although no settings form declares `states`. Now only the modules that
+do (`listing.ts`, the admin dashboard) pull it in, and Rolldown merges it with the router's
+link-handling chunk (38 → 37 chunks). Nothing in the shop needed changing; runtime code is
+identical, so server rendering is unaffected.
+
+Same script and method as the 0.3.1-next.0 table (production build, gzip -9):
+
+| Measure                    | 0.3.1-next.0 | 0.3.1-next.1 |
+| -------------------------- | ------------ | ------------ |
+| Entry                      | 7.50 KiB     | 7.48 KiB     |
+| Initial (entry graph)      | 27.97 KiB    | 27.95 KiB    |
+| All chunks (raw)           | 84.48 (232)  | 84.31 (232)  |
+| Home, department           | 32.43        | 32.41        |
+| Category, search           | 39.92        | 39.78        |
+| Product                    | 41.27        | 41.25        |
+| Cart                       | 34.35        | 34.33        |
+| Checkout                   | 37.79        | 37.77        |
+| Sign-in                    | 33.47        | 33.45        |
+| About (prerendered)        | 30.72        | 30.71        |
+| Profile, password, address | 37.08        | 36.83        |
