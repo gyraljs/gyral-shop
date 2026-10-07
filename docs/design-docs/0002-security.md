@@ -145,7 +145,7 @@ refused (no guessing). Tests: `test/node/proxy-origin.test.ts`.
 ## Addendum: strict `style-src` with Gyral 0.3 (gyral-g1r.14, 2026-10-06)
 
 Gyral 0.3 hashes styles for us (`@gyral/ssr`), so `style-src` drops `'unsafe-inline'`.
-Since 0.3.0-next.5 every page passes `renderPage({ csp: pageCsp(…) })` (`src/server/csp.ts`,
+Since Gyral 0.3.0 every page passes `renderPage({ csp: pageCsp(…) })` (`src/server/csp.ts`,
 one options object per variant: production, development, the mail preview) and Gyral builds
 the header when the page renders, with every component registered by then. (Before, the shop
 built one header per variant on its first request and cached it, so that every component

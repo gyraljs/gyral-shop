@@ -100,7 +100,7 @@ re-renders only that component.
 - **Golden fixtures:** development output carries `<!--gyral:ID-->` markers and `<!---->`
   anchors; seeds are single-quoted JSON. Gyral writes a tag's static attributes before its
   bound ones, so node tests match tags with `startTag()` (any attribute order,
-  `test/support/fixtures.ts`). Since 0.3.0-next.5 attribute values and seeds escape `<` and
+  `test/support/fixtures.ts`). Since Gyral 0.3.0 attribute values and seeds escape `<` and
   `>` too, so "no injected markup" is a plain `not.toContain('<script>…')` on the whole page
   (the `outsideAttributes()` helper that stripped attribute values first is gone).
 - **smoke:prod** also fails on console warnings (a production mismatch is one) and on any
@@ -109,7 +109,7 @@ re-renders only that component.
   sheet, may go). Every checked page passes.
 - **Development SSR** (`pnpm dev`, `ui:check`) renders development output, so `ui:check` runs
   Gyral's development hydration checks against development markup.
-- **Form state is live** (Gyral view/02-bindings.md): since 0.3.0-next.5 a control is written
+- **Form state is live** (Gyral view/02-bindings.md): since Gyral 0.3.0 a control is written
   only when the model's value for it changes. Tests type into fields, then trigger renders that
   change no value (a pending submit, a rejection, a failed save) and expect the input to stay
   (`account.test.ts`, `admin-products.test.ts`, `admin-taxonomy.test.ts`, `consent.test.ts`),

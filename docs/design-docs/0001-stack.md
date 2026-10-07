@@ -73,10 +73,8 @@ any more; read per element instead (see `test/browser/admin-manage.test.ts`).
 ## Addendum 2026-10-06: Gyral 0.3 (its own view layer)
 
 Migrated to Gyral 0.3 (Gyral ADR 0018, bead gyral-g1r.14 in the Gyral repo; branch `gyral-0.3`).
-0.3 is not on npm yet, so `@gyral/*` come from the prerelease tarballs in `../gyral-tarballs`
-(`file:` dependencies plus `pnpm.overrides` for every `@gyral/*` package, because their own
-dependencies name the prerelease version). Switch back to `^0.3.0` from npm once it is
-published.
+During the migration `@gyral/*` came from prerelease tarballs (`0.3.0-next.1` … `next.6`) in
+`../gyral-tarballs`; since the 0.3.0 release they come from `vendor/` (see "0.3.0" below).
 
 - `lit`, `@lit-labs/ssr`, `@lit-labs/ssr-client` and the `lit-html` 3.3.0 override are gone.
   `parse5` is a dev dependency: the template compiler uses it for an extra markup check.
@@ -123,3 +121,13 @@ whenever anything else is preloaded (`clientAssets`, `productionServer`'s `prelo
 for the queueing described above, so the shop's own `entryFirst` wrapper is gone; pages still
 preload their route chunks. First interaction is unchanged (median of 9 cold loads, 10 Mbps,
 150 ms RTT, CPU 4x): product buy box 705 ms (698 with `entryFirst`), category 776, login 695.
+
+### 0.3.0 (2026-10-07)
+
+Now the `0.3.0` release (Gyral tag `v0.3.0`, e79abd6). Its runtime is identical to next.6: the
+packages differ only in version numbers and changelogs (a Gyral build-script fix and the version
+bump). 0.3.0 is on GitHub but not yet on npm, so the tarballs the shop uses (`core`, `http`,
+`router`, `ssr`, `time`, `testing`) are vendored in `vendor/` and every `@gyral/*` dependency and
+`pnpm.overrides` entry is `file:./vendor/<tarball>` (the overrides because the packages depend
+on each other by version); the lockfile references nothing outside the repo. Once 0.3.0 is on
+npm, switch them all to `^0.3.0`, delete `vendor/` and run `pnpm install` (`vendor/README.md`).

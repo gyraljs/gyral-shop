@@ -24,7 +24,7 @@ export type RouteChunk = (typeof ROUTE_CHUNKS)[keyof typeof ROUTE_CHUNKS];
 
 /**
  * Production's `preload(modules)` from `productionServer`: the entry's preloads plus these
- * modules and their static imports, the entry itself first (Gyral 0.3.0-next.6), so route
+ * modules and their static imports, the entry itself first (Gyral 0.3.0), so route
  * chunks never queue it behind them on HTTP/1.1.
  */
 export type Preload = (modules: readonly RouteChunk[]) => readonly string[];
