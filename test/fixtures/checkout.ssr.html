@@ -1,11 +1,4 @@
-<!doctype html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Checkout — Gyral Goods</title>
-    
-    <style>
+<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Checkout — Gyral Goods</title><style>
 @layer reset, tokens, base, components, theme;
 
 @layer reset {
@@ -258,6 +251,57 @@
   .price.sale ins { color: var(--sale); text-decoration: none; }
   .price.sale del { color: var(--ink-muted); font-weight: 400; font-size: 0.9rem; margin-inline-start: var(--space-1); }
   .rating { display: flex; align-items: center; gap: var(--space-1); font-size: 0.9rem; }
+  [data-rating="0.0"] { --rating: 0.0; }
+[data-rating="0.1"] { --rating: 0.1; }
+[data-rating="0.2"] { --rating: 0.2; }
+[data-rating="0.3"] { --rating: 0.3; }
+[data-rating="0.4"] { --rating: 0.4; }
+[data-rating="0.5"] { --rating: 0.5; }
+[data-rating="0.6"] { --rating: 0.6; }
+[data-rating="0.7"] { --rating: 0.7; }
+[data-rating="0.8"] { --rating: 0.8; }
+[data-rating="0.9"] { --rating: 0.9; }
+[data-rating="1.0"] { --rating: 1.0; }
+[data-rating="1.1"] { --rating: 1.1; }
+[data-rating="1.2"] { --rating: 1.2; }
+[data-rating="1.3"] { --rating: 1.3; }
+[data-rating="1.4"] { --rating: 1.4; }
+[data-rating="1.5"] { --rating: 1.5; }
+[data-rating="1.6"] { --rating: 1.6; }
+[data-rating="1.7"] { --rating: 1.7; }
+[data-rating="1.8"] { --rating: 1.8; }
+[data-rating="1.9"] { --rating: 1.9; }
+[data-rating="2.0"] { --rating: 2.0; }
+[data-rating="2.1"] { --rating: 2.1; }
+[data-rating="2.2"] { --rating: 2.2; }
+[data-rating="2.3"] { --rating: 2.3; }
+[data-rating="2.4"] { --rating: 2.4; }
+[data-rating="2.5"] { --rating: 2.5; }
+[data-rating="2.6"] { --rating: 2.6; }
+[data-rating="2.7"] { --rating: 2.7; }
+[data-rating="2.8"] { --rating: 2.8; }
+[data-rating="2.9"] { --rating: 2.9; }
+[data-rating="3.0"] { --rating: 3.0; }
+[data-rating="3.1"] { --rating: 3.1; }
+[data-rating="3.2"] { --rating: 3.2; }
+[data-rating="3.3"] { --rating: 3.3; }
+[data-rating="3.4"] { --rating: 3.4; }
+[data-rating="3.5"] { --rating: 3.5; }
+[data-rating="3.6"] { --rating: 3.6; }
+[data-rating="3.7"] { --rating: 3.7; }
+[data-rating="3.8"] { --rating: 3.8; }
+[data-rating="3.9"] { --rating: 3.9; }
+[data-rating="4.0"] { --rating: 4.0; }
+[data-rating="4.1"] { --rating: 4.1; }
+[data-rating="4.2"] { --rating: 4.2; }
+[data-rating="4.3"] { --rating: 4.3; }
+[data-rating="4.4"] { --rating: 4.4; }
+[data-rating="4.5"] { --rating: 4.5; }
+[data-rating="4.6"] { --rating: 4.6; }
+[data-rating="4.7"] { --rating: 4.7; }
+[data-rating="4.8"] { --rating: 4.8; }
+[data-rating="4.9"] { --rating: 4.9; }
+[data-rating="5.0"] { --rating: 5.0; }
   .stars {
     --pct: calc(var(--rating) / 5 * 100%);
     inline-size: 5.5em; block-size: 1em;
@@ -825,6 +869,7 @@ shop-cart-page {
   @media (prefers-reduced-motion: reduce) {
     [data-component="faq"] details::details-content { transition: none; }
   }
+  .dev-mail-message iframe { inline-size: 100%; block-size: 32rem; border: 1px solid currentColor; }
   [data-region="error"] { display: grid; gap: var(--space-3); max-inline-size: 42rem; }
   [data-region="error"] h1 { margin: 0; }
   [data-region="error"] form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
@@ -1329,38 +1374,7 @@ shop-checkout {
   .theme-status:empty { display: none; }
   .theme-status { margin: 0; color: var(--ink-muted); }
 }
-</style><!--lit-part E9YpOVPJyTs=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part ktzex/F8npc=--><!--lit-node 0--><link
-    rel="stylesheet"
-    id="theme-css"
-    href="/themes/default.css"
-    data-theme="default"
-  /><!--/lit-part--> <!--lit-part--><!--/lit-part--> <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part--> <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part--> <!--lit-part--><!--/lit-part--> <!--lit-part--><!--/lit-part--> <!--lit-part--><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[{"sku":"LEGO-1","quantity":2,"productName":"LEGO","href":"/p/lego","options":{},"unit":{"cents":5000,"currency":"USD"},"listPrice":{"cents":5000,"currency":"USD"},"onSale":false,"lineTotal":{"cents":10000,"currency":"USD"},"maxQuantity":10}],"itemCount":2,"canCheckout":true,"totals":{"subtotal":{"cents":10000,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":10000,"currency":"USD"}}},"inFlight":0},"wishlist":{"member":false,"slugs":[],"csrf":"","inFlight":0}}</script>
-    <script type="module" src="/src/client/entry.ts"></script>
-  </head>
-  <body>
-    <!--lit-part 2AXb4sEqIl8=--><nav class="skip-links" aria-label="Skip links"><a class="skip-link" href="#main">Skip to content</a></nav><!--lit-node 2--><shop-header
-          
-          
-          
-          
-          
-         query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}]}}" data-gyral-light><!--gyral:lit-part t0OdRO5Irfs=--><header data-region="header"><div class="bar" data-region="masthead"><a class="brand" href="/" aria-label="Gyral Goods home" data-component="brand"
-          >Gyral <span>Goods</span></a
-        > <!--gyral:lit-node 4--><shop-search  query data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light defer-hydration><!--gyral:lit-part F7wwSlD6HNo=--><search data-region="search"><!--gyral:lit-node 1--><form action="/search" method="get" role="search" data-intent="Submit"><label for="q" class="visually-hidden">Search products</label> <!--gyral:lit-node 3--><span class="combo" data-intent="Blurred" data-intent-on="focusout"> <!--gyral:lit-node 4--><span class="keys" data-intent="Key" data-intent-on="keydown"> <!--gyral:lit-node 5--><input
-              id="q"
-              name="q"
-              type="search"
-              placeholder="Search everything"
-              autocomplete="off"
-              
-              
-              
-              
-              
-              value=""
-              value=""
-              data-intent="Typed"
-            /> </span> <!--gyral:lit-part--><!--gyral:/lit-part--> </span> <button type="submit">Search</button> <!--gyral:lit-part--><!--gyral:/lit-part--></form></search><!--gyral:/lit-part--></shop-search><nav class="utility" aria-label="Account and cart" data-region="account"><!--gyral:lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--gyral:/lit-part--> <!--gyral:lit-node 7--><shop-mini-cart  data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>
+</style><!--gyral:38tgxmhl7b--><link rel="icon" href="/favicon.svg" type="image/svg+xml"><!--gyral:1kf6tcv0bmq--><link rel="stylesheet" id="theme-css" href="/themes/default.css" data-theme="default"><!----> <!----> <!--gyral:19v8zwio4q9--><meta name="robots" content="noindex"><!----> <!--gyral:kgezmy7qtc--><meta name="csrf-token" content="test-csrf-token"><!----> <!----> <!----> <script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[{"sku":"LEGO-1","quantity":2,"productName":"LEGO","href":"/p/lego","options":{},"unit":{"cents":5000,"currency":"USD"},"listPrice":{"cents":5000,"currency":"USD"},"onSale":false,"lineTotal":{"cents":10000,"currency":"USD"},"maxQuantity":10}],"itemCount":2,"canCheckout":true,"totals":{"subtotal":{"cents":10000,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":10000,"currency":"USD"}}},"inFlight":0},"wishlist":{"member":false,"slugs":[],"csrf":"","inFlight":0}}</script><!--gyral:kq7j8fgdjg--><script type="module" src="/src/client/entry.ts"></script></head><body><!--gyral:1087ki82645--><nav class="skip-links" aria-label="Skip links"><a class="skip-link" href="#main">Skip to content</a></nav><shop-header query="" current="" data-gyral-light data-gyral-seed='{"props":{"departments":[{"slug":"electronics","name":"Electronics"},{"slug":"grocery","name":"Grocery"},{"slug":"toys-games","name":"Toys &amp; Games"}]}}'><!--gyral:jjojclqx62--><header data-region="header"><div class="bar" data-region="masthead"><a class="brand" href="/" aria-label="Gyral Goods home" data-component="brand">Gyral <span>Goods</span></a> <shop-search query="" data-gyral-light data-gyral-seed='{"props":{}}'><!--gyral:4th50v782w--><search data-region="search"><form action="/search" method="get" role="search" data-intent="Submit"><label for="q" class="visually-hidden">Search products</label> <span class="combo" data-intent-on="focusout" data-intent="Blurred"> <span class="keys" data-intent-on="keydown" data-intent="Key"> <input id="q" name="q" type="search" placeholder="Search everything" autocomplete="off" value="" data-intent="Typed"> </span> <!----> </span> <button type="submit">Search</button> </form></search></shop-search><nav class="utility" aria-label="Account and cart" data-region="account"><!--gyral:1kus44je9i5--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!----> <shop-mini-cart data-region="cart" data-gyral-seed='{"props":{}}'><template shadowrootmode="open"><style>
     @layer reset, tokens, base, components, theme;
     @layer components {
       :host {
@@ -1467,186 +1481,4 @@ shop-checkout {
         white-space: nowrap;
       }
     }
-  </style><!--lit-part LnotTO2uWNI=--><!--lit-node 0--><details class="mini-cart" part="disclosure" aria-busy="false"><summary part="summary">Cart<span class="badge" part="badge" aria-hidden="true"><!--lit-part-->2<!--/lit-part--></span
-          ><span class="visually-hidden">, <!--lit-part-->2 items<!--/lit-part--></span></summary><div class="panel" part="panel"><!--lit-part tGjzH9RbQXk=--><ul><!--lit-part--><!--lit-part 9KsTXdlAgYs=--><li data-component="cart-line" part="line"><!--lit-node 1--><a href="/p/lego"><!--lit-part-->LEGO<!--/lit-part--></a> <span class="qty">× <!--lit-part-->2<!--/lit-part--></span> <span class="amount" data-component="price"><!--lit-part-->$100.00<!--/lit-part--></span></li><!--/lit-part--><!--/lit-part--></ul><!--lit-part--><!--/lit-part--><p class="subtotal" part="subtotal"><span>Subtotal</span> <strong><!--lit-part-->$100.00<!--/lit-part--></strong></p><p class="actions" part="actions"><a href="/cart">View cart</a> <!--lit-part UyDA2YgzmK0=--><a class="primary" href="/checkout">Checkout</a><!--/lit-part--></p><!--/lit-part--></div></details><!--/lit-part--></template></shop-mini-cart></nav></div><nav class="departments" aria-label="Departments" data-region="nav"><ul><!--gyral:lit-part--><!--gyral:lit-part Yl22riAxoBs=--><li><!--gyral:lit-node 1--><a href="/d/electronics" 
-                  ><!--gyral:lit-part-->Electronics<!--gyral:/lit-part--></a
-                ></li><!--gyral:/lit-part--><!--gyral:lit-part Yl22riAxoBs=--><li><!--gyral:lit-node 1--><a href="/d/grocery" 
-                  ><!--gyral:lit-part-->Grocery<!--gyral:/lit-part--></a
-                ></li><!--gyral:/lit-part--><!--gyral:lit-part Yl22riAxoBs=--><li><!--gyral:lit-node 1--><a href="/d/toys-games" 
-                  ><!--gyral:lit-part-->Toys &amp; Games<!--gyral:/lit-part--></a
-                ></li><!--gyral:/lit-part--><!--gyral:/lit-part--></ul></nav></header><!--gyral:/lit-part--></shop-header> <!--lit-part 4beU1UUCQrU=--><!--lit-node 0--><shop-consent   mode="banner" return-to="/checkout" data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part uiC+52yBWL4=--><!--gyral:lit-node 0--><section
-        class="consent consent-banner"
-        data-region="consent"
-        aria-labelledby="consent-title"
-      ><h2 id="consent-title"><!--gyral:lit-part-->Cookies on Gyral Goods<!--gyral:/lit-part--></h2><p>We use strictly necessary cookies to run the store (your session, cart and security). With your permission we also count page views and add-to-cart clicks to improve the store. Nothing is shared with anyone.</p><!--gyral:lit-node 4--><form method="post" action="/consent" data-intent="Choose"><!--gyral:lit-node 5--><input type="hidden" name="return" value="/checkout" /><div class="consent-actions" data-component="consent-actions"><!--gyral:lit-node 7--><button type="submit" name="choice" value="accept" >Accept all</button> <!--gyral:lit-node 8--><button type="submit" name="choice" value="reject" >Reject non-essential</button></div><!--gyral:lit-node 9--><details class="consent-custom" data-component="consent-custom" ><summary>Customize</summary><fieldset><legend>Cookie categories</legend><label> <input type="checkbox" checked disabled /> Strictly necessary <small>(always on)</small> </label> <label> <!--gyral:lit-node 17--><input
-                  type="checkbox"
-                  name="analytics"
-                  
-                /> Analytics <small>(page views and add-to-cart clicks)</small> </label></fieldset><!--gyral:lit-node 19--><button type="submit" name="choice" value="save" >Save choices</button></details></form><!--gyral:lit-part--><!--gyral:/lit-part--></section><!--gyral:/lit-part--></shop-consent><!--/lit-part--><main id="main" class="page" tabindex="-1"><!--lit-part XABnjrv1IV8=--><!--lit-node 0--><shop-checkout
-        
-        
-        
-        
-       data-region="checkout" csrf="test-csrf-token" data-gyral-seed="{&quot;props&quot;:{&quot;view&quot;:{&quot;open&quot;:&quot;address&quot;,&quot;steps&quot;:[{&quot;step&quot;:&quot;contact&quot;,&quot;status&quot;:&quot;done&quot;},{&quot;step&quot;:&quot;address&quot;,&quot;status&quot;:&quot;open&quot;},{&quot;step&quot;:&quot;shipping&quot;,&quot;status&quot;:&quot;locked&quot;},{&quot;step&quot;:&quot;payment&quot;,&quot;status&quot;:&quot;locked&quot;},{&quot;step&quot;:&quot;review&quot;,&quot;status&quot;:&quot;locked&quot;}],&quot;email&quot;:&quot;ada@example.com&quot;,&quot;savedAddresses&quot;:[],&quot;shippingOptions&quot;:[{&quot;method&quot;:&quot;standard&quot;,&quot;label&quot;:&quot;Standard&quot;,&quot;price&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:5,&quot;max&quot;:7}},{&quot;method&quot;:&quot;express&quot;,&quot;label&quot;:&quot;Express&quot;,&quot;price&quot;:{&quot;cents&quot;:1299,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:2,&quot;max&quot;:3}},{&quot;method&quot;:&quot;next_day&quot;,&quot;label&quot;:&quot;Next day&quot;,&quot;price&quot;:{&quot;cents&quot;:2499,&quot;currency&quot;:&quot;USD&quot;},&quot;days&quot;:{&quot;min&quot;:1,&quot;max&quot;:1}}],&quot;lines&quot;:[{&quot;sku&quot;:&quot;LEGO-1&quot;,&quot;name&quot;:&quot;LEGO&quot;,&quot;href&quot;:&quot;/p/lego&quot;,&quot;options&quot;:{},&quot;quantity&quot;:2,&quot;lineTotal&quot;:{&quot;cents&quot;:10000,&quot;currency&quot;:&quot;USD&quot;}}],&quot;totals&quot;:{&quot;subtotal&quot;:{&quot;cents&quot;:10000,&quot;currency&quot;:&quot;USD&quot;},&quot;discount&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;shipping&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;tax&quot;:{&quot;cents&quot;:0,&quot;currency&quot;:&quot;USD&quot;},&quot;taxPending&quot;:true,&quot;total&quot;:{&quot;cents&quot;:10000,&quot;currency&quot;:&quot;USD&quot;}},&quot;ready&quot;:false}}}" data-gyral-light><!--gyral:lit-part YjZAe3npDGA=--><h1>Checkout</h1><p class="visually-hidden" role="status"><!--gyral:lit-part--><!--gyral:/lit-part--></p><div class="layout"><ol class="steps"><!--gyral:lit-part--><!--gyral:lit-part eOMFj07CJYg=--><!--gyral:lit-node 0--><li
-              class="step done"
-              data-component="checkout-step"
-              data-step="contact"
-              aria-current="false"
-            ><!--gyral:lit-node 1--><section aria-labelledby="contact-heading"><!--gyral:lit-node 2--><h2 id="contact-heading"><span class="number"><!--gyral:lit-part-->1<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Contact<!--gyral:/lit-part--></h2><!--gyral:lit-part beYoH4H0WB8=--><div class="step-summary" data-component="step-summary"><!--gyral:lit-part y6RVfKR7hws=--><p><!--gyral:lit-part-->ada@example.com<!--gyral:/lit-part--></p><!--gyral:/lit-part--> <!--gyral:lit-node 2--><a
-        href="/checkout?edit=contact"
-        data-intent="Edit"
-        data-step="contact"
-        data-component="step-edit"
-        >Edit <span class="visually-hidden"><!--gyral:lit-part-->Contact<!--gyral:/lit-part--></span></a
-      ></div><!--gyral:/lit-part--></section></li><!--gyral:/lit-part--><!--gyral:lit-part eOMFj07CJYg=--><!--gyral:lit-node 0--><li
-              class="step open"
-              data-component="checkout-step"
-              data-step="address"
-              aria-current="step"
-            ><!--gyral:lit-node 1--><section aria-labelledby="address-heading"><!--gyral:lit-node 2--><h2 id="address-heading"><span class="number"><!--gyral:lit-part-->2<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Shipping address<!--gyral:/lit-part--></h2><!--gyral:lit-part Ptbl1Egjcwo=--><!--gyral:lit-node 0--><form
-    data-intent="Address"
-    data-component="address-form"
-    action="/checkout/address"
-    method="post"
-    novalidate
-  ><!--gyral:lit-part TIYrCHR1D68=--><!--gyral:lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--gyral:/lit-part--> <!--gyral:lit-part onWe5b26NnY=--><input type="hidden" name="addressId" value="new" /><!--gyral:/lit-part--><fieldset class="new-address"><legend><!--gyral:lit-part-->Address<!--gyral:/lit-part--></legend><!--gyral:lit-part Og80xZ6vpIc=--><p class="field"><!--gyral:lit-node 1--><label for="Address-name"
-      ><!--gyral:lit-part-->Full name<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part--></label
-    > <!--gyral:lit-node 4--><input
-      id="Address-name"
-      name="name"
-      type="text"
-      autocomplete="shipping name"
-      
-      
-      required
-      value=""
-      aria-describedby="Address-name-error"
-      
-      
-    /> <!--gyral:lit-node 5--><span id="Address-name-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span></p><!--gyral:/lit-part--> <!--gyral:lit-part Og80xZ6vpIc=--><p class="field"><!--gyral:lit-node 1--><label for="Address-line1"
-      ><!--gyral:lit-part-->Street address<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part--></label
-    > <!--gyral:lit-node 4--><input
-      id="Address-line1"
-      name="line1"
-      type="text"
-      autocomplete="shipping address-line1"
-      
-      
-      required
-      value=""
-      aria-describedby="Address-line1-error"
-      
-      
-    /> <!--gyral:lit-node 5--><span id="Address-line1-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span></p><!--gyral:/lit-part--> <!--gyral:lit-part Og80xZ6vpIc=--><p class="field"><!--gyral:lit-node 1--><label for="Address-line2"
-      ><!--gyral:lit-part-->Apartment, suite, etc.<!--gyral:/lit-part--><!--gyral:lit-part yrmMS+pydms=--> <small>(optional)</small><!--gyral:/lit-part--></label
-    > <!--gyral:lit-node 4--><input
-      id="Address-line2"
-      name="line2"
-      type="text"
-      autocomplete="shipping address-line2"
-      
-      
-      
-      value=""
-      aria-describedby="Address-line2-error"
-      
-      
-    /> <!--gyral:lit-node 5--><span id="Address-line2-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span></p><!--gyral:/lit-part--> <!--gyral:lit-part Og80xZ6vpIc=--><p class="field"><!--gyral:lit-node 1--><label for="Address-city"
-      ><!--gyral:lit-part-->City<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part--></label
-    > <!--gyral:lit-node 4--><input
-      id="Address-city"
-      name="city"
-      type="text"
-      autocomplete="shipping address-level2"
-      
-      
-      required
-      value=""
-      aria-describedby="Address-city-error"
-      
-      
-    /> <!--gyral:lit-node 5--><span id="Address-city-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span></p><!--gyral:/lit-part--><p class="field"><label for="Address-state">State</label><select id="Address-state" name="state" autocomplete="shipping address-level1"><!--gyral:lit-node 13--><option value="" selected>Choose…</option><!--gyral:lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="AL" ><!--gyral:lit-part-->AL<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="AK" ><!--gyral:lit-part-->AK<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="AZ" ><!--gyral:lit-part-->AZ<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="AR" ><!--gyral:lit-part-->AR<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="CA" ><!--gyral:lit-part-->CA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="CO" ><!--gyral:lit-part-->CO<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="CT" ><!--gyral:lit-part-->CT<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="DE" ><!--gyral:lit-part-->DE<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="DC" ><!--gyral:lit-part-->DC<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="FL" ><!--gyral:lit-part-->FL<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="GA" ><!--gyral:lit-part-->GA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="HI" ><!--gyral:lit-part-->HI<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="ID" ><!--gyral:lit-part-->ID<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="IL" ><!--gyral:lit-part-->IL<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="IN" ><!--gyral:lit-part-->IN<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="IA" ><!--gyral:lit-part-->IA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="KS" ><!--gyral:lit-part-->KS<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="KY" ><!--gyral:lit-part-->KY<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="LA" ><!--gyral:lit-part-->LA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="ME" ><!--gyral:lit-part-->ME<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MD" ><!--gyral:lit-part-->MD<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MA" ><!--gyral:lit-part-->MA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MI" ><!--gyral:lit-part-->MI<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MN" ><!--gyral:lit-part-->MN<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MS" ><!--gyral:lit-part-->MS<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MO" ><!--gyral:lit-part-->MO<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="MT" ><!--gyral:lit-part-->MT<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NE" ><!--gyral:lit-part-->NE<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NV" ><!--gyral:lit-part-->NV<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NH" ><!--gyral:lit-part-->NH<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NJ" ><!--gyral:lit-part-->NJ<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NM" ><!--gyral:lit-part-->NM<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NY" ><!--gyral:lit-part-->NY<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="NC" ><!--gyral:lit-part-->NC<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="ND" ><!--gyral:lit-part-->ND<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="OH" ><!--gyral:lit-part-->OH<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="OK" ><!--gyral:lit-part-->OK<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="OR" ><!--gyral:lit-part-->OR<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="PA" ><!--gyral:lit-part-->PA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="RI" ><!--gyral:lit-part-->RI<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="SC" ><!--gyral:lit-part-->SC<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="SD" ><!--gyral:lit-part-->SD<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="TN" ><!--gyral:lit-part-->TN<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="TX" ><!--gyral:lit-part-->TX<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="UT" ><!--gyral:lit-part-->UT<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="VT" ><!--gyral:lit-part-->VT<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="VA" ><!--gyral:lit-part-->VA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="WA" ><!--gyral:lit-part-->WA<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="WV" ><!--gyral:lit-part-->WV<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="WI" ><!--gyral:lit-part-->WI<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:lit-part /Z2ahC9IPds=--><!--gyral:lit-node 0--><option value="WY" ><!--gyral:lit-part-->WY<!--gyral:/lit-part--></option><!--gyral:/lit-part--><!--gyral:/lit-part--></select><span id="Address-state-error" class="error"
-          ><!--gyral:lit-part--><!--gyral:/lit-part--></span
-        ></p><!--gyral:lit-part Og80xZ6vpIc=--><p class="field"><!--gyral:lit-node 1--><label for="Address-postalCode"
-      ><!--gyral:lit-part-->ZIP code<!--gyral:/lit-part--><!--gyral:lit-part--><!--gyral:/lit-part--></label
-    > <!--gyral:lit-node 4--><input
-      id="Address-postalCode"
-      name="postalCode"
-      type="text"
-      autocomplete="shipping postal-code"
-      inputmode="numeric"
-      
-      required
-      value=""
-      aria-describedby="Address-postalCode-error"
-      
-      
-    /> <!--gyral:lit-node 5--><span id="Address-postalCode-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span></p><!--gyral:/lit-part--> <!--gyral:lit-part Og80xZ6vpIc=--><p class="field"><!--gyral:lit-node 1--><label for="Address-phone"
-      ><!--gyral:lit-part-->Phone<!--gyral:/lit-part--><!--gyral:lit-part yrmMS+pydms=--> <small>(optional)</small><!--gyral:/lit-part--></label
-    > <!--gyral:lit-node 4--><input
-      id="Address-phone"
-      name="phone"
-      type="tel"
-      autocomplete="shipping tel"
-      
-      
-      
-      value=""
-      aria-describedby="Address-phone-error"
-      
-      
-    /> <!--gyral:lit-node 5--><span id="Address-phone-error" class="error"><!--gyral:lit-part--><!--gyral:/lit-part--></span></p><!--gyral:/lit-part--> <!--gyral:lit-part--><!--gyral:/lit-part--></fieldset><!--gyral:lit-part--><!--gyral:/lit-part--> <!--gyral:lit-part MJXybzLLglI=--><!--gyral:lit-node 0--><button class="primary" ><!--gyral:lit-part-->Continue to shipping method<!--gyral:/lit-part--></button><!--gyral:/lit-part--></form><!--gyral:/lit-part--></section></li><!--gyral:/lit-part--><!--gyral:lit-part eOMFj07CJYg=--><!--gyral:lit-node 0--><li
-              class="step locked"
-              data-component="checkout-step"
-              data-step="shipping"
-              aria-current="false"
-            ><!--gyral:lit-node 1--><section aria-labelledby="shipping-heading"><!--gyral:lit-node 2--><h2 id="shipping-heading"><span class="number"><!--gyral:lit-part-->3<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Shipping method<!--gyral:/lit-part--></h2><!--gyral:lit-part WFZKujQ03Fg=--><p class="locked">Complete the steps above first.</p><!--gyral:/lit-part--></section></li><!--gyral:/lit-part--><!--gyral:lit-part eOMFj07CJYg=--><!--gyral:lit-node 0--><li
-              class="step locked"
-              data-component="checkout-step"
-              data-step="payment"
-              aria-current="false"
-            ><!--gyral:lit-node 1--><section aria-labelledby="payment-heading"><!--gyral:lit-node 2--><h2 id="payment-heading"><span class="number"><!--gyral:lit-part-->4<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Payment<!--gyral:/lit-part--></h2><!--gyral:lit-part WFZKujQ03Fg=--><p class="locked">Complete the steps above first.</p><!--gyral:/lit-part--></section></li><!--gyral:/lit-part--><!--gyral:lit-part eOMFj07CJYg=--><!--gyral:lit-node 0--><li
-              class="step locked"
-              data-component="checkout-step"
-              data-step="review"
-              aria-current="false"
-            ><!--gyral:lit-node 1--><section aria-labelledby="review-heading"><!--gyral:lit-node 2--><h2 id="review-heading"><span class="number"><!--gyral:lit-part-->5<!--gyral:/lit-part-->.</span> <!--gyral:lit-part-->Review and place order<!--gyral:/lit-part--></h2><!--gyral:lit-part WFZKujQ03Fg=--><p class="locked">Complete the steps above first.</p><!--gyral:/lit-part--></section></li><!--gyral:/lit-part--><!--gyral:/lit-part--></ol><!--gyral:lit-part nib45pk9MuE=--><aside
-    class="order-summary"
-    data-component="order-summary"
-    aria-labelledby="summary-heading"
-  ><h2 id="summary-heading">Order summary</h2><ul class="summary-lines"><!--gyral:lit-part--><!--gyral:lit-part Czh9XI26biY=--><li data-component="summary-line"><span class="name"
-              ><!--gyral:lit-part-->LEGO<!--gyral:/lit-part--><!--gyral:lit-part BWZZAHK1AgA=--> × <!--gyral:lit-part-->2<!--gyral:/lit-part--><?><!--gyral:/lit-part--></span
-            > <!--gyral:lit-part--><!--gyral:/lit-part--> <span class="amount" data-component="price"><!--gyral:lit-part-->$100.00<!--gyral:/lit-part--></span></li><!--gyral:/lit-part--><!--gyral:/lit-part--></ul><dl class="totals"><div><dt>Subtotal</dt><dd><!--gyral:lit-part-->$100.00<!--gyral:/lit-part--></dd></div><!--gyral:lit-part--><!--gyral:/lit-part--><div><dt>Shipping</dt><dd><!--gyral:lit-part-->Free<!--gyral:/lit-part--></dd></div><div><dt>Tax</dt><dd><!--gyral:lit-part-->Calculated after the address<!--gyral:/lit-part--></dd></div><div class="total"><dt>Total</dt><dd data-component="price"><!--gyral:lit-part-->$100.00<!--gyral:/lit-part--></dd></div></dl><p><a href="/cart">Edit cart</a></p></aside><!--gyral:/lit-part--></div><!--gyral:/lit-part--></shop-checkout><!--/lit-part--></main><!--lit-part hfsumG2me/A=--><footer class="site-footer"><div class="page"><nav aria-label="Site"><ul><li><a href="/about">About</a></li><li><a href="/faq">FAQ</a></li><li><a href="/contact">Contact</a></li><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/consent">Cookie settings</a></li></ul></nav><!--lit-node 16--><shop-theme-switcher
-        
-        
-        
-        
-       current="default" return-to="/checkout" data-gyral-seed="{&quot;props&quot;:{&quot;themes&quot;:[{&quot;name&quot;:&quot;default&quot;,&quot;label&quot;:&quot;Gyral Goods&quot;,&quot;href&quot;:&quot;/themes/default.css&quot;},{&quot;name&quot;:&quot;marketplace&quot;,&quot;label&quot;:&quot;Marketplace&quot;,&quot;href&quot;:&quot;/themes/marketplace.css&quot;},{&quot;name&quot;:&quot;supercenter&quot;,&quot;label&quot;:&quot;Supercenter&quot;,&quot;href&quot;:&quot;/themes/supercenter.css&quot;},{&quot;name&quot;:&quot;boutique&quot;,&quot;label&quot;:&quot;Boutique&quot;,&quot;href&quot;:&quot;/themes/boutique.css&quot;}]}}" data-gyral-light><!--gyral:lit-part OIeOwQSIm6Q=--><!--gyral:lit-node 0--><form
-        method="post"
-        action="/theme"
-        class="theme-switcher"
-        data-region="theme-switcher"
-        data-intent="Choose"
-      ><!--gyral:lit-node 1--><fieldset data-intent="Picked" data-intent-on="change"><legend>Theme</legend><!--gyral:lit-part--><!--gyral:lit-part fEBbzH4Y2CE=--><label data-component="theme-option"> <!--gyral:lit-node 1--><input
-                  type="radio"
-                  name="theme"
-                  value="default"
-                  checked
-                /> <!--gyral:lit-part-->Gyral Goods<!--gyral:/lit-part--> </label><!--gyral:/lit-part--><!--gyral:lit-part fEBbzH4Y2CE=--><label data-component="theme-option"> <!--gyral:lit-node 1--><input
-                  type="radio"
-                  name="theme"
-                  value="marketplace"
-                  
-                /> <!--gyral:lit-part-->Marketplace<!--gyral:/lit-part--> </label><!--gyral:/lit-part--><!--gyral:lit-part fEBbzH4Y2CE=--><label data-component="theme-option"> <!--gyral:lit-node 1--><input
-                  type="radio"
-                  name="theme"
-                  value="supercenter"
-                  
-                /> <!--gyral:lit-part-->Supercenter<!--gyral:/lit-part--> </label><!--gyral:/lit-part--><!--gyral:lit-part fEBbzH4Y2CE=--><label data-component="theme-option"> <!--gyral:lit-node 1--><input
-                  type="radio"
-                  name="theme"
-                  value="boutique"
-                  
-                /> <!--gyral:lit-part-->Boutique<!--gyral:/lit-part--> </label><!--gyral:/lit-part--><!--gyral:/lit-part--></fieldset><!--gyral:lit-node 4--><input type="hidden" name="return" value="/checkout" /> <!--gyral:lit-node 5--><button type="submit" >Apply theme</button><p class="theme-status" role="status"><!--gyral:lit-part--><!--gyral:/lit-part--></p></form><!--gyral:/lit-part--></shop-theme-switcher><p><small>© 2026 <!--lit-part-->Gyral Goods<!--/lit-part-->. A demo store built with Gyral; nothing here is for sale.</small></p></div></footer><!--/lit-part--><?><!--/lit-part-->
-  </body>
-</html>
+  </style><!--gyral:hkmq9pvzqm--><details class="mini-cart" part="disclosure" aria-busy="false"><summary part="summary">Cart<span class="badge" part="badge" aria-hidden="true">2</span><span class="visually-hidden">, 2 items</span></summary><div class="panel" part="panel"><!--gyral:zct22x6rug--><ul><!--gyral:1163rjy8lpq--><li data-component="cart-line" part="line"><a href="/p/lego">LEGO</a> <span class="qty">× 2</span> <span class="amount" data-component="price">$100.00</span></li></ul><p class="subtotal" part="subtotal"><span>Subtotal</span> <strong>$100.00</strong></p><p class="actions" part="actions"><a href="/cart">View cart</a> <!--gyral:l4ed38xrnc--><a class="primary" href="/checkout">Checkout</a></p></div></details></template></shop-mini-cart></nav></div><nav class="departments" aria-label="Departments" data-region="nav"><ul><!--gyral:1kkxtrou6sj--><li><a href="/d/electronics">Electronics</a></li><!--gyral:1kkxtrou6sj--><li><a href="/d/grocery">Grocery</a></li><!--gyral:1kkxtrou6sj--><li><a href="/d/toys-games">Toys &amp; Games</a></li></ul></nav></header></shop-header> <!--gyral:1421mrywvp5--><shop-consent mode="banner" return-to="/checkout" data-gyral-light data-gyral-seed='{"props":{}}'><!--gyral:xs7t07izvc--><section data-region="consent" aria-labelledby="consent-title" class="consent consent-banner"><h2 id="consent-title">Cookies on Gyral Goods</h2><p>We use strictly necessary cookies to run the store (your session, cart and security). With your permission we also count page views and add-to-cart clicks to improve the store. Nothing is shared with anyone.</p><form method="post" action="/consent" data-intent="Choose"><input type="hidden" name="return" value="/checkout"><div class="consent-actions" data-component="consent-actions"><button type="submit" name="choice" value="accept">Accept all</button> <button type="submit" name="choice" value="reject">Reject non-essential</button></div><details class="consent-custom" data-component="consent-custom"><summary>Customize</summary><fieldset><legend>Cookie categories</legend><label> <input type="checkbox" checked disabled> Strictly necessary <small>(always on)</small> </label> <label> <input type="checkbox" name="analytics"> Analytics <small>(page views and add-to-cart clicks)</small> </label></fieldset><button type="submit" name="choice" value="save">Save choices</button></details></form></section></shop-consent><main id="main" class="page" tabindex="-1"><!--gyral:16g18y8segh--><shop-checkout data-region="checkout" csrf="test-csrf-token" data-gyral-light data-gyral-seed='{"props":{"view":{"open":"address","steps":[{"step":"contact","status":"done"},{"step":"address","status":"open"},{"step":"shipping","status":"locked"},{"step":"payment","status":"locked"},{"step":"review","status":"locked"}],"email":"ada@example.com","savedAddresses":[],"shippingOptions":[{"method":"standard","label":"Standard","price":{"cents":0,"currency":"USD"},"days":{"min":5,"max":7}},{"method":"express","label":"Express","price":{"cents":1299,"currency":"USD"},"days":{"min":2,"max":3}},{"method":"next_day","label":"Next day","price":{"cents":2499,"currency":"USD"},"days":{"min":1,"max":1}}],"lines":[{"sku":"LEGO-1","name":"LEGO","href":"/p/lego","options":{},"quantity":2,"lineTotal":{"cents":10000,"currency":"USD"}}],"totals":{"subtotal":{"cents":10000,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":10000,"currency":"USD"}},"ready":false}}}'><!--gyral:10umb9al29x--><h1>Checkout</h1><p class="visually-hidden" role="status"></p><div class="layout"><ol class="steps"><!--gyral:11bw2p53h32--><li data-component="checkout-step" class="step done" data-step="contact" aria-current="false"><section aria-labelledby="contact-heading"><h2 id="contact-heading"><span class="number">1<!---->.</span> Contact</h2><!--gyral:y3y18b4oto--><div class="step-summary" data-component="step-summary"><!--gyral:3io2c0pdft--><p>ada@example.com</p><!----> <a data-component="step-edit" href="/checkout?edit=contact" data-intent="Edit" data-step="contact">Edit <span class="visually-hidden">Contact</span></a></div></section></li><!--gyral:11bw2p53h32--><li data-component="checkout-step" class="step open" data-step="address" aria-current="step"><section aria-labelledby="address-heading"><h2 id="address-heading"><span class="number">2<!---->.</span> Shipping address</h2><!--gyral:u26rgdkksh--><form data-component="address-form" action="/checkout/address" method="post" novalidate data-intent="Address"><!--gyral:eoz6kfco23--><input type="hidden" name="_csrf" value="test-csrf-token"><!----> <!--gyral:xo6xye97z3--><input type="hidden" name="addressId" value="new"><fieldset class="new-address"><legend>Address</legend><!--gyral:rzur8tlhzx--><p class="field"><label for="Address-name">Full name<!----></label> <input id="Address-name" name="name" type="text" autocomplete="shipping name" required value="" aria-describedby="Address-name-error"> <span class="error" id="Address-name-error"></span></p><!----> <!--gyral:rzur8tlhzx--><p class="field"><label for="Address-line1">Street address<!----></label> <input id="Address-line1" name="line1" type="text" autocomplete="shipping address-line1" required value="" aria-describedby="Address-line1-error"> <span class="error" id="Address-line1-error"></span></p><!----> <!--gyral:rzur8tlhzx--><p class="field"><label for="Address-line2">Apartment, suite, etc.<!----><!--gyral:l7m0wjr3x2--> <small>(optional)</small></label> <input id="Address-line2" name="line2" type="text" autocomplete="shipping address-line2" value="" aria-describedby="Address-line2-error"> <span class="error" id="Address-line2-error"></span></p><!----> <!--gyral:rzur8tlhzx--><p class="field"><label for="Address-city">City<!----></label> <input id="Address-city" name="city" type="text" autocomplete="shipping address-level2" required value="" aria-describedby="Address-city-error"> <span class="error" id="Address-city-error"></span></p><p class="field"><label for="Address-state">State</label><select id="Address-state" name="state" autocomplete="shipping address-level1"><option value="" selected>Choose…</option><!--gyral:qobqqeiasp--><option value="AL">AL</option><!--gyral:qobqqeiasp--><option value="AK">AK</option><!--gyral:qobqqeiasp--><option value="AZ">AZ</option><!--gyral:qobqqeiasp--><option value="AR">AR</option><!--gyral:qobqqeiasp--><option value="CA">CA</option><!--gyral:qobqqeiasp--><option value="CO">CO</option><!--gyral:qobqqeiasp--><option value="CT">CT</option><!--gyral:qobqqeiasp--><option value="DE">DE</option><!--gyral:qobqqeiasp--><option value="DC">DC</option><!--gyral:qobqqeiasp--><option value="FL">FL</option><!--gyral:qobqqeiasp--><option value="GA">GA</option><!--gyral:qobqqeiasp--><option value="HI">HI</option><!--gyral:qobqqeiasp--><option value="ID">ID</option><!--gyral:qobqqeiasp--><option value="IL">IL</option><!--gyral:qobqqeiasp--><option value="IN">IN</option><!--gyral:qobqqeiasp--><option value="IA">IA</option><!--gyral:qobqqeiasp--><option value="KS">KS</option><!--gyral:qobqqeiasp--><option value="KY">KY</option><!--gyral:qobqqeiasp--><option value="LA">LA</option><!--gyral:qobqqeiasp--><option value="ME">ME</option><!--gyral:qobqqeiasp--><option value="MD">MD</option><!--gyral:qobqqeiasp--><option value="MA">MA</option><!--gyral:qobqqeiasp--><option value="MI">MI</option><!--gyral:qobqqeiasp--><option value="MN">MN</option><!--gyral:qobqqeiasp--><option value="MS">MS</option><!--gyral:qobqqeiasp--><option value="MO">MO</option><!--gyral:qobqqeiasp--><option value="MT">MT</option><!--gyral:qobqqeiasp--><option value="NE">NE</option><!--gyral:qobqqeiasp--><option value="NV">NV</option><!--gyral:qobqqeiasp--><option value="NH">NH</option><!--gyral:qobqqeiasp--><option value="NJ">NJ</option><!--gyral:qobqqeiasp--><option value="NM">NM</option><!--gyral:qobqqeiasp--><option value="NY">NY</option><!--gyral:qobqqeiasp--><option value="NC">NC</option><!--gyral:qobqqeiasp--><option value="ND">ND</option><!--gyral:qobqqeiasp--><option value="OH">OH</option><!--gyral:qobqqeiasp--><option value="OK">OK</option><!--gyral:qobqqeiasp--><option value="OR">OR</option><!--gyral:qobqqeiasp--><option value="PA">PA</option><!--gyral:qobqqeiasp--><option value="RI">RI</option><!--gyral:qobqqeiasp--><option value="SC">SC</option><!--gyral:qobqqeiasp--><option value="SD">SD</option><!--gyral:qobqqeiasp--><option value="TN">TN</option><!--gyral:qobqqeiasp--><option value="TX">TX</option><!--gyral:qobqqeiasp--><option value="UT">UT</option><!--gyral:qobqqeiasp--><option value="VT">VT</option><!--gyral:qobqqeiasp--><option value="VA">VA</option><!--gyral:qobqqeiasp--><option value="WA">WA</option><!--gyral:qobqqeiasp--><option value="WV">WV</option><!--gyral:qobqqeiasp--><option value="WI">WI</option><!--gyral:qobqqeiasp--><option value="WY">WY</option></select><span id="Address-state-error" class="error"></span></p><!--gyral:rzur8tlhzx--><p class="field"><label for="Address-postalCode">ZIP code<!----></label> <input id="Address-postalCode" name="postalCode" type="text" autocomplete="shipping postal-code" inputmode="numeric" required value="" aria-describedby="Address-postalCode-error"> <span class="error" id="Address-postalCode-error"></span></p><!----> <!--gyral:rzur8tlhzx--><p class="field"><label for="Address-phone">Phone<!----><!--gyral:l7m0wjr3x2--> <small>(optional)</small></label> <input id="Address-phone" name="phone" type="tel" autocomplete="shipping tel" value="" aria-describedby="Address-phone-error"> <span class="error" id="Address-phone-error"></span></p><!----> </fieldset><!----> <!--gyral:1tipxqo0aqz--><button class="primary">Continue to shipping method</button></form></section></li><!--gyral:11bw2p53h32--><li data-component="checkout-step" class="step locked" data-step="shipping" aria-current="false"><section aria-labelledby="shipping-heading"><h2 id="shipping-heading"><span class="number">3<!---->.</span> Shipping method</h2><!--gyral:1i7sg0xfwpn--><p class="locked">Complete the steps above first.</p></section></li><!--gyral:11bw2p53h32--><li data-component="checkout-step" class="step locked" data-step="payment" aria-current="false"><section aria-labelledby="payment-heading"><h2 id="payment-heading"><span class="number">4<!---->.</span> Payment</h2><!--gyral:1i7sg0xfwpn--><p class="locked">Complete the steps above first.</p></section></li><!--gyral:11bw2p53h32--><li data-component="checkout-step" class="step locked" data-step="review" aria-current="false"><section aria-labelledby="review-heading"><h2 id="review-heading"><span class="number">5<!---->.</span> Review and place order</h2><!--gyral:1i7sg0xfwpn--><p class="locked">Complete the steps above first.</p></section></li></ol><!--gyral:2d57n1429na--><aside class="order-summary" data-component="order-summary" aria-labelledby="summary-heading"><h2 id="summary-heading">Order summary</h2><ul class="summary-lines"><!--gyral:1a13vnd15nt--><li data-component="summary-line"><span class="name">LEGO<!----><!--gyral:gb43h4oot1--> × 2</span> <!----> <span class="amount" data-component="price">$100.00</span></li></ul><dl class="totals"><div><dt>Subtotal</dt><dd>$100.00</dd></div><div><dt>Shipping</dt><dd>Free</dd></div><div><dt>Tax</dt><dd>Calculated after the address</dd></div><div class="total"><dt>Total</dt><dd data-component="price">$100.00</dd></div></dl><p><a href="/cart">Edit cart</a></p></aside></div></shop-checkout></main><!--gyral:10vlpbhptpe--><footer class="site-footer"><div class="page"><nav aria-label="Site"><ul><li><a href="/about">About</a></li><li><a href="/faq">FAQ</a></li><li><a href="/contact">Contact</a></li><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/consent">Cookie settings</a></li></ul></nav><shop-theme-switcher current="default" return-to="/checkout" data-gyral-light data-gyral-seed='{"props":{"themes":[{"name":"default","label":"Gyral Goods","href":"/themes/default.css"},{"name":"marketplace","label":"Marketplace","href":"/themes/marketplace.css"},{"name":"supercenter","label":"Supercenter","href":"/themes/supercenter.css"},{"name":"boutique","label":"Boutique","href":"/themes/boutique.css"}]}}'><!--gyral:260dispn9jf--><form method="post" action="/theme" class="theme-switcher" data-region="theme-switcher" data-intent="Choose"><fieldset data-intent-on="change" data-intent="Picked"><legend>Theme</legend><!--gyral:2ghiqjjxyag--><label data-component="theme-option"> <input type="radio" name="theme" value="default" checked> Gyral Goods<!----> </label><!--gyral:2ghiqjjxyag--><label data-component="theme-option"> <input type="radio" name="theme" value="marketplace"> Marketplace<!----> </label><!--gyral:2ghiqjjxyag--><label data-component="theme-option"> <input type="radio" name="theme" value="supercenter"> Supercenter<!----> </label><!--gyral:2ghiqjjxyag--><label data-component="theme-option"> <input type="radio" name="theme" value="boutique"> Boutique<!----> </label></fieldset><input type="hidden" name="return" value="/checkout"> <button type="submit">Apply theme</button><p class="theme-status" role="status"></p></form></shop-theme-switcher><p><small>© 2026 Gyral Goods<!---->. A demo store built with Gyral; nothing here is for sale.</small></p></div></footer></body></html>

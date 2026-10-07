@@ -4,21 +4,20 @@ import { importsOf, optimizedDeps } from '../../vite.deps.js';
 describe('vite.deps (pre-bundled browser dependencies)', () => {
   it('reads static, re-exported and dynamic imports but not type-only ones', () => {
     const source = [
-      "import { html } from 'lit';",
+      "import { html } from '@gyral/core';",
       "import type { Foo } from 'not-at-runtime';",
       "export { x } from './local.js';",
       "import 'side-effect';",
       "const m = await import('lazy-module');",
     ].join('\n');
-    expect(importsOf(source)).toEqual(['lit', './local.js', 'side-effect', 'lazy-module']);
+    expect(importsOf(source)).toEqual(['@gyral/core', './local.js', 'side-effect', 'lazy-module']);
   });
 
   it('covers the browser graph and leaves server modules out', () => {
     const deps = optimizedDeps();
     expect(deps).toContain('valibot');
     expect(deps).toContain('@gyral/core');
-    expect(deps).toContain('@gyral/ssr/hydrate');
-    expect(deps).toContain('lit/directive.js');
+    expect(deps).toContain('@gyral/http');
     for (const serverOnly of [
       'hono',
       '@hono/node-server',

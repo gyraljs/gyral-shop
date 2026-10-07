@@ -1,13 +1,35 @@
 // Labelled form controls for admin forms: errors linked with aria-describedby and mirrored to
 // native validity with Gyral's invalid() (ADR 0008). Ids are prefixed per form so several
 // forms can sit on one page (one per variant, for example).
-import { html, invalid, liveBoolean, nothing } from '@gyral/core';
+import { each, html, invalid, nothing, type ChildValue } from '@gyral/core';
 
 export type Errors = Readonly<Record<string, readonly string[]>>;
 
 /** The key a form's errors live under: its intent, plus a record id for per-row forms. */
 export const formKey = (intent: string, id: number | string = ''): string =>
   `${intent}${String(id)}`;
+
+/** How many times each form (by `formKey`) has been saved. */
+export type Saves = Readonly<Record<string, number>>;
+
+/** `saves` with one more success for the form `key` (none when no form was pending). */
+export const savedOnce = (saves: Saves, key: string | null): Saves =>
+  key === null ? saves : { ...saves, [key]: (saves[key] ?? 0) + 1 };
+
+/**
+ * A form whose fields start empty again after each success (a stock adjustment, a new variant
+ * or taxon). Gyral writes a control only when the model's value for it changes, and these
+ * fields have no model value, so a success re-creates the form instead: a one-row keyed list
+ * whose key counts the form's successes (Gyral view/02-bindings.md "Putting a control back").
+ * Until then, what the admin typed stays, through rejections and failures alike.
+ */
+export const freshAfterSave = (key: string, saves: Saves, form: () => ChildValue) =>
+  each(
+    [`${key}#${String(saves[key] ?? 0)}`],
+    (k) => k,
+    (_k, render: () => ChildValue) => render(),
+    () => form,
+  );
 
 interface Common {
   readonly form: string;
@@ -56,12 +78,11 @@ export function textField(
         id=${id}
         name=${c.name}
         type=${c.type ?? 'text'}
-        inputmode=${c.inputmode ?? nothing}
+        inputmode=${c.inputmode}
         autocomplete=${c.autocomplete ?? 'off'}
-        .value=${c.value}
+        value=${c.value}
         ?required=${c.required ?? false}
         aria-describedby=${described}
-        aria-invalid=${errors === undefined ? nothing : 'true'}
         ${invalid(errors)}
       />`,
     )}
@@ -71,7 +92,6 @@ export function textField(
 export function textArea(c: Common & { readonly value: string; readonly rows?: number }) {
   const { id, described } = ids(c);
   const errors = c.errors[c.name];
-  // Client-rendered only (the admin is CSR), so a property binding sets the text.
   return html`<div class="admin-field" data-component="field">
     ${frame(
       c,
@@ -79,12 +99,11 @@ export function textArea(c: Common & { readonly value: string; readonly rows?: n
         id=${id}
         name=${c.name}
         rows=${c.rows ?? 4}
-        .value=${c.value}
         ?required=${c.required ?? false}
         aria-describedby=${described}
-        aria-invalid=${errors === undefined ? nothing : 'true'}
         ${invalid(errors)}
-      ></textarea>`,
+      >
+${c.value}</textarea>`,
     )}
   </div>`;
 }
@@ -106,9 +125,7 @@ export function selectField(
   const { id, described } = ids(c);
   const errors = c.errors[c.name];
   const option = (o: Choice) =>
-    html`<option value=${o.value} ?selected=${liveBoolean(o.value === c.value)}>
-      ${o.label}
-    </option>`;
+    html`<option value=${o.value} ?selected=${o.value === c.value}>${o.label}</option>`;
   const groups = [...new Set(c.choices.map((o) => o.group))];
   return html`<div class="admin-field" data-component="field">
     ${frame(
@@ -118,13 +135,12 @@ export function selectField(
         name=${c.name}
         ?required=${c.required ?? false}
         aria-describedby=${described}
-        aria-invalid=${errors === undefined ? nothing : 'true'}
         ${invalid(errors)}
       >
         ${
           c.emptyLabel === null
             ? nothing
-            : html`<option value="" ?selected=${liveBoolean(c.value === '')}>
+            : html`<option value="" ?selected=${c.value === ''}>
                 ${c.emptyLabel ?? 'Choose…'}
               </option>`
         }

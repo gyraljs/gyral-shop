@@ -25,7 +25,7 @@ browser ── HTTP ──► server (Hono) ──► services (use-cases) ─�
 `ui/` ships to the browser, so it never imports db, services, config or server code. Data
 reaches it as props (SSR) or over HTTP.
 
-## Rendering modes per route (lit-web-apps skill)
+## Rendering modes per route
 
 - **ssr:** catalog, search, product pages, cart, checkout, account, orders. Personalized or
   live data, SEO matters for catalog pages.
@@ -39,5 +39,23 @@ reaches it as props (SSR) or over HTTP.
 
 ## Gyral
 
-`@gyral/*` ^0.2.0 from npm (lit-html pinned to 3.3.0, see ADR 0001) (published with provenance). Lit is a peer dependency, so exactly
-one copy runs; `gyralVitePreset()` dedupes it in Vite as a guard.
+`@gyral/*` 0.3.0 (release tarballs in `vendor/` until it is on npm; ADR 0001). Gyral renders
+with its own view layer (Gyral ADR 0018): `html`, `css`, `each`, `raw`, the
+`invalid`/`labelledBy` hooks and the `prop.*` builders come from `@gyral/core`; there is no
+Lit. `gyralVitePreset()` adds the template compiler to `vite build` (templates precompiled and
+checked against Gyral's template rules); `@gyral/core/eslint` reports the same rules in the
+editor. The server renders with `@gyral/core/server` (via `@gyral/ssr`'s `renderPage`), each
+component hydrates on its own in the browser (no hydration import, no module-order rules), and
+production pages preload the entry's chunks, Gyral's lazily loaded hydration chunk and the
+page's own route chunks: each page lists the lazily loaded modules its components need
+(`chunks`, from `src/server/route-chunks.ts`, kept in step with `src/client/lazy.ts` by a test).
+
+Form state is live, and written only when the model's value changes (Gyral view/02-bindings.md
+"Live form state"): `value=`, `?checked=`, `?selected=`, `<textarea>` content and `?open` take
+the model's value when it changes, even over an edit, and any other render (a pending submit, a
+rejection, another field's message) leaves the control as the user left it. So models hold
+records and server answers, not copies of what the user typed. To put a control back, change
+the model: a form that must start empty after a success is a keyed row whose key counts its
+successes (`freshAfterSave` in `ui/admin/fields.ts`: stock adjustments, new variants and taxa).
+A disclosure whose `?open` follows a count the user can change under it follows its `toggle`
+event instead (listing filters).

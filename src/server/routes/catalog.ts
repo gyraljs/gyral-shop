@@ -14,6 +14,7 @@ import { departmentCrumbs, departmentPage as departmentView } from '../../ui/pag
 import type { RenderPage } from '../document.js';
 import { breadcrumbJsonLd } from '../seo.js';
 import { publicOrigin } from '../origin.js';
+import { CARD_CHUNKS, LISTING_CHUNKS } from '../route-chunks.js';
 
 export interface CatalogRouteOptions {
   readonly db: Db;
@@ -37,6 +38,7 @@ export function catalogRoutes({ db, render }: CatalogRouteOptions): Hono {
       canonical: new URL(path, origin).href,
       jsonLd: [breadcrumbJsonLd(origin, departmentCrumbs(data), path)],
       currentDepartment: data.department.slug,
+      chunks: CARD_CHUNKS,
       main: departmentView(data),
     });
   });
@@ -68,6 +70,7 @@ export function catalogRoutes({ db, render }: CatalogRouteOptions): Hono {
       noindex: data.refined,
       jsonLd: [breadcrumbJsonLd(origin, categoryCrumbs(data), base)],
       currentDepartment: data.department.slug,
+      chunks: LISTING_CHUNKS,
       main: categoryView(data),
     });
   });

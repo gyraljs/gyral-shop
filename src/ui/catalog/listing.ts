@@ -3,7 +3,7 @@
 // document styles (filters.ts, listing.ts, catalog.ts) apply directly. Server-rendered from a ListingView; in the browser it changes listing state without a
 // reload. The URL is the source of truth: intents navigate (pushing history), and every URL
 // change (including Back/Forward) streams in through router listen() and fetches that state.
-import { define, focus, html, nothing, type Next } from '@gyral/core';
+import { define, focus, html, nothing, prop, type Next } from '@gyral/core';
 import { get, type HttpError } from '@gyral/http';
 import { listen, makeRouter, navigate, setTitle, type RouteLocation } from '@gyral/router';
 import { isRefined, parseListing, sameListing, type ListingState } from '../../domain/listing.js';
@@ -30,6 +30,8 @@ export interface ListingModel {
   readonly want: ListingState | null;
   readonly status: 'idle' | 'loading' | 'error';
   readonly focusPending: boolean;
+  /** The filter disclosure as the shopper left it; `null` until they toggle it (filters.ts). */
+  readonly filtersOpen: boolean | null;
 }
 
 export type ListingMsg =
@@ -37,7 +39,8 @@ export type ListingMsg =
   | { readonly _tag: 'Go'; readonly state: ListingState }
   | { readonly _tag: 'Routed'; readonly location: RouteLocation }
   | { readonly _tag: 'Loaded'; readonly view: ListingView }
-  | { readonly _tag: 'Failed'; readonly error: HttpError['_tag'] };
+  | { readonly _tag: 'Failed'; readonly error: HttpError['_tag'] }
+  | { readonly _tag: 'FiltersToggled'; readonly open: boolean };
 
 /**
  * This page's router: it never captures link clicks. The store is a multi-page app; only the
@@ -110,9 +113,9 @@ const results = (view: ListingView) => {
 
 export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-listing', {
   shadow: false,
-  props: { view: { attribute: false, required: true } },
+  props: { view: prop.value(ListingViewSchema, { required: true }) },
   init: (props) => [
-    { view: props.view, want: null, status: 'idle', focusPending: false },
+    { view: props.view, want: null, status: 'idle', focusPending: false, filtersOpen: null },
     [listen((location) => ({ _tag: 'Routed', location }))],
   ],
   drivers: { router: listingRouter },
@@ -130,6 +133,10 @@ export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-list
       event.preventDefault();
       return { _tag: 'Go', state: stateOf(new URL(href, document.baseURI).searchParams) };
     },
+    FiltersToggled: ({ target }) =>
+      target instanceof HTMLDetailsElement
+        ? { _tag: 'FiltersToggled', open: target.open }
+        : undefined,
   },
   update: {
     Refine: (s, m) => go(s, m.state, false),
@@ -137,6 +144,7 @@ export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-list
     Routed: (s, m) => routed(s, m.location),
     Loaded: (s, m) => loaded(s, m.view),
     Failed: (s) => ({ ...s, status: 'error' }),
+    FiltersToggled: (s, m) => ({ ...s, filtersOpen: m.open }),
   },
   states: (s) => ({ loading: s.status === 'loading' }),
   view: (s, i) => {
@@ -155,7 +163,11 @@ export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-list
           </h1>
           <p class="result-count" role="status">${resultSummary(view)}</p>
         </header>
-        ${filtersForm({ ...view, state: s.want ?? state }, { refine: i.Refine, go: i.Go })}
+        ${filtersForm(
+          { ...view, state: s.want ?? state },
+          { refine: i.Refine, go: i.Go, toggle: i.FiltersToggled },
+          s.filtersOpen ?? undefined,
+        )}
         ${
           s.status === 'error'
             ? html`<p class="load-error" role="alert">

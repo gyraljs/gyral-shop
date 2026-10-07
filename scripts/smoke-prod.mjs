@@ -1,10 +1,12 @@
 /* global document, window -- page.evaluate callbacks run in the browser */
-// `pnpm smoke:prod`: the production build (production Lit, minified, code-split) must hydrate
-// in place. Seeds a throwaway database, builds, starts the production server and, in Chromium,
-// checks key pages: exactly one <h1>, every data-region rendered as often as the server sent it,
-// no element left in defer-hydration, no page or console errors, and each component's view the
-// same size as the server's. Then exercises add to cart and a listing filter in production.
-// Catches production-only hydration bugs that development-Lit tests cannot (Gyral gyral-czi.41).
+// `pnpm smoke:prod`: the production build (precompiled templates, minified, code-split) must
+// hydrate in place. Seeds a throwaway database, builds, starts the production server and, in
+// Chromium, checks key pages: exactly one <h1>, every data-region rendered as often as the
+// server sent it, no element left in defer-hydration, no page errors, no console errors or
+// warnings (a production hydration mismatch is a warning), each component's view the same size
+// as the server's, and every element the parser built still in the page after hydration. Then
+// exercises add to cart and a listing filter in production. Catches production-only hydration
+// bugs that development tests cannot (Gyral gyral-czi.41).
 //   pnpm smoke:prod             build + check
 //   pnpm smoke:prod --no-build  reuse dist/
 import { chromium } from 'playwright';
@@ -12,6 +14,7 @@ import { discoverPaths, startProduction } from './lib/prod-server.mjs';
 import {
   compareSummaries,
   ignoredConsole,
+  lostNodes,
   markServerNodes,
   replacedNodes,
   summarize,
@@ -26,7 +29,10 @@ const rows = [];
 async function checkPage(page, base, path, allow) {
   const errors = [];
   const onConsole = (m) => {
-    if (m.type() === 'error' && !ignoredConsole(m.text())) errors.push(`console: ${m.text()}`);
+    const type = m.type();
+    if ((type === 'error' || type === 'warning') && !ignoredConsole(m.text())) {
+      errors.push(`console ${type}: ${m.text()}`);
+    }
   };
   const onError = (e) => errors.push(`page error: ${String(e).split('\n')[0]}`);
   page.on('console', onConsole);
@@ -59,6 +65,12 @@ async function checkPage(page, base, path, allow) {
     if (after.islands > 0) {
       errors.push(`${String(after.islands)} island(s) never hydrated after scrolling into view`);
     }
+  }
+  // Every element the parser built is still in the page (islands included, now hydrated).
+  const lost = await page.evaluate(`(${lostNodes.toString()})(${JSON.stringify(allow ?? {})})`);
+  if (lost.length > 0) {
+    const sample = [...new Set(lost)].slice(0, 5).join(', ');
+    errors.push(`${String(lost.length)} server element(s) left the page: ${sample}`);
   }
   page.off('console', onConsole);
   page.off('pageerror', onError);

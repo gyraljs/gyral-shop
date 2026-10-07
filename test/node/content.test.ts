@@ -46,7 +46,7 @@ describe('contact form', () => {
     expect(res.status).toBe(422);
     expect(html).toContain('Choose a topic.');
     expect(html).toContain('Write at least 10 characters.');
-    expect(html).toMatch(/>hi<\/textarea>/); // the typed message comes back (static part)
+    expect(html).toMatch(/>\n?hi<\/textarea>/); // the typed message comes back
   });
 
   it('keeps a typed message with markup characters escaped', async () => {

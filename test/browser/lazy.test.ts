@@ -1,4 +1,3 @@
-import '@gyral/ssr/hydrate';
 import { afterEach, describe, expect, it } from 'vitest';
 import { LOADERS, loadComponentsIn, tagsIn } from '../../src/client/lazy.js';
 

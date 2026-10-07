@@ -1,6 +1,6 @@
 // Review pages (docs/product-specs/wishlist-reviews.md): every review of a product, paged and
 // sorted, and the write-a-review page for verified purchasers. Light DOM throughout.
-import { html, nothing, type IntentRejected } from '@gyral/core';
+import { html, type IntentRejected } from '@gyral/core';
 import { eligibilityMessage } from '../../domain/reviews.js';
 import { breadcrumbs, type Crumb } from '../catalog/breadcrumbs.js';
 import { reviewsPath, writeReviewPath, type ReviewsViewData } from '../product/reviews-model.js';
@@ -29,7 +29,7 @@ export const reviewsElement = (
   html`<shop-reviews
     .view=${view}
     list-path=${reviewsPath(view.slug)}
-    csrf-token=${options.csrfToken ?? nothing}
+    csrf-token=${options.csrfToken}
     .notice=${options.notice}
     ?standalone=${options.standalone === true}
   ></shop-reviews>`;

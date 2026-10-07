@@ -105,5 +105,35 @@ describe('departments and brands', () => {
       );
     });
     expect(http.inputs.filter((r) => r.method === 'POST')).toEqual([]);
+    // The rejection changed no model value, so what the admin chose and typed stays.
+    expect([kind.value, name.value]).toEqual(['category', 'Drones']);
+  });
+
+  it('starts the create form empty again after an addition', async () => {
+    const { http } = fakeAdmin('/admin/taxonomy', api);
+    const el = await mountAdmin('/admin/taxonomy');
+    const createForm = () => {
+      const found = el.querySelector<HTMLFormElement>('[data-component="taxon-create"]');
+      if (found === null) throw new Error('no create form');
+      return found;
+    };
+    const nameField = () => {
+      const found = createForm().querySelector('input[name="name"]');
+      if (!(found instanceof HTMLInputElement)) throw new Error('no name field');
+      return found;
+    };
+    await vi.waitFor(() => createForm());
+    nameField().value = 'Zenith';
+    createForm().requestSubmit();
+    await vi.waitFor(() => {
+      expect(el.querySelector('[role="status"][data-kind="success"]')?.textContent).toContain(
+        'Added.',
+      );
+    });
+    expect(posted(http.inputs.find((r) => r.url === '/api/admin/taxonomy')?.body)).toMatchObject({
+      kind: 'brand',
+      name: 'Zenith',
+    });
+    expect(nameField().value).toBe('');
   });
 });

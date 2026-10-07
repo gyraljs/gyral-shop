@@ -1,4 +1,5 @@
 // ADR 0002 checklist, one test per item, through the real app (docs/design-docs/0005-testing.md).
+import { createHash } from 'node:crypto';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   csrfTokenFor,
@@ -71,6 +72,54 @@ describe('headers', () => {
     expect(res.headers.get('x-content-type-options')).toBe('nosniff');
     expect(res.headers.get('referrer-policy')).toBe('strict-origin-when-cross-origin');
     expect(res.headers.get('strict-transport-security')).toBeNull();
+  });
+
+  it('allows every <style> by hash, with no unsafe-inline and no style attributes', async () => {
+    const category = await (await test.get('/c/electronics/tvs')).text();
+    const product = /href="(\/p\/[^"]+)"/.exec(category)?.[1] ?? '/p/missing';
+    const admin = await loginAs(test, ADMIN_EMAIL);
+    const pages = [
+      ...['/', '/c/electronics/tvs', product, '/cart', '/account/login'].map((p) => test.get(p)),
+      admin.get('/admin'),
+    ];
+    for (const res of await Promise.all(pages)) {
+      const html = await res.text();
+      const policy = res.headers.get('content-security-policy') ?? '';
+      const styleSrc = /(?:^|;\s*)style-src ([^;]+)/.exec(policy)?.[1] ?? '';
+      expect(styleSrc, res.url).toMatch(/^'self' 'sha256-/);
+      expect(policy, res.url).not.toContain('unsafe-inline');
+      // Global <style> in the head and each shadow component's declarative-shadow-root <style>.
+      const styles = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((m) => m[1] ?? '');
+      expect(styles.length, res.url).toBeGreaterThan(2);
+      for (const css of styles) {
+        const hash = `'sha256-${createHash('sha256').update(css).digest('base64')}'`;
+        expect(styleSrc.split(' '), res.url).toContain(hash);
+      }
+      expect(html, res.url).not.toMatch(/<[a-z][^>]*\sstyle=/);
+    }
+  });
+
+  it('builds each page header when it renders, so components registered later are hashed', async () => {
+    await test.get('/'); // headers existed before the component below did
+    const { define, html } = await import('@gyral/core');
+    const css = ':host { display: block; }';
+    define<object, never>('shop-late-probe', {
+      init: () => ({}),
+      intent: {},
+      update: {},
+      view: () => html`<p>late</p>`,
+      styles: css,
+    });
+    const hash = `'sha256-${createHash('sha256').update(css).digest('base64')}'`;
+    expect((await test.get('/')).headers.get('content-security-policy')).toContain(hash);
+  });
+
+  it('gives responses that are not pages the same directives, without style hashes', async () => {
+    const res = await test.get('/api/me');
+    const policy = res.headers.get('content-security-policy') ?? '';
+    expect(policy).toContain("script-src 'self'");
+    expect(policy).toContain("frame-ancestors 'none'");
+    expect(policy).toMatch(/(?:^|; )style-src 'self'(?:;|$)/);
   });
 
   it('allows the HMR websocket only in development; HSTS only over HTTPS', async () => {

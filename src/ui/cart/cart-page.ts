@@ -1,7 +1,8 @@
 // The cart page (docs/product-specs/cart.md). Server-rendered from the seeded cart store; every
 // control is a POST form. With JavaScript, the same forms become intents that send messages
 // to the shared store, which updates optimistically and reconciles with the JSON API.
-import { define, fieldErrors, form, html, nothing, send } from '@gyral/core';
+import { define, fieldErrors, form, html, prop, send } from '@gyral/core';
+import * as v from 'valibot';
 import { cartLines } from './cart-lines.js';
 import { cartSummary } from './cart-summary.js';
 import { PromoForm, RemoveForm, SetQuantityForm } from './schemas.js';
@@ -34,7 +35,10 @@ export type CartPageMsg =
 const PAGE_OPS: readonly CartNotice['op'][] = ['update', 'remove', 'promo', 'refresh', 'add'];
 
 export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>('shop-cart-page', {
-  props: { csrf: { type: String }, flash: { attribute: false } },
+  props: {
+    csrf: prop.string(),
+    flash: prop.value(v.object({ kind: v.picklist(['success', 'error']), message: v.string() })),
+  },
   stores: [cartStore],
   init: () => ({ promoError: undefined }),
   intent: {
@@ -61,7 +65,7 @@ export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>('shop-
     const { cart, notice, inFlight } = read(cartStore);
     const csrf = props.csrf ?? '';
     const shown = notice !== undefined && PAGE_OPS.includes(notice.op) ? notice : props.flash;
-    const message = shown?.message ?? nothing;
+    const message = shown?.message;
     return html`
       <h1>Your cart</h1>
       <p data-component="notice" class="notice ${shown?.kind ?? ''}" role="status">${message}</p>
@@ -76,7 +80,7 @@ export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>('shop-
             : html`<div class="layout">
                 <section data-region="cart-lines" aria-labelledby="items-heading">
                   <h2 id="items-heading" class="visually-hidden">Items</h2>
-                  ${cartLines(cart.lines, csrf, i)}
+                  ${cartLines(cart.lines, csrf)}
                 </section>
                 ${cartSummary(cart, inFlight > 0, csrf, i, s.promoError)}
               </div>`

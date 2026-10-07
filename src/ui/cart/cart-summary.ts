@@ -1,6 +1,6 @@
 // The cart page's order summary: itemized totals from the domain price pipeline, promo code
 // entry/removal and the way to checkout.
-import { html, nothing } from '@gyral/core';
+import { html, invalid, nothing } from '@gyral/core';
 import { format } from '../../domain/money.js';
 import { csrfField } from '../forms/csrf.js';
 import type { CartClient } from './model.js';
@@ -34,7 +34,7 @@ const promoBlock = (
               required
               maxlength="32"
               autocomplete="off"
-              aria-invalid=${error === undefined ? nothing : 'true'}
+              ${invalid(error)}
               aria-describedby=${error === undefined ? nothing : 'promo-error'}
             />
             <button type="submit">Apply</button>
@@ -46,7 +46,7 @@ const promoBlock = (
         <div class="promo applied" data-component="promo-code">
           <p>
             Promo code <strong>${cart.promo.code}</strong>
-            ${cart.promo.applied ? 'applied.' : html`not applied: ${cart.promo.message ?? nothing}`}
+            ${cart.promo.applied ? 'applied.' : html`not applied: ${cart.promo.message}`}
           </p>
           <form method="post" action="/cart/promo/remove" data-intent=${i.RemovePromo}>
             ${csrfField(csrf)}

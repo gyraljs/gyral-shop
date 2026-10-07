@@ -1,5 +1,6 @@
 import { html, nothing } from '@gyral/core';
 import { format, usd } from '../../domain/money.js';
+import { ratingStep } from './rating.js';
 import '../wishlist/toggle.js'; // registers <shop-wish-toggle> for server rendering
 
 /** What a product card shows. Matches the server's card data (services/catalog.ts). */
@@ -28,7 +29,7 @@ const price = (card: ProductCard) =>
 const rating = (card: ProductCard) =>
   card.rating === null
     ? nothing
-    : html`<p class="rating" data-component="rating" style="--rating: ${card.rating}">
+    : html`<p class="rating" data-component="rating" data-rating=${ratingStep(card.rating)}>
         <span class="stars" aria-hidden="true"></span>
         <span class="visually-hidden">Rated </span>${card.rating.toFixed(1)}<span
           class="visually-hidden"

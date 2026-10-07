@@ -2,7 +2,7 @@
 // below the fold, so its code wakes only when scrolled near. Until then (and without JS) it is
 // server HTML whose sort/page links and vote forms work on their own. Once hydrated, sorting
 // and paging load in place from the JSON endpoint, and helpful votes post without a reload.
-import { define, focus, type Next } from '@gyral/core';
+import { define, focus, prop, type Next } from '@gyral/core';
 import { request } from '@gyral/http';
 import { isReviewSort, parseReviewPage } from '../../domain/reviews.js';
 import { CSRF_META } from '../forms/csrf.js';
@@ -88,11 +88,11 @@ export const Reviews = define<State, Msg, ReviewsProps>('shop-reviews', {
   shadow: false,
   hydrate: 'visible',
   props: {
-    view: { attribute: false, required: true },
-    csrfToken: { attribute: 'csrf-token' },
-    listPath: { attribute: 'list-path', required: true },
-    notice: { attribute: false },
-    standalone: { type: Boolean, default: false },
+    view: prop.value(ReviewsViewSchema, { required: true }),
+    csrfToken: prop.string(),
+    listPath: prop.string({ required: true }),
+    notice: prop.value(v.object({ kind: v.picklist(['success', 'error']), message: v.string() })),
+    standalone: prop.boolean(),
   },
   init: (props) => ({ view: props.view, loading: false, notice: props.notice, voting: [] }),
   intent: {

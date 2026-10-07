@@ -53,7 +53,7 @@ export const devMailListPage = (messages: readonly MailSummary[]) => html`
 
 const URL_PATTERN = /(https?:\/\/[^\s<>"]+)/g;
 
-/** Plain text with http(s) URLs turned into links. Lit escapes everything else. */
+/** Plain text with http(s) URLs turned into links. Gyral's `html` escapes everything else. */
 const linkified = (text: string) =>
   text
     .split(URL_PATTERN)
@@ -81,7 +81,6 @@ export const devMailMessagePage = (message: MailDetail) => html`
         title="HTML body of “${message.subject}”"
         sandbox="allow-top-navigation-by-user-activation allow-popups"
         srcdoc=${framed(message.html)}
-        style="inline-size: 100%; block-size: 32rem; border: 1px solid currentColor;"
       ></iframe>
     </section>
     <section aria-labelledby="mail-text">

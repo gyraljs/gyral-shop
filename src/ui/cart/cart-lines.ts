@@ -1,14 +1,12 @@
 // Cart page lines (docs/product-specs/cart.md). Every control is a small POST form that works
 // without JavaScript; with it, the cart page's intents send the same fields to the store.
-import { html, nothing, repeat } from '@gyral/core';
+import { each, html, intents, nothing } from '@gyral/core';
 import { format } from '../../domain/money.js';
 import { csrfField } from '../forms/csrf.js';
 import { lineIssueMessage, type CartLine } from './model.js';
 
-export interface LineIntents {
-  readonly SetQuantity: string;
-  readonly Remove: string;
-}
+/** The cart page's line intents, as a module constant so rows stay pure (Gyral view/03). */
+const i = intents<{ readonly _tag: 'SetQuantity' } | { readonly _tag: 'Remove' }>();
 
 const optionText = (options: Readonly<Record<string, string>>) =>
   Object.entries(options)
@@ -24,9 +22,8 @@ const stepForm = (
   text: string,
   disabled: boolean,
   csrf: string,
-  intent: string,
 ) => html`
-  <form method="post" action="/cart/update" data-intent=${intent} class="step">
+  <form method="post" action="/cart/update" data-intent=${i.SetQuantity} class="step">
     ${csrfField(csrf)}
     <input type="hidden" name="sku" value=${line.sku} />
     <input type="hidden" name="quantity" value=${String(to)} />
@@ -34,7 +31,8 @@ const stepForm = (
   </form>
 `;
 
-function lineTemplate(line: CartLine, csrf: string, i: LineIntents) {
+/** One line: a pure `each` row of (line, CSRF token). */
+function lineTemplate(line: CartLine, csrf: string) {
   const id = idFor(line.sku);
   const options = optionText(line.options);
   const max = Math.max(line.maxQuantity, 1);
@@ -70,7 +68,7 @@ function lineTemplate(line: CartLine, csrf: string, i: LineIntents) {
         }
       </div>
       <div class="quantity" data-component="quantity">
-        ${stepForm(line, line.quantity - 1, `Decrease quantity of ${line.productName}`, '−', line.quantity <= 1, csrf, i.SetQuantity)}
+        ${stepForm(line, line.quantity - 1, `Decrease quantity of ${line.productName}`, '−', line.quantity <= 1, csrf)}
         <form method="post" action="/cart/update" data-intent=${i.SetQuantity} class="set">
           ${csrfField(csrf)}
           <input type="hidden" name="sku" value=${line.sku} />
@@ -88,7 +86,7 @@ function lineTemplate(line: CartLine, csrf: string, i: LineIntents) {
           />
           <button type="submit">Update</button>
         </form>
-        ${stepForm(line, line.quantity + 1, `Increase quantity of ${line.productName}`, '+', line.quantity >= line.maxQuantity, csrf, i.SetQuantity)}
+        ${stepForm(line, line.quantity + 1, `Increase quantity of ${line.productName}`, '+', line.quantity >= line.maxQuantity, csrf)}
       </div>
       <p class="line-total" data-component="price">${format(line.lineTotal)}</p>
       <form method="post" action="/cart/remove" data-intent=${i.Remove} class="remove">
@@ -100,12 +98,13 @@ function lineTemplate(line: CartLine, csrf: string, i: LineIntents) {
   `;
 }
 
-export const cartLines = (lines: readonly CartLine[], csrf: string, i: LineIntents) => html`
+export const cartLines = (lines: readonly CartLine[], csrf: string) => html`
   <ul data-component="cart-lines" class="cart-lines">
-    ${repeat(
+    ${each(
       lines,
       (l) => l.sku,
-      (l) => lineTemplate(l, csrf, i),
+      lineTemplate,
+      () => csrf,
     )}
   </ul>
 `;

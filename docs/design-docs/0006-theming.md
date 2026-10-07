@@ -139,7 +139,10 @@ production build (`pnpm build && pnpm start`), counting regions after hydration 
 department, category, product, cart, sign-in and about: with this branch before merging main,
 every light-DOM region rendered twice; after merging main (same linked Gyral), nothing is
 duplicated but each page logs one "Hydration value mismatch" (the light-DOM header), where main
-alone logs one on the category page (the listing). A Gyral fix is in progress.
+alone logs one on the category page (the listing). A Gyral fix is in progress. **Resolved:**
+fixed in Gyral 0.2 and gone for good with 0.3's own hydration (ADR 0005, Gyral 0.3 addendum):
+`smoke:prod` checks every page's production build for duplicated regions, lost server nodes and
+console warnings.
 
 ## Addendum: switching (shop-2w6.3, 2026-10-05)
 

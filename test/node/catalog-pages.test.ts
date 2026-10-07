@@ -7,10 +7,10 @@ import {
 } from '../../src/db/repos/catalog.js';
 import { PAGE_SIZE } from '../../src/domain/listing.js';
 import { testApp } from '../support/app.js';
-import { stableHtml } from '../support/fixtures.js';
+import { stableHtml, startTag } from '../support/fixtures.js';
 import { addProducts, archiveOne, firstCategory } from '../support/catalog.js';
 
-/** Collapses Lit's comment markers so assertions can read rendered text. */
+/** Drops comments (Gyral's anchors and development markers) so assertions read text. */
 const text = (html: string) => html.replace(/<!--[^>]*-->/g, '');
 
 describe('catalog repository', () => {
@@ -63,7 +63,7 @@ describe('department page', () => {
     expect(body).toContain('<h1>Electronics</h1>');
     expect(body).toContain('<link rel="canonical" href="http://localhost/d/electronics"');
     expect(body).toMatch(
-      /<li data-component="category-tile">\s*<a href="\/c\/electronics\/[a-z-]+">\s*<img\s+src="\/img\/p\/[^"]+"\s+alt=""[^>]*>\s*<span class="name">/,
+      /<li data-component="category-tile">\s*<a href="\/c\/electronics\/[a-z-]+">\s*<img(?=[^>]*\ssrc="\/img\/p\/[^"]+")(?=[^>]*\salt="")[^>]*>\s*<span class="name">/,
     );
     expect(body).toContain('2 products');
     expect(body).toContain('Top rated in Electronics');
@@ -113,8 +113,8 @@ describe('category page', () => {
     expect(second.match(/class="product-card"/g)).toHaveLength(24);
     expect(second).toContain(`<link rel="canonical" href="http://localhost${base}?page=2"`);
     expect(second).toContain(`(page 2) — Gyral Goods</title>`);
-    expect(second).toContain(`href="${base}" rel="prev"`);
-    expect(second).toContain(`href="${base}?page=3" rel="next"`);
+    expect(second).toMatch(startTag('a', { href: base, rel: 'prev' }));
+    expect(second).toMatch(startTag('a', { href: `${base}?page=3`, rel: 'next' }));
     expect(second).toMatch(/aria-label="Page 2"\s*aria-current="page"/);
 
     const third = text(await (await get(`${base}?page=3`)).text());

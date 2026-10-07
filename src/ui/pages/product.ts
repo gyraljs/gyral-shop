@@ -1,5 +1,6 @@
 import { html, nothing } from '@gyral/core';
 import { breadcrumbs, type Crumb } from '../catalog/breadcrumbs.js';
+import { ratingStep } from '../catalog/rating.js';
 import { cardGrid, type ProductCard } from '../catalog/product-card.js';
 import type { BuyBoxVariant } from '../product/buy-box.js';
 import type { GalleryImage } from '../product/gallery.js';
@@ -48,7 +49,7 @@ export const productCrumbs = (view: ProductView): Crumb[] => [
 
 const stars = (rating: number, label: string) => html`
   <span class="rating">
-    <span class="stars" aria-hidden="true" style="--rating: ${rating}"></span>
+    <span class="stars" aria-hidden="true" data-rating=${ratingStep(rating)}></span>
     <span class="visually-hidden">${label}</span>
   </span>
 `;
@@ -107,8 +108,8 @@ export const productPage = (view: ProductView, options: ProductPageOptions = {})
       <shop-buy-box
         data-region="buy-box"
         .variants=${view.variants}
-        action=${options.action ?? nothing}
-        csrf=${options.csrf ?? nothing}
+        action=${options.action}
+        csrf=${options.csrf}
       ></shop-buy-box>
       <shop-wish-toggle
         class="product-wish"

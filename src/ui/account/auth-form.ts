@@ -7,6 +7,7 @@ import {
   html,
   invalid,
   nothing,
+  prop,
   redirectedTo,
   type Command,
   type FormFields,
@@ -30,6 +31,9 @@ export interface AuthProps {
   readonly next?: string;
 }
 
+/** The props of the sign-in and registration elements. */
+export const authProps = { csrfToken: prop.string(), next: prop.string() };
+
 export type SignedIn = { readonly _tag: 'SignedIn'; readonly location: string };
 export type Failed = { readonly _tag: 'Failed'; readonly message: string };
 
@@ -38,8 +42,16 @@ export const initialAuthState = (): AuthState => ({ values: {}, errors: {}, pend
 const refill = (values: FormFields = {}): FormFields =>
   Object.fromEntries(Object.entries(values).filter(([key]) => !SECRET_FIELDS.has(key)));
 
+/**
+ * A submission is on its way. The fields keep what the user typed: Gyral writes a control only
+ * when the model's value for it changes (view/02-bindings.md "Live form state").
+ */
+export const submitting = (s: AuthState): AuthState => ({ ...s, errors: {}, pending: true });
+
 export const rejected = (s: AuthState, m: IntentRejected): AuthState => ({
-  values: refill(m.values),
+  // The server's copy of what was sent (never passwords). A rejection without one changes no
+  // value, so what the user typed stays in the fields.
+  values: m.values === undefined ? s.values : refill(m.values),
   errors: fieldErrors(m.issues),
   pending: false,
 });
@@ -113,16 +125,14 @@ export const fieldView = (s: AuthState, f: FieldSpec) => {
       name=${f.name}
       type=${f.type}
       autocomplete=${f.autocomplete}
-      minlength=${f.minlength ?? nothing}
-      maxlength=${f.maxlength ?? nothing}
+      minlength=${f.minlength}
+      maxlength=${f.maxlength}
       required
-      .value=${f.type === 'password' ? '' : text(s.values, f.name)}
       value=${f.type === 'password' ? nothing : text(s.values, f.name)}
       aria-describedby=${described}
-      aria-invalid=${errors === undefined ? nothing : 'true'}
       ${invalid(errors)}
     />
-    <span id=${`${id}-error`} class="error">${errors?.join(' ') ?? nothing}</span>
+    <span id=${`${id}-error`} class="error">${errors?.join(' ')}</span>
   </p>`;
 };
 

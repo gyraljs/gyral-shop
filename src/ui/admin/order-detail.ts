@@ -1,7 +1,7 @@
 // <shop-admin-order>: one order with its lines, totals, address, payment and timeline, and the
 // actions the state machine allows now: ship, mark delivered, cancel and refund, or refund an
 // amount (docs/product-specs/admin.md, "Orders").
-import { define, fieldErrors, form, html, nothing, type IntentRejected } from '@gyral/core';
+import { define, fieldErrors, form, html, nothing, prop, type IntentRejected } from '@gyral/core';
 import { get, submitForm, type HttpError } from '@gyral/http';
 import * as v from 'valibot';
 import {
@@ -177,9 +177,16 @@ function details(o: AdminOrder) {
 
 export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>('shop-admin-order', {
   shadow: false,
-  props: { number: { type: String, required: true } },
+  props: { number: prop.string({ required: true }) },
   init: (props) => [
-    { number: props.number, order: null, error: null, notice: null, errors: {}, pending: null },
+    {
+      number: props.number,
+      order: null,
+      error: null,
+      notice: null,
+      errors: {},
+      pending: null,
+    },
     [load(props.number)],
   ],
   intent: {
@@ -226,7 +233,7 @@ export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>('shop-a
       ${s.order === null ? nothing : html`<p>Placed <time datetime=${s.order.placedAt}>${dateTime.format(new Date(s.order.placedAt))}</time></p>`}
       ${s.error === null ? nothing : html`<p role="alert" data-component="notice" data-kind="error">${s.error}</p>`}
       <p role="status" data-component="notice" data-kind="success" ?hidden=${s.notice === null}>
-        ${s.notice ?? nothing}
+        ${s.notice}
       </p>
       ${
         s.order === null

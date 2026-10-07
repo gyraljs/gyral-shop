@@ -6,6 +6,8 @@ import { productionServer, type FetchApp } from '@gyral/ssr/static';
 import type { Config } from '../config/env.js';
 import type { Db } from '../db/client.js';
 import { createApp } from './app.js';
+import { staticPolicy } from './csp.js';
+import type { Preload } from './route-chunks.js';
 import { securityHeaderValues } from './security/headers.js';
 
 export const CLIENT_ENTRY_SOURCE = 'src/client/entry.ts';
@@ -18,10 +20,21 @@ export interface ProdOptions {
     Partial<Pick<Config, 'STORE_TIME_ZONE'>>;
 }
 
+/** The built entry and the modules to preload with it (from the Vite manifest). */
+export interface ClientAssets {
+  readonly clientEntry: string;
+  readonly modulepreload: readonly string[];
+  /**
+   * `modulepreload` plus route chunks (src/server/route-chunks.ts). The prerender step has none:
+   * the static content pages render no lazily loaded component.
+   */
+  readonly preload?: Preload;
+}
+
 /** The app as production runs it, shared by `pnpm start` and the prerender step. */
-export const productionApp = (options: Omit<ProdOptions, 'distDir'>, clientEntry: string) =>
+export const productionApp = (options: Omit<ProdOptions, 'distDir'>, assets: ClientAssets) =>
   createApp({
-    clientEntry,
+    ...assets,
     db: options.db,
     mode: 'production',
     security: { dev: false },
@@ -39,15 +52,17 @@ export async function createProdApp(options: ProdOptions): Promise<FetchApp> {
   const served = await productionServer({
     distDir: options.distDir,
     entry: CLIENT_ENTRY_SOURCE,
-    createApp: ({ clientEntry }) => productionApp(options, clientEntry),
+    createApp: (assets) => productionApp(options, assets),
   });
+  // Every component module is imported by now (the app imports them statically).
+  const csp = await staticPolicy();
   return {
     fetch: async (request) => {
       const response = await served.fetch(request);
       if (response.headers.has('content-security-policy')) return response; // came from the app
       const headers = new Headers(response.headers);
       const https = new URL(request.url).protocol === 'https:';
-      for (const [name, value] of Object.entries(securityHeaderValues({ dev: false, https }))) {
+      for (const [name, value] of Object.entries(securityHeaderValues({ https, csp }))) {
         headers.set(name, value);
       }
       return new Response(response.body, { status: response.status, headers });

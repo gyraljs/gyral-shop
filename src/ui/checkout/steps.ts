@@ -1,7 +1,7 @@
 // The checkout steps' markup: a summary with an Edit link when done, the form when open, a
 // heading only when locked. The server renders the same markup, so the no-JS flow is the same
 // page reloaded after each step.
-import { html, invalid, liveBoolean, nothing, type IntentNames } from '@gyral/core';
+import { html, invalid, nothing, type IntentNames } from '@gyral/core';
 import { addressLines, cardLabel, type CheckoutStep } from '../../domain/checkout.js';
 import { format } from '../../domain/money.js';
 import { STATE_CODES } from '../../domain/tax.js';
@@ -26,7 +26,7 @@ const value = (s: CheckoutState, field: string, fallback = ''): string => {
 
 const errorsOf = (s: CheckoutState, intent: string, field: string) => s.errors[intent]?.[field];
 
-/** A labelled input with its error message (aria-invalid also as an attribute for no-JS). */
+/** A labelled input with its error message. */
 function field(
   s: CheckoutState,
   intent: string,
@@ -51,16 +51,15 @@ function field(
       id=${id}
       name=${f.name}
       type=${f.type ?? 'text'}
-      autocomplete=${f.autocomplete ?? nothing}
-      inputmode=${f.inputmode ?? nothing}
-      placeholder=${f.placeholder ?? nothing}
+      autocomplete=${f.autocomplete}
+      inputmode=${f.inputmode}
+      placeholder=${f.placeholder}
       ?required=${f.required === true}
       value=${f.value}
       aria-describedby=${`${id}-error`}
-      aria-invalid=${errors === undefined ? nothing : 'true'}
       ${invalid(errors)}
     />
-    <span id=${`${id}-error`} class="error">${errors?.join(' ') ?? nothing}</span>
+    <span id=${`${id}-error`} class="error">${errors?.join(' ')}</span>
   </p>`;
 }
 
@@ -121,18 +120,13 @@ function addressForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string)
                     type="radio"
                     name="addressId"
                     value=${String(saved.id)}
-                    ?checked=${liveBoolean(chosen === String(saved.id))}
+                    ?checked=${chosen === String(saved.id)}
                   />
                   <span>${addressLines(saved).join(', ')}</span>
                 </label>`,
             )}
             <label class="choice">
-              <input
-                type="radio"
-                name="addressId"
-                value="new"
-                ?checked=${liveBoolean(chosen === 'new')}
-              />
+              <input type="radio" name="addressId" value="new" ?checked=${chosen === 'new'} />
               <span>A new address (below)</span>
             </label>
           </fieldset>`
@@ -146,14 +140,13 @@ function addressForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string)
       <p class="field">
         <label for="Address-state">State</label>
         <select id="Address-state" name="state" autocomplete="shipping address-level1">
-          <option value="" ?selected=${liveBoolean(state === '')}>Choose…</option>
+          <option value="" ?selected=${state === ''}>Choose…</option>
           ${STATE_CODES.map(
-            (code) =>
-              html`<option value=${code} ?selected=${liveBoolean(state === code)}>${code}</option>`,
+            (code) => html`<option value=${code} ?selected=${state === code}>${code}</option>`,
           )}
         </select>
         <span id="Address-state-error" class="error"
-          >${errorsOf(s, 'Address', 'state')?.join(' ') ?? nothing}</span
+          >${errorsOf(s, 'Address', 'state')?.join(' ')}</span
         >
       </p>
       ${field(s, 'Address', { name: 'postalCode', label: 'ZIP code', autocomplete: 'shipping postal-code', inputmode: 'numeric', value: v('postalCode', a?.postalCode), required: true })}
@@ -185,12 +178,7 @@ function shippingForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string
       ${view.shippingOptions.map(
         (o) =>
           html`<label class="choice" data-component="shipping-option">
-            <input
-              type="radio"
-              name="method"
-              value=${o.method}
-              ?checked=${liveBoolean(chosen === o.method)}
-            />
+            <input type="radio" name="method" value=${o.method} ?checked=${chosen === o.method} />
             <span class="label">${o.label}</span>
             <span class="estimate">${days(o.days)}</span>
             <span class="amount">${o.price.cents === 0 ? 'Free' : format(o.price)}</span>
@@ -241,11 +229,11 @@ function reviewForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string) 
         name="terms"
         required
         aria-describedby="PlaceOrder-terms-error"
-        aria-invalid=${errors === undefined ? nothing : 'true'}
+        ${invalid(errors)}
       />
       <span>I accept the <a href="/terms">terms of sale</a>.</span></label
     >
-    <span id="PlaceOrder-terms-error" class="error">${errors?.join(' ') ?? nothing}</span>
+    <span id="PlaceOrder-terms-error" class="error">${errors?.join(' ')}</span>
     ${formError(s, 'PlaceOrder')} ${submit(s, 'Place order')}
   </form>`;
 }
@@ -254,7 +242,7 @@ function reviewForm(s: CheckoutState, view: CheckoutClient, i: I, csrf: string) 
 function stepSummary(step: CheckoutStep, view: CheckoutClient) {
   switch (step) {
     case 'contact':
-      return html`<p>${view.email ?? nothing}</p>`;
+      return html`<p>${view.email}</p>`;
     case 'address':
       return view.address === undefined
         ? nothing

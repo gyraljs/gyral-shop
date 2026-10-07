@@ -5,7 +5,7 @@ import { products } from '../../src/db/schema.js';
 import { DEFAULT_LISTING, type ListingState } from '../../src/domain/listing.js';
 import { categoryPage } from '../../src/services/departments.js';
 import { testApp } from '../support/app.js';
-import { stableHtml } from '../support/fixtures.js';
+import { stableHtml, startTag } from '../support/fixtures.js';
 import { fixtureCategory, names } from '../support/listing.js';
 
 const text = (html: string) => html.replace(/<!--[^>]*-->/g, '');
@@ -117,11 +117,11 @@ describe('listing routes', () => {
     expect(body).toContain('<meta name="robots" content="noindex"');
     expect(body).toContain(`<link rel="canonical" href="http://localhost${path}"`);
     expect(body).toContain('Showing 1–3 of 3 products');
-    expect(body).toMatch(/name="brand"\s+value="zenith"\s+checked/);
-    expect(body).toMatch(/name="stock"\s+value="1"\s+checked/);
+    expect(body).toMatch(startTag('input', { name: 'brand', value: 'zenith', checked: true }));
+    expect(body).toMatch(startTag('input', { name: 'stock', value: '1', checked: true }));
     // Unselected boxes must carry no `checked` attribute at all (`checked="false"` checks them).
-    expect(body).toMatch(/name="brand"\s+value="acme"\s*\/>/);
-    expect(body).toMatch(/name="sale"\s+value="1"\s*\/>/);
+    expect(body).toMatch(startTag('input', { name: 'brand', value: 'acme', checked: false }));
+    expect(body).toMatch(startTag('input', { name: 'sale', value: '1', checked: false }));
     expect(body).not.toContain('checked="');
   });
 
@@ -129,7 +129,7 @@ describe('listing routes', () => {
     const { db, get } = await testApp();
     const { path } = await fixtureCategory(db);
     const plain = text(await (await get(path)).text());
-    expect(plain).toMatch(/<details class="filters-panel" data-component="filters-panel"\s*>/);
+    expect(plain).toMatch(startTag('details', { class: 'filters-panel', open: false }));
     expect(plain).toMatch(/<summary>\s*Filter and\s+sort\s*<\/summary>/);
 
     // The form submits fields in its own order; the server redirects to the canonical query.
@@ -138,9 +138,7 @@ describe('listing routes', () => {
     if (res.status === 301 && location !== null) res = await get(location);
     expect(res.status).toBe(200);
     const filtered = text(await res.text());
-    expect(filtered).toMatch(
-      /<details class="filters-panel" data-component="filters-panel"\s+open/,
-    );
+    expect(filtered).toMatch(startTag('details', { class: 'filters-panel', open: true }));
     expect(filtered).toContain('<span class="count">(2 active)</span>'); // sort isn't a filter
   });
 
@@ -157,7 +155,7 @@ describe('listing routes', () => {
         Array.from({ length: 30 }, (_, n) => ({ ...copy, slug: `zenith-extra-${String(n)}` })),
       );
     const body = text(await (await get(`${path}?brand=zenith&page=2`)).text());
-    expect(body).toContain(`href="${path}?brand=zenith" rel="prev"`);
+    expect(body).toMatch(startTag('a', { href: `${path}?brand=zenith`, rel: 'prev' }));
     expect(body).toContain('Showing 25–34 of 34 products');
   });
 

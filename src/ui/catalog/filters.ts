@@ -1,7 +1,7 @@
 // The filter and sort form of a listing. A plain GET form to the listing's own URL, so it
 // works without JavaScript; with JavaScript the listing component parses the same form into
 // a listing state (intents named by the caller) and updates results without a reload.
-import { html, live, liveBoolean, nothing } from '@gyral/core';
+import { html, nothing } from '@gyral/core';
 import {
   activeFilterCount,
   RATINGS,
@@ -16,6 +16,8 @@ export interface FilterIntents {
   readonly refine: string;
   /** On links that go to another state of this listing. */
   readonly go: string;
+  /** On the disclosure (its `toggle` event), so the model knows whether it is open. */
+  readonly toggle: string;
 }
 
 const price = (name: 'min' | 'max', label: string, value: number | null) => html`
@@ -30,7 +32,7 @@ const price = (name: 'min' | 'max', label: string, value: number | null) => html
         max="999999"
         step="1"
         inputmode="numeric"
-        .value=${live(value === null ? '' : String(value))}
+        value=${value === null ? '' : String(value)}
       />
     </span>
   </label>
@@ -39,10 +41,10 @@ const price = (name: 'min' | 'max', label: string, value: number | null) => html
 const sortField = (state: ListingState, relevanceLabel: string | undefined) => html`
   <p class="sort-field">
     <label for="sort">Sort by</label>
-    <select id="sort" name="sort" .value=${live(state.sort)}>
+    <select id="sort" name="sort">
       ${SORTS.map(
         (sort) =>
-          html`<option value=${sort} ?selected=${liveBoolean(sort === state.sort)}>
+          html`<option value=${sort} ?selected=${sort === state.sort}>
             ${sort === 'relevance' && relevanceLabel !== undefined ? relevanceLabel : SORT_LABELS[sort]}
           </option>`,
       )}
@@ -64,7 +66,7 @@ const brandFieldset = (view: ListingView) =>
                     type="checkbox"
                     name="brand"
                     value=${brand.slug}
-                    ?checked=${liveBoolean(view.state.brands.includes(brand.slug))}
+                    ?checked=${view.state.brands.includes(brand.slug)}
                   />
                   ${brand.name} <span class="count">(${brand.count})</span>
                 </label>
@@ -79,13 +81,8 @@ const ratingFieldset = (state: ListingState) => html`
     <ul class="options">
       <li>
         <label
-          ><input
-            type="radio"
-            name="rating"
-            value=""
-            ?checked=${liveBoolean(state.rating === null)}
-          />
-          Any rating</label
+          ><input type="radio" name="rating" value="" ?checked=${state.rating === null} /> Any
+          rating</label
         >
       </li>
       ${RATINGS.map(
@@ -96,7 +93,7 @@ const ratingFieldset = (state: ListingState) => html`
                 type="radio"
                 name="rating"
                 value=${rating}
-                ?checked=${liveBoolean(state.rating === rating)}
+                ?checked=${state.rating === rating}
               />
               ${rating} ${rating === 1 ? 'star' : 'stars'} &amp; up</label
             >
@@ -106,8 +103,18 @@ const ratingFieldset = (state: ListingState) => html`
   </fieldset>
 `;
 
-/** Filter and sort controls for a listing view. */
-export const filtersForm = (view: ListingView, intents: FilterIntents) => {
+/**
+ * Filter and sort controls for a listing view. `open` is the disclosure as the shopper left it
+ * (`undefined`: not touched yet). Gyral writes `?open` whenever its value changes
+ * (view/02-bindings.md), so without the shopper's own toggles in the model, unticking the last
+ * filter (active count 1 → 0) would close the panel under their hand, and going Back to a
+ * filtered URL would reopen a panel they had closed.
+ */
+export const filtersForm = (
+  view: ListingView,
+  intents: FilterIntents,
+  open: boolean | undefined,
+) => {
   const { state } = view;
   const active = activeFilterCount(state);
   // A disclosure so filters don't push results off narrow screens; wide containers show it
@@ -124,7 +131,13 @@ export const filtersForm = (view: ListingView, intents: FilterIntents) => {
       ${fixedParams(view).map(
         ([name, value]) => html`<input type="hidden" name=${name} value=${value} />`,
       )}
-      <details class="filters-panel" data-component="filters-panel" ?open=${active > 0}>
+      <details
+        class="filters-panel"
+        data-component="filters-panel"
+        ?open=${open ?? active > 0}
+        data-intent=${intents.toggle}
+        data-intent-on="toggle"
+      >
         <summary>
           Filter and
           sort${active > 0 ? html` <span class="count">(${active} active)</span>` : nothing}
@@ -143,24 +156,14 @@ export const filtersForm = (view: ListingView, intents: FilterIntents) => {
             <ul class="options">
               <li>
                 <label
-                  ><input
-                    type="checkbox"
-                    name="stock"
-                    value="1"
-                    ?checked=${liveBoolean(state.inStock)}
-                  />
-                  In stock</label
+                  ><input type="checkbox" name="stock" value="1" ?checked=${state.inStock} /> In
+                  stock</label
                 >
               </li>
               <li>
                 <label
-                  ><input
-                    type="checkbox"
-                    name="sale"
-                    value="1"
-                    ?checked=${liveBoolean(state.onSale)}
-                  />
-                  On sale</label
+                  ><input type="checkbox" name="sale" value="1" ?checked=${state.onSale} /> On
+                  sale</label
                 >
               </li>
             </ul>

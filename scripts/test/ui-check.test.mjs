@@ -81,7 +81,7 @@ describe('scenarios', () => {
 describe('findings', () => {
   it('filters expected console noise and allowed patterns', () => {
     const entries = [
-      { type: 'warning', text: 'Lit is in dev mode. Not recommended for production!' },
+      { type: 'warning', text: '[vite] server connection lost. Polling for restart...' },
       { type: 'error', text: 'Failed to load resource: the server responded with a status of 404' },
       { type: 'error', text: 'Boom' },
       { type: 'log', text: 'hello' },

@@ -2,7 +2,7 @@
 // (theme contract, ADR 0006): a plain form post without JavaScript; with it, an optimistic
 // toggle through the wishlist store. Guests get a link that remembers the product and asks
 // them to sign in (routes/wishlist.ts), after which it is saved.
-import { define, html, nothing, send, type Stateless } from '@gyral/core';
+import { define, html, nothing, prop, send, type Stateless } from '@gyral/core';
 import { csrfField } from '../forms/csrf.js';
 import { wishlistStore } from './store.js';
 
@@ -21,9 +21,9 @@ const heart = (saved: boolean) =>
 export const WishToggle = define<Stateless, Msg, ToggleProps>('shop-wish-toggle', {
   shadow: false,
   props: {
-    slug: { type: String, required: true },
-    name: { type: String, required: true },
-    next: { type: String, default: '' },
+    slug: prop.string({ required: true }),
+    name: prop.string({ required: true }),
+    next: prop.string({ default: '' }),
   },
   stores: [wishlistStore],
   intent: { Toggle: () => ({ _tag: 'Toggle' }) },

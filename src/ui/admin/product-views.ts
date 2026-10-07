@@ -9,7 +9,15 @@ import {
   type ProductEdit,
   type Taxonomy,
 } from '../../domain/admin.js';
-import { formError, formKey, selectField, textArea, textField, type Errors } from './fields.js';
+import {
+  formError,
+  formKey,
+  freshAfterSave,
+  selectField,
+  textArea,
+  textField,
+  type Errors,
+} from './fields.js';
 import { dateTime } from './format.js';
 import type { ProductEditMsg, ProductEditState } from './product-edit.js';
 
@@ -106,10 +114,25 @@ function archiveForm(s: ProductEditState, i: I, archived: boolean) {
   </form>`;
 }
 
+/** Adds or removes units; starts empty again after each adjustment (fields.ts). */
+function stockForm(s: ProductEditState, i: I, id: string) {
+  const stockErrors = errorsOf(s, formKey('Adjust', id));
+  return html`<form class="admin-form" data-intent=${i.Adjust} data-component="stock-form">
+    <input type="hidden" name="variantId" value=${id} />
+    ${formError(stockErrors)}
+    <div class="admin-row">
+      ${textField({ form: `s${id}`, name: 'delta', label: 'Add or remove units', hint: 'Negative numbers remove stock.', errors: stockErrors, value: '', inputmode: 'numeric', required: true })}
+      ${textField({ form: `s${id}`, name: 'reason', label: 'Reason', hint: 'e.g. Delivery, Damaged, Stock count', errors: stockErrors, value: '', required: true })}
+    </div>
+    <div class="admin-actions">
+      <button type="submit" ?disabled=${s.pending === formKey('Adjust', id)}>Adjust stock</button>
+    </div>
+  </form>`;
+}
+
 function variantForms(s: ProductEditState, i: I, variant: ProductEdit['variants'][number]) {
   const id = String(variant.id);
   const editErrors = errorsOf(s, formKey('SaveVariant', variant.id));
-  const stockErrors = errorsOf(s, formKey('Adjust', variant.id));
   const label = optionsLabel(variant.options);
   return html`<article
     class="admin-variant"
@@ -143,22 +166,11 @@ function variantForms(s: ProductEditState, i: I, variant: ProductEdit['variants'
         </button>
       </div>
     </form>
-    <form class="admin-form" data-intent=${i.Adjust} data-component="stock-form">
-      <input type="hidden" name="variantId" value=${id} />
-      ${formError(stockErrors)}
-      <div class="admin-row">
-        ${textField({ form: `s${id}`, name: 'delta', label: 'Add or remove units', hint: 'Negative numbers remove stock.', errors: stockErrors, value: '', inputmode: 'numeric', required: true })}
-        ${textField({ form: `s${id}`, name: 'reason', label: 'Reason', hint: 'e.g. Delivery, Damaged, Stock count', errors: stockErrors, value: '', required: true })}
-      </div>
-      <div class="admin-actions">
-        <button type="submit" ?disabled=${s.pending === formKey('Adjust', variant.id)}>
-          Adjust stock
-        </button>
-      </div>
-    </form>
+    ${freshAfterSave(formKey('Adjust', variant.id), s.saves, () => stockForm(s, i, id))}
   </article>`;
 }
 
+/** Starts empty again after each new variant (fields.ts `freshAfterSave`). */
 function addVariantForm(s: ProductEditState, i: I) {
   const errors = errorsOf(s, formKey('AddVariant'));
   return html`<form
@@ -228,7 +240,7 @@ export function productEditView(s: ProductEditState, i: I) {
     ${p === undefined ? nothing : html`<p><a href=${`/p/${p.slug}`}>View in the store</a></p>`}
     ${s.error === null ? nothing : html`<p role="alert" data-component="notice" data-kind="error">${s.error}</p>`}
     <p role="status" data-component="notice" data-kind="success" ?hidden=${s.notice === null}>
-      ${s.notice ?? nothing}
+      ${s.notice}
     </p>
     ${
       s.taxonomy === null || (s.id !== 0 && s.edit === null)
@@ -242,7 +254,7 @@ export function productEditView(s: ProductEditState, i: I) {
                 : html`<section aria-labelledby="variants-heading" data-region="admin-variants">
                       <h2 id="variants-heading">Variants and stock</h2>
                       ${s.edit.variants.map((variant) => variantForms(s, i, variant))}
-                      ${addVariantForm(s, i)}
+                      ${freshAfterSave(formKey('AddVariant'), s.saves, () => addVariantForm(s, i))}
                     </section>
                     ${inventoryLog(s.edit.log)}
                     <section aria-label="Archive" data-region="admin-archive">

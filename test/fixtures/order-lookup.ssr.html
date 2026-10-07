@@ -1,11 +1,4 @@
-<!doctype html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Find your order — Gyral Goods</title>
-    
-    <style>
+<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Find your order — Gyral Goods</title><style>
 @layer reset, tokens, base, components, theme;
 
 @layer reset {
@@ -258,6 +251,57 @@
   .price.sale ins { color: var(--sale); text-decoration: none; }
   .price.sale del { color: var(--ink-muted); font-weight: 400; font-size: 0.9rem; margin-inline-start: var(--space-1); }
   .rating { display: flex; align-items: center; gap: var(--space-1); font-size: 0.9rem; }
+  [data-rating="0.0"] { --rating: 0.0; }
+[data-rating="0.1"] { --rating: 0.1; }
+[data-rating="0.2"] { --rating: 0.2; }
+[data-rating="0.3"] { --rating: 0.3; }
+[data-rating="0.4"] { --rating: 0.4; }
+[data-rating="0.5"] { --rating: 0.5; }
+[data-rating="0.6"] { --rating: 0.6; }
+[data-rating="0.7"] { --rating: 0.7; }
+[data-rating="0.8"] { --rating: 0.8; }
+[data-rating="0.9"] { --rating: 0.9; }
+[data-rating="1.0"] { --rating: 1.0; }
+[data-rating="1.1"] { --rating: 1.1; }
+[data-rating="1.2"] { --rating: 1.2; }
+[data-rating="1.3"] { --rating: 1.3; }
+[data-rating="1.4"] { --rating: 1.4; }
+[data-rating="1.5"] { --rating: 1.5; }
+[data-rating="1.6"] { --rating: 1.6; }
+[data-rating="1.7"] { --rating: 1.7; }
+[data-rating="1.8"] { --rating: 1.8; }
+[data-rating="1.9"] { --rating: 1.9; }
+[data-rating="2.0"] { --rating: 2.0; }
+[data-rating="2.1"] { --rating: 2.1; }
+[data-rating="2.2"] { --rating: 2.2; }
+[data-rating="2.3"] { --rating: 2.3; }
+[data-rating="2.4"] { --rating: 2.4; }
+[data-rating="2.5"] { --rating: 2.5; }
+[data-rating="2.6"] { --rating: 2.6; }
+[data-rating="2.7"] { --rating: 2.7; }
+[data-rating="2.8"] { --rating: 2.8; }
+[data-rating="2.9"] { --rating: 2.9; }
+[data-rating="3.0"] { --rating: 3.0; }
+[data-rating="3.1"] { --rating: 3.1; }
+[data-rating="3.2"] { --rating: 3.2; }
+[data-rating="3.3"] { --rating: 3.3; }
+[data-rating="3.4"] { --rating: 3.4; }
+[data-rating="3.5"] { --rating: 3.5; }
+[data-rating="3.6"] { --rating: 3.6; }
+[data-rating="3.7"] { --rating: 3.7; }
+[data-rating="3.8"] { --rating: 3.8; }
+[data-rating="3.9"] { --rating: 3.9; }
+[data-rating="4.0"] { --rating: 4.0; }
+[data-rating="4.1"] { --rating: 4.1; }
+[data-rating="4.2"] { --rating: 4.2; }
+[data-rating="4.3"] { --rating: 4.3; }
+[data-rating="4.4"] { --rating: 4.4; }
+[data-rating="4.5"] { --rating: 4.5; }
+[data-rating="4.6"] { --rating: 4.6; }
+[data-rating="4.7"] { --rating: 4.7; }
+[data-rating="4.8"] { --rating: 4.8; }
+[data-rating="4.9"] { --rating: 4.9; }
+[data-rating="5.0"] { --rating: 5.0; }
   .stars {
     --pct: calc(var(--rating) / 5 * 100%);
     inline-size: 5.5em; block-size: 1em;
@@ -825,6 +869,7 @@ shop-cart-page {
   @media (prefers-reduced-motion: reduce) {
     [data-component="faq"] details::details-content { transition: none; }
   }
+  .dev-mail-message iframe { inline-size: 100%; block-size: 32rem; border: 1px solid currentColor; }
   [data-region="error"] { display: grid; gap: var(--space-3); max-inline-size: 42rem; }
   [data-region="error"] h1 { margin: 0; }
   [data-region="error"] form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
@@ -1329,38 +1374,7 @@ shop-checkout {
   .theme-status:empty { display: none; }
   .theme-status { margin: 0; color: var(--ink-muted); }
 }
-</style><!--lit-part E9YpOVPJyTs=--><link rel="icon" href="/favicon.svg" type="image/svg+xml" /> <!--lit-part ktzex/F8npc=--><!--lit-node 0--><link
-    rel="stylesheet"
-    id="theme-css"
-    href="/themes/default.css"
-    data-theme="default"
-  /><!--/lit-part--> <!--lit-part--><!--/lit-part--> <!--lit-part 0jY8k+SQbEM=--><meta name="robots" content="noindex" /><!--/lit-part--> <!--lit-part NeGwkYvcW70=--><!--lit-node 0--><meta name="csrf-token" content="test-csrf-token" /><!--/lit-part--> <!--lit-part--><!--/lit-part--> <!--lit-part--><!--/lit-part--> <!--lit-part--><!--/lit-part--><?><!--/lit-part--><script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[],"itemCount":0,"canCheckout":false,"totals":{"subtotal":{"cents":0,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":0,"currency":"USD"}}},"inFlight":0},"wishlist":{"member":false,"slugs":[],"csrf":"","inFlight":0}}</script>
-    <script type="module" src="/src/client/entry.ts"></script>
-  </head>
-  <body>
-    <!--lit-part 2AXb4sEqIl8=--><nav class="skip-links" aria-label="Skip links"><a class="skip-link" href="#main">Skip to content</a></nav><!--lit-node 2--><shop-header
-          
-          
-          
-          
-          
-         query current data-gyral-seed="{&quot;props&quot;:{&quot;departments&quot;:[{&quot;slug&quot;:&quot;electronics&quot;,&quot;name&quot;:&quot;Electronics&quot;},{&quot;slug&quot;:&quot;grocery&quot;,&quot;name&quot;:&quot;Grocery&quot;},{&quot;slug&quot;:&quot;toys-games&quot;,&quot;name&quot;:&quot;Toys &amp; Games&quot;}]}}" data-gyral-light><!--gyral:lit-part t0OdRO5Irfs=--><header data-region="header"><div class="bar" data-region="masthead"><a class="brand" href="/" aria-label="Gyral Goods home" data-component="brand"
-          >Gyral <span>Goods</span></a
-        > <!--gyral:lit-node 4--><shop-search  query data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light defer-hydration><!--gyral:lit-part F7wwSlD6HNo=--><search data-region="search"><!--gyral:lit-node 1--><form action="/search" method="get" role="search" data-intent="Submit"><label for="q" class="visually-hidden">Search products</label> <!--gyral:lit-node 3--><span class="combo" data-intent="Blurred" data-intent-on="focusout"> <!--gyral:lit-node 4--><span class="keys" data-intent="Key" data-intent-on="keydown"> <!--gyral:lit-node 5--><input
-              id="q"
-              name="q"
-              type="search"
-              placeholder="Search everything"
-              autocomplete="off"
-              
-              
-              
-              
-              
-              value=""
-              value=""
-              data-intent="Typed"
-            /> </span> <!--gyral:lit-part--><!--gyral:/lit-part--> </span> <button type="submit">Search</button> <!--gyral:lit-part--><!--gyral:/lit-part--></form></search><!--gyral:/lit-part--></shop-search><nav class="utility" aria-label="Account and cart" data-region="account"><!--gyral:lit-part OJ0/gA8KMBg=--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!--gyral:/lit-part--> <!--gyral:lit-node 7--><shop-mini-cart  data-region="cart" data-gyral-seed="{&quot;props&quot;:{}}" defer-hydration><template shadowroot="open" shadowrootmode="open"><style>
+</style><!--gyral:38tgxmhl7b--><link rel="icon" href="/favicon.svg" type="image/svg+xml"><!--gyral:1kf6tcv0bmq--><link rel="stylesheet" id="theme-css" href="/themes/default.css" data-theme="default"><!----> <!----> <!--gyral:19v8zwio4q9--><meta name="robots" content="noindex"><!----> <!--gyral:kgezmy7qtc--><meta name="csrf-token" content="test-csrf-token"><!----> <!----> <!----> <script type="application/json" data-gyral-stores>{"cart":{"cart":{"lines":[],"itemCount":0,"canCheckout":false,"totals":{"subtotal":{"cents":0,"currency":"USD"},"savings":{"cents":0,"currency":"USD"},"discount":{"cents":0,"currency":"USD"},"shipping":{"cents":0,"currency":"USD"},"tax":{"cents":0,"currency":"USD"},"taxPending":true,"total":{"cents":0,"currency":"USD"}}},"inFlight":0},"wishlist":{"member":false,"slugs":[],"csrf":"","inFlight":0}}</script><!--gyral:kq7j8fgdjg--><script type="module" src="/src/client/entry.ts"></script></head><body><!--gyral:1087ki82645--><nav class="skip-links" aria-label="Skip links"><a class="skip-link" href="#main">Skip to content</a></nav><shop-header query="" current="" data-gyral-light data-gyral-seed='{"props":{"departments":[{"slug":"electronics","name":"Electronics"},{"slug":"grocery","name":"Grocery"},{"slug":"toys-games","name":"Toys &amp; Games"}]}}'><!--gyral:jjojclqx62--><header data-region="header"><div class="bar" data-region="masthead"><a class="brand" href="/" aria-label="Gyral Goods home" data-component="brand">Gyral <span>Goods</span></a> <shop-search query="" data-gyral-light data-gyral-seed='{"props":{}}'><!--gyral:4th50v782w--><search data-region="search"><form action="/search" method="get" role="search" data-intent="Submit"><label for="q" class="visually-hidden">Search products</label> <span class="combo" data-intent-on="focusout" data-intent="Blurred"> <span class="keys" data-intent-on="keydown" data-intent="Key"> <input id="q" name="q" type="search" placeholder="Search everything" autocomplete="off" value="" data-intent="Typed"> </span> <!----> </span> <button type="submit">Search</button> </form></search></shop-search><nav class="utility" aria-label="Account and cart" data-region="account"><!--gyral:1kus44je9i5--><a href="/account/login">Sign in</a> <a href="/account/register">Register</a><!----> <shop-mini-cart data-region="cart" data-gyral-seed='{"props":{}}'><template shadowrootmode="open"><style>
     @layer reset, tokens, base, components, theme;
     @layer components {
       :host {
@@ -1467,68 +1481,4 @@ shop-checkout {
         white-space: nowrap;
       }
     }
-  </style><!--lit-part LnotTO2uWNI=--><!--lit-node 0--><details class="mini-cart" part="disclosure" aria-busy="false"><summary part="summary">Cart<span class="badge" part="badge" aria-hidden="true"><!--lit-part-->0<!--/lit-part--></span
-          ><span class="visually-hidden">, <!--lit-part-->0 items<!--/lit-part--></span></summary><div class="panel" part="panel"><!--lit-part +G7B0qPP8mo=--><p>Your cart is empty.</p><!--/lit-part--></div></details><!--/lit-part--></template></shop-mini-cart></nav></div><nav class="departments" aria-label="Departments" data-region="nav"><ul><!--gyral:lit-part--><!--gyral:lit-part Yl22riAxoBs=--><li><!--gyral:lit-node 1--><a href="/d/electronics" 
-                  ><!--gyral:lit-part-->Electronics<!--gyral:/lit-part--></a
-                ></li><!--gyral:/lit-part--><!--gyral:lit-part Yl22riAxoBs=--><li><!--gyral:lit-node 1--><a href="/d/grocery" 
-                  ><!--gyral:lit-part-->Grocery<!--gyral:/lit-part--></a
-                ></li><!--gyral:/lit-part--><!--gyral:lit-part Yl22riAxoBs=--><li><!--gyral:lit-node 1--><a href="/d/toys-games" 
-                  ><!--gyral:lit-part-->Toys &amp; Games<!--gyral:/lit-part--></a
-                ></li><!--gyral:/lit-part--><!--gyral:/lit-part--></ul></nav></header><!--gyral:/lit-part--></shop-header> <!--lit-part 4beU1UUCQrU=--><!--lit-node 0--><shop-consent   mode="banner" return-to="/order/lookup?number=GG-20261004-TEST" data-gyral-seed="{&quot;props&quot;:{}}" data-gyral-light><!--gyral:lit-part uiC+52yBWL4=--><!--gyral:lit-node 0--><section
-        class="consent consent-banner"
-        data-region="consent"
-        aria-labelledby="consent-title"
-      ><h2 id="consent-title"><!--gyral:lit-part-->Cookies on Gyral Goods<!--gyral:/lit-part--></h2><p>We use strictly necessary cookies to run the store (your session, cart and security). With your permission we also count page views and add-to-cart clicks to improve the store. Nothing is shared with anyone.</p><!--gyral:lit-node 4--><form method="post" action="/consent" data-intent="Choose"><!--gyral:lit-node 5--><input type="hidden" name="return" value="/order/lookup?number=GG-20261004-TEST" /><div class="consent-actions" data-component="consent-actions"><!--gyral:lit-node 7--><button type="submit" name="choice" value="accept" >Accept all</button> <!--gyral:lit-node 8--><button type="submit" name="choice" value="reject" >Reject non-essential</button></div><!--gyral:lit-node 9--><details class="consent-custom" data-component="consent-custom" ><summary>Customize</summary><fieldset><legend>Cookie categories</legend><label> <input type="checkbox" checked disabled /> Strictly necessary <small>(always on)</small> </label> <label> <!--gyral:lit-node 17--><input
-                  type="checkbox"
-                  name="analytics"
-                  
-                /> Analytics <small>(page views and add-to-cart clicks)</small> </label></fieldset><!--gyral:lit-node 19--><button type="submit" name="choice" value="save" >Save choices</button></details></form><!--gyral:lit-part--><!--gyral:/lit-part--></section><!--gyral:/lit-part--></shop-consent><!--/lit-part--><main id="main" class="page" tabindex="-1"><!--lit-part naz5Qv//WZk=--><article class="order-page order-lookup" data-region="order-lookup" aria-labelledby="title"><header><h1 id="title">Find your order</h1><p>Enter the order number from your confirmation email and the email address you used at checkout. Have an account? <a href="/account/orders">See your orders</a>.</p></header><form method="post" action="/order/lookup" data-component="lookup-form"><!--lit-part TIYrCHR1D68=--><!--lit-node 0--><input type="hidden" name="_csrf" value="test-csrf-token" /><!--/lit-part--> <!--lit-part--><!--/lit-part--><p><label for="lookup-number">Order number</label> <!--lit-node 10--><input
-          id="lookup-number"
-          name="number"
-          required
-          autocomplete="off"
-          spellcheck="false"
-          placeholder="GG-20261004-4F7Q"
-          value="GG-20261004-TEST"
-          
-        /></p><p><label for="lookup-email">Email</label> <!--lit-node 13--><input
-          id="lookup-email"
-          name="email"
-          type="email"
-          required
-          autocomplete="email"
-          value=""
-        /></p><p><button type="submit">Find order</button></p></form></article><!--/lit-part--></main><!--lit-part hfsumG2me/A=--><footer class="site-footer"><div class="page"><nav aria-label="Site"><ul><li><a href="/about">About</a></li><li><a href="/faq">FAQ</a></li><li><a href="/contact">Contact</a></li><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/consent">Cookie settings</a></li></ul></nav><!--lit-node 16--><shop-theme-switcher
-        
-        
-        
-        
-       current="default" return-to="/order/lookup?number=GG-20261004-TEST" data-gyral-seed="{&quot;props&quot;:{&quot;themes&quot;:[{&quot;name&quot;:&quot;default&quot;,&quot;label&quot;:&quot;Gyral Goods&quot;,&quot;href&quot;:&quot;/themes/default.css&quot;},{&quot;name&quot;:&quot;marketplace&quot;,&quot;label&quot;:&quot;Marketplace&quot;,&quot;href&quot;:&quot;/themes/marketplace.css&quot;},{&quot;name&quot;:&quot;supercenter&quot;,&quot;label&quot;:&quot;Supercenter&quot;,&quot;href&quot;:&quot;/themes/supercenter.css&quot;},{&quot;name&quot;:&quot;boutique&quot;,&quot;label&quot;:&quot;Boutique&quot;,&quot;href&quot;:&quot;/themes/boutique.css&quot;}]}}" data-gyral-light><!--gyral:lit-part OIeOwQSIm6Q=--><!--gyral:lit-node 0--><form
-        method="post"
-        action="/theme"
-        class="theme-switcher"
-        data-region="theme-switcher"
-        data-intent="Choose"
-      ><!--gyral:lit-node 1--><fieldset data-intent="Picked" data-intent-on="change"><legend>Theme</legend><!--gyral:lit-part--><!--gyral:lit-part fEBbzH4Y2CE=--><label data-component="theme-option"> <!--gyral:lit-node 1--><input
-                  type="radio"
-                  name="theme"
-                  value="default"
-                  checked
-                /> <!--gyral:lit-part-->Gyral Goods<!--gyral:/lit-part--> </label><!--gyral:/lit-part--><!--gyral:lit-part fEBbzH4Y2CE=--><label data-component="theme-option"> <!--gyral:lit-node 1--><input
-                  type="radio"
-                  name="theme"
-                  value="marketplace"
-                  
-                /> <!--gyral:lit-part-->Marketplace<!--gyral:/lit-part--> </label><!--gyral:/lit-part--><!--gyral:lit-part fEBbzH4Y2CE=--><label data-component="theme-option"> <!--gyral:lit-node 1--><input
-                  type="radio"
-                  name="theme"
-                  value="supercenter"
-                  
-                /> <!--gyral:lit-part-->Supercenter<!--gyral:/lit-part--> </label><!--gyral:/lit-part--><!--gyral:lit-part fEBbzH4Y2CE=--><label data-component="theme-option"> <!--gyral:lit-node 1--><input
-                  type="radio"
-                  name="theme"
-                  value="boutique"
-                  
-                /> <!--gyral:lit-part-->Boutique<!--gyral:/lit-part--> </label><!--gyral:/lit-part--><!--gyral:/lit-part--></fieldset><!--gyral:lit-node 4--><input type="hidden" name="return" value="/order/lookup?number=GG-20261004-TEST" /> <!--gyral:lit-node 5--><button type="submit" >Apply theme</button><p class="theme-status" role="status"><!--gyral:lit-part--><!--gyral:/lit-part--></p></form><!--gyral:/lit-part--></shop-theme-switcher><p><small>© 2026 <!--lit-part-->Gyral Goods<!--/lit-part-->. A demo store built with Gyral; nothing here is for sale.</small></p></div></footer><!--/lit-part--><?><!--/lit-part-->
-  </body>
-</html>
+  </style><!--gyral:hkmq9pvzqm--><details class="mini-cart" part="disclosure" aria-busy="false"><summary part="summary">Cart<span class="badge" part="badge" aria-hidden="true">0</span><span class="visually-hidden">, 0 items</span></summary><div class="panel" part="panel"><!--gyral:90cx58fsx2--><p>Your cart is empty.</p></div></details></template></shop-mini-cart></nav></div><nav class="departments" aria-label="Departments" data-region="nav"><ul><!--gyral:1kkxtrou6sj--><li><a href="/d/electronics">Electronics</a></li><!--gyral:1kkxtrou6sj--><li><a href="/d/grocery">Grocery</a></li><!--gyral:1kkxtrou6sj--><li><a href="/d/toys-games">Toys &amp; Games</a></li></ul></nav></header></shop-header> <!--gyral:1421mrywvp5--><shop-consent mode="banner" return-to="/order/lookup?number=GG-20261004-TEST" data-gyral-light data-gyral-seed='{"props":{}}'><!--gyral:xs7t07izvc--><section data-region="consent" aria-labelledby="consent-title" class="consent consent-banner"><h2 id="consent-title">Cookies on Gyral Goods</h2><p>We use strictly necessary cookies to run the store (your session, cart and security). With your permission we also count page views and add-to-cart clicks to improve the store. Nothing is shared with anyone.</p><form method="post" action="/consent" data-intent="Choose"><input type="hidden" name="return" value="/order/lookup?number=GG-20261004-TEST"><div class="consent-actions" data-component="consent-actions"><button type="submit" name="choice" value="accept">Accept all</button> <button type="submit" name="choice" value="reject">Reject non-essential</button></div><details class="consent-custom" data-component="consent-custom"><summary>Customize</summary><fieldset><legend>Cookie categories</legend><label> <input type="checkbox" checked disabled> Strictly necessary <small>(always on)</small> </label> <label> <input type="checkbox" name="analytics"> Analytics <small>(page views and add-to-cart clicks)</small> </label></fieldset><button type="submit" name="choice" value="save">Save choices</button></details></form></section></shop-consent><main id="main" class="page" tabindex="-1"><!--gyral:17d8hpvkwc8--><article class="order-page order-lookup" data-region="order-lookup" aria-labelledby="title"><header><h1 id="title">Find your order</h1><p>Enter the order number from your confirmation email and the email address you used at checkout. Have an account? <a href="/account/orders">See your orders</a>.</p></header><form method="post" action="/order/lookup" data-component="lookup-form"><!--gyral:eoz6kfco23--><input type="hidden" name="_csrf" value="test-csrf-token"><!----> <p><label for="lookup-number">Order number</label> <input id="lookup-number" name="number" required autocomplete="off" spellcheck="false" placeholder="GG-20261004-4F7Q" value="GG-20261004-TEST"></p><p><label for="lookup-email">Email</label> <input id="lookup-email" name="email" type="email" required autocomplete="email" value=""></p><p><button type="submit">Find order</button></p></form></article></main><!--gyral:10vlpbhptpe--><footer class="site-footer"><div class="page"><nav aria-label="Site"><ul><li><a href="/about">About</a></li><li><a href="/faq">FAQ</a></li><li><a href="/contact">Contact</a></li><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy</a></li><li><a href="/consent">Cookie settings</a></li></ul></nav><shop-theme-switcher current="default" return-to="/order/lookup?number=GG-20261004-TEST" data-gyral-light data-gyral-seed='{"props":{"themes":[{"name":"default","label":"Gyral Goods","href":"/themes/default.css"},{"name":"marketplace","label":"Marketplace","href":"/themes/marketplace.css"},{"name":"supercenter","label":"Supercenter","href":"/themes/supercenter.css"},{"name":"boutique","label":"Boutique","href":"/themes/boutique.css"}]}}'><!--gyral:260dispn9jf--><form method="post" action="/theme" class="theme-switcher" data-region="theme-switcher" data-intent="Choose"><fieldset data-intent-on="change" data-intent="Picked"><legend>Theme</legend><!--gyral:2ghiqjjxyag--><label data-component="theme-option"> <input type="radio" name="theme" value="default" checked> Gyral Goods<!----> </label><!--gyral:2ghiqjjxyag--><label data-component="theme-option"> <input type="radio" name="theme" value="marketplace"> Marketplace<!----> </label><!--gyral:2ghiqjjxyag--><label data-component="theme-option"> <input type="radio" name="theme" value="supercenter"> Supercenter<!----> </label><!--gyral:2ghiqjjxyag--><label data-component="theme-option"> <input type="radio" name="theme" value="boutique"> Boutique<!----> </label></fieldset><input type="hidden" name="return" value="/order/lookup?number=GG-20261004-TEST"> <button type="submit">Apply theme</button><p class="theme-status" role="status"></p></form></shop-theme-switcher><p><small>© 2026 Gyral Goods<!---->. A demo store built with Gyral; nothing here is for sale.</small></p></div></footer></body></html>

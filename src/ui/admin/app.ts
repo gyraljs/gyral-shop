@@ -3,7 +3,7 @@
 // router captures in-app links, and each section is its own component that loads its data from
 // the admin JSON API. Light DOM (theme contract, ADR 0006 rule 5): document styles apply and
 // themes can restyle it through the `admin*` hooks.
-import { define, focus, html, keyed, nothing, type Next } from '@gyral/core';
+import { define, each, focus, html, nothing, prop, type Next } from '@gyral/core';
 import { listen, setTitle, type RouteLocation } from '@gyral/router';
 import { goTo } from '../drivers/location.js';
 import { adminDrivers } from './drivers.js';
@@ -89,7 +89,7 @@ function routed(s: AdminState, location: RouteLocation): Next<AdminState, AdminM
 
 export const AdminApp = define<AdminState, AdminMsg, AdminProps>('shop-admin', {
   shadow: false,
-  props: { path: { type: String, required: true } },
+  props: { path: prop.string({ required: true }) },
   init: (props) => [
     { url: props.path, navigated: false },
     [listen((location): AdminMsg => ({ _tag: 'Routed', location }))],
@@ -100,7 +100,8 @@ export const AdminApp = define<AdminState, AdminMsg, AdminProps>('shop-admin', {
   view: (s) => {
     const view = adminView(s.url);
     const current = adminSection(view);
-    // A product or order view starts fresh when its id changes (new data, new form state).
+    // A product or order view starts fresh when its id changes (new data, new form state):
+    // a one-row keyed list whose key is the view's identity.
     const key =
       view.name === 'product'
         ? `p${String(view.id)}`
@@ -121,7 +122,14 @@ export const AdminApp = define<AdminState, AdminMsg, AdminProps>('shop-admin', {
           )}
         </ul>
       </nav>
-      <div class="admin-main" data-region="admin-main">${keyed(key, section(view))}</div>
+      <div class="admin-main" data-region="admin-main">
+        ${each(
+          [key],
+          (k) => k,
+          (_k, v: AdminView) => section(v),
+          () => view,
+        )}
+      </div>
     </div>`;
   },
 });

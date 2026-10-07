@@ -5,6 +5,7 @@ import { fakeDriver } from '@gyral/testing';
 import { SearchBox } from '../../src/ui/layout/search-box.js';
 import type { Suggestions } from '../../src/ui/layout/suggestions.js';
 import { a11yViolations } from '../support/axe.js';
+import { settled } from '@gyral/core';
 
 const answer: Suggestions = {
   query: 'kit',
@@ -33,7 +34,7 @@ async function mount() {
   await vi.waitFor(() => {
     expect(el.state.enhanced).toBe(true);
   });
-  await el.updateComplete;
+  await settled();
   const input = el.querySelector('input[name="q"]');
   if (!(input instanceof HTMLInputElement)) throw new Error('no search field');
   const list = el.querySelector('[role="listbox"]');
@@ -45,7 +46,7 @@ async function mount() {
       expect(el.state.status).toBe('idle');
       expect(el.state.open).toBe(true);
     });
-    await el.updateComplete;
+    await settled();
   };
   const key = async (k: string) => {
     const event = new KeyboardEvent('keydown', {
@@ -55,7 +56,7 @@ async function mount() {
       cancelable: true,
     });
     input.dispatchEvent(event);
-    await el.updateComplete;
+    await settled();
     return event;
   };
   const options = () => [...list.querySelectorAll('[role="option"]')];
@@ -91,10 +92,10 @@ describe('<shop-search>', () => {
   });
 
   it('does not ask for one-letter queries', async () => {
-    const { el, http, input } = await mount();
+    const { http, input } = await mount();
     input.value = 'k';
     input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
-    await el.updateComplete;
+    await settled();
     expect(http.inputs).toEqual([]);
   });
 

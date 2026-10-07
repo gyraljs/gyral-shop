@@ -10,6 +10,7 @@ import { breadcrumbJsonLd, productJsonLd, twitterCard } from '../seo.js';
 import { publicOrigin } from '../origin.js';
 import { takeFlash } from '../flash.js';
 import { productReviews, reviewJsonLd } from './reviews.js';
+import { PRODUCT_CHUNKS } from '../route-chunks.js';
 
 export interface ProductRouteOptions {
   readonly db: Db;
@@ -44,6 +45,7 @@ export function productRoutes({ db, render }: ProductRouteOptions): Hono<AppEnv>
       description,
       canonical,
       currentDepartment: data.department.slug,
+      chunks: PRODUCT_CHUNKS,
       jsonLd: [
         {
           ...productJsonLd(origin, data, path),

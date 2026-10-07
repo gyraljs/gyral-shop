@@ -2,7 +2,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ProductEdit, ProductList, Taxonomy } from '../../src/domain/admin.js';
 import { a11yViolations } from '../support/axe.js';
-import { fakeAdmin, mountAdmin, restoreAdmin, type FakeRequest } from '../support/admin-browser.js';
+import {
+  fakeAdmin,
+  mountAdmin,
+  reply,
+  restoreAdmin,
+  type FakeRequest,
+} from '../support/admin-browser.js';
 
 const taxonomy: Taxonomy = {
   departments: [{ id: 1, name: 'Toys & Games' }],
@@ -145,6 +151,45 @@ describe('product editor', () => {
       variantId: '77',
     });
     expect(await a11yViolations(document.body)).toEqual([]);
+  });
+
+  it('keeps typed stock input through a rejection, and empties the form after a success', async () => {
+    let refuse = true;
+    fakeAdmin('/admin/products/10', (req) =>
+      req.url === '/api/admin/variants/77/adjust' && refuse
+        ? reply(422, {
+            _tag: 'IntentRejected',
+            intent: 'Adjust',
+            issues: [{ path: '', message: 'Stock can’t go below zero.' }],
+          })
+        : api(req),
+    );
+    const el = await mountAdmin('/admin/products/10');
+    const stockForm = () => {
+      const found = el.querySelector<HTMLFormElement>('form[data-component="stock-form"]');
+      if (found === null) throw new Error('no stock form');
+      return found;
+    };
+    await vi.waitFor(() => stockForm());
+    field(el, '#s77-delta').value = '5';
+    field(el, '#s77-reason').value = 'Delivery';
+    stockForm().requestSubmit();
+    await vi.waitFor(() => {
+      expect(stockForm().textContent).toContain('Stock can’t go below zero.');
+    });
+    // The server's rejection carries no values: nothing in the model changed, nothing is written.
+    expect([field(el, '#s77-delta').value, field(el, '#s77-reason').value]).toEqual([
+      '5',
+      'Delivery',
+    ]);
+    refuse = false;
+    stockForm().requestSubmit();
+    await vi.waitFor(() => {
+      expect(el.querySelector('[role="status"][data-kind="success"]')?.textContent.trim()).toBe(
+        'Stock adjusted.',
+      );
+    });
+    expect([field(el, '#s77-delta').value, field(el, '#s77-reason').value]).toEqual(['', '']);
   });
 
   it('starts a new product from the taxonomy', async () => {

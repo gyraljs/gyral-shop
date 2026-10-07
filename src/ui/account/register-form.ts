@@ -2,6 +2,7 @@ import { define, form, html, type IntentRejected } from '@gyral/core';
 import { MAX_NAME_LENGTH, MIN_PASSWORD_LENGTH } from '../../domain/accounts.js';
 import { goTo } from '../drivers/location.js';
 import {
+  authProps,
   failed,
   fieldView,
   formError,
@@ -9,6 +10,7 @@ import {
   initialAuthState,
   rejected,
   submit,
+  submitting,
   type AuthProps,
   type AuthState,
   type Failed,
@@ -42,7 +44,7 @@ const FIELDS: readonly FieldSpec[] = [
 
 /** Registration form: same two paths as sign-in, posting to /account/register. */
 export const RegisterFormElement = define<AuthState, RegisterMsg, AuthProps>('shop-register', {
-  props: { csrfToken: { attribute: 'csrf-token' }, next: { type: String } },
+  props: authProps,
   init: initialAuthState,
   intent: {
     // Validated in the browser first; the raw FormData then goes to the server unchanged.
@@ -50,7 +52,7 @@ export const RegisterFormElement = define<AuthState, RegisterMsg, AuthProps>('sh
   },
   update: {
     Register: (s, m, { props }) => [
-      { ...s, pending: true, errors: {} },
+      submitting(s),
       [submit('/account/register', m.form, props.csrfToken)],
     ],
     SignedIn: (s, m) => [s, [goTo(m.location)]],

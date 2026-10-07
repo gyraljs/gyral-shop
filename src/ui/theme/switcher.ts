@@ -2,17 +2,7 @@
 // Without JavaScript it is a POST form to /theme that redirects back with the theme cookie set;
 // the next page links the chosen stylesheet. With it, picking a theme swaps the stylesheet in
 // place (View Transition when allowed) and saves the choice with submitForm.
-import {
-  changed,
-  define,
-  defineForm,
-  form,
-  html,
-  liveBoolean,
-  nothing,
-  send,
-  type Next,
-} from '@gyral/core';
+import { changed, define, defineForm, form, html, prop, send, type Next } from '@gyral/core';
 import { submitForm } from '@gyral/http';
 import * as v from 'valibot';
 import { loadedMe, meStore } from '../me/store.js';
@@ -27,11 +17,8 @@ export const ThemeForm = defineForm(
 );
 
 /** One choice, as the server describes it (src/server/theme.ts themeOptions). */
-export interface ThemeChoice {
-  readonly name: string;
-  readonly label: string;
-  readonly href: string;
-}
+const ThemeChoiceSchema = v.object({ name: v.string(), label: v.string(), href: v.string() });
+export type ThemeChoice = v.InferOutput<typeof ThemeChoiceSchema>;
 
 export interface ThemeSwitcherProps {
   readonly themes: readonly ThemeChoice[];
@@ -91,10 +78,10 @@ export const ThemeSwitcher = define<ThemeSwitcherState, ThemeSwitcherMsg, ThemeS
     stores: [meStore],
     shadow: false,
     props: {
-      themes: { attribute: false, required: true },
-      current: { type: String },
-      returnTo: { type: String, attribute: 'return-to' },
-      deferred: { type: Boolean },
+      themes: prop.value(v.array(ThemeChoiceSchema), { required: true }),
+      current: prop.string(),
+      returnTo: prop.string(),
+      deferred: prop.boolean(),
     },
     init: (props) => ({
       current: props.current ?? '',
@@ -149,19 +136,14 @@ export const ThemeSwitcher = define<ThemeSwitcherState, ThemeSwitcherMsg, ThemeS
           ${props.themes.map(
             (t) =>
               html`<label data-component="theme-option">
-                <input
-                  type="radio"
-                  name="theme"
-                  value=${t.name}
-                  ?checked=${liveBoolean(s.current === t.name)}
-                />
+                <input type="radio" name="theme" value=${t.name} ?checked=${s.current === t.name} />
                 ${t.label}
               </label>`,
           )}
         </fieldset>
         <input type="hidden" name="return" value=${props.returnTo ?? '/'} />
         <button type="submit" ?hidden=${s.enhanced}>Apply theme</button>
-        <p class="theme-status" role="status">${s.message ?? nothing}</p>
+        <p class="theme-status" role="status">${s.message}</p>
       </form>
     `,
   },

@@ -1,4 +1,5 @@
-import { define, fieldErrors, form, html, nothing, send } from '@gyral/core';
+import { define, fieldErrors, form, html, nothing, prop, send } from '@gyral/core';
+import * as v from 'valibot';
 import { maxQuantity } from '../../domain/inventory.js';
 import { format, usd } from '../../domain/money.js';
 import {
@@ -18,13 +19,14 @@ import { csrfField } from '../forms/csrf.js';
 import { buyBoxCss } from '../styles/buy-box.js';
 
 /** One SKU (matches services/product.ts VariantView). */
-export interface BuyBoxVariant {
-  readonly sku: string;
-  readonly options: Readonly<Record<string, string>>;
-  readonly priceCents: number;
-  readonly salePriceCents: number | null;
-  readonly stock: number;
-}
+const BuyBoxVariantSchema = v.object({
+  sku: v.string(),
+  options: v.record(v.string(), v.string()),
+  priceCents: v.number(),
+  salePriceCents: v.nullable(v.number()),
+  stock: v.number(),
+});
+export type BuyBoxVariant = Readonly<v.InferOutput<typeof BuyBoxVariantSchema>>;
 
 export interface BuyBoxProps {
   readonly variants: readonly BuyBoxVariant[];
@@ -98,7 +100,7 @@ const axisPickers = (variants: readonly BuyBoxVariant[], selection: Selection, i
   optionAxes(variants).map(
     (axis) => html`
       <fieldset part="choices" class="choices axis">
-        <legend>${axis.name}: <strong>${selection[axis.name] ?? nothing}</strong></legend>
+        <legend>${axis.name}: <strong>${selection[axis.name]}</strong></legend>
         ${axis.values.map((value) => {
           const state = choiceState(variants, selection, axis.name, value);
           const reason = choiceReason(state, axis.name, selection);
@@ -130,9 +132,9 @@ const axisPickers = (variants: readonly BuyBoxVariant[], selection: Selection, i
  */
 export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box', {
   props: {
-    variants: { attribute: false, required: true },
-    action: { type: String, default: ADD_TO_CART_PATH },
-    csrf: { type: String },
+    variants: prop.value(v.array(BuyBoxVariantSchema), { required: true }),
+    action: prop.string({ default: ADD_TO_CART_PATH }),
+    csrf: prop.string(),
   },
   stores: [cartStore],
   // The server and the first client render show the no-JS SKU list (hydration must match);
@@ -214,7 +216,7 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box'
         role="status"
       >
         ${
-          s.formError ?? added?.message ?? nothing
+          s.formError ?? added?.message
         }${added?.kind === 'success' && s.formError === undefined ? html` <a href="/cart">View cart</a>` : nothing}
       </p>
     `;

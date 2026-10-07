@@ -2,7 +2,7 @@
 // (docs/product-specs/admin.md, "Products" and "Inventory"). Each form validates in the browser
 // with the shared schema (form()), then posts with submitForm; the API answers with JSON or a
 // 422 IntentRejected that lands in the same error state as a browser-side rejection.
-import { define, fieldErrors, form, type IntentRejected, type Next } from '@gyral/core';
+import { define, fieldErrors, form, prop, type IntentRejected, type Next } from '@gyral/core';
 import { get, submitForm, type HttpError } from '@gyral/http';
 import { navigate } from '@gyral/router';
 import * as v from 'valibot';
@@ -15,7 +15,7 @@ import {
   type Taxonomy,
 } from '../../domain/admin.js';
 import { adminDrivers } from './drivers.js';
-import { formKey, type Errors } from './fields.js';
+import { formKey, savedOnce, type Errors, type Saves } from './fields.js';
 import { loadError } from './format.js';
 import { productEditView } from './product-views.js';
 import { AdjustForm, ArchiveForm, ProductForm, VariantForm } from './schemas.js';
@@ -35,6 +35,8 @@ export interface ProductEditState {
   readonly errors: Readonly<Record<string, Errors>>;
   /** The form whose request is in flight (its key), for disabling buttons and server 422s. */
   readonly pending: string | null;
+  /** Successes per form, keyed like `errors`: one-shot forms start empty after one. */
+  readonly saves: Saves;
 }
 
 type Submit<T extends string> = {
@@ -140,7 +142,7 @@ export const AdminProductEdit = define<ProductEditState, ProductEditMsg, Product
   'shop-admin-product',
   {
     shadow: false,
-    props: { productId: { type: Number, default: 0 } },
+    props: { productId: prop.number({ default: 0 }) },
     init: (props) => [
       {
         id: props.productId,
@@ -150,6 +152,7 @@ export const AdminProductEdit = define<ProductEditState, ProductEditMsg, Product
         notice: null,
         errors: {},
         pending: null,
+        saves: {},
       },
       [props.productId === 0 ? loadTaxonomy() : loadProduct(props.productId)],
     ],
@@ -172,7 +175,10 @@ export const AdminProductEdit = define<ProductEditState, ProductEditMsg, Product
       Saved: (s, m) =>
         s.id === 0
           ? [s, [navigate(`/admin/products/${String(m.id)}`)]]
-          : [{ ...s, pending: null, notice: m.notice }, [loadProduct(s.id)]],
+          : [
+              { ...s, pending: null, notice: m.notice, saves: savedOnce(s.saves, s.pending) },
+              [loadProduct(s.id)],
+            ],
       Failed: (s, m) => ({ ...s, pending: null, error: loadError(m.error) }),
       IntentRejected: rejected,
     },

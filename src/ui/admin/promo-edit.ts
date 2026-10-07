@@ -7,6 +7,7 @@ import {
   form,
   html,
   nothing,
+  prop,
   type IntentRejected,
   type Next,
 } from '@gyral/core';
@@ -184,7 +185,7 @@ export const AdminPromoEdit = define<PromoEditState, PromoEditMsg, PromoEditProp
   'shop-admin-promo',
   {
     shadow: false,
-    props: { promoId: { type: Number, default: 0 } },
+    props: { promoId: prop.number({ default: 0 }) },
     init: (props) => [
       {
         id: props.promoId,
@@ -223,7 +224,7 @@ export const AdminPromoEdit = define<PromoEditState, PromoEditMsg, PromoEditProp
         <h1 tabindex="-1">${title}</h1>
         ${s.error === null ? nothing : html`<p role="alert" data-component="notice" data-kind="error">${s.error}</p>`}
         <p role="status" data-component="notice" data-kind="success" ?hidden=${s.notice === null}>
-          ${s.notice ?? nothing}
+          ${s.notice}
         </p>
         ${
           s.edit === null

@@ -38,10 +38,22 @@ import { themeRoutes } from './routes/themes.js';
 import { analyticsMiddleware } from './analytics.js';
 import { organizationJsonLd, twitterCard, websiteJsonLd } from './seo.js';
 import { publicOrigin } from './origin.js';
+import { pageCsp } from './csp.js';
+import { CARD_CHUNKS, type Preload } from './route-chunks.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
   readonly clientEntry: string;
+  /**
+   * Production: the entry's static imports and Gyral's hydration chunk, preloaded with the
+   * entry (`clientAssetsFromManifest` in @gyral/ssr/static). Empty in development.
+   */
+  readonly modulepreload?: readonly string[];
+  /**
+   * Production: `modulepreload` plus a page's route chunks and their imports
+   * (`productionServer`'s `preload`, route-chunks.ts). Absent in development.
+   */
+  readonly preload?: Preload;
   readonly db: Db;
   /** `production` disables development tools such as /dev/mail. Default `development`. */
   readonly mode?: 'development' | 'test' | 'production';
@@ -55,7 +67,10 @@ export interface AppOptions {
 
 const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#c8102e"/><text x="16" y="22" font-family="system-ui,sans-serif" font-size="17" font-weight="800" text-anchor="middle" fill="#fff">G</text></svg>`;
 
-type PageOptions = Omit<ShellOptions, 'clientEntry' | 'departments' | 'account' | 'stores'>;
+type PageOptions = Omit<
+  ShellOptions,
+  'clientEntry' | 'modulepreload' | 'preload' | 'departments' | 'account' | 'stores'
+>;
 
 /** The signed-in member for the header, read from the current request (if any). */
 function accountSummary(): ShellOptions['account'] {
@@ -69,6 +84,8 @@ function accountSummary(): ShellOptions['account'] {
 
 export function createApp({
   clientEntry,
+  modulepreload = [],
+  preload,
   db,
   mode = 'development',
   security,
@@ -76,6 +93,13 @@ export function createApp({
   siteOrigin,
 }: AppOptions): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
+  // Pages build their Content-Security-Policy when they render (a route may pass its own).
+  const assets = {
+    clientEntry,
+    modulepreload,
+    ...(preload === undefined ? {} : { preload }),
+    csp: pageCsp({ dev: security?.dev ?? false }),
+  };
   const clock = security?.now;
   const services: Services = createServices({
     ...serviceOptions,
@@ -92,7 +116,7 @@ export function createApp({
   };
   const page = async (o: PageOptions) => {
     // Prerendered pages are the same for everyone: no account, token or cart in the HTML.
-    if (o.static === true) return shell({ ...o, clientEntry, departments: await nav() });
+    if (o.static === true) return shell({ ...assets, ...o, departments: await nav() });
     const account = accountSummary();
     const c = tryGetContext<AppEnv>();
     // The cart store is read by the header on every page (and by cart and product pages).
@@ -104,8 +128,8 @@ export function createApp({
     // Browser code reads the token from <meta> for JSON requests (e.g. the cart store).
     const csrfToken = o.csrfToken ?? (c === undefined ? undefined : c.get('session')?.csrfToken);
     return shell({
+      ...assets,
       ...o,
-      clientEntry,
       departments: departmentList,
       ...(account === undefined ? {} : { account }),
       ...(csrfToken === undefined ? {} : { csrfToken }),
@@ -167,6 +191,7 @@ export function createApp({
         ['og:url', canonical],
       ],
       metaNames: twitterCard(undefined),
+      chunks: CARD_CHUNKS,
       main: homePage(data),
     });
   });
@@ -190,8 +215,10 @@ export function createApp({
   app.route('/', checkoutRoutes({ db, render: page, services }));
   app.route('/', orderRoutes({ services, render: page }));
   app.route('/', wishlistRoutes({ db, render: page }));
-  app.route('/', adminRoutes({ services, render: (o) => adminShell({ ...o, clientEntry }) }));
-  if (mode !== 'production') app.route('/dev/mail', devMailRoutes(services.mailer, page));
+  app.route('/', adminRoutes({ services, render: (o) => adminShell({ ...o, ...assets }) }));
+  if (mode !== 'production') {
+    app.route('/dev/mail', devMailRoutes(services.mailer, page, security?.dev ?? false));
+  }
 
   app.notFound(async (c) =>
     page({
@@ -210,7 +237,7 @@ export function createApp({
       title: 'Something went wrong',
       status: 500,
       noindex: true,
-      clientEntry,
+      ...assets,
       departments: departmentList,
       main: serverErrorPage(departmentList),
     });

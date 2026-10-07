@@ -31,7 +31,7 @@ beforeEach(async () => {
 const stockOf = async (sku: string) =>
   (await test.db.select({ s: variants.stock }).from(variants).where(eq(variants.sku, sku)))[0]?.s;
 
-/** Page text without Lit's comment markers, for matching visible text. */
+/** Page text without comments (Gyral's anchors and markers), for matching visible text. */
 const visible = async (res: Response) => (await res.text()).replace(/<!--[\s\S]*?-->/g, '');
 
 const flashOf = (res: Response) =>

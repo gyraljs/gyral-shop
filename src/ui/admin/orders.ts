@@ -1,6 +1,6 @@
 // <shop-admin-orders>: orders filtered by status, date range and number/email
 // (docs/product-specs/admin.md, "Orders"). Filters live in the URL, like the product table.
-import { define, form, html, liveBoolean, nothing } from '@gyral/core';
+import { define, form, html, nothing, prop } from '@gyral/core';
 import { get, type HttpError } from '@gyral/http';
 import { navigate } from '@gyral/router';
 import * as v from 'valibot';
@@ -124,25 +124,22 @@ function filters(f: OrdersFilter, i: { readonly Filter: 'Filter' }) {
     <label
       >Status
       <select name="status">
-        <option value="" ?selected=${liveBoolean(f.status === '')}>Any status</option>
+        <option value="" ?selected=${f.status === ''}>Any status</option>
         ${ORDER_STATUS_VALUES.map(
-          (s) =>
-            html`<option value=${s} ?selected=${liveBoolean(f.status === s)}>
-              ${statusLabel(s)}
-            </option>`,
+          (s) => html`<option value=${s} ?selected=${f.status === s}>${statusLabel(s)}</option>`,
         )}
       </select>
     </label>
-    <label>From <input type="date" name="from" .value=${f.from} /></label>
-    <label>To <input type="date" name="to" .value=${f.to} /></label>
-    <label>Order number or email <input type="search" name="q" .value=${f.q} /></label>
+    <label>From <input type="date" name="from" value=${f.from} /></label>
+    <label>To <input type="date" name="to" value=${f.to} /></label>
+    <label>Order number or email <input type="search" name="q" value=${f.q} /></label>
     <button type="submit">Filter</button>
   </form>`;
 }
 
 export const AdminOrders = define<OrdersState, OrdersMsg, OrdersProps>('shop-admin-orders', {
   shadow: false,
-  props: { search: { type: String, default: '' } },
+  props: { search: prop.string({ default: '' }) },
   init: (props) => [{ search: props.search, list: null, error: null }, [load(props.search)]],
   intent: {
     Filter: form(FilterForm, (data) => ({ _tag: 'Filter', filter: data })),

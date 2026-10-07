@@ -1,7 +1,5 @@
 // Adding from a product page with JavaScript: the buy box sends the shared cart store a
 // message; the header badge and a status message update without navigating.
-// ORDER IS LOAD-BEARING: hydrate support before anything that imports Lit (Gyral ADR 0012).
-import '@gyral/ssr/hydrate';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/product.ssr.html?raw';
 import { serverCart, stubCartApi } from '../support/cart-api.js';

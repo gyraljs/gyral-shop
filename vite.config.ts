@@ -1,11 +1,12 @@
 import { defineConfig } from 'vite';
-import { LIT_PACKAGES, optimizedDeps } from './vite.deps.js';
+import { gyralVitePreset } from '@gyral/core/vite';
+import { optimizedDeps } from './vite.deps.js';
 
-// gyralVitePreset() (via vite.deps.ts): exactly one copy of Lit (ADR 0001). optimizeDeps lists
+// gyralVitePreset(): the template compiler for `vite build` (templates precompiled and checked
+// against Gyral's template rules; the runtime preparer leaves the bundle). optimizeDeps lists
 // every browser import up front so Vite never re-optimizes mid-run.
 export default defineConfig({
-  resolve: { dedupe: [...LIT_PACKAGES] },
-  optimizeDeps: { include: optimizedDeps() },
+  ...gyralVitePreset({ optimize: optimizedDeps() }),
   server: { port: 5200 },
   // Production client build (`pnpm build`, Gyral ADR 0016): only the browser entry is bundled;
   // the manifest maps it to its content-hashed file for the server and the prerender step.

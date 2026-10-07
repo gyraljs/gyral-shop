@@ -8,6 +8,7 @@ import {
   form,
   html,
   nothing,
+  prop,
   type IntentRejected,
   type Next,
 } from '@gyral/core';
@@ -163,7 +164,7 @@ function confirmPanel(s: UsersState, i: { UserAction: string; Cancel: string }) 
 
 export const AdminUsers = define<UsersState, UsersMsg, UsersProps>('shop-admin-users', {
   shadow: false,
-  props: { search: { type: String, default: '' } },
+  props: { search: prop.string({ default: '' }) },
   init: (props) => [
     {
       search: props.search,
@@ -225,12 +226,12 @@ export const AdminUsers = define<UsersState, UsersMsg, UsersProps>('shop-admin-u
         role="search"
         data-component="user-search"
       >
-        <label>Search name or email <input type="search" name="q" .value=${qOf(s.search)} /></label>
+        <label>Search name or email <input type="search" name="q" value=${qOf(s.search)} /></label>
         <button type="submit">Search</button>
       </form>
       ${s.error === null ? nothing : html`<p role="alert" data-component="notice" data-kind="error">${s.error}</p>`}
       <p role="status" data-component="notice" data-kind="success" ?hidden=${s.notice === null}>
-        ${s.notice ?? nothing}
+        ${s.notice}
       </p>
       ${confirmPanel(s, i)}
       ${

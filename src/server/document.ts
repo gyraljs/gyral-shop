@@ -1,33 +1,16 @@
-// The server-only document shell: head, skip link, header, main, footer (lit-web-apps skill:
-// document.ts). Only the custom elements inside hydrate; the shell itself never does.
-import { html, nothing, type AnyStoreInstance } from '@gyral/core';
-import { renderPage } from '@gyral/ssr';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+// The server-only document shell: head, skip link, header, main, footer. Only the custom
+// elements inside hydrate; the shell itself never does.
+import { html, nothing, raw, type AnyStoreInstance } from '@gyral/core';
+import { renderPage, type CspOptions } from '@gyral/ssr';
 import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
 import '../ui/consent/consent.js'; // registers <shop-consent>
-import { consentCss } from '../ui/styles/consent.js';
 import { currentConsent, currentPath } from './consent.js';
-import { searchCss } from '../ui/styles/search.js';
 import { CSRF_META } from '../ui/forms/csrf.js';
-import { baseCss } from '../ui/styles/base.js';
-import { headerCss } from '../ui/styles/header.js';
-import { authCss } from '../ui/account/auth-form.js';
-import { cartCss } from '../ui/styles/cart.js';
+import { DOCUMENT_STYLES } from './page-styles.js';
+import type { Preload, RouteChunk } from './route-chunks.js';
 import '../ui/theme/switcher.js'; // registers <shop-theme-switcher>
-import { themeSwitcherCss } from '../ui/styles/theme-switcher.js';
 import { CURRENT_THEME_PATH, currentTheme, themeHref, themeOptions } from './theme.js';
-import { catalogCss } from '../ui/styles/catalog.js';
-import { filtersCss } from '../ui/styles/filters.js';
-import { listingCss } from '../ui/styles/listing.js';
-import { accountCss } from '../ui/styles/account.js';
-import { memberFormCss } from '../ui/forms/member-form.js';
-import { contentCss } from '../ui/styles/content.js';
-import { productCss } from '../ui/styles/product.js';
-import { ordersCss } from '../ui/styles/orders.js';
-import { checkoutCss } from '../ui/styles/checkout.js';
-import { wishlistCss } from '../ui/styles/wishlist.js';
-import { adminCss } from '../ui/styles/admin.js';
 
 import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
 
@@ -36,11 +19,19 @@ export { SITE_NAME };
 export interface ShellOptions {
   /** URL of the browser entry module (Vite dev: a source path; prod: a built asset). */
   readonly clientEntry: string;
+  /** Modules to preload with the entry (production; see AppOptions.modulepreload). */
+  readonly modulepreload?: readonly string[];
+  /** Production: `modulepreload` plus route chunks (see AppOptions.preload). */
+  readonly preload?: Preload;
+  /** The lazily loaded modules this page's components need, preloaded in production. */
+  readonly chunks?: readonly RouteChunk[];
+  /** The Content-Security-Policy, built when the page renders (csp.ts `pageCsp`). */
+  readonly csp?: CspOptions;
   readonly title: string;
   readonly description?: string;
   readonly departments: readonly DepartmentLink[];
   readonly query?: string;
-  /** The page's main content (a Lit template, usually one page component). */
+  /** The page's main content (an `html` template, usually one page component). */
   readonly main: unknown;
   readonly status?: number;
   /** Account, cart, checkout and admin pages are not for search engines (SEO spec). */
@@ -98,30 +89,6 @@ const footer = (prerendered: boolean) => html`
   </footer>
 `;
 
-/** Document CSS, in cascade order (each sheet declares its layers; ADR 0006 rule 3). */
-const DOCUMENT_STYLES = [
-  baseCss,
-  headerCss,
-  catalogCss,
-  listingCss,
-  filtersCss,
-  productCss,
-  accountCss,
-  authCss,
-  cartCss,
-  ordersCss,
-  memberFormCss,
-  contentCss,
-  checkoutCss,
-  wishlistCss,
-  adminCss,
-  searchCss,
-  consentCss,
-  themeSwitcherCss,
-  // The theme is not inline: <link id="theme-css"> in the head (themeLink below). It only
-  // writes to @layer theme, which wins by layer order wherever the sheet appears.
-];
-
 /**
  * The theme stylesheet (ADR 0006 rule 8). A render-blocking <link>, so the right theme paints
  * first. Server-rendered pages link the visitor's theme by its content-hashed URL; prerendered
@@ -173,7 +140,7 @@ export function shell(options: ShellOptions): Response {
     }
     ${(options.meta ?? []).map(([property, content]) => html`<meta property=${property} content=${content} />`)}
     ${(options.metaNames ?? []).map(([name, content]) => html`<meta name=${name} content=${content} />`)}
-    ${structured === '' ? nothing : unsafeHTML(structured)}`;
+    ${structured === '' ? nothing : raw(structured)}`;
   return renderPage(
     {
       title: documentTitle(options.title),
@@ -196,7 +163,12 @@ export function shell(options: ShellOptions): Response {
         ${footer(options.static === true)}
       `,
       scripts: [options.clientEntry],
+      modulepreload:
+        options.chunks === undefined || options.preload === undefined
+          ? (options.modulepreload ?? [])
+          : options.preload(options.chunks),
       stores: options.stores ?? [],
+      ...(options.csp === undefined ? {} : { csp: options.csp }),
     },
     { status: options.status ?? 200 },
   );
@@ -204,5 +176,5 @@ export function shell(options: ShellOptions): Response {
 
 /** Renders a page inside the shell; created per app so the header's departments are loaded. */
 export type RenderPage = (
-  options: Omit<ShellOptions, 'clientEntry' | 'departments'>,
+  options: Omit<ShellOptions, 'clientEntry' | 'modulepreload' | 'preload' | 'departments'>,
 ) => Promise<Response>;

@@ -16,7 +16,7 @@ export function sortHeader<S extends string>(
   const active = current.sort === sort;
   const state = active ? (current.dir === 'asc' ? 'ascending' : 'descending') : 'none';
   const next = active && current.dir === 'asc' ? 'descending' : 'ascending';
-  return html`<th scope="col" class=${cls ?? nothing} aria-sort=${state}>
+  return html`<th scope="col" class=${cls} aria-sort=${state}>
     <button type="button" data-intent="Sort" value=${sort} aria-label=${`${label}, sort ${next}`}>
       ${label}
     </button>

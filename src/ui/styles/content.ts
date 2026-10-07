@@ -25,6 +25,7 @@ export const contentCss = `
   @media (prefers-reduced-motion: reduce) {
     [data-component="faq"] details::details-content { transition: none; }
   }
+  .dev-mail-message iframe { inline-size: 100%; block-size: 32rem; border: 1px solid currentColor; }
   [data-region="error"] { display: grid; gap: var(--space-3); max-inline-size: 42rem; }
   [data-region="error"] h1 { margin: 0; }
   [data-region="error"] form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }

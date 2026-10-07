@@ -3,6 +3,7 @@
 // without JavaScript; <shop-reviews> (./reviews.ts) enhances links and vote forms in place.
 import { html, nothing, type IntentNames } from '@gyral/core';
 import { eligibilityMessage, REVIEW_SORTS, type ReviewSort } from '../../domain/reviews.js';
+import { ratingStep } from '../catalog/rating.js';
 import { CSRF_FIELD } from '../forms/csrf.js';
 import {
   helpfulPath,
@@ -38,7 +39,7 @@ const SORT_LABELS: Record<ReviewSort, string> = { helpful: 'Most helpful', newes
 
 export const stars = (rating: number, label: string) => html`
   <span class="rating" data-component="rating">
-    <span class="stars" aria-hidden="true" style="--rating: ${rating}"></span>
+    <span class="stars" aria-hidden="true" data-rating=${ratingStep(rating)}></span>
     <span class="visually-hidden">${label}</span>
   </span>
 `;
@@ -166,7 +167,7 @@ export function reviewsSection(s: ReviewsRender, i: Intents) {
   >
     ${title} ${summary(s.view)}
     <p data-component="review-cta">${callToAction(s.view)}</p>
-    <p data-component="review-notice" role="status" class=${s.notice?.kind ?? nothing}>
+    <p data-component="review-notice" role="status" class=${s.notice?.kind}>
       ${s.notice === undefined ? nothing : s.notice.message}
     </p>
     ${

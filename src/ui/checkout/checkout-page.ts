@@ -4,15 +4,16 @@
 // submitForm posts to the same route, which answers with the new view (or the same
 // IntentRejected the no-JS path renders). The server always has the last word.
 //
-// Light DOM (ADR 0006 rule 5): Gyral hydrates light-DOM components in place (Gyral ADR 0014
-// addendum), so anything typed before the script loads survives; a browser test proves it.
+// Light DOM (ADR 0006 rule 5): Gyral hydrates light-DOM components in place and never
+// overwrites form state the user changed before the script loaded (Gyral view/07-hydration.md);
+// a browser test proves it.
 // Styles are document CSS (styles/checkout.ts, scoped to shop-checkout).
 import {
   define,
   fieldErrors,
   form,
   html,
-  nothing,
+  prop,
   redirectedTo,
   type FormFields,
   type IntentRejected,
@@ -21,7 +22,7 @@ import { submitForm } from '@gyral/http';
 import { isCheckoutStep, type CheckoutStep } from '../../domain/checkout.js';
 import { goTo } from '../drivers/location.js';
 import { CSRF_META } from '../forms/csrf.js';
-import { parseCheckout, type CheckoutClient } from './model.js';
+import { CheckoutClientSchema, parseCheckout, type CheckoutClient } from './model.js';
 import {
   AddressForm,
   ContactForm,
@@ -78,7 +79,11 @@ const URLS: Readonly<Record<FormStep, string>> = {
 const refill = (values: FormFields = {}): FormFields =>
   Object.fromEntries(Object.entries(values).filter(([key]) => !SECRET_FIELDS.has(key)));
 
-/** Posts a step; the server answers with the new view, a redirect, or a 422 rejection. */
+/**
+ * Posts a step; the server answers with the new view, a redirect, or a 422 rejection. The
+ * fields keep what the customer typed meanwhile: Gyral writes a control only when the model's
+ * value for it changes (view/02-bindings.md "Live form state").
+ */
 function post(s: CheckoutState, step: FormStep, data: FormData) {
   const errors = Object.fromEntries(Object.entries(s.errors).filter(([intent]) => intent !== step));
   return [
@@ -114,7 +119,7 @@ const toForm =
 
 export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>('shop-checkout', {
   shadow: false,
-  props: { view: { attribute: false, required: true }, csrf: { type: String } },
+  props: { view: prop.value(CheckoutClientSchema, { required: true }), csrf: prop.string() },
   init: (props) => ({
     view: props.view,
     open: props.view.open,
@@ -175,13 +180,7 @@ export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>('shop-
       return server === 'open' ? 'locked' : server;
     };
     return html`<h1>Checkout</h1>
-      <p class="visually-hidden" role="status">
-        ${
-          // nothing, not '': Lit hydrates an empty text part without a text node, and its first
-          // update then writes into the closing marker comment (see the bead in Gyral).
-          s.status === '' ? nothing : s.status
-        }
-      </p>
+      <p class="visually-hidden" role="status">${s.status}</p>
       <div class="layout">
         <ol class="steps">
           ${view.steps.map(({ step }, index) => {

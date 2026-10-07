@@ -1,5 +1,3 @@
-// ORDER IS LOAD-BEARING: hydrate support before anything that imports Lit (Gyral ADR 0012).
-import '@gyral/ssr/hydrate';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 import productHtml from '../fixtures/wishlist-product.ssr.html?raw';
@@ -8,6 +6,7 @@ import { FAILED_MESSAGE } from '../../src/ui/wishlist/store.js';
 import { a11yViolations } from '../support/axe.js';
 import { loadComponentsIn } from '../../src/client/lazy.js';
 import { stubCartApi } from '../support/cart-api.js';
+import { settled } from '@gyral/core';
 
 const errors = vi.spyOn(console, 'error');
 let page: MountedSsr | undefined;
@@ -38,11 +37,6 @@ async function productToggle() {
   return { before, button, toggle, slug };
 }
 
-const settle = async (el: Element) => {
-  await new Promise((r) => setTimeout(r, 0));
-  await (el as unknown as { updateComplete: Promise<unknown> }).updateComplete;
-};
-
 describe('wishlist toggle on the product page', () => {
   it('hydrates in place without errors', async () => {
     const { before, button } = await productToggle();
@@ -55,7 +49,7 @@ describe('wishlist toggle on the product page', () => {
     const api = stubCartApi();
     const { button, toggle, slug } = await productToggle();
     button().click();
-    await settle(toggle);
+    await settled();
     expect(button().getAttribute('aria-pressed')).toBe('true'); // before the server answers
     const [call] = api.calls;
     expect(call?.method).toBe('POST');
@@ -74,7 +68,7 @@ describe('wishlist toggle on the product page', () => {
     const api = stubCartApi();
     const { button, toggle } = await productToggle();
     button().click();
-    await settle(toggle);
+    await settled();
     api.calls[0]?.fail();
     await vi.waitFor(() => {
       expect(button().getAttribute('aria-pressed')).toBe('false');

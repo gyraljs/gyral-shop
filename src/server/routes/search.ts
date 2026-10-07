@@ -15,6 +15,7 @@ import {
   searchResults,
 } from '../../ui/pages/search.js';
 import type { RenderPage } from '../document.js';
+import { LISTING_CHUNKS } from '../route-chunks.js';
 
 export interface SearchRouteOptions {
   readonly db: Db;
@@ -63,6 +64,7 @@ export function searchRoutes({ db, render }: SearchRouteOptions): Hono {
           description: `Products matching “${q}” at Gyral Goods.`,
           noindex: true,
           query: q,
+          chunks: LISTING_CHUNKS,
           main: searchResults(data),
         });
       }

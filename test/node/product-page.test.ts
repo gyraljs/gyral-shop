@@ -8,7 +8,7 @@ import { productPage, reviewerName } from '../../src/services/product.js';
 import { stableHtml } from '../support/fixtures.js';
 import { testApp } from '../support/app.js';
 
-/** Collapses Lit's comment markers so assertions can read rendered text. */
+/** Drops comments (Gyral's anchors and development markers) so assertions read text. */
 const text = (html: string) => html.replace(/<!--[^>]*-->/g, '');
 
 /** The seeded product with the most variants (an apparel item with Color × Size). */

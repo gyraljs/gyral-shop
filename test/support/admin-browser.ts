@@ -9,6 +9,7 @@ import { makeRouter } from '@gyral/router';
 import { adminCss } from '../../src/ui/styles/admin.js';
 import { baseCss } from '../../src/ui/styles/base.js';
 import { defaultThemeCss } from '../../src/ui/themes/default.css.js';
+import { settled } from '@gyral/core';
 
 export interface FakeRequest {
   readonly url: string;
@@ -90,6 +91,6 @@ export async function mountAdmin(path: string): Promise<HTMLElement> {
   el.path = path;
   const parent = container ?? document.body.appendChild(document.createElement('main'));
   parent.append(el);
-  await el.updateComplete;
+  await settled();
   return el;
 }

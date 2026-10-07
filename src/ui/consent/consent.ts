@@ -2,7 +2,7 @@
 // A non-modal region, never a dialog: the page stays usable while it is open. Without
 // JavaScript it is a POST form to /consent that redirects back. With it, the same form is sent
 // with submitForm and the banner closes in place. Light DOM (theme contract, ADR 0006).
-import { changed, define, defineForm, form, html, liveBoolean, nothing, send } from '@gyral/core';
+import { changed, define, defineForm, form, html, nothing, prop, send } from '@gyral/core';
 import { submitForm } from '@gyral/http';
 import { pageViewBeacon } from '../analytics/beacon.js';
 import { loadedMe, meStore } from '../me/store.js';
@@ -49,16 +49,18 @@ export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>('shop-c
   stores: [meStore],
   shadow: false,
   props: {
-    mode: { type: String },
-    analytics: { type: Boolean },
-    returnTo: { type: String, attribute: 'return-to' },
-    deferred: { type: Boolean },
+    mode: prop.string({ schema: v.picklist(['banner', 'page']) }),
+    analytics: prop.boolean(),
+    returnTo: prop.string(),
+    deferred: prop.boolean(),
   },
   init: (props) => ({ open: props.deferred !== true, saving: false, message: null }),
   intent: {
     Choose: form(ConsentForm, (_data, raw) => ({ _tag: 'Choose', form: raw })),
   },
   update: {
+    // The box and the disclosure stay as the visitor left them while saving: their bindings
+    // below never change, so Gyral never writes them again (view/02-bindings.md).
     Choose: (s, m) => [
       { ...s, saving: true, message: null },
       [
@@ -124,11 +126,7 @@ export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>('shop-c
                 Strictly necessary <small>(always on)</small>
               </label>
               <label>
-                <input
-                  type="checkbox"
-                  name="analytics"
-                  ?checked=${liveBoolean(props.analytics === true)}
-                />
+                <input type="checkbox" name="analytics" ?checked=${props.analytics === true} />
                 Analytics <small>(page views and add-to-cart clicks)</small>
               </label>
             </fieldset>

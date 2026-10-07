@@ -7,6 +7,7 @@ import { baseCss } from '../../src/ui/styles/base.js';
 import { defaultThemeCss } from '../../src/ui/themes/default.css.js';
 import { consentCss } from '../../src/ui/styles/consent.js';
 import { a11yViolations } from '../support/axe.js';
+import { settled } from '@gyral/core';
 
 // Light DOM: the component is styled by document CSS, as on a real page.
 const style = document.createElement('style');
@@ -28,7 +29,7 @@ async function mount(
   const http = fakeDriver<Sent>('http', { impl: answer });
   el.drivers = { http };
   document.body.append(el);
-  await el.updateComplete;
+  await settled();
   const button = (name: string) => {
     const found = [...el.querySelectorAll('button')].find((b) => b.textContent.trim() === name);
     if (found === undefined) throw new Error(`no button ${name}`);
@@ -89,6 +90,23 @@ describe('<shop-consent>', () => {
       expect(el.querySelector('[role="status"]')?.textContent).toContain('could not be saved');
     });
     expect(el.querySelector('section')).not.toBeNull();
+  });
+
+  it('leaves the Customize panel and the analytics box as the visitor set them', async () => {
+    const { el, button } = await mount('banner', () => {
+      throw new Error('offline');
+    });
+    const details = el.querySelector('details');
+    const box = el.querySelector('input[name="analytics"]');
+    if (details === null || !(box instanceof HTMLInputElement)) throw new Error('no controls');
+    details.open = true;
+    box.checked = true;
+    button('Save choices').click();
+    await vi.waitFor(() => {
+      expect(el.querySelector('[role="status"]')?.textContent).toContain('could not be saved');
+    });
+    // Saving and failing re-rendered the form; neither control's binding changed.
+    expect([details.open, box.checked]).toEqual([true, true]);
   });
 
   it('confirms on the settings page instead of closing', async () => {

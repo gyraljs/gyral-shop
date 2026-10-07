@@ -30,6 +30,7 @@ import { reviewsPage, writeReviewPage } from '../../ui/pages/reviews.js';
 import type { RenderPage } from '../document.js';
 import { setFlash, takeFlash } from '../flash.js';
 import { csrfTokenFor, requireUser, wantsJson, type AppEnv } from '../security/index.js';
+import { ROUTE_CHUNKS } from '../route-chunks.js';
 
 export interface ReviewRouteOptions {
   readonly db: Db;
@@ -107,6 +108,7 @@ export function reviewRoutes({ db, render }: ReviewRouteOptions): Hono<AppEnv> {
       canonical: new URL(query.sort === DEFAULT_REVIEW_SORT ? canonicalPath : base, origin).href,
       noindex: query.sort !== DEFAULT_REVIEW_SORT,
       currentDepartment: detail.product.department.slug,
+      chunks: [ROUTE_CHUNKS.reviews],
       main: reviewsPage(view, detail.product, {
         ...(csrfToken === undefined ? {} : { csrfToken }),
         ...(flash === undefined ? {} : { notice: flash }),
@@ -135,6 +137,7 @@ export function reviewRoutes({ db, render }: ReviewRouteOptions): Hono<AppEnv> {
       noindex: true,
       status,
       currentDepartment: detail.product.department.slug,
+      chunks: [ROUTE_CHUNKS.reviewForm],
       main: writeReviewPage(view, detail.product, await csrfTokenFor(c), rejected),
     });
     response.headers.set('cache-control', 'no-store');
