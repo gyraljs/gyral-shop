@@ -61,7 +61,7 @@ describe('a shopper without JavaScript', () => {
     const page = await noJsPage(served);
     await page.goto(served.url('/'));
     await expect(page.title()).resolves.toBe('Gyral Goods');
-    // The header comes from Declarative Shadow DOM.
+    // The header is server-rendered light DOM: its department links work without JavaScript.
     expect(
       await page.getByRole('navigation', { name: 'Departments' }).getByRole('link').count(),
     ).toBe(8);

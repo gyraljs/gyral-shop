@@ -1,6 +1,6 @@
 // Checkout use-cases (docs/product-specs/checkout.md): load the priced checkout for a cart and
-// save each step. Placing the order (charge, reserve stock, create the order, email) is the next
-// step's job; this module ends at a draft that is ready to place.
+// save each step. Placing the order (charge, reserve stock, create the order, email) is
+// services/orders.ts; this module ends at a draft that is ready to place.
 import { cartLineRows, findPromo, findSessionCart, findUserCart } from '../db/repos/cart.js';
 import { addAddress, findAddress, listAddresses } from '../db/repos/addresses.js';
 import { findCheckout, saveCheckout, type CheckoutRow } from '../db/repos/checkout.js';

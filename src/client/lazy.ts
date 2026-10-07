@@ -1,5 +1,5 @@
 // Per-route code splitting (shop-bha): page-specific components load only when their tag is
-// on the page. The shell (header, mini-cart, search, consent) is on every page and stays in
+// on the page. The shell (header, mini-cart, search, consent, theme switcher) is on every page and stays in
 // the entry chunk. Server-rendered markup is already painted, so a lazily defined element
 // simply hydrates a moment later: no flash.
 

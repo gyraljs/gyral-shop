@@ -144,7 +144,7 @@ export async function rotateSession(
   });
 }
 
-/** Ends a session. A guest cart attached to it is detached (kept for the cart epic to purge). */
+/** Ends a session. A guest cart attached to it is detached; maintenance.ts purges orphaned carts. */
 export async function destroySession(db: Db, id: string): Promise<void> {
   await writeTransaction(db, async (tx) => {
     await tx.update(carts).set({ sessionId: null }).where(eq(carts.sessionId, id));

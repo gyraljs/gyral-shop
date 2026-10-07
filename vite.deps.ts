@@ -1,4 +1,4 @@
-// Dependency pre-bundling list for Vite and Vitest, derived from the source (ADR 0005).
+// Dependency pre-bundling list for Vite and Vitest, derived from the source (ADR 0001, "Gyral from npm").
 //
 // Vite pre-bundles dependencies once and caches them. When code later imports a module the cache
 // lacks (a new import in the shop), Vite discovers it mid-run, re-optimizes

@@ -1,4 +1,4 @@
-// Sign in, register, sign out and the account landing page (docs/product-specs/accounts.md).
+// Sign in, register and sign out (docs/product-specs/accounts.md; /account is account-settings.ts).
 // Each POST is a Gyral formAction: a plain form gets Post/Redirect/Get or a 422 re-render;
 // the components' submitForm gets the same outcome as JSON (Gyral ADR 0008, "Round trip").
 import { Hono, type Context } from 'hono';

@@ -81,7 +81,7 @@ export function compareSummaries(path, server, live, errors, allow = {}) {
 }
 
 /**
- * Console messages that are not problems in a production build (none known yet). Errors and
+ * Console messages that are not problems in a production build: Vite's own `[vite]` logs. Errors and
  * warnings both count: a production hydration mismatch is a warning (Gyral view/07).
  */
 export const ignoredConsole = (text) => text.startsWith('[vite]');

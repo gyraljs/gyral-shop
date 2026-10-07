@@ -1,4 +1,4 @@
-// Account pages: sign in, register and the member's account landing page. The forms are
+// Account pages: sign in and register (/account is account-settings.ts). The forms are
 // Gyral components (shop-login, shop-register); the rest is server-rendered markup.
 import { html, nothing, type IntentRejected } from '@gyral/core';
 import { csrfField } from '../forms/csrf.js';

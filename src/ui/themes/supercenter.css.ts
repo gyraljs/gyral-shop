@@ -2,7 +2,7 @@
 // blue header with a pill-shaped search, yellow call-to-action buttons, generous spacing and big
 // rounded cards that lead with the price. Our own name; no third-party logos or brand assets.
 // It writes only to @layer theme and targets only documented hooks (data-region, data-component,
-// documented ::part()s, component tags) and semantic elements: test/node/themes.test.ts checks.
+// documented ::part()s, component tags) and semantic elements: test/node/themes-contract.test.ts checks.
 import type { ThemeDefinition } from './theme.js';
 
 export const supercenterThemeCss = `

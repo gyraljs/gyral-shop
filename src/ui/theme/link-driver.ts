@@ -12,7 +12,7 @@ export interface ThemeSwap {
   readonly href: string;
 }
 
-/** View Transitions are progressive enhancement (ADR 0003): skipped when unsupported. */
+/** View Transitions are progressive enhancement (Gyral ADR 0003): skipped when unsupported. */
 const prefersReducedMotion = (): boolean =>
   typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 

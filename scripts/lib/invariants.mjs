@@ -3,12 +3,16 @@
 
 const EFFECT_IMPORT = /(?:from\s+|import\s*\(\s*)['"](effect|@effect\/[^'"]+|effect\/[^'"]+)['"]/g;
 
-/** Public declaration files must not mention Effect (docs/design-docs/0002-effect-boundary.md). */
+/**
+ * Public declaration files must not mention Effect. Ported from Gyral (its ADR 0002, "Effect
+ * boundary"); the shop bans Effect outright (docs/design-docs/0001-stack.md). Not wired into
+ * `pnpm invariants`: only scripts/test/invariants.test.mjs calls it.
+ */
 export function findEffectLeaks(file, text) {
   return [...text.matchAll(EFFECT_IMPORT)].map(
     (m) =>
       `${file}: public types reference "${m[1]}". Effect must stay internal ` +
-      `(docs/design-docs/0002-effect-boundary.md). Convert the type to plain TypeScript ` +
+      `(Gyral docs/design-docs/0002-effect-boundary.md). Convert the type to plain TypeScript ` +
       `(tagged unions, Promise, AbortSignal) before exporting it.`,
   );
 }

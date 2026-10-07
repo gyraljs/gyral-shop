@@ -82,7 +82,7 @@ export const baseCss = `
   body > main { grid-row: 3; }
   body > .site-footer { grid-row: 4; }
   a { color: inherit; }
-  /* Form controls take the page font (shadow roots get this from shadow-base.ts). */
+  /* Form controls take the page font (the shadow widgets set their own, e.g. buy-box.ts). */
   button, input, select, textarea { font: inherit; }
   .skip-link {
     position: absolute;

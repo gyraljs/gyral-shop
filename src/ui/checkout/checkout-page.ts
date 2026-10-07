@@ -4,9 +4,9 @@
 // submitForm posts to the same route, which answers with the new view (or the same
 // IntentRejected the no-JS path renders). The server always has the last word.
 //
-// Light DOM (ADR 0006 rule 5): Gyral hydrates light-DOM components in place and never
-// overwrites form state the user changed before the script loaded (Gyral view/07-hydration.md);
-// a browser test proves it.
+// Light DOM (ADR 0006 rule 5): Gyral hydrates light-DOM components in place and keeps form
+// state the user changed before the script loaded until the model's value for it changes
+// (Gyral view/02-bindings.md "Live form state", view/07-hydration.md); a browser test proves it.
 // Styles are document CSS (styles/checkout.ts, scoped to shop-checkout).
 import {
   define,

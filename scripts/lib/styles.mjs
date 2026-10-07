@@ -1,4 +1,4 @@
-// Theme contract checks (docs/design-docs/0006-theming.md, rule 4). Pure: tested in
+// Theme contract checks (docs/design-docs/0006-theming.md, rules 3 and 4 and the relative-colour addendum). Pure: tested in
 // scripts/test/styles.test.mjs. Each finding says how to fix it.
 
 const RULES = [

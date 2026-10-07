@@ -6,7 +6,7 @@
 // - Category and search pages put the category nav and filters in a left rail on wide screens.
 // - Product pages use three columns on wide screens: gallery, details, a boxed buy box.
 // Targets only documented hooks (data-region, data-component, landmarks, ::part names) and
-// writes only to @layer theme (test/node/theme-marketplace.test.ts).
+// writes only to @layer theme (test/node/themes-contract.test.ts).
 import type { ThemeDefinition } from './theme.js';
 
 export const marketplaceThemeCss = `

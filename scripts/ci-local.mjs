@@ -1,7 +1,7 @@
 // `pnpm ci:local`: runs .github/workflows/ci.yml in Docker with `gh act` (ADR 0004) and exits
 // by the jobs' results, not act's exit code (scripts/lib/act.mjs, ported from Gyral). The
-// workflow checks out the private Gyral repo beside this one, so the GitHub token from
-// `gh auth token` is passed as a secret (act masks it in its output). Extra arguments go to act.
+// GitHub token from `gh auth token` is passed as a secret so act can fetch the workflow's
+// actions (act masks it in its output). Extra arguments go to act.
 import { execFileSync, spawn } from 'node:child_process';
 import { jobResults } from './lib/act.mjs';
 

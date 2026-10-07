@@ -1,5 +1,5 @@
 // Ranking by rating without letting one 5-star review beat hundreds of 4.6s
-// (docs/product-specs/content.md, "Top rated"): a Bayesian average pulls products with few
+// (docs/product-specs/catalog.md, "Top rated" sort): a Bayesian average pulls products with few
 // reviews toward a prior, and top-rated lists also require a minimum number of reviews.
 
 /** The prior: as if every product already had PRIOR_COUNT reviews averaging PRIOR_MEAN. */

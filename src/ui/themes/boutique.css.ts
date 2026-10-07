@@ -3,7 +3,7 @@
 // wordmark above a quiet nav, red used sparingly, large imagery, an editorial home grid,
 // image-led cards with no chrome, a product page led by its gallery, and a calm cart and
 // checkout. Targets only documented hooks, semantic elements and widget ::parts; writes only to
-// @layer theme (checked by test/node/theme-boutique.test.ts).
+// @layer theme (checked by test/node/themes-contract.test.ts).
 import type { ThemeDefinition } from './theme.js';
 
 export const boutiqueThemeCss = `
