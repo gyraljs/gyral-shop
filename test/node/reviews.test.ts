@@ -34,6 +34,9 @@ const jsonLd = (html: string): unknown[] =>
     (m) => JSON.parse(m[1] ?? 'null') as unknown,
   );
 
+/** Golden fixtures show review dates: pin them (the column defaults to the wall clock). */
+const pinReviewDates = () => test.db.update(reviews).set({ createdAt: T0 });
+
 const flashOf = (res: Response) =>
   decodeURIComponent(res.headers.getSetCookie().find((c) => c.startsWith('flash=')) ?? '');
 
@@ -59,6 +62,7 @@ describe('product page reviews section', () => {
       title: 'Solid',
       body: 'Sturdy and fun to build.',
     });
+    await pinReviewDates();
     const html = await (await buyer.get('/p/lego')).text();
     expect(html).toContain('<shop-reviews');
     expect(html).toContain('data-gyral-hydrate="visible"');
@@ -100,6 +104,7 @@ describe('reviews page and JSON', () => {
         body: 'Long enough to count as a review body.',
       });
     }
+    await pinReviewDates();
   });
 
   it('pages and sorts with one URL per state', async () => {
