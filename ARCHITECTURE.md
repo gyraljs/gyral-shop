@@ -40,7 +40,7 @@ reaches it as props (SSR) or over HTTP.
 
 ## Gyral
 
-`@gyral/*` 0.3.0 (release tarballs in `vendor/` until it is on npm; ADR 0001). Gyral renders
+`@gyral/*` 0.3.1-next.0 (prerelease tarballs in `vendor/` until 0.3.1 is on npm; ADR 0001). Gyral renders
 with its own view layer (Gyral ADR 0018): `html`, `css`, `each`, `raw`, the
 `invalid`/`labelledBy` hooks and the `prop.*` builders come from `@gyral/core`; there is no
 Lit. `gyralVitePreset()` adds the template compiler to `vite build` (templates precompiled and

@@ -5,7 +5,7 @@
 // Light DOM (theme contract ADR 0006, Gyral ADR 0014): document styles in styles/search.ts.
 import { define, each, html, intents, nothing, prop, type Next } from '@gyral/core';
 import { get } from '@gyral/http';
-import { debounce, delay } from '@gyral/time';
+import { debounce, delay } from '@gyral/time/delay';
 import { normalizeQuery, searchQueryString } from '../../domain/search.js';
 import { goTo } from '../drivers/location.js';
 import { suggestHref, SuggestionsSchema, type Suggestions } from './suggestions.js';

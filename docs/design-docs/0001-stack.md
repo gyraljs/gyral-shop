@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3.0 (see the Gyral 0.3 addendum). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.0 (see the Gyral 0.3 addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** on Node (`@hono/node-server`): routes, middleware, SSR via `@gyral/ssr`.
@@ -133,3 +133,49 @@ bump). 0.3.0 is on GitHub but not yet on npm, so the tarballs the shop uses (`co
 `pnpm.overrides` entry is `file:./vendor/<tarball>` (the overrides because the packages depend
 on each other by version); the lockfile references nothing outside the repo. Once 0.3.0 is on
 npm, switch them all to `^0.3.0`, delete `vendor/` and run `pnpm install` (`vendor/README.md`).
+
+### 0.3.1-next.0 (2026-10-07)
+
+Now `0.3.1-next.0`, a prerelease packed from Gyral branch `next` (207e864). Neither 0.3.0 nor
+0.3.1 is on npm yet, so the same six tarballs are vendored the same way (`vendor/README.md`
+says how to switch to `^0.3.1` once it is published).
+
+- The search box takes `delay` and `debounce` from the new `@gyral/time/delay` entry, a
+  delay-only driver (still named `time`, so the tests' fake is unchanged).
+- `tsconfig.json` drops `useDefineForClassFields: false`, a leftover from Lit.
+- Not adopted: `clientOnly` (the shop server-renders), plain type guards for props (the
+  props use valibot schemas, which are Standard Schema; there are no adapters) and
+  `defineDisposableHook` (no hook needs teardown). The new `gyral/unused-intent` rule, the
+  stricter SVG template rules (no `svg` templates or inline `<svg>` in views) and the
+  function-in-property-binding warnings flag nothing. The stricter `settled()` needed no
+  test change: no test spins microtasks before it or observes an in-between loading state.
+- Production builds drop the check of `prop.value(Schema)` when it is a plain reference.
+  Most of the shop's are calls (`prop.value(v.array(Item))`), which keep it; naming them
+  saves nothing here, because Rolldown (Vite 8.3.2) keeps the valibot calls that build an
+  unused schema in a lazily loaded chunk once valibot sits in a chunk shared with the entry.
+
+These are production builds. Until 2026-10-07 `startProduction()` (scripts/lib/prod-server.mjs)
+built with NODE_ENV=development, so `pnpm perf`, `pnpm smoke:prod` and the tables above used
+development bundles. Both columns: production client build, gzip -9, same machine and
+script; per page = every script a cold load fetches (scrolled to the bottom, so islands load);
+cart and checkout with one item.
+
+| Measure               | 0.3.0      | 0.3.1-next.0 |
+| --------------------- | ---------- | ------------ |
+| Entry                 | 7.7 KiB    | 7.5 KiB      |
+| Initial (entry graph) | 28.9 KiB   | 28.0 KiB     |
+| All chunks (raw)      | 85.2 (234) | 84.5 (232)   |
+| Home, department      | 33.4       | 32.4         |
+| Category, search      | 40.6       | 39.9         |
+| Product               | 42.2       | 41.3         |
+| Cart                  | 35.3       | 34.4         |
+| Checkout              | 38.7       | 37.8         |
+| Sign-in               | 34.4       | 33.5         |
+| About (prerendered)   | 31.6       | 30.7         |
+
+Every page loads 0.7–1.0 KiB less, from 0.3.1's production trims: coded diagnostics instead of
+the full texts, no prop path for property sets and seeds, view-transition and frame-lane
+code left out (the shop names neither) and the delay-only time driver. (Development builds
+grow instead, initial 31.6 → 33.0 KiB: they carry the new messages and source locations.)
+Server rendering is unchanged (median of three alternating runs of 400 sequential requests
+each): category 3.04 → 2.96 ms, product 5.60 → 5.56 ms, home 7.54 → 7.50 ms.

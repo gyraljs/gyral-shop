@@ -4,7 +4,7 @@ Status: **accepted** (2026-10-04). Same policy as Gyral's ADR 0004.
 
 Workflows in `.github/workflows/` trigger on `workflow_dispatch` only (checked by
 `scripts/check-workflows.mjs`) and run locally with `pnpm ci:local` (`gh act` in Docker).
-The workflow needs nothing outside this repo (Gyral comes from npm or, until 0.3.0 is
+The workflow needs nothing outside this repo (Gyral comes from npm or, until 0.3.1 is
 published there, from `vendor/`); the local run passes your `gh auth token` as `GITHUB_TOKEN`
 so act can fetch the actions it uses. (Until 2026-10-05 Gyral was linked and the workflow also
 checked out `gyraljs/gyral` beside this repo.)
