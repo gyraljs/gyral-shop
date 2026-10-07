@@ -3,7 +3,8 @@
 - **Dashboard**: sales today/7 days/30 days, orders by status, low-stock alerts, top products,
   page views (consented analytics).
 - **Products**: searchable, sortable table; create/edit (name, slug, department, category,
-  brand, description, images by URL, variants with SKU, price, sale price, stock); archive.
+  brand, description, images by URL, sale price, variants with SKU, options and an optional price override); archive. Stock
+  changes only through inventory adjustments.
 - **Inventory**: adjust stock per SKU with a reason (audit log).
 - **Orders**: filter by status/date; detail; transitions (fulfil, mark delivered, cancel,
   refund full/partial) through the domain state machine.
@@ -21,6 +22,6 @@
   themselves; the store always keeps an active admin (checked inside the write lock); role changes
   and disabling end that member's sessions.
 - **Reviews** (`/admin/reviews`): hide or show; the product rating is recomputed.
-- **Departments & brands** (`/admin/taxonomy`): create, rename, archive, restore. Archived ones are
+- **Departments, categories & brands** (`/admin/taxonomy`): create, rename, archive, restore. Archived ones are
   hidden from shoppers; archiving is refused while live products use them.
 - The admin has its own document shell (no storefront header, cart, consent banner or footer).

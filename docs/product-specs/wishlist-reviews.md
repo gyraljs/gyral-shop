@@ -20,4 +20,5 @@
 - `<shop-reviews>` is a `hydrate: 'visible'` island in light DOM: links and vote forms work as
   server HTML; once hydrated, sorting and paging load in place and votes post without a reload.
 - Product structured data carries `review` snippets for exactly the reviews the page shows.
-- Admin hiding (`setReviewHidden`) exists in the repository; its UI is the admin epic.
+- Admins hide or show reviews at `/admin/reviews` (admin.md); `setReviewHidden` recomputes the
+  product rating.

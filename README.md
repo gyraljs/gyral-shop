@@ -18,7 +18,7 @@ pnpm install
 pnpm exec playwright install chromium
 pnpm db:reset      # create data/shop.db, migrate, seed the catalog
 pnpm dev           # http://localhost:5200
-pnpm check         # typecheck, lint, format, invariants, tests
+pnpm check         # typecheck, lint, format, invariants, tests, production smoke
 ```
 
 Production (Gyral ADR 0016): a Vite client build plus the static content pages prerendered at

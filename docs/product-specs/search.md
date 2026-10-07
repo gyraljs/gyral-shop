@@ -6,14 +6,15 @@
 - Results page reuses the listing (filters, sort, pagination) with "relevance" ranking:
   name match > brand match > category match > description match.
 - "No results" page suggests departments and popular products.
-- SQLite FTS5 (or LIKE fallback) behind a repository; queries are parameterized.
+- SQLite FTS5 behind a repository (department and category suggestions match names with
+  LIKE); queries are parameterized.
 
 ## Implementation notes (shop-y8c.1)
 
 - `products_fts` (FTS5, `unicode61 remove_diacritics 2`, prefix indexes) is created by the
   custom migration `drizzle/0002_search_fts.sql` and kept in sync by triggers on `products`.
-  Brand, category and department names are copied in at write time; renaming a brand or
-  category does not reindex its products (follow-up when admin can rename them).
+  Brand, category and department names are copied in at write time; renaming a brand,
+  category or department updates the index through triggers (`drizzle/0006_taxonomy_reindex.sql`).
 - Ranking: bm25 with column weights name 10, brand 5, category 3, department 2,
   description 1 (`src/db/repos/search.ts`); ties by rating. Every word must match, as a
   prefix. User text is reduced to letters and digits (`src/domain/search.ts`), so FTS

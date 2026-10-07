@@ -6,7 +6,7 @@
   total, remove; promo code entry; itemized totals from the domain price pipeline; "continue
   shopping" and "checkout".
 - Header **mini-cart** badge with item count, shared state across the page (Gyral stores,
-  ADR 0013); opens a popover summary.
+  Gyral ADR 0013); opens a `<details>` summary panel (works without JS).
 - Every action works as a POST form without JS; with JS, optimistic updates reconcile with the
   server response; stock errors are shown per line.
 
@@ -23,8 +23,10 @@
 - **Optimistic updates:** quantity changes and removals show at once. All requests share one
   queued lane; the server's cart replaces the optimistic one only when no request is still in
   flight. An answer without a cart, or a network failure, triggers one re-read.
-- **The mini-cart is slotted** into `<shop-header>` from the document shell (light DOM), not
-  rendered inside the header's shadow root: Gyral components nested in another component's
-  server-rendered shadow root get `defer-hydration`, and Gyral then never wires their intents.
+- **The mini-cart is a nested component:** `<shop-header>` is light DOM (ADR 0006 rule 5) and
+  renders `<shop-mini-cart>` in its own view. The mini-cart keeps a shadow root with its own
+  styles and parts, and hydrates on its own. (It used to be slotted in from the document shell while the header had
+  a shadow root, because components nested in a server-rendered shadow root never wired their
+  intents.)
 - **Flash messages** are cleared through the security cookie queue (`queueCookie`): pages
   return their own `Response`, which drops cookies set through Hono's context.

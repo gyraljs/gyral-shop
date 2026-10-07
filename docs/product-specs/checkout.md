@@ -1,11 +1,13 @@
 # Checkout
 
-Steps on one page with progressive disclosure, or as separate pages without JS:
+Steps on one page with progressive disclosure, with or without JS (without JS each step posts
+and returns to `/checkout` with the next step open):
 
 1. **Contact**: guest email, or the signed-in member.
 2. **Shipping address**: saved addresses for members; validated form for guests.
 3. **Shipping method**: Standard (free over $35), Express, Next day; prices from domain rules.
-4. **Payment**: mock card form (payments.md) or saved mock card for members.
+4. **Payment**: mock card form (payments.md); the entered card (brand, last 4, expiry) is kept
+   on the checkout draft until the order is placed. Members have no stored cards.
 5. **Review**: itemized totals (subtotal, discount, shipping, tax by state, total), editable
    links back to each step, terms checkbox, **Place order**.
 
@@ -52,4 +54,5 @@ Steps on one page with progressive disclosure, or as separate pages without JS:
   needs. Correctness doesn't depend on the lock but on the conditional updates: the race tests
   in test/node/place-order-race.test.ts fail when those guards are removed.
 - The confirmation is visible to the member who placed it, admins, and the browser that placed
-  it (a signed `orders` cookie); anyone else gets 404.
+  it (a signed `orders` cookie); anyone else is redirected (303) to the order lookup form
+  (`/order/lookup?number=…`), the same way for every number.

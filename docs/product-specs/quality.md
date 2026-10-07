@@ -13,7 +13,7 @@
 ## Implementation notes
 
 - **Accessibility, every template:** `test/node/a11y-templates.test.ts` serves the real app
-  and runs axe (WCAG 2.2 AA tags) in Chromium on the server-rendered markup of 40 page
+  and runs axe (WCAG 2.2 AA tags) in Chromium on the server-rendered markup of 41 page
   templates, as a guest, a member with a placed order, and guests at each checkout step. A
   control page with a missing `alt` proves the run reports violations. Not covered there:
   `/admin` (client-rendered; its own suite) and `/dev/mail` (development tool). Hydrated
@@ -31,12 +31,16 @@
 - **Performance budgets:** `pnpm perf` (`scripts/perf.mjs`, about 45 s, so not part of
   `pnpm check`) seeds a throwaway database, builds, starts the production server and loads
   home, a category and a product page cold in Chromium with 4x CPU and 1.6 Mbps / 150 ms
-  network throttling, three runs each. It fails on median LCP ≥ 2.5 s, CLS ≥ 0.1, or JS gzip
+  network throttling, three runs each. It fails on median LCP above 2.5 s, CLS above 0.1, or JS gzip
   above the recorded baseline + 10% (`scripts/perf-baseline.json`; refresh with
   `pnpm perf --update` after an intended change).
 
-  Baseline (2026-10-05, production build, after per-route code splitting and the Gyral fix for
-  production-only hydration duplicates, gyral-czi.41):
+  Current baseline (2026-10-06, production build on Gyral 0.3.0-next.5, whose runtime 0.3.0
+  ships unchanged; ADR 0001): JS gzip home 36.5 KiB, category 44.1 KiB, product 45.8 KiB
+  (`scripts/perf-baseline.json`); LCP 720–776 ms; CLS 0.
+
+  First baseline (2026-10-05, Gyral 0.1, production build, after per-route code splitting and
+  the Gyral fix for production-only hydration duplicates, gyral-czi.41), kept for history:
 
   | Page     | LCP (median) |   CLS |  JS gzip |    JS raw | CSS (inline + files) |
   | -------- | -----------: | ----: | -------: | --------: | -------------------: |
@@ -49,4 +53,4 @@
 
 - **Production hydration:** `pnpm smoke:prod` (part of `pnpm check`, about 20 s) builds and
   serves the production bundle and checks that key pages hydrate in place (see ADR 0005,
-  "Production builds").
+  "Production builds" and its Gyral 0.3 addendum).

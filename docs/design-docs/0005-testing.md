@@ -2,7 +2,7 @@
 
 Status: **accepted** (2026-10-04)
 
-Three kinds of test, each with a helper in `test/support/`:
+Four kinds of test, each with a helper in `test/support/`:
 
 | Kind       | Where                                     | Runs in                        | Helper                                                                                                                                                                                                                                                                                                             |
 | ---------- | ----------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -55,9 +55,10 @@ any problem. `--baseline` saves screenshots; `--compare` pixel-diffs against the
 
 ## Addendum: Production builds (2026-10-05)
 
-Every other test runs Lit's **development** build. Production builds differ: Lit renames its
-private fields, and Rolldown reorders module evaluation across chunks (the client entry's
-top-level await let Lit run before `@gyral/ssr/hydrate`). Both caused production-only bugs that
+With Gyral 0.2 (history; see the Gyral 0.3 addendum below), every other test ran Lit's
+**development** build. Production builds differed: Lit renamed its private fields, and Rolldown
+reordered module evaluation across chunks (the client entry's top-level await let Lit run before
+`@gyral/ssr/hydrate`). Both caused production-only bugs that
 no development test could see: the consent banner rendered twice, the header and listing
 logged hydration mismatches, and the cart heading doubled (Gyral gyral-czi.38, gyral-czi.41).
 
@@ -73,7 +74,7 @@ line), sign-in, `/about` (prerendered) and checkout. For each page it requires:
 - **the server's nodes survive hydration**: an init script tags every element when parsing
   finishes, before any module script runs, and headings, regions and each component's
   top-level view must still be those nodes afterwards. A fresh client render looks identical
-  but replaces them, and counting alone cannot tell the difference: with
+  but replaces them, and counting alone cannot tell the difference: under Gyral 0.2, with
   `@gyral/ssr/hydrate` removed from the entry, the counts still matched but all ten page checks
   failed on replaced nodes.
 

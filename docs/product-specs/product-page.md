@@ -2,7 +2,8 @@
 
 - URL `/p/:slug`. SSR with title, description, price (sale price with the original struck
   through), rating summary, breadcrumbs (department › category › product).
-- Image gallery: main image + thumbnails, keyboard operable; `loading="lazy"` except the first.
+- Image gallery: main image + thumbnails, keyboard operable; main images are `loading="lazy"`
+  except the first.
 - Variants (e.g. size, color) select a SKU; price and stock update per SKU; unavailable
   combinations are disabled with a reason.
 - Quantity input (1..min(10, stock)) and **Add to cart** (a POST form without JS; with JS,

@@ -6,6 +6,6 @@
   POST. Lockout messaging after rate limit.
 - **Profile**: change name and email (re-enter password for email change).
 - **Addresses**: list, add, edit, delete, set default shipping address; US states only.
-- **Change password** (current + new) and **forgot/reset password** via mailed link
+- **Change password** (current + new + confirmation) and **forgot/reset password** via mailed link
   (mail.md), token single-use, 30 minutes.
 - Account pages require login; the header shows the member's first name and an account menu.

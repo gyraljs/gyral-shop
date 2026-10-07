@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3 (see the 2026-10-06 addenda). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), 0.3.0 (see the Gyral 0.3 addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** on Node (`@hono/node-server`): routes, middleware, SSR via `@gyral/ssr`.
@@ -15,7 +15,8 @@ Status: **accepted** (2026-10-04)
 - **valibot** for every boundary. It implements Standard Schema, so the same schemas drive
   Gyral `form()` intents and server `formAction()`.
 - **Testing:** Vitest browser mode (Chromium) for UI, Node project for domain/db/services and
-  route tests against an in-memory SQLite, `@axe-core/playwright` for accessibility.
+  route tests against an in-memory SQLite, `axe-core` for accessibility (page tests and
+  `pnpm ui:check`).
 - **Local only** for now: no deployment target.
 
 ## Addendum: public origin (2026-10-04)
@@ -61,7 +62,8 @@ their own dependencies, so `optimizedDeps()` now follows only the shop's own bro
 Upgraded to `@gyral/*` ^0.2.0 (bead shop-1tc). Gyral no longer bundles Effect, so the main
 entry's static graph dropped from 69.8 to 32.4 KiB gzip and all client JS from 124.0 to 85.3 kB.
 `package.json` pins `lit-html` to 3.3.0 through `pnpm.overrides` until lit/lit#5298 (a
-`repeat()` comment-node leak in 3.3.1+) is fixed upstream; remove the override then.
+`repeat()` comment-node leak in 3.3.1+) is fixed upstream; remove the override then. (Removed
+with Lit itself in Gyral 0.3, below.)
 
 Gyral 0.2.0 also strips indentation whitespace from `html` templates, which changed every SSR
 golden fixture (regenerated with `pnpm test -u`). One visible effect, a fix: the empty review

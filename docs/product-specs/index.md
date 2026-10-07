@@ -18,5 +18,5 @@ Every file here must be listed below (`pnpm invariants` checks).
 | [seo.md](seo.md)                           | Meta, canonical, sitemap, robots, structured data                          |
 | [consent.md](consent.md)                   | Cookie/consent banner and mock analytics                                   |
 | [mail.md](mail.md)                         | Mock email outbox                                                          |
-| [admin.md](admin.md)                       | Dashboard, products, inventory, orders, promos, users                      |
+| [admin.md](admin.md)                       | Dashboard, products, inventory, orders, promos, users, reviews, taxonomy   |
 | [quality.md](quality.md)                   | Accessibility, performance, security acceptance                            |

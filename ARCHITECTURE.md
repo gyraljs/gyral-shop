@@ -27,8 +27,9 @@ reaches it as props (SSR) or over HTTP.
 
 ## Rendering modes per route
 
-- **ssr:** catalog, search, product pages, cart, checkout, account, orders. Personalized or
-  live data, SEO matters for catalog pages.
+- **ssr:** every other storefront page: home, departments, catalog, search, product pages and
+  reviews, cart, checkout, account, wishlist, orders, contact. Personalized or live data, SEO
+  matters for catalog pages.
 - **ssg:** content pages (about, FAQ, terms, privacy), prerendered by `pnpm build`
   (`src/server/prerender.ts`, Gyral `@gyral/ssr/static`) and served from `dist/static`. They
   carry no per-visitor data: the header fetches `/api/me` and the mini-cart loads the cart
