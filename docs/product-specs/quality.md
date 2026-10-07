@@ -35,9 +35,11 @@
   above the recorded baseline + 10% (`scripts/perf-baseline.json`; refresh with
   `pnpm perf --update` after an intended change).
 
-  Current baseline (2026-10-06, production build on Gyral 0.3.0-next.5, whose runtime 0.3.0
-  ships unchanged; ADR 0001): JS gzip home 36.5 KiB, category 44.1 KiB, product 45.8 KiB
-  (`scripts/perf-baseline.json`); LCP 720–776 ms; CLS 0.
+  Current baseline (2026-10-07, production build on Gyral 0.3.1-next.0; ADR 0001): JS gzip
+  home 32.4 KiB, category 39.9 KiB, product 41.3 KiB (`scripts/perf-baseline.json`); LCP
+  704–768 ms; CLS 0. Earlier baselines were measured on development bundles (until
+  2026-10-07 the build ran under NODE_ENV=development; ADR 0001, "0.3.1-next.0"): the
+  previous one, on Gyral 0.3.0-next.5, was home 36.5, category 44.1, product 45.8 KiB.
 
   First baseline (2026-10-05, Gyral 0.1, production build, after per-route code splitting and
   the Gyral fix for production-only hydration duplicates, gyral-czi.41), kept for history:
