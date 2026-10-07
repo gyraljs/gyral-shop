@@ -16,11 +16,14 @@ export const freePort = () =>
     });
   });
 
+/** Runs a command; an `undefined` value in `env` removes that variable. */
 function run(cmd, cmdArgs, env, quiet) {
+  const merged = { ...process.env, ...env };
+  for (const [key, value] of Object.entries(merged)) if (value === undefined) delete merged[key];
   const result = spawnSync(cmd, cmdArgs, {
     stdio: quiet ? 'pipe' : 'inherit',
     encoding: 'utf8',
-    env: { ...process.env, ...env },
+    env: merged,
   });
   if (result.status !== 0) {
     throw new Error(
@@ -69,8 +72,11 @@ export async function startProduction({ build = true, quiet = false } = {}) {
   try {
     run('pnpm', ['exec', 'tsx', 'src/db/migrate.ts'], dev, quiet);
     run('pnpm', ['exec', 'tsx', 'scripts/seed.ts'], dev, quiet);
-    // Prerendering reads the catalog, so the build runs against the seeded database.
-    if (build || !existsSync('dist/client')) run('pnpm', ['build'], dev, quiet);
+    // Prerendering reads the catalog, so the build runs against the seeded database. Without
+    // NODE_ENV, as `pnpm build` is run for a deployment: under NODE_ENV=development, Vite (and
+    // with it Gyral's preset) makes a development build, with its checks and messages.
+    if (build || !existsSync('dist/client'))
+      run('pnpm', ['build'], { ...dev, NODE_ENV: undefined }, quiet);
     const port = await freePort();
     const base = `http://localhost:${String(port)}`;
     server = spawn('pnpm', ['exec', 'tsx', 'src/server/prod.ts'], {
