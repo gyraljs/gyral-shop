@@ -35,11 +35,12 @@
   above the recorded baseline + 10% (`scripts/perf-baseline.json`; refresh with
   `pnpm perf --update` after an intended change).
 
-  Current baseline (2026-10-08, production build on Gyral 0.3.1-next.2; ADR 0001): JS gzip
-  home 33.0 KiB, category 41.0 KiB, product 41.9 KiB (`scripts/perf-baseline.json`); LCP
-  836–876 ms on a loaded machine; CLS 0. The one before, on 0.3.1-next.1, was 0.6–1.2 KiB
-  smaller (home 32.4, category 39.8, product 41.3 KiB): next.2's router scroll and focus
-  handling. The one before that, on 0.3.1-next.0, was 19–143 bytes larger than next.1. Earlier baselines were measured on development bundles (until 2026-10-07 the
+  Current baseline (2026-10-08, production build on Gyral 0.3.1-next.3; ADR 0001): JS gzip
+  home 32.7 KiB, category 40.5 KiB, product 41.6 KiB (`scripts/perf-baseline.json`); LCP
+  1040–1248 ms on a heavily loaded machine; CLS 0. The one before, on 0.3.1-next.2, was
+  0.3–0.5 KiB larger (home 33.0, category 41.0, product 41.9 KiB): next.2's router split the
+  scheduler into extra chunks, which next.3 fixed. The one before that, on 0.3.1-next.1, was
+  home 32.4, category 39.8, product 41.3 KiB; on 0.3.1-next.0 it was 19–143 bytes larger than next.1. Earlier baselines were measured on development bundles (until 2026-10-07 the
   build ran under NODE_ENV=development; ADR 0001, "0.3.1-next.0"): the last of them, on Gyral
   0.3.0-next.5, was home 36.5, category 44.1, product 45.8 KiB.
 

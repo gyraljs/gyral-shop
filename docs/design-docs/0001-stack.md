@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.2 (see the Gyral 0.3 addendum). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.3 (see the Gyral 0.3 addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** for routes and middleware, SSR via `@gyral/ssr`, served on Node by Gyral's adapter
@@ -246,9 +246,50 @@ Same script and method as the tables above (production build, gzip -9); 37 → 4
 | Sign-in               | 33.45        | 34.08        |
 | About (prerendered)   | 30.71        | 31.33        |
 
-Every page loads 0.6–0.7 KiB more (category 1.2 KiB), mostly the router's scroll and focus
-handling and `settled()`; it buys the same scroll and focus behavior on every browser. Server
-rendering was not re-measured.
+Every page loads 0.6–0.7 KiB more (category 1.2 KiB). Correction (measured after next.3, see
+below): most of that was not the router's code. The router's lazily loaded History API
+fallback imported `settled()` statically, so the bundler split the scheduler out of the core
+chunk into extra chunks that every page loaded, including pages without the router; the real
+code growth was about 0.18 KiB on home and product, plus about 0.36 KiB of scroll and focus
+handling on the router pages. Server rendering was not re-measured.
+
+### 0.3.1-next.3 (2026-10-08)
+
+Now `0.3.1-next.3`, packed from Gyral branch `next` (3239f6b); the same six tarballs, vendored
+the same way. What next.3 changes for the shop:
+
+- **Router chunking (Gyral fix):** the History API fallback no longer imports anything at
+  runtime, so the scheduler stays in the core chunk; 41 → 38 chunks, and every page loads
+  0.3–0.5 KiB less than on next.2. A `replace` navigation no longer scrolls or resets focus
+  (the shop's filters and admin searches push, so nothing changes for it); if the History API
+  chunk fails to load, navigations become full page loads.
+- **SSR:** `toNodeListener` passes `{ incoming, remoteAddress }` and `productionServer` passes
+  it on to the app, so the shop serves with `@gyral/ssr/node` (addendum below). A handler that
+  doesn't read a request body no longer stalls keep-alive connections.
+- **Core:** templates parse through a Trusted Types policy named `gyral` (the shop's CSP has no
+  `trusted-types` directive, so nothing changes); a parser returning `undefined` passes the
+  event to the next intent outward (the shop has no nested intents for one event); equal prop
+  writes are skipped.
+
+Same script and method as the tables above (production build, gzip -9); 41 → 38 chunks:
+
+| Measure               | 0.3.1-next.2 | 0.3.1-next.3 |
+| --------------------- | ------------ | ------------ |
+| Entry                 | 7.56 KiB     | 7.48 KiB     |
+| Initial (entry graph) | 28.51 KiB    | 28.23 KiB    |
+| All chunks (raw)      | 86.57 (235)  | 85.98 (235)  |
+| Home, department      | 33.04        | 32.74        |
+| Category, search      | 41.00        | 40.52        |
+| Product               | 41.90        | 41.59        |
+| Cart                  | 34.96        | 34.66        |
+| Checkout              | 38.39        | 38.10        |
+| Sign-in               | 34.08        | 33.78        |
+| About (prerendered)   | 31.33        | 31.03        |
+
+Against next.1, every page is now 0.29–0.34 KiB larger (category and search 0.74 KiB, with the
+router's scroll and focus handling): next.2's and next.3's core additions and the router
+features, without the chunking overhead. Server rendering was not re-measured (the machine was
+heavily loaded).
 
 ## Addendum 2026-10-08: Gyral's Node adapter instead of `@hono/node-server`
 
@@ -262,11 +303,10 @@ passes.
   the env's `remoteAddress` rather than `getConnInfo` from `@hono/node-server/conninfo` (which
   would work with the same env, but keeps the package); `hono/conninfo` only has types.
   In-process requests (`app.request` in tests) have no env and share the key `unknown`.
-- **Through `productionServer`.** Its `fetch` passes the app the `Request` alone, so
-  `createProdApp` keeps the adapter's env in a `WeakMap` keyed by that `Request` and hands it
-  to the Hono app's `fetch`. When Gyral forwards the env itself, the map can go;
-  `prod.test.ts` › "rate-limits by the client address the Node adapter passes" fails if the
-  address stops arriving.
+- **Through `productionServer`.** From next.3 its `fetch` passes the env on to the app
+  (`productionServer<NodeEnv>`), so `createProdApp` hands it straight through; a `WeakMap`
+  workaround for next.3's first pack is gone. `prod.test.ts` › "rate-limits by the client
+  address the Node adapter passes" fails if the address stops arriving.
 - **Request URLs.** In production they are built on `SITE_ORIGIN` (the adapter's `origin`),
   no longer on the client's `Host` header, so a forged `Host` cannot change them, and over a
   TLS-terminating proxy with an `https:` `SITE_ORIGIN` the request counts as HTTPS. The dev

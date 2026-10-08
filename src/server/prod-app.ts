@@ -55,23 +55,18 @@ export interface ProdApp {
 }
 
 export async function createProdApp(options: ProdOptions): Promise<ProdApp> {
-  // productionServer hands the app the request alone, so the adapter's env (the client address
-  // rate limiting reads, security/request.ts) is looked up by the same Request object.
-  const envs = new WeakMap<Request, NodeEnv>();
-  const served = await productionServer({
+  // productionServer passes the adapter's env (the client address rate limiting reads,
+  // security/request.ts) on to the app with the request.
+  const served = await productionServer<NodeEnv>({
     distDir: options.distDir,
     entry: CLIENT_ENTRY_SOURCE,
-    createApp: (assets) => {
-      const app = productionApp(options, assets);
-      return { fetch: (request) => app.fetch(request, envs.get(request)) };
-    },
+    createApp: (assets) => productionApp(options, assets),
   });
   // Every component module is imported by now (the app imports them statically).
   const csp = await staticPolicy();
   return {
     fetch: async (request, env) => {
-      if (env !== undefined) envs.set(request, env);
-      const response = await served.fetch(request);
+      const response = await served.fetch(request, env);
       if (response.headers.has('content-security-policy')) return response; // came from the app
       const headers = new Headers(response.headers);
       const https = new URL(request.url).protocol === 'https:';
