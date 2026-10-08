@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.1 (see the Gyral 0.3 addendum). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.2 (see the Gyral 0.3 addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** on Node (`@hono/node-server`): routes, middleware, SSR via `@gyral/ssr`.
@@ -208,3 +208,43 @@ Same script and method as the 0.3.1-next.0 table (production build, gzip -9):
 | Sign-in                    | 33.47        | 33.45        |
 | About (prerendered)        | 30.72        | 30.71        |
 | Profile, password, address | 37.08        | 36.83        |
+
+### 0.3.1-next.2 (2026-10-08)
+
+Now `0.3.1-next.2`, packed from Gyral branch `next` (751f76a); the same six tarballs, vendored
+the same way. Nothing in the shop needed changing; `pnpm check` (742 tests, `smoke:prod`) and
+`pnpm perf` pass as they were. What next.2 changes for the shop:
+
+- **Router:** after a navigation renders, the router scrolls to the `#fragment` or the top,
+  restores the position on back/forward and resets focus unless the app moved it, the same
+  with or without the Navigation API. The entry now carries `settled()` and the Navigation API
+  intercept options; the History API path became a lazily loaded chunk (0.76 KiB gzip) that
+  only browsers without the Navigation API fetch. `match()` also returns the canonical `path`.
+- **Core:** `style` attributes are written through the CSSOM, so they apply under a strict CSP
+  (the shop's policy has no `'unsafe-inline'`, but its views use no `style` attributes, per
+  `csp.ts`, so nothing changes; a client-rendered `style=` would now apply), and
+  `data-intent-on` takes a list of events.
+- **SSR:** `productionServer` serves assets more safely (400 on malformed URLs, `HEAD`,
+  `nosniff`, `no-store` misses, an in-memory cache); `preload(modules)` is unchanged, so
+  `route-chunks.ts` needs nothing. The shop keeps `@hono/node-server` rather than
+  `@gyral/ssr/node`'s `toNodeListener`: `security/request.ts` reads the client address with
+  `getConnInfo` for rate limiting, which a plain `Request` doesn't carry.
+
+Same script and method as the tables above (production build, gzip -9); 37 → 41 chunks:
+
+| Measure               | 0.3.1-next.1 | 0.3.1-next.2 |
+| --------------------- | ------------ | ------------ |
+| Entry                 | 7.48 KiB     | 7.56 KiB     |
+| Initial (entry graph) | 27.95 KiB    | 28.51 KiB    |
+| All chunks (raw)      | 84.31 (232)  | 86.57 (235)  |
+| Home, department      | 32.41        | 33.04        |
+| Category, search      | 39.78        | 41.00        |
+| Product               | 41.25        | 41.90        |
+| Cart                  | 34.33        | 34.96        |
+| Checkout              | 37.77        | 38.39        |
+| Sign-in               | 33.45        | 34.08        |
+| About (prerendered)   | 30.71        | 31.33        |
+
+Every page loads 0.6–0.7 KiB more (category 1.2 KiB), mostly the router's scroll and focus
+handling and `settled()`; it buys the same scroll and focus behavior on every browser. Server
+rendering was not re-measured.
