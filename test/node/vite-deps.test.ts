@@ -20,7 +20,7 @@ describe('vite.deps (pre-bundled browser dependencies)', () => {
     expect(deps).toContain('@gyral/http');
     for (const serverOnly of [
       'hono',
-      '@hono/node-server',
+      '@gyral/ssr/node',
       'drizzle-orm',
       '@libsql/client',
       'playwright',

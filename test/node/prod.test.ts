@@ -7,17 +7,17 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'vite';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import type { FetchApp } from '@gyral/ssr/static';
 import { createTestDb, type Db } from '../../src/db/client.js';
 import { insertSeed } from '../../src/db/seed/insert.js';
 import * as v from 'valibot';
 import { prerenderSite } from '../../src/server/prerender.js';
-import { createProdApp } from '../../src/server/prod-app.js';
+import { createProdApp, type ProdApp } from '../../src/server/prod-app.js';
 import { ROUTE_CHUNKS } from '../../src/server/route-chunks.js';
 import { SESSION_COOKIE } from '../../src/server/security/index.js';
 import { createSession } from '../../src/services/sessions.js';
 import { CSRF_FIELD } from '../../src/ui/forms/csrf.js';
 import { smallCatalog } from '../support/app.js';
+import { serveFetch } from '../support/server.js';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const dist = mkdtempSync(join(tmpdir(), 'gyral-shop-prod-'));
@@ -27,7 +27,7 @@ const config = {
   SITE_ORIGIN: 'https://shop.example',
 };
 let db: Db;
-let app: FetchApp;
+let app: ProdApp;
 let prerendered: readonly string[] = [];
 
 const req = (path: string, init?: RequestInit): Promise<Response> =>
@@ -144,5 +144,27 @@ describe('production build', () => {
   it('keeps 404s and refuses paths outside the build', async () => {
     expect((await req('/nope')).status).toBe(404);
     expect((await req('/assets/..%2F..%2Fpackage.json')).status).toBe(404);
+  });
+
+  it('rate-limits by the client address the Node adapter passes, through productionServer', async () => {
+    const session = await createSession(db, { now: new Date() });
+    const register = (send: (path: string, init: RequestInit) => Promise<Response>) =>
+      send('/account/register', {
+        method: 'POST',
+        headers: { cookie: `${SESSION_COOKIE}=${session.id}` },
+        body: new URLSearchParams({ name: 'X', email: 'x', [CSRF_FIELD]: session.csrfToken }),
+      });
+    const served = await serveFetch(app.fetch);
+    try {
+      const statuses: number[] = [];
+      for (let n = 0; n < 6; n += 1) {
+        statuses.push((await register((path, init) => fetch(served.url(path), init))).status);
+      }
+      expect(statuses).toEqual([422, 422, 422, 422, 422, 429]);
+    } finally {
+      await served.close();
+    }
+    // In-process (no env, key 'unknown'): a different client, so its budget is untouched.
+    expect((await register(req)).status).toBe(422);
   });
 });

@@ -1,6 +1,5 @@
 // Small request facts shared by the security middleware.
 import type { Context } from 'hono';
-import { getConnInfo } from '@hono/node-server/conninfo';
 
 /** True when the client wants JSON (fetch with an API Accept header, JSON body or CSRF header). */
 export function wantsJson(c: Context): boolean {
@@ -19,19 +18,24 @@ export function isHttps(c: Context): boolean {
 }
 
 /**
+ * The peer address `toNodeListener` (`@gyral/ssr/node`) passes as the env's `remoteAddress`
+ * (src/server/prod.ts, dev.ts). In-process requests (`app.request` in tests) have no env.
+ */
+function remoteAddress(env: unknown): string | undefined {
+  if (typeof env !== 'object' || env === null || !('remoteAddress' in env)) return undefined;
+  return typeof env.remoteAddress === 'string' ? env.remoteAddress : undefined;
+}
+
+/**
  * The client IP for rate limiting. Proxy headers are only trusted when `trustProxy` is set,
- * otherwise anyone could pick their own key. In-process test requests have no socket.
+ * otherwise anyone could pick their own key.
  */
 export function clientIp(c: Context, trustProxy: boolean): string {
   if (trustProxy) {
     const forwarded = c.req.header('x-forwarded-for')?.split(',')[0]?.trim();
     if (forwarded !== undefined && forwarded !== '') return forwarded;
   }
-  try {
-    return getConnInfo(c).remote.address ?? 'unknown';
-  } catch {
-    return 'unknown';
-  }
+  return remoteAddress(c.env) ?? 'unknown';
 }
 
 /** A `?next=` target that is a same-site path, or `/` (prevents open redirects). */

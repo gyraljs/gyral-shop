@@ -1,7 +1,7 @@
 // Dev server: Vite serves browser modules (with HMR); every other request is server-rendered
 // by the Hono app, re-loaded per request so SSR follows source edits.
 import http from 'node:http';
-import { getRequestListener } from '@hono/node-server';
+import { toNodeListener } from '@gyral/ssr/node';
 import { createServer as createViteServer } from 'vite';
 import { loadConfig } from '../config/env.js';
 import { openDb } from '../db/client.js';
@@ -23,14 +23,17 @@ const vite = await createViteServer({
 // Built once: per-request apps must share the secret (see dev-options.ts).
 const options = devAppOptions(config, db);
 
-const ssr = getRequestListener(async (request) => {
+// The env carries the client address that rate limiting reads (security/request.ts).
+const ssr = toNodeListener(async (request, env) => {
   const mod = (await vite.ssrLoadModule('/src/server/app.ts')) as typeof import('./app.js');
-  return mod.createApp(options).fetch(request);
+  return mod.createApp(options).fetch(request, env);
 });
 
 http
   .createServer((req, res) => {
-    vite.middlewares(req, res, () => void ssr(req, res));
+    vite.middlewares(req, res, () => {
+      ssr(req, res);
+    });
   })
   .listen(port, () => {
     console.log(`gyral-shop: http://localhost:${String(port)}`);

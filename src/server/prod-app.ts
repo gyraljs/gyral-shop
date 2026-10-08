@@ -2,7 +2,8 @@
 // immutable, prerendered (`ssg`) pages from disk, everything else by the app per request.
 // Files served from disk never pass through the app's middleware, so the same security
 // headers are added here (docs/design-docs/0002-security.md).
-import { productionServer, type FetchApp } from '@gyral/ssr/static';
+import type { NodeEnv } from '@gyral/ssr/node';
+import { productionServer } from '@gyral/ssr/static';
 import type { Config } from '../config/env.js';
 import type { Db } from '../db/client.js';
 import { createApp } from './app.js';
@@ -48,16 +49,28 @@ export const productionApp = (options: Omit<ProdOptions, 'distDir'>, assets: Cli
     },
   });
 
-export async function createProdApp(options: ProdOptions): Promise<FetchApp> {
+/** The production handler; `env` is what `toNodeListener` passes (src/server/prod.ts). */
+export interface ProdApp {
+  readonly fetch: (request: Request, env?: NodeEnv) => Promise<Response>;
+}
+
+export async function createProdApp(options: ProdOptions): Promise<ProdApp> {
+  // productionServer hands the app the request alone, so the adapter's env (the client address
+  // rate limiting reads, security/request.ts) is looked up by the same Request object.
+  const envs = new WeakMap<Request, NodeEnv>();
   const served = await productionServer({
     distDir: options.distDir,
     entry: CLIENT_ENTRY_SOURCE,
-    createApp: (assets) => productionApp(options, assets),
+    createApp: (assets) => {
+      const app = productionApp(options, assets);
+      return { fetch: (request) => app.fetch(request, envs.get(request)) };
+    },
   });
   // Every component module is imported by now (the app imports them statically).
   const csp = await staticPolicy();
   return {
-    fetch: async (request) => {
+    fetch: async (request, env) => {
+      if (env !== undefined) envs.set(request, env);
       const response = await served.fetch(request);
       if (response.headers.has('content-security-policy')) return response; // came from the app
       const headers = new Headers(response.headers);

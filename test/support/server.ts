@@ -1,7 +1,7 @@
 // End-to-end helpers (Node): serve the app over real HTTP and drive Chromium, e.g. with
 // JavaScript disabled to prove the no-JS paths (docs/product-specs/quality.md).
-import type { AddressInfo } from 'node:net';
-import { serve } from '@hono/node-server';
+import { createServer } from 'node:http';
+import { toNodeListener, type FetchHandler } from '@gyral/ssr/node';
 import { chromium, type Browser, type Page } from 'playwright';
 import type { TestApp } from './app.js';
 
@@ -10,21 +10,24 @@ export interface Served {
   readonly close: () => Promise<void>;
 }
 
-export async function listen(test: TestApp): Promise<Served> {
-  return new Promise((resolve) => {
-    const server = serve({ fetch: test.app.fetch, port: 0 }, (info: AddressInfo) => {
-      resolve({
-        url: (path) => `http://localhost:${String(info.port)}${path}`,
-        close: () =>
-          new Promise((done) => {
-            server.close(() => {
-              done();
-            });
-          }),
-      });
-    });
-  });
+/** Serves `fetch` on a free port through Gyral's Node adapter, as `pnpm start` does. */
+export async function serveFetch(fetch: FetchHandler): Promise<Served> {
+  const server = createServer(toNodeListener(fetch));
+  await new Promise<void>((resolve) => server.listen(0, resolve));
+  const address = server.address();
+  if (address === null || typeof address === 'string') throw new Error('not a TCP server');
+  return {
+    url: (path) => `http://localhost:${String(address.port)}${path}`,
+    close: () =>
+      new Promise((done) => {
+        server.close(() => {
+          done();
+        });
+      }),
+  };
 }
+
+export const listen = (test: TestApp): Promise<Served> => serveFetch(test.app.fetch);
 
 let browser: Browser | undefined;
 

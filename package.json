@@ -37,7 +37,6 @@
     "@gyral/router": "file:./vendor/gyral-router-0.3.1-next.2.tgz",
     "@gyral/ssr": "file:./vendor/gyral-ssr-0.3.1-next.2.tgz",
     "@gyral/time": "file:./vendor/gyral-time-0.3.1-next.2.tgz",
-    "@hono/node-server": "2.1.3",
     "@libsql/client": "0.18.0",
     "drizzle-orm": "0.45.3",
     "hono": "4.13.13",
