@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.4 (see the Gyral 0.3 addendum). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.5 (see the Gyral 0.3 addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** for routes and middleware, SSR via `@gyral/ssr`, served on Node by Gyral's adapter
@@ -340,6 +340,47 @@ Where the bytes went (per-chunk diff of the two builds):
 
 `pnpm perf` baseline (bytes, gzip): home 33,534 → 33,711, category 41,502 → 42,795, product
 42,594 → 42,902; LCP 800 / 800 / 808 ms. All pages within budget.
+
+### 0.3.1-next.5 (2026-10-09)
+
+Now `0.3.1-next.5`, packed from Gyral branch `next` (cc05cb6); the same six tarballs, vendored
+the same way. No app code changed: next.5 adds to next.4 without removing anything, and the
+shop has no exhaustive `switch` over `HttpError` (the new `HttpTimeoutError` case) and no test
+that asserts a command is aborted synchronously on removal (Gyral now stops commands one
+microtask later, so a moved component keeps them). The new `retry` options (`jitter`,
+`retryIf`), `timeoutMs` and `Connected` are not used.
+
+Same script and method as the tables above (production build, gzip -9; the script reproduces
+the next.4 column exactly); 40 → 39 chunks:
+
+| Measure               | 0.3.1-next.4 | 0.3.1-next.5 |
+| --------------------- | ------------ | ------------ |
+| Entry                 | 7.52 KiB     | 7.50 KiB     |
+| Initial (entry graph) | 28.40 KiB    | 28.26 KiB    |
+| All chunks (raw)      | 87.41 (238)  | 87.29 (238)  |
+| Home, department      | 32.92        | 32.77        |
+| Category, search      | 41.79        | 41.68        |
+| Product               | 41.89        | 41.74        |
+| Cart                  | 34.83        | 34.69        |
+| Checkout              | 38.40        | 38.25        |
+| Sign-in               | 33.96        | 33.81        |
+| About (prerendered)   | 31.21        | 31.06        |
+
+Where the bytes went (per-chunk diff of the two builds):
+
+- **Every page, −0.33 KiB:** Gyral moved the head model's JSON escaping into its own module (the
+  fix reported in the next.4 section), so store-scope is part of the shop's `store` chunk again
+  and its separate 0.78 KiB chunk is gone.
+- **Every page, +0.06 KiB:** Gyral core's deferred stop on disconnect and the small fixes.
+- **Every page, +0.13 KiB:** `makeHttpDriver`'s per-attempt timeout branch, in the `csrf` http
+  chunk that every measured page loads.
+- **Category and search, +0.04 KiB:** the router chunk.
+
+Net: −0.11 to −0.15 KiB per page.
+
+`pnpm perf` baseline (bytes, gzip): home 33,711 → 33,562, category 42,795 → 42,690, product
+42,902 → 42,751. All pages within budget (LCP 980 / 868 / 920 ms on a loaded machine, load
+average about 10; earlier runs measured 800–808 ms).
 
 ## Addendum 2026-10-08: Gyral's Node adapter instead of `@hono/node-server`
 
