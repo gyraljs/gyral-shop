@@ -11,7 +11,6 @@ import {
   type AdminReviewList,
   type ReviewFilter,
 } from '../../domain/admin-manage.js';
-import { adminDrivers } from './drivers.js';
 import { formError, type Errors } from './fields.js';
 import { dateTime, loadError } from './format.js';
 import { ListFilterForm, ReviewVisibilityForm } from './manage-schemas.js';
@@ -158,7 +157,6 @@ export const AdminReviews = define<ReviewsState, ReviewsMsg, ReviewsProps>()('sh
     PropsChanged: (s, m) =>
       m.props.search === s.search ? s : [{ ...s, search: m.props.search }, [load(m.props.search)]],
   },
-  drivers: adminDrivers,
   view: (s, i) => {
     const q = reviewsQuery(s.search);
     return html`<section class="admin-page" data-region="admin-reviews">

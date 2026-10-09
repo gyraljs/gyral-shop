@@ -8,12 +8,11 @@ import {
   invalid,
   nothing,
   prop,
-  redirectedTo,
   type Command,
   type FormFields,
   type IntentRejected,
 } from '@gyral/core';
-import { submitForm, type HttpError } from '@gyral/http';
+import { redirectedTo, submitForm, type HttpError } from '@gyral/http';
 import { CSRF_FIELD, CSRF_HEADER } from '../forms/csrf.js';
 import { SECRET_FIELDS } from './schemas.js';
 

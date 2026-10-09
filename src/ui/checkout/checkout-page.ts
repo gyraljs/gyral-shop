@@ -14,14 +14,12 @@ import {
   form,
   html,
   prop,
-  redirectedTo,
   type FormFields,
   type IntentRejected,
 } from '@gyral/core';
-import { submitForm } from '@gyral/http';
+import { redirectedTo, submitForm } from '@gyral/http';
 import { isCheckoutStep, type CheckoutStep } from '../../domain/checkout.js';
 import { goTo } from '../drivers/location.js';
-import { csrfHttp } from '../drivers/http.js';
 import { CheckoutClientSchema, parseCheckout, type CheckoutClient } from './model.js';
 import {
   AddressForm,
@@ -118,7 +116,6 @@ const toForm =
 
 export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>()('shop-checkout', {
   shadow: false,
-  drivers: { http: csrfHttp },
   props: { view: prop.value(CheckoutClientSchema, { required: true }), csrf: prop.string() },
   init: (props) => ({
     view: props.view,

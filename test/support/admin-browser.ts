@@ -1,15 +1,15 @@
 // Mounting the client-rendered admin in browser tests: fake HTTP answers by URL (decoded through
 // each request's schema, like production), an in-memory router (so tests never touch the real
 // address bar), and the document styles the shell would load (so axe checks real colours).
-// Fakes are supplied to the whole admin tree with a Gyral driver provider (withDrivers), so the
+// Fakes are supplied to the whole admin tree with a Gyral driver provider (provideDrivers), so the
 // app's own drivers (src/ui/admin/drivers.ts) stay untouched.
-import { fakeDriver, withDrivers } from '@gyral/testing';
+import { fakeDriver } from '@gyral/testing';
 import { fakeHttp, type FakeResponse } from '@gyral/http/testing';
 import { makeRouter } from '@gyral/router';
 import { adminCss } from '../../src/ui/styles/admin.js';
 import { baseCss } from '../../src/ui/styles/base.js';
 import { defaultThemeCss } from '../../src/ui/themes/default.css.js';
-import { settled } from '@gyral/core';
+import { provideDrivers, settled } from '@gyral/core';
 
 export interface FakeRequest {
   readonly url: string;
@@ -65,7 +65,7 @@ export function fakeAdmin(initial: string, respond: Responder) {
   router = memory;
   container = document.createElement('main');
   document.body.append(container);
-  release = withDrivers(container, { http, router: memory, location });
+  release = provideDrivers(container, { http, router: memory, location });
   if (document.getElementById('admin-test-styles') === null) {
     const style = document.createElement('style');
     style.id = 'admin-test-styles';

@@ -51,22 +51,21 @@ export const productionApp = (options: Omit<ProdOptions, 'distDir'>, assets: Cli
 
 /** The production handler; `env` is what `toNodeListener` passes (src/server/prod.ts). */
 export interface ProdApp {
-  readonly fetch: (request: Request, env?: NodeEnv) => Promise<Response>;
+  readonly fetch: (request: Request, env?: NodeEnv) => Response | Promise<Response>;
 }
 
 export async function createProdApp(options: ProdOptions): Promise<ProdApp> {
-  // productionServer passes the adapter's env (the client address rate limiting reads,
-  // security/request.ts) on to the app with the request.
-  const served = await productionServer<NodeEnv>({
-    distDir: options.distDir,
-    entry: CLIENT_ENTRY_SOURCE,
-    createApp: (assets) => productionApp(options, assets),
-  });
   // Every component module is imported by now (the app imports them statically).
   const csp = await staticPolicy();
-  return {
-    fetch: async (request, env) => {
-      const response = await served.fetch(request, env);
+  // productionServer passes the adapter's env (the client address rate limiting reads,
+  // security/request.ts) on to the app with the request. Responses the app didn't make (assets,
+  // prerendered pages) get the same security headers here.
+  return productionServer<NodeEnv>({
+    distDir: options.distDir,
+    entry: CLIENT_ENTRY_SOURCE,
+    createApp: ({ clientEntry, ...assets }) =>
+      productionApp(options, { ...assets, clientEntry: clientEntry ?? '' }),
+    onResponse: (response, request) => {
       if (response.headers.has('content-security-policy')) return response; // came from the app
       const headers = new Headers(response.headers);
       const https = new URL(request.url).protocol === 'https:';
@@ -75,5 +74,5 @@ export async function createProdApp(options: ProdOptions): Promise<ProdApp> {
       }
       return new Response(response.body, { status: response.status, headers });
     },
-  };
+  });
 }

@@ -10,7 +10,6 @@ import {
   type PromoStatus,
 } from '../../domain/admin-manage.js';
 import { format, usd } from '../../domain/money.js';
-import { adminDrivers } from './drivers.js';
 import { dateOnly, loadError } from './format.js';
 
 export interface PromosState {
@@ -77,7 +76,6 @@ export const AdminPromos = define<PromosState, PromosMsg>()('shop-admin-promos',
     Loaded: (s, m) => ({ ...s, list: m.list, error: null }),
     Failed: (s, m) => ({ ...s, error: loadError(m.error) }),
   },
-  drivers: adminDrivers,
   view: (s) =>
     html`<section class="admin-page" data-region="admin-promos">
       <h1 tabindex="-1">Promo codes</h1>

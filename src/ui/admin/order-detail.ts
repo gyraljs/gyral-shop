@@ -13,7 +13,6 @@ import {
 } from '../../domain/admin.js';
 import { format, usd } from '../../domain/money.js';
 import { statusBadge } from '../orders/parts.js';
-import { adminDrivers } from './drivers.js';
 import { formError, textField, type Errors } from './fields.js';
 import { dateTime, loadError, statusLabel } from './format.js';
 import { TransitionForm } from './schemas.js';
@@ -223,7 +222,6 @@ export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>()('shop
       errors: fieldErrors(m.issues),
     }),
   },
-  drivers: adminDrivers,
   view: (s, i) =>
     html`<section class="admin-page" data-region="admin-order">
       <p class="crumbs"><a href="/admin/orders">All orders</a></p>

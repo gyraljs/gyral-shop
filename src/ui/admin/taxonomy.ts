@@ -20,7 +20,6 @@ import {
   type TaxonKindName,
   type TaxonomyAdmin,
 } from '../../domain/admin-manage.js';
-import { adminDrivers } from './drivers.js';
 import {
   formError,
   formKey,
@@ -241,7 +240,6 @@ export const AdminTaxonomy = define<TaxonomyState, TaxonomyMsg>()('shop-admin-ta
     Failed: (s, m) => ({ ...s, pending: null, error: loadError(m.error) }),
     IntentRejected: rejected,
   },
-  drivers: adminDrivers,
   view: (s, i) => {
     const tree = s.tree;
     return html`<section class="admin-page" data-region="admin-taxonomy">

@@ -12,7 +12,6 @@ import {
   type ProductSort,
 } from '../../domain/admin.js';
 import { format, usd } from '../../domain/money.js';
-import { adminDrivers } from './drivers.js';
 import { loadError } from './format.js';
 import { pager, sortHeader } from './table.js';
 
@@ -151,7 +150,6 @@ export const AdminProducts = define<ProductsState, ProductsMsg, ProductsProps>()
           ? s
           : [{ ...s, search: m.props.search }, [load(m.props.search)]],
     },
-    drivers: adminDrivers,
     view: (s) => {
       const query = productsQuery(s.search);
       return html`<section class="admin-page" data-region="admin-products">

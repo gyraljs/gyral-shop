@@ -14,7 +14,7 @@ import {
   type TemplateResult,
 } from '@gyral/core';
 import { get } from '@gyral/http';
-import { debounce, delay } from '@gyral/time/delay';
+import { debounce, delay } from '@gyral/time';
 import { normalizeQuery, searchQueryString } from '../../domain/search.js';
 import { goTo } from '../drivers/location.js';
 import { suggestHref, SuggestionsSchema, type Suggestions } from './suggestions.js';

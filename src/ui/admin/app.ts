@@ -3,7 +3,7 @@
 // router captures in-app links, and each section is its own component that loads its data from
 // the admin JSON API. Light DOM (theme contract, ADR 0006 rule 5): document styles apply and
 // themes can restyle it through the `admin*` hooks.
-import { define, each, focus, html, nothing, prop, type Next } from '@gyral/core';
+import { define, each, focus, html, nothing, prop, provideDrivers, type Next } from '@gyral/core';
 import { listen, setHead, type RouteLocation } from '@gyral/router';
 import { goTo } from '../drivers/location.js';
 import { adminDrivers } from './drivers.js';
@@ -18,6 +18,11 @@ import './promo-edit.js';
 import './users.js';
 import './reviews.js';
 import './taxonomy.js';
+
+// Every admin component's drivers (CSRF http, the link-capturing router, location), provided
+// once for the whole admin page. Tests provide fakes on a nearer element, which wins. The module
+// is also imported on the server (for the shell render), where there is no document.
+if (typeof document !== 'undefined') provideDrivers(document.body, adminDrivers);
 
 export interface AdminProps {
   /** Path and query of the admin URL the server rendered (the browser seeds it back). */
@@ -94,7 +99,6 @@ export const AdminApp = define<AdminState, AdminMsg, AdminProps>()('shop-admin',
   ],
   intent: {},
   update: { Routed: (s, m) => routed(s, m.location) },
-  drivers: adminDrivers,
   view: (s) => {
     const view = adminView(s.url);
     const current = adminSection(view);

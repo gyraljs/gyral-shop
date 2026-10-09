@@ -4,7 +4,6 @@ import { define, html, nothing } from '@gyral/core';
 import { get, type HttpError } from '@gyral/http';
 import { DashboardSchema, type Dashboard } from '../../domain/admin.js';
 import { format, usd } from '../../domain/money.js';
-import { adminDrivers } from './drivers.js';
 import { loadError, statusLabel } from './format.js';
 
 export interface DashboardState {
@@ -140,7 +139,6 @@ export const AdminDashboard = define<DashboardState, DashboardMsg>()('shop-admin
     Loaded: (_s, m) => ({ data: m.data, error: null }),
     Failed: (s, m) => ({ ...s, error: loadError(m.error) }),
   },
-  drivers: adminDrivers,
   states: (s) => ({ loading: s.data === null && s.error === null }),
   view: (s) =>
     html`<section class="admin-page" data-region="admin-dashboard">

@@ -13,8 +13,8 @@ export const adminRouter = makeRouter({ captureLinks: true });
 export const adminHttp = makeHttpDriver({ headers: csrfFromMeta(CSRF_META) });
 
 /**
- * The drivers every admin component declares (`spec.drivers`). Tests substitute fakes for the
- * whole admin tree with a Gyral driver provider (`withDrivers`), which wins over these.
+ * The drivers every admin component uses, provided once on the admin page (./app.ts). Tests
+ * provide fakes on a nearer element (provideDrivers), which wins over these.
  */
 export const adminDrivers: DriverOverrides = Object.freeze({
   http: adminHttp,

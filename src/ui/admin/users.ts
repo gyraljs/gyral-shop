@@ -24,7 +24,6 @@ import {
   type UserList,
   type UserRow,
 } from '../../domain/admin-manage.js';
-import { adminDrivers } from './drivers.js';
 import { formError, type Errors } from './fields.js';
 import { dateTime, loadError } from './format.js';
 import { ListFilterForm, UserActionForm, UserAskForm } from './manage-schemas.js';
@@ -216,7 +215,6 @@ export const AdminUsers = define<UsersState, UsersMsg, UsersProps>()('shop-admin
         ? s
         : [{ ...s, search: m.props.search, confirming: null }, [load(m.props.search)]],
   },
-  drivers: adminDrivers,
   view: (s, i) =>
     html`<section class="admin-page" data-region="admin-users">
       <h1 tabindex="-1">Users</h1>

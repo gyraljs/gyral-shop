@@ -1,4 +1,4 @@
-import { resetDocumentStores } from '@gyral/core';
+import { resetDocumentStores } from '@gyral/testing';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/static-about.ssr.html?raw';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';

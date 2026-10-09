@@ -16,7 +16,6 @@ import { navigate } from '@gyral/router';
 import * as v from 'valibot';
 import { dollarsText } from '../../domain/admin.js';
 import { PromoEditSchema, promoAmountText, type PromoEdit } from '../../domain/admin-manage.js';
-import { adminDrivers } from './drivers.js';
 import { formError, selectField, textField, type Errors } from './fields.js';
 import { loadError } from './format.js';
 import { PromoDeleteForm, PromoForm } from './manage-schemas.js';
@@ -214,7 +213,6 @@ export const AdminPromoEdit = define<PromoEditState, PromoEditMsg, PromoEditProp
       Failed: (s, m) => ({ ...s, pending: null, error: loadError(m.error) }),
       IntentRejected: rejected,
     },
-    drivers: adminDrivers,
     view: (s, i) => {
       const p = s.edit?.promo ?? null;
       const title =

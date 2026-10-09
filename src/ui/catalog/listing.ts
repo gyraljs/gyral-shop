@@ -5,7 +5,7 @@
 // change (including Back/Forward) streams in through router listen() and fetches that state.
 import { define, focus, html, nothing, prop, type Next } from '@gyral/core';
 import { get, type HttpError } from '@gyral/http';
-import { listen, makeRouter, navigate, setHead, type RouteLocation } from '@gyral/router';
+import { listen, navigate, setHead, type RouteLocation } from '@gyral/router';
 import { isRefined, parseListing, sameListing, type ListingState } from '../../domain/listing.js';
 import { filtersForm } from './filters.js';
 import { listingHead } from './listing-head.js';
@@ -37,12 +37,6 @@ export type ListingMsg =
   | { readonly _tag: 'Loaded'; readonly view: ListingView }
   | { readonly _tag: 'Failed'; readonly error: HttpError['_tag'] }
   | { readonly _tag: 'FiltersToggled'; readonly open: boolean };
-
-/**
- * This page's router: it never captures link clicks. The store is a multi-page app; only the
- * listing's own links (pager, clear) are handled in-page, through intents.
- */
-export const listingRouter = makeRouter({ captureLinks: false });
 
 const stateOf = (params: URLSearchParams): ListingState => {
   const parsed = parseListing(params);
@@ -122,7 +116,6 @@ export const Listing = define<ListingModel, ListingMsg, ListingProps>()('shop-li
     },
     [listen((location) => ({ _tag: 'Routed', location }))],
   ],
-  drivers: { router: listingRouter },
   intent: {
     Refine: ({ formData, target }) => {
       const form = target instanceof HTMLFormElement ? target : target.closest('form');

@@ -14,7 +14,6 @@ import {
   type ProductEdit,
   type Taxonomy,
 } from '../../domain/admin.js';
-import { adminDrivers } from './drivers.js';
 import { formKey, savedOnce, type Errors, type Saves } from './fields.js';
 import { loadError } from './format.js';
 import { productEditView } from './product-views.js';
@@ -182,7 +181,6 @@ export const AdminProductEdit = define<ProductEditState, ProductEditMsg, Product
       Failed: (s, m) => ({ ...s, pending: null, error: loadError(m.error) }),
       IntentRejected: rejected,
     },
-    drivers: adminDrivers,
     view: (s, i) => productEditView(s, i),
   },
 );

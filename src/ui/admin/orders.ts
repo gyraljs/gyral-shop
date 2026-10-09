@@ -12,7 +12,6 @@ import {
 } from '../../domain/admin.js';
 import { format, usd } from '../../domain/money.js';
 import { statusBadge } from '../orders/parts.js';
-import { adminDrivers } from './drivers.js';
 import { dateTime, loadError, statusLabel } from './format.js';
 import { pager } from './table.js';
 
@@ -151,7 +150,6 @@ export const AdminOrders = define<OrdersState, OrdersMsg, OrdersProps>()('shop-a
     PropsChanged: (s, m) =>
       m.props.search === s.search ? s : [{ ...s, search: m.props.search }, [load(m.props.search)]],
   },
-  drivers: adminDrivers,
   view: (s, i) => {
     const f = ordersFilter(s.search);
     return html`<section class="admin-page" data-region="admin-orders">

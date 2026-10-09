@@ -5,7 +5,6 @@
 import { define, focus, prop, type Next } from '@gyral/core';
 import { request } from '@gyral/http';
 import { isReviewSort, parseReviewPage } from '../../domain/reviews.js';
-import { csrfHttp } from '../drivers/http.js';
 import {
   helpfulPath,
   reviewsApiPath,
@@ -86,7 +85,6 @@ const mapItems = (s: State, id: number, f: (r: ReviewsViewData['items'][number])
 
 export const Reviews = define<State, Msg, ReviewsProps>()('shop-reviews', {
   shadow: false,
-  drivers: { http: csrfHttp },
   hydrate: 'visible',
   props: {
     view: prop.value(ReviewsViewSchema, { required: true }),
