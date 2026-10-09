@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.3 (see the Gyral 0.3 addendum). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.4 (see the Gyral 0.3 addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** for routes and middleware, SSR via `@gyral/ssr`, served on Node by Gyral's adapter
@@ -290,6 +290,56 @@ Against next.1, every page is now 0.29–0.34 KiB larger (category and search 0.
 router's scroll and focus handling): next.2's and next.3's core additions and the router
 features, without the chunking overhead. Server rendering was not re-measured (the machine was
 heavily loaded).
+
+### 0.3.1-next.4 (2026-10-08)
+
+Now `0.3.1-next.4`, packed from Gyral branch `next` (f95ede8); the same six tarballs, vendored
+the same way. next.4 is Gyral's one-time breaking prerelease before 0.3.1, so the app migrated:
+
+- **Two-call `define`:** `define<S, M, P>()(tag, spec)` everywhere; intent names are the parser
+  keys. Rows that name intents through a module constant use `intentsOf<typeof C>()` and declare
+  `: TemplateResult`; view helpers type `IntentNames` with the names they use.
+- **Head model (Gyral ADR 0019):** the shell writes title, description, canonical, robots, Open
+  Graph/Twitter meta and JSON-LD as Gyral's managed head; the favicon, theme stylesheet and CSRF
+  meta stay in `extraHead`. Listing pages build their head with one pure function
+  (`listingHead`), used by the category and search routes and by `<shop-listing>` after
+  filtering or paging, so canonical, robots, description and breadcrumbs now follow client
+  updates (before, only the title did). The admin shares `adminHead` the same way.
+- **`@gyral/http`:** the CSRF token comes only from driver headers, so checkout and reviews
+  declare `csrfHttp` (`src/ui/drivers/http.ts`); retry options are gone (the shop used none).
+- **Style-attribute hashes** are not enabled: the shop's server markup has no style attributes.
+
+Same script and method as the tables above (production build, gzip -9); 38 → 40 chunks:
+
+| Measure               | 0.3.1-next.3 | 0.3.1-next.4 |
+| --------------------- | ------------ | ------------ |
+| Entry                 | 7.48 KiB     | 7.52 KiB     |
+| Initial (entry graph) | 28.23 KiB    | 28.40 KiB    |
+| All chunks (raw)      | 85.98 (235)  | 87.41 (238)  |
+| Home, department      | 32.74        | 32.92        |
+| Category, search      | 40.52        | 41.79        |
+| Product               | 41.59        | 41.89        |
+| Cart                  | 34.66        | 34.83        |
+| Checkout              | 38.10        | 38.40        |
+| Sign-in               | 33.78        | 33.96        |
+| About (prerendered)   | 31.03        | 31.21        |
+
+Where the bytes went (per-chunk diff of the two builds):
+
+- **Every page, +0.17–0.18 KiB:** Gyral core's head module imports its JSON escaping from the
+  store-scope module, so that module (before, part of the shop's `store` chunk) becomes a shared
+  chunk of its own: +0.31 KiB of split overhead. Gyral's smaller http and command runner (retry
+  moved out of core) save 0.12 KiB in the shared core chunk; the two-call `define` adds a few
+  bytes to the entry. Reported to Gyral: moving that escaping helper into its own module would
+  keep store-scope in one chunk and take back about 0.3 KiB per page.
+- **Category and search, +1.1 KiB more:** the router's `setHead()` (+0.76 KiB in the router
+  chunk) and the listing's own head builder and breadcrumb trail (+0.33 KiB). The price buys
+  correct canonical, robots and structured data after every filter or page change.
+- **Product and checkout, +0.12 KiB more:** the `http` chunk with `csrfHttp`
+  (`makeHttpDriver` plus `csrfFromMeta`), which the default driver didn't need before.
+
+`pnpm perf` baseline (bytes, gzip): home 33,534 → 33,711, category 41,502 → 42,795, product
+42,594 → 42,902; LCP 800 / 800 / 808 ms. All pages within budget.
 
 ## Addendum 2026-10-08: Gyral's Node adapter instead of `@hono/node-server`
 
