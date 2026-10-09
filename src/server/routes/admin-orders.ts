@@ -9,7 +9,7 @@ import type { Services } from '../../services/container.js';
 import { adminOrder, changeOrder, listOrders } from '../../services/admin-orders.js';
 import { TransitionForm } from '../../ui/admin/schemas.js';
 import { requireAdmin, type AppEnv } from '../security/index.js';
-import { adminFailure, asJson, NO_STORE } from './admin-http.js';
+import { adminFailure, NO_STORE } from './admin-http.js';
 
 type C = Context<AppEnv>;
 
@@ -71,7 +71,6 @@ export function adminOrderRoutes(services: Services): Hono<AppEnv> {
           ? rejectWith(result.error.issues)
           : adminFailure(c, result.error);
       },
-      invalid: asJson,
     })(c.req.raw),
   );
 

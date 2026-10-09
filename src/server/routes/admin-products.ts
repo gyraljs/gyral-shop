@@ -26,7 +26,7 @@ import {
   VariantForm,
 } from '../../ui/admin/schemas.js';
 import { requireAdmin, type AppEnv } from '../security/index.js';
-import { adminFailure, answer, asJson, NO_STORE, positiveId } from './admin-http.js';
+import { adminFailure, answer, NO_STORE, positiveId } from './admin-http.js';
 
 type C = Context<AppEnv>;
 
@@ -103,7 +103,6 @@ export function adminProductRoutes(services: Services): Hono<AppEnv> {
             id: r.id,
           }),
         ),
-      invalid: asJson,
     })(c.req.raw);
 
   routes.post('/api/admin/products', (c) => saveProductAt(c, undefined));
@@ -122,7 +121,6 @@ export function adminProductRoutes(services: Services): Hono<AppEnv> {
           _tag: 'Saved',
           id: r.id,
         })),
-      invalid: asJson,
     })(c.req.raw);
   });
 
@@ -140,7 +138,6 @@ export function adminProductRoutes(services: Services): Hono<AppEnv> {
             id: r.id,
           }),
         ),
-      invalid: asJson,
     })(c.req.raw);
   });
 
@@ -158,7 +155,6 @@ export function adminProductRoutes(services: Services): Hono<AppEnv> {
             id: r.id,
           }),
         ),
-      invalid: asJson,
     })(c.req.raw);
   });
 
@@ -173,7 +169,6 @@ export function adminProductRoutes(services: Services): Hono<AppEnv> {
           await adjustInventory(db, c.get('user'), { variantId, ...data }, services.now()),
           (r) => ({ _tag: 'Adjusted', stock: r.stock }),
         ),
-      invalid: asJson,
     })(c.req.raw);
   });
 
@@ -188,7 +183,6 @@ export function adminProductRoutes(services: Services): Hono<AppEnv> {
         if (result.ok) services.catalog.changed(); // the header's department names
         return answer(c, result, (r) => ({ _tag: 'Saved', id: r.id }));
       },
-      invalid: asJson,
     })(c.req.raw);
   });
 

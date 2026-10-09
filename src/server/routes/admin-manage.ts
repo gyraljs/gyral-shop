@@ -20,7 +20,7 @@ import {
   UserActionForm,
 } from '../../ui/admin/manage-schemas.js';
 import { requireAdmin, type AppEnv } from '../security/index.js';
-import { adminFailure, answer, asJson, NO_STORE, pageParam, positiveId } from './admin-http.js';
+import { adminFailure, answer, NO_STORE, pageParam, positiveId } from './admin-http.js';
 
 type C = Context<AppEnv>;
 
@@ -71,7 +71,6 @@ export function adminManageRoutes({ services }: AdminManageOptions): Hono<AppEnv
           _tag: 'Saved',
           id: r.id,
         })),
-      invalid: asJson,
     })(c.req.raw);
   routes.post('/api/admin/promos', (c) => save(c, undefined));
   routes.post('/api/admin/promos/:id', (c) => {
@@ -85,7 +84,6 @@ export function adminManageRoutes({ services }: AdminManageOptions): Hono<AppEnv
       intent: 'DeletePromo',
       valid: async () =>
         answer(c, await deletePromo(db, c.get('user'), id), (r) => ({ _tag: 'Deleted', id: r.id })),
-      invalid: asJson,
     })(c.req.raw);
   });
 
@@ -109,7 +107,6 @@ export function adminManageRoutes({ services }: AdminManageOptions): Hono<AppEnv
               _tag: 'UserUpdated',
               ...r,
             })),
-      invalid: asJson,
     })(c.req.raw);
   });
 
@@ -133,7 +130,6 @@ export function adminManageRoutes({ services }: AdminManageOptions): Hono<AppEnv
               _tag: 'ReviewModerated',
               ...r,
             })),
-      invalid: asJson,
     })(c.req.raw);
   });
 
@@ -150,7 +146,6 @@ export function adminManageRoutes({ services }: AdminManageOptions): Hono<AppEnv
         if (result.ok) services.catalog.changed();
         return answer(c, result, (r) => ({ _tag: 'Saved', id: r.id }));
       },
-      invalid: asJson,
     })(c.req.raw),
   );
   routes.post('/api/admin/taxonomy/:kind/:id/archive', (c) => {
@@ -164,7 +159,6 @@ export function adminManageRoutes({ services }: AdminManageOptions): Hono<AppEnv
         if (result.ok) services.catalog.changed();
         return answer(c, result, (r) => ({ _tag: 'Saved', id: r.id }));
       },
-      invalid: asJson,
     })(c.req.raw);
   });
 

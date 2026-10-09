@@ -1,6 +1,5 @@
 // Shared answers for the admin JSON API.
 import type { Context } from 'hono';
-import type { IntentRejected } from '@gyral/core';
 import { rejectWith, type FormReject } from '@gyral/ssr';
 import type { Result } from '../../domain/result.js';
 import type { AdminError } from '../../services/admin-products.js';
@@ -39,13 +38,6 @@ export function answer<T>(
     ? rejectWith(result.error.issues)
     : adminFailure(c, result.error);
 }
-
-/** The admin requires JavaScript, so a rejected submission is always answered as JSON. */
-export const asJson = (rejected: IntentRejected) =>
-  Response.json(
-    { _tag: rejected._tag, intent: rejected.intent, issues: rejected.issues },
-    { status: 422, headers: NO_STORE },
-  );
 
 /** A positive integer id from a route parameter, or undefined. */
 export const positiveId = (text: string): number | undefined => {

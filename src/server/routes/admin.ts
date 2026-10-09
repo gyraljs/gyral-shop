@@ -25,6 +25,12 @@ type C = Context<AppEnv>;
 export function adminRoutes({ services, render }: AdminRoutesOptions): Hono<AppEnv> {
   const routes = new Hono<AppEnv>();
   for (const path of ['/admin', '/admin/*', '/api/admin/*']) routes.use(path, requireAdmin());
+  // Admin API answers are never cached, including formAction's own 422 rejections (JSON, since
+  // the admin requires JavaScript and the routes give formAction no `invalid`).
+  routes.use('/api/admin/*', async (c, next) => {
+    await next();
+    if (!c.res.headers.has('cache-control')) c.res.headers.set('cache-control', 'no-store');
+  });
 
   const shell = async (c: C) => {
     const url = new URL(c.req.url);
