@@ -5,32 +5,32 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@gyral/core': file:./vendor/gyral-core-0.3.1-next.4.tgz
-  '@gyral/http': file:./vendor/gyral-http-0.3.1-next.4.tgz
-  '@gyral/router': file:./vendor/gyral-router-0.3.1-next.4.tgz
-  '@gyral/ssr': file:./vendor/gyral-ssr-0.3.1-next.4.tgz
-  '@gyral/time': file:./vendor/gyral-time-0.3.1-next.4.tgz
-  '@gyral/testing': file:./vendor/gyral-testing-0.3.1-next.4.tgz
+  '@gyral/core': file:./vendor/gyral-core-0.3.1-next.5.tgz
+  '@gyral/http': file:./vendor/gyral-http-0.3.1-next.5.tgz
+  '@gyral/router': file:./vendor/gyral-router-0.3.1-next.5.tgz
+  '@gyral/ssr': file:./vendor/gyral-ssr-0.3.1-next.5.tgz
+  '@gyral/time': file:./vendor/gyral-time-0.3.1-next.5.tgz
+  '@gyral/testing': file:./vendor/gyral-testing-0.3.1-next.5.tgz
 
 importers:
 
   .:
     dependencies:
       '@gyral/core':
-        specifier: file:vendor/gyral-core-0.3.1-next.4.tgz
-        version: file:vendor/gyral-core-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
+        specifier: file:vendor/gyral-core-0.3.1-next.5.tgz
+        version: file:vendor/gyral-core-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
       '@gyral/http':
-        specifier: file:vendor/gyral-http-0.3.1-next.4.tgz
-        version: file:vendor/gyral-http-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
+        specifier: file:vendor/gyral-http-0.3.1-next.5.tgz
+        version: file:vendor/gyral-http-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
       '@gyral/router':
-        specifier: file:vendor/gyral-router-0.3.1-next.4.tgz
-        version: file:vendor/gyral-router-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
+        specifier: file:vendor/gyral-router-0.3.1-next.5.tgz
+        version: file:vendor/gyral-router-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
       '@gyral/ssr':
-        specifier: file:vendor/gyral-ssr-0.3.1-next.4.tgz
-        version: file:vendor/gyral-ssr-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
+        specifier: file:vendor/gyral-ssr-0.3.1-next.5.tgz
+        version: file:vendor/gyral-ssr-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
       '@gyral/time':
-        specifier: file:vendor/gyral-time-0.3.1-next.4.tgz
-        version: file:vendor/gyral-time-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
+        specifier: file:vendor/gyral-time-0.3.1-next.5.tgz
+        version: file:vendor/gyral-time-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
       '@libsql/client':
         specifier: 0.18.0
         version: 0.18.0
@@ -54,8 +54,8 @@ importers:
         specifier: 10.6.0
         version: 10.6.0
       '@gyral/testing':
-        specifier: file:vendor/gyral-testing-0.3.1-next.4.tgz
-        version: file:vendor/gyral-testing-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))(vitest@5.0.3)
+        specifier: file:vendor/gyral-testing-0.3.1-next.5.tgz
+        version: file:vendor/gyral-testing-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))(vitest@5.0.3)
       '@types/node':
         specifier: 24.19.1
         version: 24.19.1
@@ -622,9 +622,9 @@ packages:
     resolution: {integrity: sha512-3RQHgEtvL1Frl/d1cSreo7qhJ3Gk1OdNUai/CtZ8G+wYeRQnJih3s9xJ9/kgYekPQRdwgh0HXRPqMlzWGwivIQ==}
     engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
-  '@gyral/core@file:vendor/gyral-core-0.3.1-next.4.tgz':
-    resolution: {integrity: sha512-lvSFTkrwFqPPA8UYoQB7kj5TuXktrWPFGroXZSOIvVllKh1rPD4roR0dZjY1yGL5Nq+l5bIiIs4xfGDrSuhQxQ==, tarball: file:vendor/gyral-core-0.3.1-next.4.tgz}
-    version: 0.3.1-next.4
+  '@gyral/core@file:vendor/gyral-core-0.3.1-next.5.tgz':
+    resolution: {integrity: sha512-fG1u+VxhB3K2Pk2e1XQrElv+W3ZChxCsF1PYZOBNxNIfGla4/jJQ/snqqsYa3UPV6WB2HhBOnpryfwA20A7VbQ==, tarball: file:vendor/gyral-core-0.3.1-next.5.tgz}
+    version: 0.3.1-next.5
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
       parse5: ^7.0.0 || ^8.0.0
@@ -637,21 +637,21 @@ packages:
       vite:
         optional: true
 
-  '@gyral/http@file:vendor/gyral-http-0.3.1-next.4.tgz':
-    resolution: {integrity: sha512-outEHoDgfSVpb6/VpgBScqoUyYHD5aNCuHveNosT0jf2ld6NOSpkfDsTapAjZb1axWiqqJ+TDVpgf87aJ4C0Yg==, tarball: file:vendor/gyral-http-0.3.1-next.4.tgz}
-    version: 0.3.1-next.4
+  '@gyral/http@file:vendor/gyral-http-0.3.1-next.5.tgz':
+    resolution: {integrity: sha512-YU9w2fMg5dsL9QtJRo9b7sbK99kbB1LEgVDbKAqk7StC98q3lxHchWB1PDTyZsLN83Ioq3/L50vw6vck/YJLCA==, tarball: file:vendor/gyral-http-0.3.1-next.5.tgz}
+    version: 0.3.1-next.5
 
-  '@gyral/router@file:vendor/gyral-router-0.3.1-next.4.tgz':
-    resolution: {integrity: sha512-M8nAfvQscBu6s0pzliiYvnvn+jpfxKFCdNU+l8cje6GGv10UOsyUxj29ysjioFZtMrqqExiheopN6jNyLbQnkw==, tarball: file:vendor/gyral-router-0.3.1-next.4.tgz}
-    version: 0.3.1-next.4
+  '@gyral/router@file:vendor/gyral-router-0.3.1-next.5.tgz':
+    resolution: {integrity: sha512-XHVnusZI+P3vcnLbsGTa0Nlalewbwv1ggpyhgEYaJXlGZIIrCYq80kMS8snX9yWEs812lj6Umw9Vu6qUYC9fVA==, tarball: file:vendor/gyral-router-0.3.1-next.5.tgz}
+    version: 0.3.1-next.5
 
-  '@gyral/ssr@file:vendor/gyral-ssr-0.3.1-next.4.tgz':
-    resolution: {integrity: sha512-NTgzE//GCRYi3MwpTgK+wprbAGMTJRLhqdYm/Durz4shmklCy3Imym0ezz6hRhoc9wYjMMU4SM4feG6zQQQUOw==, tarball: file:vendor/gyral-ssr-0.3.1-next.4.tgz}
-    version: 0.3.1-next.4
+  '@gyral/ssr@file:vendor/gyral-ssr-0.3.1-next.5.tgz':
+    resolution: {integrity: sha512-1VMAuub6GaOMtZzqAyej08frV5spRY3UjGj84q2LbTB1uXVPhXORI3xb0OBhzsS9cSeBwKRh9Xkwbi2DCCg/lw==, tarball: file:vendor/gyral-ssr-0.3.1-next.5.tgz}
+    version: 0.3.1-next.5
 
-  '@gyral/testing@file:vendor/gyral-testing-0.3.1-next.4.tgz':
-    resolution: {integrity: sha512-xWkkApYZcy2rjbAtp0lbIaQMIr+SQCizosrj6n5NSVtor203qpV9Lq4M+eQ48xDExDhQXgpLuY78DxxmmliexA==, tarball: file:vendor/gyral-testing-0.3.1-next.4.tgz}
-    version: 0.3.1-next.4
+  '@gyral/testing@file:vendor/gyral-testing-0.3.1-next.5.tgz':
+    resolution: {integrity: sha512-aYew/iW+hplacsh7HstaLusUrgNuGGW2bvkk9kyQE+hGm2xjMk/R12ZN/sO9fkYZ/fHGo5s7PQrqoPP/89oQoQ==, tarball: file:vendor/gyral-testing-0.3.1-next.5.tgz}
+    version: 0.3.1-next.5
     peerDependencies:
       fast-check: ^4.0.0
       vitest: ^4.1.0 || ^5.0.0
@@ -661,9 +661,9 @@ packages:
       vitest:
         optional: true
 
-  '@gyral/time@file:vendor/gyral-time-0.3.1-next.4.tgz':
-    resolution: {integrity: sha512-bMyrt5q6CjC555S9MbhyQNRLWin8ljhbyG1E0UFuR3m9Ja6qyvd5N/Cci8VjWEKodwjONyKWMwgxWcEXDI7MVg==, tarball: file:vendor/gyral-time-0.3.1-next.4.tgz}
-    version: 0.3.1-next.4
+  '@gyral/time@file:vendor/gyral-time-0.3.1-next.5.tgz':
+    resolution: {integrity: sha512-VZDHTGuEvY2Dbu9Hyo2kxPXtVghPGi6MsvKOGQ3iF0G8HFvwiD8DpF9XtHedht2iwQBLhJG9DsVfh8TnJI/lWw==, tarball: file:vendor/gyral-time-0.3.1-next.5.tgz}
+    version: 0.3.1-next.5
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -2082,7 +2082,7 @@ snapshots:
 
   '@faker-js/faker@10.6.0': {}
 
-  '@gyral/core@file:vendor/gyral-core-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))':
+  '@gyral/core@file:vendor/gyral-core-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))':
     dependencies:
       '@standard-schema/spec': 1.1.0
     optionalDependencies:
@@ -2090,35 +2090,35 @@ snapshots:
       parse5: 8.0.1
       vite: 8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15)
 
-  '@gyral/http@file:vendor/gyral-http-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))':
+  '@gyral/http@file:vendor/gyral-http-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))':
     dependencies:
-      '@gyral/core': file:vendor/gyral-core-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
+      '@gyral/core': file:vendor/gyral-core-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
       '@standard-schema/spec': 1.1.0
     transitivePeerDependencies:
       - eslint
       - parse5
       - vite
 
-  '@gyral/router@file:vendor/gyral-router-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))':
+  '@gyral/router@file:vendor/gyral-router-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))':
     dependencies:
-      '@gyral/core': file:vendor/gyral-core-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
+      '@gyral/core': file:vendor/gyral-core-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
     transitivePeerDependencies:
       - eslint
       - parse5
       - vite
 
-  '@gyral/ssr@file:vendor/gyral-ssr-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))':
+  '@gyral/ssr@file:vendor/gyral-ssr-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))':
     dependencies:
-      '@gyral/core': file:vendor/gyral-core-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
+      '@gyral/core': file:vendor/gyral-core-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
       '@standard-schema/spec': 1.1.0
     transitivePeerDependencies:
       - eslint
       - parse5
       - vite
 
-  '@gyral/testing@file:vendor/gyral-testing-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))(vitest@5.0.3)':
+  '@gyral/testing@file:vendor/gyral-testing-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))(vitest@5.0.3)':
     dependencies:
-      '@gyral/core': file:vendor/gyral-core-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
+      '@gyral/core': file:vendor/gyral-core-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
       '@sinonjs/fake-timers': 15.4.0
       '@standard-schema/spec': 1.1.0
     optionalDependencies:
@@ -2128,9 +2128,9 @@ snapshots:
       - parse5
       - vite
 
-  '@gyral/time@file:vendor/gyral-time-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))':
+  '@gyral/time@file:vendor/gyral-time-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))':
     dependencies:
-      '@gyral/core': file:vendor/gyral-core-0.3.1-next.4.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
+      '@gyral/core': file:vendor/gyral-core-0.3.1-next.5.tgz(eslint@10.12.0)(parse5@8.0.1)(vite@8.3.2(@types/node@24.19.1)(esbuild@0.28.2)(tsx@4.23.15))
     transitivePeerDependencies:
       - eslint
       - parse5

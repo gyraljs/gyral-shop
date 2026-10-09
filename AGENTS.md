@@ -14,7 +14,7 @@ system of record.
 
 | Command                     | What it does                                                                                                                               |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm install`              | Install (Gyral `@gyral/*` 0.3.1-next.4, a prerelease, from `vendor/` until 0.3.1 is on npm, ADR 0001)                                      |
+| `pnpm install`              | Install (Gyral `@gyral/*` 0.3.1-next.5, a prerelease, from `vendor/` until 0.3.1 is on npm, ADR 0001)                                      |
 | `pnpm check`                | **The gate**: typecheck, lint, format, invariants, tests, `smoke:prod`, fixture check                                                      |
 | `pnpm dev`                  | Dev server with SSR + HMR: http://localhost:5200                                                                                           |
 | `pnpm build`                | Production client build + prerender static pages (needs a seeded DB)                                                                       |
