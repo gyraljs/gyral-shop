@@ -5,7 +5,7 @@
 import { define, focus, prop, type Next } from '@gyral/core';
 import { request } from '@gyral/http';
 import { isReviewSort, parseReviewPage } from '../../domain/reviews.js';
-import { CSRF_META } from '../forms/csrf.js';
+import { csrfHttp } from '../drivers/http.js';
 import {
   helpfulPath,
   reviewsApiPath,
@@ -84,8 +84,9 @@ const mapItems = (s: State, id: number, f: (r: ReviewsViewData['items'][number])
   items: s.view.items.map((r) => (r.id === id ? f(r) : r)),
 });
 
-export const Reviews = define<State, Msg, ReviewsProps>('shop-reviews', {
+export const Reviews = define<State, Msg, ReviewsProps>()('shop-reviews', {
   shadow: false,
+  drivers: { http: csrfHttp },
   hydrate: 'visible',
   props: {
     view: prop.value(ReviewsViewSchema, { required: true }),
@@ -118,7 +119,7 @@ export const Reviews = define<State, Msg, ReviewsProps>('shop-reviews', {
       { ...s, voting: [...s.voting, m.reviewId] },
       [
         request(
-          { url: helpfulPath(m.reviewId), method: 'POST', csrf: { meta: CSRF_META } },
+          { url: helpfulPath(m.reviewId), method: 'POST' },
           {
             schema: VotedSchema,
             errorSchema: VoteErrorSchema,

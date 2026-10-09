@@ -18,7 +18,7 @@ type Msg = { readonly _tag: 'Toggle' };
 const heart = (saved: boolean) =>
   html`<span class="heart" aria-hidden="true">${saved ? '♥' : '♡'}</span>`;
 
-export const WishToggle = define<Stateless, Msg, ToggleProps>('shop-wish-toggle', {
+export const WishToggle = define<Stateless, Msg, ToggleProps>()('shop-wish-toggle', {
   shadow: false,
   props: {
     slug: prop.string({ required: true }),

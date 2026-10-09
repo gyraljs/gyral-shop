@@ -4,7 +4,8 @@
 import { html } from '@gyral/core';
 import { renderPage, type CspOptions } from '@gyral/ssr';
 import { CSRF_META, csrfField } from '../ui/forms/csrf.js';
-import { documentTitle, SITE_NAME } from '../ui/layout/site.js';
+import { adminHead } from '../ui/admin/routes.js';
+import { SITE_NAME } from '../ui/layout/site.js';
 import { ADMIN_STYLES } from './page-styles.js';
 import { ROUTE_CHUNKS, type Preload } from './route-chunks.js';
 
@@ -26,10 +27,10 @@ export interface AdminShellOptions {
 export function adminShell(options: AdminShellOptions): Response {
   return renderPage(
     {
-      title: documentTitle(options.title),
+      // The same managed head <shop-admin> sets on client navigations (routes.ts adminHead).
+      ...adminHead(options.title),
       styles: ADMIN_STYLES,
-      head: html`<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <meta name="robots" content="noindex" />
+      extraHead: html`<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <meta name=${CSRF_META} content=${options.csrfToken} />`,
       body: html`
         <nav class="skip-links" aria-label="Skip links">

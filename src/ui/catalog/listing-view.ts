@@ -9,6 +9,7 @@ import {
   SORTS,
   type ListingState,
 } from '../../domain/listing.js';
+import type { Crumb } from './breadcrumbs.js';
 import type { ProductCard } from './product-card.js';
 
 export interface BrandOption {
@@ -38,6 +39,8 @@ export interface ListingView {
   readonly fixedQuery?: string;
   /** Label for the `relevance` sort, e.g. "Best match" in search ("Featured" by default). */
   readonly relevanceLabel?: string;
+  /** The page's breadcrumb trail, for its structured data (category listings). */
+  readonly crumbs?: readonly Crumb[];
 }
 
 /** The URL of a listing state (canonical spelling): fixed parameters first, then the state's. */
@@ -104,4 +107,7 @@ export const ListingViewSchema = v.object({
   ),
   fixedQuery: v.exactOptional(v.string()),
   relevanceLabel: v.exactOptional(v.string()),
+  crumbs: v.exactOptional(
+    v.array(v.object({ name: v.string(), path: v.exactOptional(v.string()) })),
+  ),
 }) satisfies v.GenericSchema<unknown, ListingView>;

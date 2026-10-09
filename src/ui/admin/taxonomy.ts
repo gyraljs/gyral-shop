@@ -218,7 +218,7 @@ const submitted =
     key: tag === 'CreateTaxon' ? formKey(tag) : keyOf(tag, raw),
   });
 
-export const AdminTaxonomy = define<TaxonomyState, TaxonomyMsg>('shop-admin-taxonomy', {
+export const AdminTaxonomy = define<TaxonomyState, TaxonomyMsg>()('shop-admin-taxonomy', {
   shadow: false,
   init: () => [
     { tree: null, error: null, notice: null, errors: {}, pending: null, saves: {} },

@@ -113,7 +113,7 @@ function row(p: ProductList['rows'][number]) {
   </tr>`;
 }
 
-export const AdminProducts = define<ProductsState, ProductsMsg, ProductsProps>(
+export const AdminProducts = define<ProductsState, ProductsMsg, ProductsProps>()(
   'shop-admin-products',
   {
     shadow: false,

@@ -27,7 +27,7 @@ const FIELDS: readonly FieldSpec[] = [
 ];
 
 /** Sign-in form: a POST to /account/login without JS, the same POST via submitForm with it. */
-export const LoginFormElement = define<AuthState, LoginMsg, AuthProps>('shop-login', {
+export const LoginFormElement = define<AuthState, LoginMsg, AuthProps>()('shop-login', {
   props: authProps,
   init: initialAuthState,
   intent: {

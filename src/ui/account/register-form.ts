@@ -43,7 +43,7 @@ const FIELDS: readonly FieldSpec[] = [
 ];
 
 /** Registration form: same two paths as sign-in, posting to /account/register. */
-export const RegisterFormElement = define<AuthState, RegisterMsg, AuthProps>('shop-register', {
+export const RegisterFormElement = define<AuthState, RegisterMsg, AuthProps>()('shop-register', {
   props: authProps,
   init: initialAuthState,
   intent: {

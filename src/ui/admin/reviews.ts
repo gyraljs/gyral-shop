@@ -124,7 +124,7 @@ function card(r: AdminReviewList['rows'][number], s: ReviewsState, i: { Moderate
   </article>`;
 }
 
-export const AdminReviews = define<ReviewsState, ReviewsMsg, ReviewsProps>('shop-admin-reviews', {
+export const AdminReviews = define<ReviewsState, ReviewsMsg, ReviewsProps>()('shop-admin-reviews', {
   shadow: false,
   props: { search: prop.string({ default: '' }) },
   init: (props) => [

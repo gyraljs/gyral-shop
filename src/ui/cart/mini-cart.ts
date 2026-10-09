@@ -40,7 +40,7 @@ const panel = (cart: CartClient) =>
  * The header's cart entry point: a count badge and a summary panel, read from the shared cart
  * store on every page. A <details> disclosure, so it opens without JavaScript too.
  */
-export const MiniCart = define<Stateless, never>('shop-mini-cart', {
+export const MiniCart = define<Stateless, never>()('shop-mini-cart', {
   stores: [cartStore],
   intent: {},
   update: {

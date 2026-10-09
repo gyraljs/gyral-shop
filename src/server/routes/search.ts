@@ -5,7 +5,9 @@ import { parseListing } from '../../domain/listing.js';
 import { parseSearchQuery } from '../../domain/search.js';
 import { searchPage, searchSuggestions } from '../../services/search.js';
 import { SUGGEST_API } from '../../ui/layout/suggestions.js';
+import { listingHead } from '../../ui/catalog/listing-head.js';
 import { listingTitle } from '../../ui/catalog/listing-view.js';
+import { publicOrigin } from '../origin.js';
 import {
   noResults,
   resultsHeading,
@@ -59,10 +61,11 @@ export function searchRoutes({ db, render }: SearchRouteOptions): Hono {
             main: noResults(q, data.suggestions),
           });
         }
+        const view = searchListing(data);
         return render({
-          title: listingTitle(searchListing(data)),
-          description: `Products matching “${q}” at Gyral Goods.`,
-          noindex: true,
+          title: listingTitle(view),
+          // The same head <shop-listing> sets after filtering or paging without a reload.
+          head: listingHead(view, publicOrigin(c)),
           query: q,
           chunks: LISTING_CHUNKS,
           main: searchResults(data),

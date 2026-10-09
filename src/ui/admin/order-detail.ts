@@ -175,7 +175,7 @@ function details(o: AdminOrder) {
     </section>`;
 }
 
-export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>('shop-admin-order', {
+export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>()('shop-admin-order', {
   shadow: false,
   props: { number: prop.string({ required: true }) },
   init: (props) => [

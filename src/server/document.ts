@@ -1,6 +1,6 @@
 // The server-only document shell: head, skip link, header, main, footer. Only the custom
 // elements inside hydrate; the shell itself never does.
-import { html, nothing, raw, type AnyStoreInstance } from '@gyral/core';
+import { html, nothing, type AnyStoreInstance, type Head, type JsonValue } from '@gyral/core';
 import { renderPage, type CspOptions } from '@gyral/ssr';
 import type { AccountSummary, DepartmentLink } from '../ui/layout/site-header.js';
 import '../ui/layout/site-header.js'; // registers <shop-header> for server rendering
@@ -29,6 +29,12 @@ export interface ShellOptions {
   readonly csp?: CspOptions;
   readonly title: string;
   readonly description?: string;
+  /**
+   * The whole managed head, for pages whose head the browser also sets after updates without a
+   * reload (listing-head.ts). Replaces the one built from title, description, canonical, robots,
+   * meta and JSON-LD.
+   */
+  readonly head?: Head;
   readonly departments: readonly DepartmentLink[];
   readonly query?: string;
   /** The page's main content (an `html` template, usually one page component). */
@@ -41,7 +47,7 @@ export interface ShellOptions {
   /** Absolute canonical URL (SEO spec). */
   readonly canonical?: string;
   /** Structured data objects, each written as an `application/ld+json` script. */
-  readonly jsonLd?: readonly object[];
+  readonly jsonLd?: readonly JsonValue[];
   /** Slug of the department this page belongs to, marked current in the header nav. */
   readonly currentDepartment?: string;
   /** The signed-in member, for the header's account menu (set by createApp's page()). */
@@ -59,8 +65,27 @@ export interface ShellOptions {
   readonly static?: boolean;
 }
 
-/** JSON for a <script> body: `<` is escaped so content can never close the element. */
-const scriptJson = (value: object): string => JSON.stringify(value).replace(/</g, '\\u003c');
+/**
+ * The page's managed head (Gyral's head model, ADR 0019 there): title, description, canonical,
+ * robots, Open Graph and Twitter meta, JSON-LD. Client-side listing and admin updates replace
+ * these with `setHead()`, so they are built from the same fields (listing-head.ts, admin
+ * routes.ts). The favicon, theme stylesheet and CSRF meta stay in `extraHead`, which
+ * `setHead()` never touches.
+ */
+export function shellHead(options: ShellOptions): Head {
+  if (options.head !== undefined) return options.head;
+  return {
+    title: documentTitle(options.title),
+    ...(options.description === undefined ? {} : { description: options.description }),
+    ...(options.canonical === undefined ? {} : { canonical: options.canonical }),
+    ...(options.noindex === true ? { robots: 'noindex' } : {}),
+    meta: [
+      ...(options.meta ?? []).map(([property, content]) => ({ property, content })),
+      ...(options.metaNames ?? []).map(([name, content]) => ({ name, content })),
+    ],
+    jsonLd: options.jsonLd ?? [],
+  };
+}
 
 /** The footer, with the theme switcher (ADR 0006 rule 8; prerendered pages ask /api/me). */
 const footer = (prerendered: boolean) => html`
@@ -122,31 +147,18 @@ function consentBanner(prerendered: boolean) {
 }
 
 export function shell(options: ShellOptions): Response {
-  const structured = (options.jsonLd ?? [])
-    .map((data) => `<script type="application/ld+json">${scriptJson(data)}</script>`)
-    .join('');
-  const head = html`<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  const extraHead = html`<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     ${themeLink(options.static === true)}
-    ${
-      options.canonical === undefined
-        ? nothing
-        : html`<link rel="canonical" href=${options.canonical} />`
-    }
-    ${options.noindex === true ? html`<meta name="robots" content="noindex" />` : nothing}
     ${
       options.csrfToken === undefined
         ? nothing
         : html`<meta name=${CSRF_META} content=${options.csrfToken} />`
-    }
-    ${(options.meta ?? []).map(([property, content]) => html`<meta property=${property} content=${content} />`)}
-    ${(options.metaNames ?? []).map(([name, content]) => html`<meta name=${name} content=${content} />`)}
-    ${structured === '' ? nothing : raw(structured)}`;
+    }`;
   return renderPage(
     {
-      title: documentTitle(options.title),
+      ...shellHead(options),
       styles: DOCUMENT_STYLES,
-      ...(options.description === undefined ? {} : { description: options.description }),
-      head,
+      extraHead,
       body: html`
         <nav class="skip-links" aria-label="Skip links">
           <a class="skip-link" href="#main">Skip to content</a>

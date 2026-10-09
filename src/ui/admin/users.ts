@@ -162,7 +162,7 @@ function confirmPanel(s: UsersState, i: { UserAction: string; Cancel: string }) 
   </section>`;
 }
 
-export const AdminUsers = define<UsersState, UsersMsg, UsersProps>('shop-admin-users', {
+export const AdminUsers = define<UsersState, UsersMsg, UsersProps>()('shop-admin-users', {
   shadow: false,
   props: { search: prop.string({ default: '' }) },
   init: (props) => [

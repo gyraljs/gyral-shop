@@ -3,9 +3,9 @@ import { Hono } from 'hono';
 import type { Db } from '../../db/client.js';
 import { parseListing } from '../../domain/listing.js';
 import { categoryPage, departmentPage } from '../../services/departments.js';
-import { listingTitle, resultSummary } from '../../ui/catalog/listing-view.js';
+import { listingHead } from '../../ui/catalog/listing-head.js';
+import { listingTitle } from '../../ui/catalog/listing-view.js';
 import {
-  categoryCrumbs,
   categoryListing,
   categoryPage as categoryView,
   categoryPath,
@@ -57,18 +57,10 @@ export function catalogRoutes({ db, render }: CatalogRouteOptions): Hono {
     const { data } = result;
     const view = categoryListing(data);
     const origin = publicOrigin(c);
-    // Pages of the plain listing are their own canonical URLs (Google's guidance). Sorted or
-    // filtered states point to the plain listing and stay out of the index (SEO spec).
-    const base = categoryPath(data.department.slug, data.category.slug);
-    const path = data.refined
-      ? base
-      : categoryPath(data.department.slug, data.category.slug, data.page);
     return render({
       title: listingTitle(view),
-      description: `Shop ${data.category.name.toLowerCase()} in ${data.department.name} at Gyral Goods. ${resultSummary(view)}.`,
-      canonical: new URL(path, origin).href,
-      noindex: data.refined,
-      jsonLd: [breadcrumbJsonLd(origin, categoryCrumbs(data), base)],
+      // The same head <shop-listing> sets after filtering or paging without a reload.
+      head: listingHead(view, origin),
       currentDepartment: data.department.slug,
       chunks: LISTING_CHUNKS,
       main: categoryView(data),

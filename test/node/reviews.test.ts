@@ -30,7 +30,7 @@ const idOf = async (email: string) => {
 const visible = (html: string) => html.replace(/<!--[\s\S]*?-->/g, '');
 
 const jsonLd = (html: string): unknown[] =>
-  [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(
+  [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map(
     (m) => JSON.parse(m[1] ?? 'null') as unknown,
   );
 

@@ -59,7 +59,7 @@ const departmentItem = (d: DepartmentLink, current: boolean) =>
     <a href="/d/${d.slug}" aria-current=${current ? 'true' : undefined}>${d.name}</a>
   </li>`;
 
-export const SiteHeader = define<Stateless, never, HeaderProps>('shop-header', {
+export const SiteHeader = define<Stateless, never, HeaderProps>()('shop-header', {
   stores: [meStore],
   props: {
     departments: prop.value(v.array(DepartmentLinkSchema), { default: [] }),

@@ -1,12 +1,17 @@
 // Cart page lines (docs/product-specs/cart.md). Every control is a small POST form that works
 // without JavaScript; with it, the cart page's intents send the same fields to the store.
-import { each, html, intents, nothing } from '@gyral/core';
+import { each, html, intentsOf, nothing, type TemplateResult } from '@gyral/core';
 import { format } from '../../domain/money.js';
 import { csrfField } from '../forms/csrf.js';
 import { lineIssueMessage, type CartLine } from './model.js';
 
-/** The cart page's line intents, as a module constant so rows stay pure (Gyral view/03). */
-const i = intents<{ readonly _tag: 'SetQuantity' } | { readonly _tag: 'Remove' }>();
+import type { CartPage } from './cart-page.js';
+
+/**
+ * The cart page's intents, as a module constant so rows stay pure (Gyral view/03). The
+ * templates below declare their return types, so the page's class doesn't infer through them.
+ */
+const i = intentsOf<typeof CartPage>();
 
 const optionText = (options: Readonly<Record<string, string>>) =>
   Object.entries(options)
@@ -22,7 +27,7 @@ const stepForm = (
   text: string,
   disabled: boolean,
   csrf: string,
-) => html`
+): TemplateResult => html`
   <form method="post" action="/cart/update" data-intent=${i.SetQuantity} class="step">
     ${csrfField(csrf)}
     <input type="hidden" name="sku" value=${line.sku} />
@@ -32,7 +37,7 @@ const stepForm = (
 `;
 
 /** One line: a pure `each` row of (line, CSRF token). */
-function lineTemplate(line: CartLine, csrf: string) {
+function lineTemplate(line: CartLine, csrf: string): TemplateResult {
   const id = idFor(line.sku);
   const options = optionText(line.options);
   const max = Math.max(line.maxQuantity, 1);
@@ -98,7 +103,7 @@ function lineTemplate(line: CartLine, csrf: string) {
   `;
 }
 
-export const cartLines = (lines: readonly CartLine[], csrf: string) => html`
+export const cartLines = (lines: readonly CartLine[], csrf: string): TemplateResult => html`
   <ul data-component="cart-lines" class="cart-lines">
     ${each(
       lines,

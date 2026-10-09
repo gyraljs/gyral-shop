@@ -43,7 +43,7 @@ function readHead(status: number, html: string): Head {
     noindex: attr(named('robots') ?? '', 'content')?.includes('noindex') ?? false,
     properties: pairs('property'),
     names: pairs('name'),
-    jsonLd: [...html.matchAll(/<script type="application\/ld\+json">([^<]*)<\/script>/g)].map(
+    jsonLd: [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([^<]*)<\/script>/g)].map(
       (m) => JSON.parse(m[1] ?? '{}') as Record<string, unknown>,
     ),
     html,

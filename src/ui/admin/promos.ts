@@ -69,7 +69,7 @@ function row(p: PromoRow) {
   </tr>`;
 }
 
-export const AdminPromos = define<PromosState, PromosMsg>('shop-admin-promos', {
+export const AdminPromos = define<PromosState, PromosMsg>()('shop-admin-promos', {
   shadow: false,
   init: () => [{ list: null, error: null }, [load()]],
   intent: {},

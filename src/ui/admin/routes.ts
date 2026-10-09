@@ -1,5 +1,6 @@
 // The admin route table (docs/product-specs/admin.md), shared by the server (page titles,
 // the first render) and the browser app. Order matters: `/admin/products/new` before `:id`.
+import type { Head } from '@gyral/core';
 import { routes } from '@gyral/router';
 import { documentTitle } from '../layout/site.js';
 
@@ -86,8 +87,14 @@ export function adminLabel(url: string): string {
 /** The server shell's title for an admin URL (the shell appends the site name). */
 export const adminPageTitle = (url: string): string => `${adminLabel(url)} — Admin`;
 
-/** The full document title, for the browser's setTitle(); matches the server's <title>. */
-export const adminTitle = (url: string): string => documentTitle(adminPageTitle(url));
+/**
+ * The managed head of an admin page, from its title without the site name: the server shell
+ * writes it and <shop-admin> sets it on client navigations, so the two always match.
+ */
+export const adminHead = (pageTitle: string): Head => ({
+  title: documentTitle(pageTitle),
+  robots: 'noindex',
+});
 
 /** Which nav section an admin view belongs to. */
 export type AdminSection =

@@ -6,10 +6,11 @@ import { addressLines, cardLabel, type CheckoutStep } from '../../domain/checkou
 import { format } from '../../domain/money.js';
 import { STATE_CODES } from '../../domain/tax.js';
 import { csrfField } from '../forms/csrf.js';
-import type { CheckoutMsg, CheckoutState } from './checkout-page.js';
+import type { CheckoutState } from './checkout-page.js';
 import type { CheckoutClient } from './model.js';
 
-type I = IntentNames<CheckoutMsg>;
+// The intent names these templates use (a subset of the component's parser keys).
+type I = IntentNames<'Contact' | 'Address' | 'Shipping' | 'Payment' | 'PlaceOrder' | 'Edit'>;
 
 export const STEP_TITLES: Readonly<Record<CheckoutStep, string>> = {
   contact: 'Contact',

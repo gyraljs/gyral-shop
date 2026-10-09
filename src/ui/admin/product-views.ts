@@ -19,9 +19,10 @@ import {
   type Errors,
 } from './fields.js';
 import { dateTime } from './format.js';
-import type { ProductEditMsg, ProductEditState } from './product-edit.js';
+import type { ProductEditState } from './product-edit.js';
 
-type I = IntentNames<ProductEditMsg>;
+// The intent names these templates use (a subset of the component's parser keys).
+type I = IntentNames<'SaveProduct' | 'Archive' | 'Adjust' | 'SaveVariant' | 'AddVariant'>;
 const NO_ERRORS: Errors = {};
 
 const errorsOf = (s: ProductEditState, key: string): Errors => s.errors[key] ?? NO_ERRORS;

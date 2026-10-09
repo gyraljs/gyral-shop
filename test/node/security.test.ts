@@ -103,7 +103,7 @@ describe('headers', () => {
     await test.get('/'); // headers existed before the component below did
     const { define, html } = await import('@gyral/core');
     const css = ':host { display: block; }';
-    define<object, never>('shop-late-probe', {
+    define<object, never>()('shop-late-probe', {
       init: () => ({}),
       intent: {},
       update: {},

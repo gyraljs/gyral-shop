@@ -130,7 +130,7 @@ const axisPickers = (variants: readonly BuyBoxVariant[], selection: Selection, i
  * Price, availability, options and the add-to-cart form. The form posts the SKU and quantity
  * with or without JavaScript; with it, options are chosen per axis instead of from a SKU list.
  */
-export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>('shop-buy-box', {
+export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>()('shop-buy-box', {
   props: {
     variants: prop.value(v.array(BuyBoxVariantSchema), { required: true }),
     action: prop.string({ default: ADD_TO_CART_PATH }),

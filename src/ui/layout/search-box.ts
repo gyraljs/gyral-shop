@@ -3,7 +3,16 @@
 // (debounced; each request cancels the previous one), arrow keys move through them, Enter opens
 // the highlighted one (or searches), Escape and leaving the field close the list.
 // Light DOM (theme contract ADR 0006, Gyral ADR 0014): document styles in styles/search.ts.
-import { define, each, html, intents, nothing, prop, type Next } from '@gyral/core';
+import {
+  define,
+  each,
+  html,
+  intentsOf,
+  nothing,
+  prop,
+  type Next,
+  type TemplateResult,
+} from '@gyral/core';
 import { get } from '@gyral/http';
 import { debounce, delay } from '@gyral/time/delay';
 import { normalizeQuery, searchQueryString } from '../../domain/search.js';
@@ -137,10 +146,7 @@ function statusText(s: SearchModel) {
 
 const optionId = (n: number) => `search-option-${String(n)}`;
 
-/** Intent names as a module constant, so list rows stay pure (Gyral view/03-lists.md). */
-const i = intents<SearchMsg>();
-
-export const SearchBox = define<SearchModel, SearchMsg, SearchProps>('shop-search', {
+export const SearchBox = define<SearchModel, SearchMsg, SearchProps>()('shop-search', {
   shadow: false,
   props: { query: prop.string() },
   init: (props) => ({
@@ -180,7 +186,7 @@ export const SearchBox = define<SearchModel, SearchMsg, SearchProps>('shop-searc
     Dismiss: (s) => closed(s),
     Hydrated: (s) => ({ ...s, enhanced: true }),
   },
-  view: (s) => html`
+  view: (s, i) => html`
     <search data-region="search">
       <form action="/search" method="get" role="search" data-intent=${i.Submit}>
         <label for="q" class="visually-hidden">Search products</label>
@@ -212,11 +218,17 @@ export const SearchBox = define<SearchModel, SearchMsg, SearchProps>('shop-searc
   `,
 });
 
+/**
+ * Intent names as a module constant, so list rows stay pure (Gyral view/03-lists.md). The rows
+ * declare their return types, so the class doesn't infer through them.
+ */
+const i = intentsOf<typeof SearchBox>();
+
 /** One suggestion: a pure `each` row; `n` is its position, for ids and the Pick intent. */
 const suggestion = (
   { option: o, n }: { readonly option: Option; readonly n: number },
   highlighted: boolean,
-) =>
+): TemplateResult =>
   html`<li
     id=${optionId(n)}
     role="option"
@@ -230,7 +242,7 @@ const suggestion = (
     <span class="detail">${o.detail}</span>
   </li>`;
 
-const suggestionList = (s: SearchModel) =>
+const suggestionList = (s: SearchModel): TemplateResult =>
   html`<ul
     id="search-suggestions"
     role="listbox"

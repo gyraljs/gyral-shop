@@ -5,17 +5,11 @@
 // change (including Back/Forward) streams in through router listen() and fetches that state.
 import { define, focus, html, nothing, prop, type Next } from '@gyral/core';
 import { get, type HttpError } from '@gyral/http';
-import { listen, makeRouter, navigate, setTitle, type RouteLocation } from '@gyral/router';
+import { listen, makeRouter, navigate, setHead, type RouteLocation } from '@gyral/router';
 import { isRefined, parseListing, sameListing, type ListingState } from '../../domain/listing.js';
-import { documentTitle } from '../layout/site.js';
 import { filtersForm } from './filters.js';
-import {
-  listingHref,
-  listingTitle,
-  ListingViewSchema,
-  resultSummary,
-  type ListingView,
-} from './listing-view.js';
+import { listingHead } from './listing-head.js';
+import { listingHref, ListingViewSchema, resultSummary, type ListingView } from './listing-view.js';
 import { pager } from './pager.js';
 import { productCard } from './product-card.js';
 
@@ -32,6 +26,8 @@ export interface ListingModel {
   readonly focusPending: boolean;
   /** The filter disclosure as the shopper left it; `null` until they toggle it (filters.ts). */
   readonly filtersOpen: boolean | null;
+  /** The page's origin, from the last routed URL: the head's canonical URL is absolute. */
+  readonly origin: string | null;
 }
 
 export type ListingMsg =
@@ -76,7 +72,8 @@ function routed(s: ListingModel, location: RouteLocation): Next<ListingModel, Li
   const { view } = s;
   if (view === null || location.pathname !== view.basePath) return s;
   const want = stateOf(new URLSearchParams(location.search));
-  if (sameListing(want, view.state)) return { ...s, want, status: 'idle' };
+  const origin = new URL(location.href).origin;
+  if (sameListing(want, view.state)) return { ...s, want, origin, status: 'idle' };
   const api = {
     basePath: view.api,
     ...(view.fixedQuery === undefined ? {} : { fixedQuery: view.fixedQuery }),
@@ -88,16 +85,16 @@ function routed(s: ListingModel, location: RouteLocation): Next<ListingModel, Li
     onSuccess: (next) => ({ _tag: 'Loaded', view: next }),
     onFailure: (error) => ({ _tag: 'Failed', error: error._tag }),
   });
-  return [{ ...s, want, status: 'loading' }, [request]];
+  return [{ ...s, want, origin, status: 'loading' }, [request]];
 }
 
 function loaded(s: ListingModel, view: ListingView): Next<ListingModel, ListingMsg> {
   if (s.want !== null && !sameListing(view.state, s.want)) return s; // an answer to an old URL
   const next: ListingModel = { ...s, view, status: 'idle', focusPending: false };
-  const title = setTitle(documentTitle(listingTitle(view)));
+  const head = s.origin === null ? [] : [setHead(listingHead(view, s.origin))];
   // After paging, move focus to the heading so keyboard and screen-reader users land on the
   // new results (Gyral's focus() runs after the update renders).
-  return [next, s.focusPending ? [title, focus('#listing-title')] : [title]];
+  return [next, s.focusPending ? [...head, focus('#listing-title')] : head];
 }
 
 const results = (view: ListingView) => {
@@ -111,11 +108,18 @@ const results = (view: ListingView) => {
     : html`<p class="empty">There are no products here yet.</p>`;
 };
 
-export const Listing = define<ListingModel, ListingMsg, ListingProps>('shop-listing', {
+export const Listing = define<ListingModel, ListingMsg, ListingProps>()('shop-listing', {
   shadow: false,
   props: { view: prop.value(ListingViewSchema, { required: true }) },
   init: (props) => [
-    { view: props.view, want: null, status: 'idle', focusPending: false, filtersOpen: null },
+    {
+      view: props.view,
+      want: null,
+      status: 'idle',
+      focusPending: false,
+      filtersOpen: null,
+      origin: null,
+    },
     [listen((location) => ({ _tag: 'Routed', location }))],
   ],
   drivers: { router: listingRouter },

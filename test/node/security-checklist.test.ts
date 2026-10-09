@@ -58,7 +58,7 @@ describe('user-supplied content in rendered pages', () => {
       expect(html, path).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
       // JSON-LD review snippets are script-safe: no "</script" inside the data.
       for (const [, json] of html.matchAll(
-        /<script type="application\/ld\+json">([\s\S]*?)<\/script>/g,
+        /<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g,
       )) {
         expect(json, path).not.toMatch(/<\/script/i);
       }

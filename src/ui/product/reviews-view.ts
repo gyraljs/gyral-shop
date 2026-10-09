@@ -33,7 +33,7 @@ export interface ReviewsRender {
   readonly standalone: boolean;
 }
 
-type Intents = IntentNames<{ readonly _tag: 'Load' } | { readonly _tag: 'Vote' }>;
+type Intents = IntentNames<'Load' | 'Vote'>;
 
 const SORT_LABELS: Record<ReviewSort, string> = { helpful: 'Most helpful', newest: 'Newest' };
 

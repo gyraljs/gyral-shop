@@ -40,7 +40,7 @@ async function setStock(db: Db, productId: number) {
 }
 
 const jsonLd = (html: string) =>
-  [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map(
+  [...html.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map(
     (m) => JSON.parse(m[1] ?? 'null') as Record<string, unknown>,
   );
 

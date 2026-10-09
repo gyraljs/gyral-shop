@@ -137,7 +137,7 @@ function filters(f: OrdersFilter, i: { readonly Filter: 'Filter' }) {
   </form>`;
 }
 
-export const AdminOrders = define<OrdersState, OrdersMsg, OrdersProps>('shop-admin-orders', {
+export const AdminOrders = define<OrdersState, OrdersMsg, OrdersProps>()('shop-admin-orders', {
   shadow: false,
   props: { search: prop.string({ default: '' }) },
   init: (props) => [{ search: props.search, list: null, error: null }, [load(props.search)]],

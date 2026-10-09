@@ -45,7 +45,7 @@ export type ConsentMsg =
 
 const FAILED = 'Your choice could not be saved. Please try again.';
 
-export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>('shop-consent', {
+export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>()('shop-consent', {
   stores: [meStore],
   shadow: false,
   props: {

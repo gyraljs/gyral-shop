@@ -159,7 +159,7 @@ export function defineMemberForm(spec: MemberFormSpec) {
   const secret = new Set([...(spec.secret ?? []), CSRF_FIELD]);
   // Ids are prefixed with the tag: several forms can share a page (profile + email).
   const id = (name: string) => `${spec.tag}-${name}`;
-  return define<AuthState, Msg, MemberFormProps>(spec.tag, {
+  return define<AuthState, Msg, MemberFormProps>()(spec.tag, {
     shadow: false,
     props: {
       csrfToken: prop.string(),

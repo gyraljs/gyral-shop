@@ -138,7 +138,7 @@ function rejected(s: ProductEditState, m: IntentRejected): ProductEditState {
   return { ...s, pending: null, errors: { ...s.errors, [key]: fieldErrors(m.issues) } };
 }
 
-export const AdminProductEdit = define<ProductEditState, ProductEditMsg, ProductEditProps>(
+export const AdminProductEdit = define<ProductEditState, ProductEditMsg, ProductEditProps>()(
   'shop-admin-product',
   {
     shadow: false,

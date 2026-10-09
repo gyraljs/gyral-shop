@@ -29,7 +29,7 @@ const viewRules = Array.from(
  * arrow keys, focus and the checked state work with or without JavaScript; CSS shows the
  * matching view. The component adds an "Image n of m" status as the selection changes.
  */
-export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>('shop-gallery', {
+export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>()('shop-gallery', {
   props: { images: prop.value(v.array(GalleryImageSchema), { default: [] }) },
   init: () => ({ index: 0 }),
   intent: {

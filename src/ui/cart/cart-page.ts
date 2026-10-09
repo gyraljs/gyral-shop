@@ -34,7 +34,7 @@ export type CartPageMsg =
 /** Store notices shown on the cart page (the buy box shows its own `add` notices). */
 const PAGE_OPS: readonly CartNotice['op'][] = ['update', 'remove', 'promo', 'refresh', 'add'];
 
-export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>('shop-cart-page', {
+export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>()('shop-cart-page', {
   props: {
     csrf: prop.string(),
     flash: prop.value(v.object({ kind: v.picklist(['success', 'error']), message: v.string() })),

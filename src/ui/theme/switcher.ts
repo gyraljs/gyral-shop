@@ -72,7 +72,7 @@ function apply(
   ];
 }
 
-export const ThemeSwitcher = define<ThemeSwitcherState, ThemeSwitcherMsg, ThemeSwitcherProps>(
+export const ThemeSwitcher = define<ThemeSwitcherState, ThemeSwitcherMsg, ThemeSwitcherProps>()(
   'shop-theme-switcher',
   {
     stores: [meStore],

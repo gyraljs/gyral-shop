@@ -21,7 +21,7 @@ import {
 import { submitForm } from '@gyral/http';
 import { isCheckoutStep, type CheckoutStep } from '../../domain/checkout.js';
 import { goTo } from '../drivers/location.js';
-import { CSRF_META } from '../forms/csrf.js';
+import { csrfHttp } from '../drivers/http.js';
 import { CheckoutClientSchema, parseCheckout, type CheckoutClient } from './model.js';
 import {
   AddressForm,
@@ -90,7 +90,6 @@ function post(s: CheckoutState, step: FormStep, data: FormData) {
     { ...s, errors, pending: step, status: '' },
     [
       submitForm<CheckoutMsg, CheckoutMsg>(URLS[step], data, {
-        csrf: { meta: CSRF_META },
         onSuccess: (body) => {
           const location = redirectedTo(body);
           if (location !== undefined) return { _tag: 'Redirect', location };
@@ -117,8 +116,9 @@ const toForm =
     form: raw,
   });
 
-export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>('shop-checkout', {
+export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>()('shop-checkout', {
   shadow: false,
+  drivers: { http: csrfHttp },
   props: { view: prop.value(CheckoutClientSchema, { required: true }), csrf: prop.string() },
   init: (props) => ({
     view: props.view,

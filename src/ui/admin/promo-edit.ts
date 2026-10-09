@@ -181,7 +181,7 @@ function deleteForm(s: PromoEditState, i: { DeletePromo: string }, used: number)
   </form>`;
 }
 
-export const AdminPromoEdit = define<PromoEditState, PromoEditMsg, PromoEditProps>(
+export const AdminPromoEdit = define<PromoEditState, PromoEditMsg, PromoEditProps>()(
   'shop-admin-promo',
   {
     shadow: false,

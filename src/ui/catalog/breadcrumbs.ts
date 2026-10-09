@@ -7,7 +7,25 @@ export interface Crumb {
   readonly path?: string;
 }
 
-/** Breadcrumb navigation (WAI-ARIA breadcrumb pattern). JSON-LD is added by the server. */
+/**
+ * `BreadcrumbList` structured data for a trail. The current page (the crumb without a path)
+ * uses `currentPath`, so every item has an absolute URL. Shared by the server's page heads and
+ * <shop-listing>'s head after updates without a reload (listing-head.ts).
+ */
+export function breadcrumbJsonLd(origin: string, trail: readonly Crumb[], currentPath: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((crumb, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: crumb.name,
+      item: new URL(crumb.path ?? currentPath, origin).href,
+    })),
+  };
+}
+
+/** Breadcrumb navigation (WAI-ARIA breadcrumb pattern); its JSON-LD is in the page's head. */
 export const breadcrumbs = (trail: readonly Crumb[]) => html`
   <nav class="breadcrumbs" aria-label="Breadcrumb">
     <ol>

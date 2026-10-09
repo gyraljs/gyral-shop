@@ -52,6 +52,7 @@ export const categoryListing = (view: CategoryView): ListingView => {
     total: view.total,
     pageCount: view.pageCount,
     brands: view.brands,
+    crumbs: categoryCrumbs(view),
   };
 };
 

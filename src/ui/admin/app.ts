@@ -4,10 +4,10 @@
 // the admin JSON API. Light DOM (theme contract, ADR 0006 rule 5): document styles apply and
 // themes can restyle it through the `admin*` hooks.
 import { define, each, focus, html, nothing, prop, type Next } from '@gyral/core';
-import { listen, setTitle, type RouteLocation } from '@gyral/router';
+import { listen, setHead, type RouteLocation } from '@gyral/router';
 import { goTo } from '../drivers/location.js';
 import { adminDrivers } from './drivers.js';
-import { adminSection, adminTitle, adminView, type AdminView } from './routes.js';
+import { adminHead, adminPageTitle, adminSection, adminView, type AdminView } from './routes.js';
 import './dashboard.js';
 import './products.js';
 import './product-edit.js';
@@ -80,14 +80,12 @@ function routed(s: AdminState, location: RouteLocation): Next<AdminState, AdminM
   // Captured links outside the admin (header, footer) are full page loads.
   if (!location.pathname.startsWith('/admin')) return [s, [goTo(location.href)]];
   const url = location.pathname + location.search;
-  if (url === s.url) return [s, [setTitle(adminTitle(url))]];
-  return [
-    { url, navigated: true },
-    [setTitle(adminTitle(url)), focus('h1', { preventScroll: false })],
-  ];
+  const head = setHead(adminHead(adminPageTitle(url)));
+  if (url === s.url) return [s, [head]];
+  return [{ url, navigated: true }, [head, focus('h1', { preventScroll: false })]];
 }
 
-export const AdminApp = define<AdminState, AdminMsg, AdminProps>('shop-admin', {
+export const AdminApp = define<AdminState, AdminMsg, AdminProps>()('shop-admin', {
   shadow: false,
   props: { path: prop.string({ required: true }) },
   init: (props) => [

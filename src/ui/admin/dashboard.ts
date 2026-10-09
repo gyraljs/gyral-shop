@@ -132,7 +132,7 @@ function body(d: Dashboard) {
   `;
 }
 
-export const AdminDashboard = define<DashboardState, DashboardMsg>('shop-admin-dashboard', {
+export const AdminDashboard = define<DashboardState, DashboardMsg>()('shop-admin-dashboard', {
   shadow: false,
   init: () => [{ data: null, error: null }, [loadDashboard()]],
   intent: {},
