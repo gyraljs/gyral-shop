@@ -27,7 +27,6 @@ import {
   EmailForm,
   PasswordForm,
   ProfileForm,
-  SETTINGS_SECRETS,
 } from '../../ui/account/settings-schemas.js';
 import {
   accountOverview,
@@ -57,17 +56,6 @@ export interface AccountSettingsOptions {
 }
 
 type C = Context<AppEnv>;
-
-const SECRETS = new Set<string>(SETTINGS_SECRETS);
-
-/** Rejections are rendered into the page and its state: never echo passwords back. */
-const withoutSecrets = (r: IntentRejected): IntentRejected =>
-  r.values === undefined
-    ? r
-    : {
-        ...r,
-        values: Object.fromEntries(Object.entries(r.values).filter(([k]) => !SECRETS.has(k))),
-      };
 
 const noStore = (response: Response): Response => {
   response.headers.set('cache-control', 'no-store');
@@ -202,7 +190,7 @@ export function accountSettingsRoutes({
         await startMemberSession(c, { ...user, email: changed.value });
         return done(c, '/account/profile', `Your email is now ${changed.value}.`);
       },
-      invalid: (r) => profile(c, { form: 'email', issue: withoutSecrets(r) }, 422),
+      invalid: (r) => profile(c, { form: 'email', issue: r }, 422),
     })(c.req.raw);
   });
 
@@ -240,7 +228,7 @@ export function accountSettingsRoutes({
         await startMemberSession(c, user);
         return done(c, '/account/password', 'Your password is changed.');
       },
-      invalid: (r) => passwordView(c, withoutSecrets(r), 422),
+      invalid: (r) => passwordView(c, r, 422),
     })(c.req.raw);
   });
 

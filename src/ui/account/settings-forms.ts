@@ -9,7 +9,6 @@ import {
   ProfileForm,
   ResetForm,
   ResetRequestForm,
-  SETTINGS_SECRETS,
 } from './settings-schemas.js';
 
 const newPasswordFields: readonly MemberField[] = [
@@ -55,7 +54,6 @@ export const EmailFormElement = defineMemberForm({
   fields: [{ kind: 'email', name: 'email', label: 'New email', autocomplete: 'email' }, current],
   submitLabel: 'Change email',
   pendingLabel: 'Saving…',
-  secret: SETTINGS_SECRETS,
 });
 
 export const PasswordFormElement = defineMemberForm({
@@ -65,7 +63,6 @@ export const PasswordFormElement = defineMemberForm({
   fields: [current, ...newPasswordFields],
   submitLabel: 'Change password',
   pendingLabel: 'Saving…',
-  secret: SETTINGS_SECRETS,
 });
 
 /** The address fields; the action differs between adding and editing. */
@@ -153,7 +150,6 @@ export const ResetFormElement = defineMemberForm({
   fields: newPasswordFields,
   submitLabel: 'Set new password',
   pendingLabel: 'Saving…',
-  secret: SETTINGS_SECRETS,
 });
 
 declare global {

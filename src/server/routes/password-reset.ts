@@ -134,10 +134,8 @@ export function passwordResetRoutes({
         setFlash(c, { kind: 'success', message: 'Your password is changed. You are signed in.' });
         return seeOther('/account');
       },
-      invalid: (r) => {
-        const rejected: IntentRejected = { ...r, values: {} }; // never echo passwords or token
-        return resetView(c, token, rejected, 422);
-      },
+      // The token and both passwords are secret fields (ResetForm): never echoed back.
+      invalid: (r) => resetView(c, token, r, 422),
     })(c.req.raw);
   });
 

@@ -2,6 +2,7 @@
 // formAction() handlers (Gyral ADR 0008), so both paths reject identically. Card checks reuse the
 // domain rules, so a card the browser accepts is a card the server accepts.
 import { defineForm } from '@gyral/core';
+import { CSRF_SECRET } from '../forms/csrf.js';
 import * as v from 'valibot';
 import { validateCard } from '../../domain/cards.js';
 import { normalizePostalCode } from '../../domain/checkout.js';
@@ -20,6 +21,7 @@ export const ContactForm = defineForm(
       v.email('Enter a valid email address.'),
     ),
   }),
+  { secret: [CSRF_SECRET] },
 );
 
 /** Field rules that apply only to a new address (`addressId` = `new`). */
@@ -67,10 +69,12 @@ export const AddressForm = defineForm(
       }
     }),
   ),
+  { secret: [CSRF_SECRET] },
 );
 
 export const ShippingForm = defineForm(
   v.object({ method: v.picklist(SHIPPING_METHODS, 'Choose a shipping method.') }),
+  { secret: [CSRF_SECRET] },
 );
 
 const CARD_FIELDS = ['number', 'expiry', 'cvc'] as const;
@@ -99,6 +103,7 @@ export const PaymentForm = defineForm(
       }
     }),
   ),
+  { secret: [...CARD_FIELDS, CSRF_SECRET] },
 );
 
 export const PlaceOrderForm = defineForm(
@@ -113,7 +118,5 @@ export const PlaceOrderForm = defineForm(
     /** The total shown on the review page, in cents (hidden); a change is caught server-side. */
     expectedTotal: v.optional(v.pipe(v.string(), v.regex(/^\d{1,9}$/), v.transform(Number))),
   }),
+  { secret: [CSRF_SECRET] },
 );
-
-/** Card fields are never refilled into a page (state is serialized into the HTML). */
-export const SECRET_FIELDS: ReadonlySet<string> = new Set([...CARD_FIELDS, '_csrf']);

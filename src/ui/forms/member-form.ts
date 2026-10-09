@@ -71,8 +71,6 @@ export interface MemberFormSpec {
   readonly fields: readonly MemberField[];
   readonly submitLabel: string;
   readonly pendingLabel: string;
-  /** Field names never put back into the page after a rejection (passwords). */
-  readonly secret?: readonly string[];
 }
 
 type Msg =
@@ -156,7 +154,6 @@ const FormFieldsSchema = v.record(v.string(), v.union([v.string(), v.array(v.str
 
 /** Defines (and registers) one light-DOM member form element. */
 export function defineMemberForm(spec: MemberFormSpec) {
-  const secret = new Set([...(spec.secret ?? []), CSRF_FIELD]);
   // Ids are prefixed with the tag: several forms can share a page (profile + email).
   const id = (name: string) => `${spec.tag}-${name}`;
   return define<AuthState, Msg, MemberFormProps>()(spec.tag, {
@@ -180,13 +177,9 @@ export function defineMemberForm(spec: MemberFormSpec) {
       // Pending stays on: the server's page (with its flash message) is about to load.
       SignedIn: (s, m) => [s, [goTo(m.location)]],
       Failed: failed,
-      IntentRejected: (s, m) => {
-        const next = rejected(s, m);
-        const values = Object.fromEntries(
-          Object.entries(next.values).filter(([key]) => !secret.has(key)),
-        );
-        return { ...next, values };
-      },
+      // Secret fields (passwords, tokens, the CSRF field) are never in m.values: each form
+      // definition declares them (settings-schemas.ts).
+      IntentRejected: rejected,
     },
     view: (s, i, { props }) => html`
       <form

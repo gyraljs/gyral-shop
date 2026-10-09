@@ -1,6 +1,7 @@
 // The contact form (docs/product-specs/content.md): one schema for the browser's form() and
 // the server's formAction(), a light-DOM member form, mail goes to the outbox.
 import { defineForm } from '@gyral/core';
+import { CSRF_SECRET } from '../forms/csrf.js';
 import * as v from 'valibot';
 import { email } from '../account/settings-schemas.js';
 import { defineMemberForm } from '../forms/member-form.js';
@@ -30,6 +31,7 @@ export const ContactForm = defineForm(
       v.maxLength(MESSAGE_MAX, `Keep it under ${String(MESSAGE_MAX)} characters.`),
     ),
   }),
+  { secret: [CSRF_SECRET] },
 );
 
 export const topicLabel = (value: string): string =>

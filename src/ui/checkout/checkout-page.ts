@@ -21,14 +21,7 @@ import { redirectedTo, submitForm } from '@gyral/http';
 import { isCheckoutStep, type CheckoutStep } from '../../domain/checkout.js';
 import { goTo } from '../drivers/location.js';
 import { CheckoutClientSchema, parseCheckout, type CheckoutClient } from './model.js';
-import {
-  AddressForm,
-  ContactForm,
-  PaymentForm,
-  PlaceOrderForm,
-  SECRET_FIELDS,
-  ShippingForm,
-} from './schemas.js';
+import { AddressForm, ContactForm, PaymentForm, PlaceOrderForm, ShippingForm } from './schemas.js';
 import { STEP_TITLES, stepBody } from './steps.js';
 import { orderSummary } from './summary.js';
 
@@ -74,9 +67,6 @@ const URLS: Readonly<Record<FormStep, string>> = {
   PlaceOrder: '/checkout/place',
 };
 
-const refill = (values: FormFields = {}): FormFields =>
-  Object.fromEntries(Object.entries(values).filter(([key]) => !SECRET_FIELDS.has(key)));
-
 /**
  * Posts a step; the server answers with the new view, a redirect, or a 422 rejection. The
  * fields keep what the customer typed meanwhile: Gyral writes a control only when the model's
@@ -103,7 +93,7 @@ function post(s: CheckoutState, step: FormStep, data: FormData) {
 const rejected = (s: CheckoutState, m: IntentRejected): CheckoutState => ({
   ...s,
   errors: { ...s.errors, [m.intent]: fieldErrors(m.issues) },
-  values: m.values === undefined ? s.values : refill(m.values),
+  values: m.values ?? s.values,
   pending: undefined,
 });
 

@@ -7,7 +7,7 @@ import { formAction, rejectWith, seeOther } from '@gyral/ssr';
 import type { Db } from '../../db/client.js';
 import { registerErrorMessage, registerMember } from '../../services/accounts.js';
 import { authenticate, loginErrorMessage, normalizeEmail } from '../../services/auth.js';
-import { LoginForm, RegisterForm, SECRET_FIELDS } from '../../ui/account/schemas.js';
+import { LoginForm, RegisterForm } from '../../ui/account/schemas.js';
 import { loginPage, registerPage } from '../../ui/pages/account.js';
 import type { RenderPage } from '../document.js';
 import { limitedResponse, overLimit } from '../limited-form.js';
@@ -48,15 +48,6 @@ const field = (data: FormData, name: string): string => {
   const value = data.get(name);
   return typeof value === 'string' ? value : '';
 };
-
-/** Rejections are rendered into the page and its state: never echo passwords back. */
-const withoutSecrets = (r: IntentRejected): IntentRejected =>
-  r.values === undefined
-    ? r
-    : {
-        ...r,
-        values: Object.fromEntries(Object.entries(r.values).filter(([k]) => !SECRET_FIELDS.has(k))),
-      };
 
 const noStore = (response: Response): Response => {
   response.headers.set('cache-control', 'no-store');
@@ -117,7 +108,7 @@ export function accountRoutes({ db, render, now = Date.now }: AccountRouteOption
         await startMemberSession(c, user.value);
         return seeOther(next === '' ? '/' : next);
       },
-      invalid: (rejected) => authPage(c, 'login', next, withoutSecrets(rejected)),
+      invalid: (rejected) => authPage(c, 'login', next, rejected),
     })(c.req.raw);
   });
 
@@ -141,7 +132,7 @@ export function accountRoutes({ db, render, now = Date.now }: AccountRouteOption
         await startMemberSession(c, created.value);
         return seeOther(next === '' ? '/account' : next);
       },
-      invalid: (rejected) => authPage(c, 'register', next, withoutSecrets(rejected)),
+      invalid: (rejected) => authPage(c, 'register', next, rejected),
     })(c.req.raw);
   });
 

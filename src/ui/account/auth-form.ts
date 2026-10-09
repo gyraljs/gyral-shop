@@ -14,7 +14,6 @@ import {
 } from '@gyral/core';
 import { redirectedTo, submitForm, type HttpError } from '@gyral/http';
 import { CSRF_FIELD, CSRF_HEADER } from '../forms/csrf.js';
-import { SECRET_FIELDS } from './schemas.js';
 
 export interface AuthState {
   /** Text to re-fill after a rejection. Never passwords: state is serialized into the page. */
@@ -38,9 +37,6 @@ export type Failed = { readonly _tag: 'Failed'; readonly message: string };
 
 export const initialAuthState = (): AuthState => ({ values: {}, errors: {}, pending: false });
 
-const refill = (values: FormFields = {}): FormFields =>
-  Object.fromEntries(Object.entries(values).filter(([key]) => !SECRET_FIELDS.has(key)));
-
 /**
  * A submission is on its way. The fields keep what the user typed: Gyral writes a control only
  * when the model's value for it changes (view/02-bindings.md "Live form state").
@@ -50,7 +46,7 @@ export const submitting = (s: AuthState): AuthState => ({ ...s, errors: {}, pend
 export const rejected = (s: AuthState, m: IntentRejected): AuthState => ({
   // The server's copy of what was sent (never passwords). A rejection without one changes no
   // value, so what the user typed stays in the fields.
-  values: m.values === undefined ? s.values : refill(m.values),
+  values: m.values ?? s.values,
   errors: fieldErrors(m.issues),
   pending: false,
 });

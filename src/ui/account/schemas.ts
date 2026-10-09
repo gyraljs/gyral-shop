@@ -2,6 +2,7 @@
 // (Gyral ADR 0008), so both paths reject identically. Native constraints in the markup catch
 // the easy cases first.
 import { defineForm } from '@gyral/core';
+import { CSRF_SECRET } from '../forms/csrf.js';
 import * as v from 'valibot';
 import { MAX_NAME_LENGTH, passwordProblem } from '../../domain/accounts.js';
 
@@ -22,6 +23,7 @@ export const LoginForm = defineForm(
     password: v.pipe(v.string(), v.nonEmpty('Enter your password.')),
     next,
   }),
+  { secret: [CSRF_SECRET] },
 );
 
 export const RegisterForm = defineForm(
@@ -53,7 +55,5 @@ export const RegisterForm = defineForm(
       ['confirm'],
     ),
   ),
+  { secret: ['confirm', CSRF_SECRET] },
 );
-
-/** Fields never echoed back into a page (state is serialized into the HTML). */
-export const SECRET_FIELDS: ReadonlySet<string> = new Set(['password', 'confirm', '_csrf']);

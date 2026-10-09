@@ -20,7 +20,7 @@ export const beaconDriver = defineDriver<PageView, boolean>({
 });
 
 export const pageViewBeacon = (path: string): Command<never> =>
-  command<PageView, boolean, unknown, never>(
+  command<PageView, boolean, unknown>(
     beaconDriver,
     { path },
     {
