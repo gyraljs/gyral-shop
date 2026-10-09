@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.5 (see the Gyral 0.3 addendum). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.6 (see the Gyral 0.3 addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** for routes and middleware, SSR via `@gyral/ssr`, served on Node by Gyral's adapter
@@ -381,6 +381,42 @@ Net: −0.11 to −0.15 KiB per page.
 `pnpm perf` baseline (bytes, gzip): home 33,711 → 33,562, category 42,795 → 42,690, product
 42,902 → 42,751. All pages within budget (LCP 980 / 868 / 920 ms on a loaded machine, load
 average about 10; earlier runs measured 800–808 ms).
+
+### 0.3.1-next.6 (2026-10-09)
+
+Now `0.3.1-next.6`, packed from Gyral branch `next` (209304e); the same six tarballs, vendored
+the same way. No app code changed. next.6 routes every failure Gyral catches through one channel
+(a `GyralError`, a bubbling `error` event a parent can claim, the component's `error` view or
+`Errored` reducer, then `reportError`), lets parsers read state, adds
+`focus(selector, { wait: true })` and trims Gyral's public exports. The shop imports none of the
+removed exports (its `scriptSafeJson` is its own, in `src/server/security/json.ts`), has no
+message named `Errored`, and no test makes a component fail on purpose; the browser tests that
+spy on `console.error`/`console.warn` assert there are none, which still holds.
+
+Same script and method as the tables above (production build, gzip -9); 39 chunks:
+
+| Measure               | 0.3.1-next.5 | 0.3.1-next.6 |
+| --------------------- | ------------ | ------------ |
+| Entry                 | 7.50 KiB     | 7.49 KiB     |
+| Initial (entry graph) | 28.26 KiB    | 29.04 KiB    |
+| All chunks (raw)      | 87.29 (238)  | 88.25 (240)  |
+| Home, department      | 32.77        | 33.55        |
+| Category, search      | 41.68        | 42.62        |
+| Product               | 41.74        | 42.67        |
+| Cart                  | 34.69        | 35.47        |
+| Checkout              | 38.25        | 39.03        |
+| Sign-in               | 33.81        | 34.59        |
+| About (prerendered)   | 31.06        | 31.84        |
+
+Where the bytes went (per-chunk diff of the two builds):
+
+- **Every page, +0.78 KiB:** Gyral's error channel: core's shared chunk +0.63 KiB, the store
+  chunk +0.09 KiB, the render chunk +0.06 KiB. The Gyral owner accepted this cost for 0.3.1.
+- **Category, search and product, +0.16 KiB more:** the `focus` chunk (pending focus requests
+  for `wait: true`), which only pages whose components issue `focus()` load.
+
+`pnpm perf` baseline (bytes, gzip): home 33,562 → 34,354, category 42,690 → 43,652, product
+42,751 → 43,707. All pages within budget (LCP 796 / 796 / 808 ms, load average about 5).
 
 ## Addendum 2026-10-08: Gyral's Node adapter instead of `@hono/node-server`
 

@@ -35,9 +35,11 @@
   above the recorded baseline + 10% (`scripts/perf-baseline.json`; refresh with
   `pnpm perf --update` after an intended change).
 
-  Current baseline (2026-10-09, production build on Gyral 0.3.1-next.5; ADR 0001): JS gzip
-  home 32.8 KiB, category 41.7 KiB, product 41.7 KiB (`scripts/perf-baseline.json`); CLS 0.
-  The one before, on 0.3.1-next.4, was home 32.9, category 41.8, product 41.9 KiB, LCP
+  Current baseline (2026-10-09, production build on Gyral 0.3.1-next.6; ADR 0001): JS gzip
+  home 33.5 KiB, category 42.6 KiB, product 42.7 KiB (`scripts/perf-baseline.json`); LCP
+  796–808 ms; CLS 0. next.6's error channel added 0.78 KiB to every page (0.94 on category and
+  product, which also load the pending-focus code). The one before, on 0.3.1-next.5, was home
+  32.8, category 41.7, product 41.7 KiB. The one before that, on 0.3.1-next.4, was home 32.9, category 41.8, product 41.9 KiB, LCP
   800–808 ms. Category grew 1.3 KiB with the head model in next.4: canonical, robots and
   breadcrumbs now follow listing updates without a reload. The one before, on 0.3.1-next.3,
   was home 32.7, category 40.5, product 41.6 KiB. The one before that, on 0.3.1-next.2, was
