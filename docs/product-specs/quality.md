@@ -35,10 +35,12 @@
   above the recorded baseline + 10% (`scripts/perf-baseline.json`; refresh with
   `pnpm perf --update` after an intended change).
 
-  Current baseline (2026-10-09, production build on Gyral 0.3.1-next.7; ADR 0001): JS gzip
-  home 34.2 KiB, category 43.3 KiB, product 43.3 KiB (`scripts/perf-baseline.json`); LCP
-  804–828 ms; CLS 0. next.7 added 0.6–0.7 KiB per page, mostly Gyral's error view (registered
-  because the shop names `error`) and form-secret handling. The one before, on 0.3.1-next.6, was
+  Current baseline (2026-10-10, production build on Gyral 0.3.1-next.8; ADR 0001): JS gzip
+  home 34.0 KiB, category 43.1 KiB, product 43.0 KiB (`scripts/perf-baseline.json`); LCP
+  764–800 ms; CLS 0. next.8 took 0.23–0.27 KiB off each page (the error view no longer ships).
+  On 0.3.1-next.7 it was home 34.2, category 43.3, product 43.3 KiB: next.7 added 0.6–0.7 KiB
+  per page, mostly Gyral's error view (registered because the shop names `error`) and
+  form-secret handling. The one before, on 0.3.1-next.6, was
   home 33.5, category 42.6, product 42.7 KiB; next.6's error channel added 0.78 KiB to every page
   (0.94 on category and product, which also load the pending-focus code). The one before that,
   on 0.3.1-next.5, was home

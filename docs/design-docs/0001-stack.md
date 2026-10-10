@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.7 (see the Gyral 0.3 addendum). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.8 (see the Gyral 0.3 addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** for routes and middleware, SSR via `@gyral/ssr`, served on Node by Gyral's adapter
@@ -465,6 +465,41 @@ Where the bytes went (per-chunk diff of the two builds):
   `keyed`, the http driver's timeout support, and the entry's driver provider.
 
 All pages within budget (LCP 828 / 808 / 804 ms).
+
+### 0.3.1-next.8 (2026-10-10)
+
+Now `0.3.1-next.8`, packed from Gyral branch `next` (3df7769), vendored the same way. next.8
+fixes what this shop's next.7 migration reported to Gyral:
+
+- **The CSRF cast is gone.** Gyral never echoes a field named like `csrf`, and `secret` accepts
+  any posted field name, so `CSRF_SECRET` (`forms/csrf.ts`) and its fifteen uses in the form
+  definitions went; lists that only held it went too.
+- **The error view no longer ships.** Gyral registers it only for an `error` key in a `define()`
+  spec, so the shop's state fields named `error` don't pull it in (the next.7 +218 B above).
+- **Generated typings:** `.gyral/elements.d.ts` now starts with `/* eslint-disable */`; `.gyral/`
+  is in the ESLint ignores, because the unused-directive check flags that header.
+- **Still not taken up: automatic components.** next.8 added `componentsReady()` and loading
+  inside shadow roots, so the two earlier blockers are gone, but `componentsFromManifest` (and
+  `productionServer`, which uses it) throws for a component module that another chunk imports
+  statically: Vite's manifest has no entry for it. Here that is 12 of 35 tags (the shell's
+  components the entry imports, the wishlist toggle in product cards, and the admin screens
+  `<shop-admin>` imports). Reported to Gyral; `lazy.ts` and the route-chunk table stay until it
+  is fixed. Trying it also showed that the nine member forms (`defineMemberForm({ tag })`) are
+  invisible to Gyral's discovery, which reads `define<…>()('tag'` from the source; they need the
+  tag written in a `define()` call.
+
+App code: 26 lines deleted, 13 added (src).
+
+`pnpm perf` baseline (bytes, gzip -9 of every chunk the page loads):
+
+| Page     | 0.3.1-next.7 | 0.3.1-next.8 | Change |
+| -------- | -----------: | -----------: | -----: |
+| Home     |       35,059 |       34,824 |   −235 |
+| Category |       44,362 |       44,112 |   −250 |
+| Product  |       44,323 |       44,049 |   −274 |
+
+Most of the saving is the error view no longer bundled. All pages within budget (LCP 764 / 772 /
+800 ms).
 
 ## Addendum 2026-10-08: Gyral's Node adapter instead of `@hono/node-server`
 
