@@ -3,6 +3,7 @@ import { userEvent } from 'vitest/browser';
 import serverHtml from '../fixtures/product.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
@@ -44,7 +45,7 @@ describe('product page', () => {
 
   it('hydrates in place, then switches to per-option choices', async () => {
     const form = buyBox().querySelector('form');
-    await import('../../src/client/entry.js');
+    await loadPage();
     await hydrated(page);
     await vi.waitFor(() => {
       expect(all(buyBox(), 'fieldset.axis').length).toBeGreaterThan(0);

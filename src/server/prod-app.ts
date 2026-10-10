@@ -8,7 +8,7 @@ import type { Config } from '../config/env.js';
 import type { Db } from '../db/client.js';
 import { createApp } from './app.js';
 import { staticPolicy } from './csp.js';
-import type { Preload } from './route-chunks.js';
+import type { ComponentAssets, ComponentModule } from '@gyral/ssr';
 import { securityHeaderValues } from './security/headers.js';
 
 export const CLIENT_ENTRY_SOURCE = 'src/client/entry.ts';
@@ -26,10 +26,11 @@ export interface ClientAssets {
   readonly clientEntry: string;
   readonly modulepreload: readonly string[];
   /**
-   * `modulepreload` plus route chunks (src/server/route-chunks.ts). The prerender step has none:
-   * the static content pages render no lazily loaded component.
+   * The components pages load automatically (`productionServer` reads them from the build's
+   * component manifest). The prerender step passes none: the static content pages render only
+   * the shell components, which the entry imports.
    */
-  readonly preload?: Preload;
+  readonly components?: ComponentAssets;
 }
 
 /** The app as production runs it, shared by `pnpm start` and the prerender step. */
@@ -49,6 +50,28 @@ export const productionApp = (options: Omit<ProdOptions, 'distDir'>, assets: Cli
     },
   });
 
+/**
+ * `components` without the modules the head already preloads. Gyral 0.3.1's loader imports the
+ * entry, so its preload list repeats the entry's graph, and `renderPage` would link each of
+ * those modules a second time after the body (the browser fetches each once either way). The
+ * head's list stays first, the entry at its top.
+ */
+export function withoutHeadPreloads(
+  components: ComponentAssets,
+  modulepreload: readonly string[],
+): ComponentAssets {
+  const inHead = new Set(modulepreload);
+  const rest = (hrefs: readonly string[]) => hrefs.filter((href) => !inHead.has(href));
+  const modules = new Map<string, ComponentModule>();
+  for (const [tag, module] of components.modules)
+    modules.set(tag, { ...module, preload: rest(module.preload) });
+  return {
+    ...components,
+    modules,
+    ...(components.preload === undefined ? {} : { preload: rest(components.preload) }),
+  };
+}
+
 /** The production handler; `env` is what `toNodeListener` passes (src/server/prod.ts). */
 export interface ProdApp {
   readonly fetch: (request: Request, env?: NodeEnv) => Response | Promise<Response>;
@@ -63,8 +86,14 @@ export async function createProdApp(options: ProdOptions): Promise<ProdApp> {
   return productionServer<NodeEnv>({
     distDir: options.distDir,
     entry: CLIENT_ENTRY_SOURCE,
-    createApp: ({ clientEntry, ...assets }) =>
-      productionApp(options, { ...assets, clientEntry: clientEntry ?? '' }),
+    createApp: ({ clientEntry, modulepreload, components }) =>
+      productionApp(options, {
+        clientEntry: clientEntry ?? '',
+        modulepreload,
+        ...(components === undefined
+          ? {}
+          : { components: withoutHeadPreloads(components, modulepreload) }),
+      }),
     onResponse: (response, request) => {
       if (response.headers.has('content-security-policy')) return response; // came from the app
       const headers = new Headers(response.headers);

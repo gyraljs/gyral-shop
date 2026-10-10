@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/home.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
@@ -30,7 +31,7 @@ describe('home page', () => {
 
   it('hydrates in place with no mismatch', async () => {
     const link = header().querySelector('nav.departments a');
-    await import('../../src/client/entry.js');
+    await loadPage();
     await hydrated(page);
     expect(header().querySelector('nav.departments a')).toBe(link);
     expect(header().hasAttribute('data-gyral-seed')).toBe(false);

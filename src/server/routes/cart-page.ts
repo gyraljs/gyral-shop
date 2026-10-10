@@ -7,7 +7,6 @@ import '../../ui/cart/cart-page.js'; // registers <shop-cart-page> for server re
 import type { RenderPage } from '../document.js';
 import { takeFlash } from '../flash.js';
 import { csrfTokenFor, type AppEnv } from '../security/index.js';
-import { ROUTE_CHUNKS } from '../route-chunks.js';
 
 export function cartPageRoutes({ render }: { readonly render: RenderPage }): Hono<AppEnv> {
   const routes = new Hono<AppEnv>();
@@ -19,7 +18,6 @@ export function cartPageRoutes({ render }: { readonly render: RenderPage }): Hon
       title: 'Your cart',
       noindex: true,
       csrfToken: csrf,
-      chunks: [ROUTE_CHUNKS.cart],
       main: html`<shop-cart-page data-region="cart" csrf=${csrf} .flash=${flash}></shop-cart-page>`,
     });
   });

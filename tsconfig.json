@@ -24,6 +24,7 @@
     "vitest.config.ts",
     "drizzle.config.ts",
     "vite.deps.ts",
+    "vite.components.ts",
     ".gyral/elements.d.ts"
   ]
 }

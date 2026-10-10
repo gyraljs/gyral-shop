@@ -4,6 +4,7 @@ import serverHtml from '../fixtures/search.ssr.html?raw';
 import saleJson from '../fixtures/search-sale.json?raw';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 const fetches: string[] = [];
@@ -33,7 +34,7 @@ beforeAll(async () => {
     return Promise.resolve(new Response(body, { headers: { 'content-type': 'application/json' } }));
   });
   page = mountSsr(serverHtml);
-  await import('../../src/client/entry.js');
+  await loadPage();
   await hydrated(page);
 });
 

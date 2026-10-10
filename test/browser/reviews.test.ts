@@ -3,6 +3,7 @@ import serverHtml from '../fixtures/product-reviews.ssr.html?raw';
 import page2Json from '../fixtures/reviews-page2.json?raw';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 // Fixture from test/node/reviews.test.ts: Grace (who bought the set) views the product page;
 // Alan's review is the only one, so Grace may vote on it.
@@ -25,7 +26,7 @@ beforeAll(async () => {
     return Promise.resolve(new Response(body, { headers: { 'content-type': 'application/json' } }));
   });
   page = mountSsr(serverHtml);
-  await import('../../src/client/entry.js');
+  await loadPage();
 });
 
 afterAll(() => {

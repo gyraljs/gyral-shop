@@ -4,6 +4,7 @@ import { OFFLINE_MESSAGE } from '../../src/ui/cart/store.js';
 import { a11yViolations } from '../support/axe.js';
 import { serverCart, stubCartApi, type ApiCall } from '../support/cart-api.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
@@ -66,7 +67,7 @@ describe('cart page', () => {
 
   it('hydrates in place from the seeded store, with no mismatch', async () => {
     const line = cartPage().querySelector('.cart-line');
-    await import('../../src/client/entry.js');
+    await loadPage();
     await hydrated(page);
     expect(cartPage().querySelector('.cart-line')).toBe(line);
     expect(badge()).toBe('5');

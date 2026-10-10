@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/static-about.ssr.html?raw';
 import cartJson from '../fixtures/static-cart.json?raw';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 // A prerendered page (fixture from test/node/static-pages.test.ts): the same HTML for every
 // visitor. After hydration the header asks who is signed in and the mini-cart loads the cart.
@@ -32,7 +33,7 @@ beforeAll(async () => {
   });
   page = mountSsr(serverHtml);
   expect(header().textContent).toContain('Sign in'); // static HTML: no one is signed in
-  await import('../../src/client/entry.js');
+  await loadPage();
   await hydrated(page);
 });
 

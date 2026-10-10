@@ -5,6 +5,7 @@ import saleJson from '../fixtures/listing-sale.json?raw';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 import { settled } from '@gyral/core';
+import { loadPage } from '../support/components.js';
 
 const { basePath } = JSON.parse(baseJson) as { basePath: string };
 // A second page of the same listing, for the paging test.
@@ -43,7 +44,7 @@ beforeAll(async () => {
     return Promise.resolve(new Response(body, { headers: { 'content-type': 'application/json' } }));
   });
   page = mountSsr(serverHtml);
-  await import('../../src/client/entry.js');
+  await loadPage();
   await hydrated(page);
 });
 

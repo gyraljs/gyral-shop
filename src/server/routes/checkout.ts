@@ -39,7 +39,6 @@ import { grantOrderAccess } from '../order-access.js';
 import { csrfTokenFor, type AppEnv } from '../security/index.js';
 import { now } from '../security/runtime.js';
 import { publicOrigin } from '../origin.js';
-import { ROUTE_CHUNKS } from '../route-chunks.js';
 
 export interface CheckoutRoutesOptions {
   readonly db: Db;
@@ -124,7 +123,6 @@ export function checkoutRoutes({ db, render, services }: CheckoutRoutesOptions):
       noindex: true,
       csrfToken: csrf,
       ...(options.status === undefined ? {} : { status: options.status }),
-      chunks: [ROUTE_CHUNKS.checkout],
       main: html`<shop-checkout
         data-region="checkout"
         csrf=${csrf}

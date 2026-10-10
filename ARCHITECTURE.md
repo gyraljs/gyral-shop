@@ -46,10 +46,16 @@ with its own view layer (Gyral ADR 0018): `html`, `css`, `each`, `raw`, the
 Lit. `gyralVitePreset()` adds the template compiler to `vite build` (templates precompiled and
 checked against Gyral's template rules); `@gyral/core/eslint` reports the same rules in the
 editor. The server renders with `@gyral/core/server` (via `@gyral/ssr`'s `renderPage`), each
-component hydrates on its own in the browser (no hydration import, no module-order rules), and
-production pages preload the entry's chunks, Gyral's lazily loaded hydration chunk and the
-page's own route chunks: each page lists the lazily loaded modules its components need
-(`chunks`, from `src/server/route-chunks.ts`, kept in step with `src/client/lazy.ts` by a test).
+component hydrates on its own in the browser (no hydration import, no module-order rules).
+Components load automatically (`gyralVitePreset({ components })`, `vite.components.ts`): the
+client entry (`src/client/entry.ts`) imports only the shell components every page renders and
+provides the page-wide http driver; every other component's module is loaded by Gyral's
+components loader when a page renders its tag, and production pages preload the entry, the
+hydration chunk and the modules of the components they rendered (`renderPage({ components })`,
+from `productionServer` and `gyralDevServer`). `vite.components.ts` lists the tags the scan
+can't see (the member forms, defined through `defineMemberForm`) and keeps the admin sections
+in the admin app's chunk. Browser tests load a page with `test/support/components.ts` (entry,
+loader, `componentsReady()`).
 
 Form state is live, and written only when the model's value changes (Gyral view/02-bindings.md
 "Live form state"): `value=`, `?checked=`, `?selected=`, `<textarea>` content and `?open` take

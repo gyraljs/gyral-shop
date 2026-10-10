@@ -4,15 +4,15 @@ import productHtml from '../fixtures/wishlist-product.ssr.html?raw';
 import wishlistHtml from '../fixtures/wishlist.ssr.html?raw';
 import { FAILED_MESSAGE } from '../../src/ui/wishlist/store.js';
 import { a11yViolations } from '../support/axe.js';
-import { loadComponentsIn } from '../../src/client/lazy.js';
 import { stubCartApi } from '../support/cart-api.js';
-import { settled } from '@gyral/core';
+import { componentsReady, settled } from '@gyral/core';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 let page: MountedSsr | undefined;
 
 beforeAll(async () => {
-  await import('../../src/client/entry.js');
+  await loadPage();
 });
 
 afterEach(() => {
@@ -29,7 +29,7 @@ async function productToggle() {
     return b;
   };
   const before = button();
-  await loadComponentsIn(page.root); // lazily split components (src/client/lazy.ts)
+  await componentsReady();
   await hydrated(page);
   const toggle = page.root.querySelector('.product-wish');
   if (toggle === null) throw new Error('no toggle');
@@ -81,7 +81,7 @@ describe('wishlist toggle on the product page', () => {
 describe('wishlist page', () => {
   it('hydrates and has no axe violations', async () => {
     page = mountSsr(wishlistHtml);
-    await loadComponentsIn(page.root); // lazily split components (src/client/lazy.ts)
+    await componentsReady();
     await hydrated(page);
     expect(page.root.querySelectorAll('[data-component="wishlist-item"]')).toHaveLength(2);
     expect(await a11yViolations(page.root)).toEqual([]);

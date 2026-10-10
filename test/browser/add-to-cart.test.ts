@@ -4,6 +4,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/product.ssr.html?raw';
 import { serverCart, stubCartApi } from '../support/cart-api.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 let page: MountedSsr;
 let api: ReturnType<typeof stubCartApi>;
@@ -28,7 +29,7 @@ afterAll(() => {
 
 describe('add to cart with JavaScript', () => {
   it('updates the header badge and announces the add without leaving the page', async () => {
-    await import('../../src/client/entry.js');
+    await loadPage();
     await hydrated(page);
     expect(badge()).toBe('0');
     // Wait for the enhanced (per-option) form, then add the selected SKU.

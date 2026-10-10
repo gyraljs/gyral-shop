@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/static-about.ssr.html?raw';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 import { PAGE_VIEW_PATH } from '../../src/ui/analytics/beacon.js';
+import { loadPage } from '../support/components.js';
 
 // A prerendered page counts its own page view (shop-8c2): after hydration, one beacon, and
 // only when /api/me says the visitor accepted analytics.
@@ -19,7 +20,7 @@ async function visit(analytics: boolean) {
   });
   const sendBeacon = vi.spyOn(navigator, 'sendBeacon').mockReturnValue(true);
   page = mountSsr(serverHtml);
-  await import('../../src/client/entry.js');
+  await loadPage();
   await hydrated(page);
   await vi.waitFor(() => {
     expect(requests).toContain('/api/me');

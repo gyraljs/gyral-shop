@@ -4,6 +4,7 @@ import historyHtml from '../fixtures/order-history.ssr.html?raw';
 import lookupHtml from '../fixtures/order-lookup.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 let page: MountedSsr | undefined;
@@ -15,7 +16,7 @@ afterEach(() => {
 
 const mount = async (html: string) => {
   page = mountSsr(html);
-  await import('../../src/client/entry.js'); // the header's components
+  await loadPage(); // the header's components
   await hydrated(page);
   return page.root;
 };

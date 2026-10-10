@@ -4,6 +4,7 @@ import shippingView from '../fixtures/checkout-shipping.json';
 import paymentView from '../fixtures/checkout-payment.json';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 let page: MountedSsr;
@@ -99,7 +100,7 @@ describe('checkout', () => {
     const form = root().querySelector('[aria-current="step"] form');
     const name = input('name');
     name.value = 'Typed before the script loaded';
-    await import('../../src/client/entry.js');
+    await loadPage();
     await hydrated(page);
     expect(customElements.get('shop-checkout')).toBeDefined();
     expect(root().querySelector('[aria-current="step"] form')).toBe(form);

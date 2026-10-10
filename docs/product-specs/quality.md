@@ -35,24 +35,12 @@
   above the recorded baseline + 10% (`scripts/perf-baseline.json`; refresh with
   `pnpm perf --update` after an intended change).
 
-  Current baseline (2026-10-10, production build on Gyral 0.3.1-next.8; ADR 0001): JS gzip
-  home 34.0 KiB, category 43.1 KiB, product 43.0 KiB (`scripts/perf-baseline.json`); LCP
-  764–800 ms; CLS 0. next.8 took 0.23–0.27 KiB off each page (the error view no longer ships).
-  On 0.3.1-next.7 it was home 34.2, category 43.3, product 43.3 KiB: next.7 added 0.6–0.7 KiB
-  per page, mostly Gyral's error view (registered because the shop names `error`) and
-  form-secret handling. The one before, on 0.3.1-next.6, was
-  home 33.5, category 42.6, product 42.7 KiB; next.6's error channel added 0.78 KiB to every page
-  (0.94 on category and product, which also load the pending-focus code). The one before that,
-  on 0.3.1-next.5, was home
-  32.8, category 41.7, product 41.7 KiB. The one before that, on 0.3.1-next.4, was home 32.9, category 41.8, product 41.9 KiB, LCP
-  800–808 ms. Category grew 1.3 KiB with the head model in next.4: canonical, robots and
-  breadcrumbs now follow listing updates without a reload. The one before, on 0.3.1-next.3,
-  was home 32.7, category 40.5, product 41.6 KiB. The one before that, on 0.3.1-next.2, was
-  0.3–0.5 KiB larger (home 33.0, category 41.0, product 41.9 KiB): next.2's router split the
-  scheduler into extra chunks, which next.3 fixed. The one before that, on 0.3.1-next.1, was
-  home 32.4, category 39.8, product 41.3 KiB; on 0.3.1-next.0 it was 19–143 bytes larger than next.1. Earlier baselines were measured on development bundles (until 2026-10-07 the
-  build ran under NODE_ENV=development; ADR 0001, "0.3.1-next.0"): the last of them, on Gyral
-  0.3.0-next.5, was home 36.5, category 44.1, product 45.8 KiB.
+  Current baseline (2026-10-12, production build on Gyral 0.3.1 with automatic components;
+  ADR 0001): JS gzip home 33.6 KiB, category 42.6 KiB, product 42.5 KiB
+  (`scripts/perf-baseline.json`); LCP 788–816 ms; CLS 0. Automatic components took 0.4–0.5 KiB
+  off each page compared with the shop's former hand-written loader (ADR 0001, "Automatic
+  components"). Earlier baselines, on Gyral prereleases and development bundles, are in the
+  history of this file and ADR 0001.
 
   First baseline (2026-10-05, Gyral 0.1, production build, after per-route code splitting and
   the Gyral fix for production-only hydration duplicates, gyral-czi.41), kept for history:

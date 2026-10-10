@@ -32,7 +32,6 @@ import {
   startMemberSession,
   type AppEnv,
 } from '../security/index.js';
-import { ROUTE_CHUNKS, type RouteChunk } from '../route-chunks.js';
 
 export interface PasswordResetOptions {
   readonly db: Db;
@@ -57,10 +56,6 @@ const noStore = (response: Response): Response => {
   return response;
 };
 
-type Chunks = readonly RouteChunk[];
-/** The reset forms are member forms (settings-forms.ts). */
-const FORMS: Chunks = [ROUTE_CHUNKS.settings];
-
 export function passwordResetRoutes({
   db,
   render,
@@ -72,11 +67,11 @@ export function passwordResetRoutes({
   const perAccount = new SlidingWindowLimiter({ ...LIMITS.resetPerAccount, now });
   const clock = () => new Date(now());
 
-  const page = async (title: string, main: unknown, status = 200, chunks: Chunks = []) =>
-    noStore(await render({ title, noindex: true, status, main, chunks }));
+  const page = async (title: string, main: unknown, status = 200) =>
+    noStore(await render({ title, noindex: true, status, main }));
 
   const requestView = async (c: C, rejected?: IntentRejected, status = 200) =>
-    page('Reset your password', forgotPage(await csrfTokenFor(c), rejected), status, FORMS);
+    page('Reset your password', forgotPage(await csrfTokenFor(c), rejected), status);
 
   app.get('/account/forgot', (c) => requestView(c));
 
@@ -112,7 +107,7 @@ export function passwordResetRoutes({
   );
 
   const resetView = async (c: C, token: string, rejected?: IntentRejected, status = 200) =>
-    page('Choose a new password', resetPage(await csrfTokenFor(c), token, rejected), status, FORMS);
+    page('Choose a new password', resetPage(await csrfTokenFor(c), token, rejected), status);
 
   const invalidView = () => page('This link has expired', resetInvalidPage(), 410);
 

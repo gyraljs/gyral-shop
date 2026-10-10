@@ -6,6 +6,7 @@ import { locationDriver } from '../../src/ui/drivers/location.js';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
 import { settled } from '@gyral/core';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
@@ -13,7 +14,7 @@ let page: MountedSsr | undefined;
 
 beforeAll(async () => {
   const first = mountSsr(addressesHtml);
-  await import('../../src/client/entry.js');
+  await loadPage();
   await hydrated(first);
   first.unmount();
 });

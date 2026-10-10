@@ -17,7 +17,6 @@ import {
   searchResults,
 } from '../../ui/pages/search.js';
 import type { RenderPage } from '../document.js';
-import { LISTING_CHUNKS } from '../route-chunks.js';
 
 export interface SearchRouteOptions {
   readonly db: Db;
@@ -67,7 +66,6 @@ export function searchRoutes({ db, render }: SearchRouteOptions): Hono {
           // The same head <shop-listing> sets after filtering or paging without a reload.
           head: listingHead(view, publicOrigin(c)),
           query: q,
-          chunks: LISTING_CHUNKS,
           main: searchResults(data),
         });
       }

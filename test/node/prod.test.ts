@@ -12,7 +12,6 @@ import { insertSeed } from '../../src/db/seed/insert.js';
 import * as v from 'valibot';
 import { prerenderSite } from '../../src/server/prerender.js';
 import { createProdApp, type ProdApp } from '../../src/server/prod-app.js';
-import { ROUTE_CHUNKS } from '../../src/server/route-chunks.js';
 import { SESSION_COOKIE } from '../../src/server/security/index.js';
 import { createSession } from '../../src/services/sessions.js';
 import { CSRF_FIELD } from '../../src/ui/forms/csrf.js';
@@ -83,7 +82,7 @@ describe('production build', () => {
     expect(await res.text()).toMatch(/src="\/assets\/entry-[\w-]+\.js"/);
   });
 
-  it("preloads each page's route chunks with the entry, and only those", async () => {
+  it('preloads the components each page rendered with the entry, and only those', async () => {
     const manifest = v.parse(
       v.record(v.string(), v.object({ file: v.string() })),
       JSON.parse(readFileSync(join(dist, 'client', '.vite', 'manifest.json'), 'utf8')),
@@ -97,15 +96,18 @@ describe('production build', () => {
     };
     const [product] = smallCatalog().products;
     const productPage = await preloads(`/p/${product?.slug ?? ''}`);
-    // The entry first, so route chunks never queue it behind them (Gyral 0.3.0).
+    // The entry first, so component chunks never queue it behind them (Gyral 0.3.0).
     expect(productPage[0]).toBe(chunk('src/client/entry.ts'));
     expect(productPage.filter((href) => href === productPage[0])).toHaveLength(1);
-    expect(productPage).toContain(chunk(ROUTE_CHUNKS.buyBox));
-    expect(productPage).toContain(chunk(ROUTE_CHUNKS.gallery));
-    expect(productPage).not.toContain(chunk(ROUTE_CHUNKS.listing));
+    // Nothing linked twice: the loader's preloads repeat the entry graph (prod-app.ts).
+    expect(new Set(productPage).size).toBe(productPage.length);
+    // Automatic components (vite.components.ts): only what the page rendered.
+    expect(productPage).toContain(chunk('src/ui/product/buy-box.ts'));
+    expect(productPage).toContain(chunk('src/ui/product/gallery.ts'));
+    expect(productPage).not.toContain(chunk('src/ui/catalog/listing.ts'));
     const login = await preloads('/account/login');
-    expect(login).toContain(chunk(ROUTE_CHUNKS.login));
-    expect(login).not.toContain(chunk(ROUTE_CHUNKS.buyBox));
+    expect(login).toContain(chunk('src/ui/account/login-form.ts'));
+    expect(login).not.toContain(chunk('src/ui/product/buy-box.ts'));
   });
 
   it('serves hashed assets as immutable JavaScript', async () => {

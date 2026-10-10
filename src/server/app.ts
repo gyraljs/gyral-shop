@@ -38,8 +38,8 @@ import { themeRoutes } from './routes/themes.js';
 import { analyticsMiddleware } from './analytics.js';
 import { organizationJsonLd, twitterCard, websiteJsonLd } from './seo.js';
 import { publicOrigin } from './origin.js';
+import type { ComponentAssets } from '@gyral/ssr';
 import { pageCsp } from './csp.js';
-import { CARD_CHUNKS, type Preload } from './route-chunks.js';
 
 export interface AppOptions {
   /** URL of the browser entry module (Vite dev: `/src/client/entry.ts`). */
@@ -50,10 +50,11 @@ export interface AppOptions {
    */
   readonly modulepreload?: readonly string[];
   /**
-   * Production: `modulepreload` plus a page's route chunks and their imports
-   * (`productionServer`'s `preload`, route-chunks.ts). Absent in development.
+   * Automatic components (Gyral ADR 0016): each page loads the components it rendered, with
+   * their modules preloaded in production. From `gyralDevServer` in development and
+   * `productionServer` in production; absent in tests, which import components themselves.
    */
-  readonly preload?: Preload;
+  readonly components?: ComponentAssets;
   readonly db: Db;
   /** `production` disables development tools such as /dev/mail. Default `development`. */
   readonly mode?: 'development' | 'test' | 'production';
@@ -69,7 +70,7 @@ const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><re
 
 type PageOptions = Omit<
   ShellOptions,
-  'clientEntry' | 'modulepreload' | 'preload' | 'departments' | 'account' | 'stores'
+  'clientEntry' | 'modulepreload' | 'components' | 'departments' | 'account' | 'stores'
 >;
 
 /** The signed-in member for the header, read from the current request (if any). */
@@ -85,7 +86,7 @@ function accountSummary(): ShellOptions['account'] {
 export function createApp({
   clientEntry,
   modulepreload = [],
-  preload,
+  components,
   db,
   mode = 'development',
   security,
@@ -97,7 +98,7 @@ export function createApp({
   const assets = {
     clientEntry,
     modulepreload,
-    ...(preload === undefined ? {} : { preload }),
+    ...(components === undefined ? {} : { components }),
     csp: pageCsp({ dev: security?.dev ?? false }),
   };
   const clock = security?.now;
@@ -191,7 +192,6 @@ export function createApp({
         ['og:url', canonical],
       ],
       metaNames: twitterCard(undefined),
-      chunks: CARD_CHUNKS,
       main: homePage(data),
     });
   });

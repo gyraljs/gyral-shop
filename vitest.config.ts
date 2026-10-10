@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 
 import { gyralVitePreset } from '@gyral/core/vite';
+import { componentModules } from './vite.components.js';
 import { optimizedDeps } from './vite.deps.js';
 
 export default defineConfig({
@@ -10,7 +11,10 @@ export default defineConfig({
       {
         // Every browser import, derived from the shop's source (vite.deps.ts), plus axe:
         // a new import changes this list, so Vite re-optimizes at startup instead of mid-run.
-        ...gyralVitePreset({ optimize: [...optimizedDeps(), 'axe-core'] }),
+        ...gyralVitePreset({
+          optimize: [...optimizedDeps(), 'axe-core'],
+          components: { modules: componentModules },
+        }),
         test: {
           name: 'browser',
           include: ['src/ui/**/*.test.ts', 'test/browser/**/*.test.ts'],

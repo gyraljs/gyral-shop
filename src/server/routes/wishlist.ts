@@ -31,7 +31,6 @@ import {
   WISHLIST_SAVE_COOKIE,
   type AppEnv,
 } from '../security/index.js';
-import { CARD_CHUNKS } from '../route-chunks.js';
 
 export interface WishlistRouteOptions {
   readonly db: Db;
@@ -73,7 +72,6 @@ export function wishlistRoutes({ db, render }: WishlistRouteOptions): Hono<AppEn
     const response = await render({
       title: 'Wishlist',
       noindex: true,
-      chunks: CARD_CHUNKS,
       main: wishlistPage({
         csrfToken: await csrfTokenFor(c),
         items: await wishlistCards(db, member(c).id),

@@ -3,6 +3,7 @@ import reviewHtml from '../fixtures/checkout-review.ssr.html?raw';
 import placed from '../fixtures/checkout-placed.json';
 import declined from '../fixtures/checkout-declined.json';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 // Placing an order with JavaScript (shop-8w0): the review step's form goes through Gyral's
 // submitForm to /checkout/place, and the server's answer (fixtures written by
@@ -67,7 +68,7 @@ const nextPost = async (): Promise<Post> => {
 beforeAll(async () => {
   page = mountSsr(reviewHtml);
   restoreFetch = stubPlacePosts();
-  await import('../../src/client/entry.js');
+  await loadPage();
   await hydrated(page);
   // Record navigations instead of leaving the test page (src/ui/drivers/location.ts).
   checkout().drivers = {

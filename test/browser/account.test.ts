@@ -6,9 +6,9 @@ import rejectedHtml from '../fixtures/login-rejected.ssr.html?raw';
 import registerHtml from '../fixtures/register.ssr.html?raw';
 import { locationDriver } from '../../src/ui/drivers/location.js';
 import { a11yViolations } from '../support/axe.js';
-import { loadComponentsIn } from '../../src/client/lazy.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
-import { settled } from '@gyral/core';
+import { componentsReady, settled } from '@gyral/core';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
@@ -17,7 +17,7 @@ let page: MountedSsr | undefined;
 beforeAll(async () => {
   // Components register once; later mounts upgrade on insertion.
   const first = mountSsr(loginHtml);
-  await import('../../src/client/entry.js');
+  await loadPage();
   await hydrated(first);
   first.unmount();
 });
@@ -29,7 +29,7 @@ afterEach(() => {
 
 async function mount(html: string, tag: 'shop-login' | 'shop-register') {
   page = mountSsr(html);
-  await loadComponentsIn(page.root); // lazily split components (src/client/lazy.ts)
+  await componentsReady();
   await hydrated(page);
   const el = page.root.querySelector(tag);
   if (el === null) throw new Error(`no ${tag}`);
@@ -52,7 +52,7 @@ async function mount(html: string, tag: 'shop-login' | 'shop-register') {
 describe('sign-in page', () => {
   it('hydrates without errors and has no axe violations', async () => {
     page = mountSsr(loginHtml);
-    await loadComponentsIn(page.root); // lazily split components (src/client/lazy.ts)
+    await componentsReady();
     await hydrated(page);
     expect(errors).not.toHaveBeenCalled();
     expect(warnings).not.toHaveBeenCalled();
@@ -143,7 +143,7 @@ describe('sign-in page after a wrong password (no-JS render)', () => {
 describe('registration page', () => {
   it('hydrates without errors and has no axe violations', async () => {
     page = mountSsr(registerHtml);
-    await loadComponentsIn(page.root); // lazily split components (src/client/lazy.ts)
+    await componentsReady();
     await hydrated(page);
     expect(errors).not.toHaveBeenCalled();
     expect(await a11yViolations(page.root)).toEqual([]);

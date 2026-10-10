@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/category.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
@@ -40,7 +41,7 @@ describe('category page (page 2 of a 32-product listing)', () => {
   it('hydrates the header in place and marks the department as current', async () => {
     const link = header().querySelector('nav.departments a[aria-current]');
     expect(link?.textContent.trim()).toBe('Electronics');
-    await import('../../src/client/entry.js');
+    await loadPage();
     await hydrated(page);
     expect(header().querySelector('nav.departments a[aria-current]')).toBe(link);
     const card = listing().querySelector('.product-card');

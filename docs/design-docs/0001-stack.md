@@ -551,3 +551,51 @@ passes.
 ## Stable npm 0.3.1 (2026-10-11)
 
 All six packages now use exact registry 0.3.1 versions and one core, with no file overrides. The prerelease tarballs and `vendor/` are gone; the lockfile resolves every `@gyral/*` package from the npm registry, and frozen installs check its registry integrity.
+
+## Automatic components (2026-10-12)
+
+The shop loads its components with Gyral 0.3.1's automatic components instead of its own
+loader: `gyralVitePreset({ components: { modules } })` in `vite.config.ts` and
+`vitest.config.ts`, `components` from `productionServer` / `gyralDevServer` passed to
+`renderPage`. `src/client/lazy.ts`, `src/server/route-chunks.ts` (the per-page `chunks` lists)
+and their tests are gone. The entry keeps the shell components and the page-wide http driver;
+browser tests load a page with `test/support/components.ts` and wait on `componentsReady()`.
+
+`vite.components.ts` overrides the scan twice: it lists the member forms (defined through
+`defineMemberForm({ tag })`, which the scan can't see), and it maps the ten admin sections to
+`src/ui/admin/app.ts`, which imports them all and provides their drivers. Without that, each
+section becomes its own lazily loaded chunk and the build grows by about 12 KiB gzip.
+
+The loader imports the entry, so the preload list `componentsFromManifest` gives it repeats the
+entry's graph, and `renderPage` linked those modules a second time after the body.
+`withoutHeadPreloads` (`src/server/prod-app.ts`) drops what the head already preloads;
+`prod.test.ts` fails if a page links a module twice. (Bytes are unaffected: the browser fetches
+each module once.)
+
+Size, production build, cold load in Chromium after the loader is ready: every script and
+stylesheet the page fetched, each compressed on its own (gzip -9, brotli q11), in bytes. All JS
+chunks: every emitted `.js` file. Before is the hand-written loader on the same npm 0.3.1.
+
+| Page          | gzip before | gzip after |      Δ | brotli before | brotli after |      Δ | Scripts |
+| ------------- | ----------: | ---------: | -----: | ------------: | -----------: | -----: | ------- |
+| Home          |      35,278 |     34,881 |   −397 |        31,525 |       31,119 |   −406 | 13 → 13 |
+| Department    |      35,278 |     34,881 |   −397 |        31,525 |       31,119 |   −406 | 13 → 13 |
+| Category      |      44,588 |     44,138 |   −450 |        39,817 |       39,358 |   −459 | 18 → 18 |
+| Product       |      44,489 |     43,987 |   −502 |        39,531 |       39,029 |   −502 | 20 → 20 |
+| Search        |      44,588 |     44,138 |   −450 |        39,817 |       39,358 |   −459 | 18 → 18 |
+| Cart (empty)  |      37,532 |     37,098 |   −434 |        33,505 |       33,071 |   −434 | 14 → 15 |
+| Sign-in       |      36,802 |     36,353 |   −449 |        32,865 |       32,408 |   −457 | 16 → 17 |
+| Register      |      36,886 |     36,435 |   −451 |        32,932 |       32,474 |   −458 | 16 → 17 |
+| Forgot pw     |      39,788 |     39,329 |   −459 |        35,353 |       34,890 |   −463 | 18 → 19 |
+| About         |      33,529 |     32,033 | −1,496 |        30,020 |       28,647 | −1,373 | 11 → 11 |
+| Contact       |      39,088 |     38,630 |   −458 |        34,786 |       34,320 |   −466 | 18 → 19 |
+| Admin         |      57,918 |     57,325 |   −593 |        51,358 |       50,826 |   −532 | 15 → 16 |
+| All JS chunks |      91,664 |     90,759 |   −905 |        80,565 |       79,771 |   −794 | 40 → 40 |
+
+The stylesheet (the theme, 488 B gzip) is the same before and after; the admin page links none.
+Every page is smaller. The entry lost `lazy.ts` and its top-level await (7,742 → 6,617 B), and
+Gyral's runtime ships as one chunk instead of two (15,877 → 15,542 B with the preload helper).
+The loader (`components-*.js`, 1,098 B) is fetched only by pages that render a component the
+entry doesn't import, so the prerendered About page, which renders only the shell, skips it.
+Script counts move by one at most: the loader is added, the separate render chunk is gone. `pnpm perf` re-recorded
+`scripts/perf-baseline.json`: home 33.6, category 42.6, product 42.5 KiB; LCP 788–816 ms.

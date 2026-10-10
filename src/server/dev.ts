@@ -18,7 +18,9 @@ const options = devAppOptions(config, db);
 
 const server = await gyralDevServer({
   entry: '/src/server/app.ts',
-  app: (mod: typeof import('./app.js')) => mod.createApp(options),
+  // `components`: each page loads the components it rendered (vite.components.ts).
+  app: (mod: typeof import('./app.js'), { components }) =>
+    mod.createApp({ ...options, ...(components === undefined ? {} : { components }) }),
   port: Number(process.env['PORT'] ?? 5200),
   hmrPort: Number(process.env['HMR_PORT'] ?? 24690),
 });

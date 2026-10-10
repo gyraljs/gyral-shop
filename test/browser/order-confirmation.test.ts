@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/order-confirmation.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 let page: MountedSsr;
@@ -27,7 +28,7 @@ describe('order confirmation (fixture from test/node/place-order.test.ts)', () =
   });
 
   it('hydrates the page shell without errors and has no axe violations', async () => {
-    await import('../../src/client/entry.js'); // the header's components
+    await loadPage(); // the header's components
     await hydrated(page);
     expect(errors).not.toHaveBeenCalled();
     expect(await a11yViolations(page.root)).toEqual([]);

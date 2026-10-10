@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import serverHtml from '../fixtures/static-about.ssr.html?raw';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 // A prerendered page can't decide the consent banner: it starts closed and opens after
 // hydration only when /api/me says this visitor hasn't chosen yet.
@@ -15,7 +16,7 @@ beforeAll(async () => {
     return Promise.resolve(Response.json(body));
   });
   page = mountSsr(serverHtml);
-  await import('../../src/client/entry.js');
+  await loadPage();
   await hydrated(page);
 });
 

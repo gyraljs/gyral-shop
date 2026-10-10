@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import rejectedHtml from '../fixtures/contact-rejected.ssr.html?raw';
 import { a11yViolations } from '../support/axe.js';
 import { hydrated, mountSsr, type MountedSsr } from '@gyral/testing';
+import { loadPage } from '../support/components.js';
 
 const errors = vi.spyOn(console, 'error');
 const warnings = vi.spyOn(console, 'warn');
@@ -16,7 +17,7 @@ describe('contact form after a rejection (no-JS render)', () => {
   it('hydrates in place keeping the typed message, errors and accessibility', async () => {
     page = mountSsr(rejectedHtml);
     const before = page.root.querySelector('textarea');
-    await import('../../src/client/entry.js');
+    await loadPage();
     await hydrated(page);
     const el = page.root.querySelector('shop-contact-form');
     expect(customElements.get('shop-contact-form')).toBeDefined();

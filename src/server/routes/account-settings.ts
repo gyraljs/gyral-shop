@@ -47,7 +47,6 @@ import {
   startMemberSession,
   type AppEnv,
 } from '../security/index.js';
-import { ROUTE_CHUNKS, type RouteChunk } from '../route-chunks.js';
 
 export interface AccountSettingsOptions {
   readonly db: Db;
@@ -99,8 +98,6 @@ const toAddress = (d: {
   phone: d.phone,
 });
 
-const FORMS: readonly RouteChunk[] = [ROUTE_CHUNKS.settings];
-
 export function accountSettingsRoutes({
   db,
   render,
@@ -110,9 +107,8 @@ export function accountSettingsRoutes({
   // Wrong-current-password guesses: per account, like login.
   const passwordChecks = new SlidingWindowLimiter({ ...LIMITS.loginPerAccount, now });
 
-  // Every settings page but the overview has a member form (settings-forms.ts).
-  const page = async (c: C, title: string, main: unknown, status = 200, chunks = FORMS) =>
-    noStore(await render({ title, noindex: true, status, main, chunks }));
+  const page = async (_c: C, title: string, main: unknown, status = 200) =>
+    noStore(await render({ title, noindex: true, status, main }));
 
   // Per route, not app.use('/account/*'): that would also guard sign-in and registration,
   // which other route modules serve under the same prefix.
@@ -131,8 +127,6 @@ export function accountSettingsRoutes({
         ...(first === undefined ? {} : { defaultAddress: addressLines(first) }),
         ...(flash === undefined ? {} : { flash }),
       }),
-      200,
-      [],
     );
   });
 

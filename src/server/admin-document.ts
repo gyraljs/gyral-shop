@@ -2,18 +2,17 @@
 // consent banner or footer, just an admin header with a link back to the store and sign-out.
 // The page itself is the client-rendered <shop-admin> app; the shell is server-only.
 import { html } from '@gyral/core';
-import { renderPage, type CspOptions } from '@gyral/ssr';
+import { renderPage, type ComponentAssets, type CspOptions } from '@gyral/ssr';
 import { CSRF_META, csrfField } from '../ui/forms/csrf.js';
 import { adminHead } from '../ui/admin/routes.js';
 import { SITE_NAME } from '../ui/layout/site.js';
 import { ADMIN_STYLES } from './page-styles.js';
-import { ROUTE_CHUNKS, type Preload } from './route-chunks.js';
 
 export interface AdminShellOptions {
   readonly clientEntry: string;
   readonly modulepreload?: readonly string[];
-  /** Production: `modulepreload` plus route chunks; the admin page preloads the admin app. */
-  readonly preload?: Preload;
+  /** The components the page loads automatically (the <shop-admin> app; see AppOptions). */
+  readonly components?: ComponentAssets;
   /** The Content-Security-Policy, built when the page renders (csp.ts `pageCsp`). */
   readonly csp?: CspOptions;
   readonly title: string;
@@ -54,7 +53,8 @@ export function adminShell(options: AdminShellOptions): Response {
         <main id="main" class="page" tabindex="-1">${options.main}</main>
       `,
       scripts: [options.clientEntry],
-      modulepreload: options.preload?.([ROUTE_CHUNKS.admin]) ?? options.modulepreload ?? [],
+      modulepreload: options.modulepreload ?? [],
+      ...(options.components === undefined ? {} : { components: options.components }),
       ...(options.csp === undefined ? {} : { csp: options.csp }),
     },
     { status: options.status ?? 200 },
