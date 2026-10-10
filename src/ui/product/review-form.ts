@@ -2,7 +2,6 @@
 // browser's form() and the server's formAction(), rendered by the shared light-DOM member form
 // (same markup with and without JavaScript).
 import { defineForm } from '@gyral/core';
-import { CSRF_SECRET } from '../forms/csrf.js';
 import * as v from 'valibot';
 import {
   REVIEW_BODY_MAX,
@@ -45,7 +44,6 @@ export const ReviewForm = defineForm(
       v.maxLength(REVIEW_BODY_MAX, `Keep it under ${String(REVIEW_BODY_MAX)} characters.`),
     ),
   }),
-  { secret: [CSRF_SECRET] },
 );
 
 export const ReviewFormElement = defineMemberForm({

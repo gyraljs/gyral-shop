@@ -2,14 +2,11 @@
 // (docs/design-docs/0002-security.md). The server checks either the form field or the header.
 import { html } from '@gyral/core';
 
-/** Hidden form field name carrying the session's CSRF token. */
-export const CSRF_FIELD = '_csrf';
 /**
- * For a form definition's `secret` list: the CSRF field is posted with every form but is part of
- * no schema, and Gyral types `secret` by the schema's fields, hence the cast. Listed, the token
- * stays out of rejected values and so out of the state serialized into the page.
+ * Hidden form field name carrying the session's CSRF token. Gyral never echoes a field named like
+ * `csrf` in rejected values (0.3.1-next.8), so form definitions need not list it as `secret`.
  */
-export const CSRF_SECRET = CSRF_FIELD as never;
+export const CSRF_FIELD = '_csrf';
 /** Request header carrying the token for fetch/http-driver requests. */
 export const CSRF_HEADER = 'x-csrf-token';
 /** `<meta name>` the document shell uses to hand the token to browser code. */

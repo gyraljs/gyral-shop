@@ -1,7 +1,6 @@
 // Schemas for the account-settings forms, shared by the browser's form() intents and the
 // server's formAction() handlers (Gyral ADR 0008).
 import { defineForm } from '@gyral/core';
-import { CSRF_SECRET } from '../forms/csrf.js';
 import * as v from 'valibot';
 import { MAX_NAME_LENGTH, passwordProblem } from '../../domain/accounts.js';
 import { normalizePostalCode } from '../../domain/checkout.js';
@@ -30,11 +29,11 @@ const newPassword = v.pipe(
   ),
 );
 
-export const ProfileForm = defineForm(v.object({ name }), { secret: [CSRF_SECRET] });
+export const ProfileForm = defineForm(v.object({ name }));
 
 export const EmailForm = defineForm(
   v.object({ email, current: v.pipe(v.string(), v.nonEmpty('Enter your current password.')) }),
-  { secret: ['current', CSRF_SECRET] },
+  { secret: ['current'] },
 );
 
 export const PasswordForm = defineForm(
@@ -53,10 +52,10 @@ export const PasswordForm = defineForm(
       ['confirm'],
     ),
   ),
-  { secret: ['current', 'confirm', CSRF_SECRET] },
+  { secret: ['current', 'confirm'] },
 );
 
-export const ResetRequestForm = defineForm(v.object({ email }), { secret: [CSRF_SECRET] });
+export const ResetRequestForm = defineForm(v.object({ email }));
 
 export const ResetForm = defineForm(
   v.pipe(
@@ -74,7 +73,7 @@ export const ResetForm = defineForm(
       ['confirm'],
     ),
   ),
-  { secret: ['token', 'confirm', CSRF_SECRET] },
+  { secret: ['token', 'confirm'] },
 );
 
 const text = (max: number, message?: string) =>
@@ -97,5 +96,4 @@ export const AddressBookForm = defineForm(
     phone: text(30),
     isDefault: v.optional(v.picklist(['on']), undefined),
   }),
-  { secret: [CSRF_SECRET] },
 );

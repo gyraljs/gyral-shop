@@ -67,6 +67,9 @@ export default tseslint.config(
       '.pnpm-store/**',
       '.claude/worktrees/**',
       'drizzle/**',
+      // Generated element typings (gyral-types); the file disables ESLint itself, and the
+      // unused-directive check would flag that header in a file with nothing to report.
+      '.gyral/**',
     ],
   },
   js.configs.recommended,
