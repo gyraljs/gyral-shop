@@ -501,6 +501,30 @@ App code: 26 lines deleted, 13 added (src).
 Most of the saving is the error view no longer bundled. All pages within budget (LCP 764 / 772 /
 800 ms).
 
+### 0.3.1-next.9 (2026-10-10)
+
+Now `0.3.1-next.9`, packed from Gyral branch `next` (78052c4), vendored the same way. next.9
+fixes the next.8 blocker: component modules folded into another chunk load and preload, and
+`gyralVitePreset({ components: { modules } })` lists wrapper-defined tags such as the member
+forms. No app code changed, and every page is byte-identical to next.8.
+
+**Automatic components were tried again and not taken up, for size.** With them (branch
+`components-attempt-next9`, commit 42458f5: `lazy.ts`, `route-chunks.ts` and their tests
+deleted, the member forms listed in `vite.components.ts`, browser tests on
+`componentsReady()`), `pnpm check` passed (742 tests), but every page grew by about 3.9 KiB
+gzip: home 34,824 → 38,729 B, category 44,112 → 48,158 B, product 44,049 → 47,916 B. Two
+causes, both reported to Gyral:
+
+- **The loader carries Vite's preload map.** Its dynamic imports go through Vite's preload
+  helper, which inlines the dependency list of every component (`components-*.js`, 2.31 KiB
+  gzip, plus `preload-helper`, 0.75 KiB), although `renderPage` already preloads what the page
+  rendered.
+- **Components imported by both the entry and the loader become their own chunks.** The
+  shell's header, search box, mini-cart, consent banner and theme switcher left the entry chunk,
+  so the home page loads 23 scripts instead of 13, and more, smaller chunks compress worse.
+
+`lazy.ts` and the route-chunk table stay until the loader doesn't cost more than they do.
+
 ## Addendum 2026-10-08: Gyral's Node adapter instead of `@hono/node-server`
 
 `pnpm start`, `pnpm dev` and the HTTP test helper (`test/support/server.ts`) serve through
