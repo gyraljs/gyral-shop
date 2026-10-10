@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.6 (see the Gyral 0.3 addendum). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.7 (see the Gyral 0.3 addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** for routes and middleware, SSR via `@gyral/ssr`, served on Node by Gyral's adapter
@@ -417,6 +417,54 @@ Where the bytes went (per-chunk diff of the two builds):
 
 `pnpm perf` baseline (bytes, gzip): home 33,562 → 34,354, category 42,690 → 43,652, product
 42,751 → 43,707. All pages within budget (LCP 796 / 796 / 808 ms, load average about 5).
+
+### 0.3.1-next.7 (2026-10-09)
+
+Now `0.3.1-next.7`, packed from Gyral branch `next` (0b96681), vendored the same way. next.7
+is Gyral's "essential surface" release, and the shop took up what applied:
+
+- **Drivers:** the spec `drivers` field is gone. The storefront's CSRF http driver is provided
+  once for the page by the client entry, the admin's drivers once by `<shop-admin>`'s module
+  (14 per-component declarations removed); the listing uses the default router.
+- **Form secrets:** each form definition lists its secret fields (passwords are secret by name),
+  so rejected values never carry them. Removed: `withoutSecrets` in two routes, the
+  password-reset blanking, the client refill filters in the auth and checkout forms, the member
+  form's `secret` option and both secret lists. The CSRF field is outside every schema and Gyral
+  types `secret` by schema field, so it is listed through one cast (`forms/csrf.ts`).
+- **formAction:** the 13 `invalid: asJson` and `asJson` go (formAction answers the JSON 422
+  itself); a middleware keeps `no-store` on the admin API.
+- **Server:** `productionServer`'s `onResponse` replaces the fetch wrapper; `gyralDevServer`
+  replaces the hand-written dev server.
+- **Templates and types:** `keyed()` replaces the admin's two one-row `each()` remounts; five
+  echo parsers became `Key: true`; seven empty tables went; two commands need no handlers; the
+  25 `define()`d tags come from generated typings.
+- **Not taken up:** automatic components. The shop's loader finds tags inside shadow roots and
+  43 browser tests rely on `await import(entry)` resolving once page components are defined;
+  Gyral's loader searches the light DOM only and offers no completion signal. The four admin
+  `PropsChanged` reloads stay (one-shot fetches, not long-lived work).
+
+App code: 374 lines deleted, 110 added (src and test).
+
+`pnpm perf` baseline (bytes, gzip -9 of every chunk the page loads):
+
+| Page     | 0.3.1-next.6 | 0.3.1-next.7 | Change |
+| -------- | -----------: | -----------: | -----: |
+| Home     |       34,354 |       35,059 |   +705 |
+| Category |       43,652 |       44,362 |   +710 |
+| Product  |       43,707 |       44,323 |   +616 |
+
+Where the bytes went (per-chunk diff of the two builds):
+
+- **The error view, +218 B:** Gyral registers `spec.error` when a module names `error`, and the
+  shop's state objects and HTTP results use that name, so the fallback view ships although no
+  component defines one.
+- **Form secrets, about +0.3 KiB:** core's form chunk grew (the secret lists and checks); the
+  account schemas and domain helpers were re-chunked around it (auth-form −0.5, schemas +0.4,
+  a new `accounts` chunk +0.3 KiB).
+- **Render +0.12, the shared chunk +0.11, entry +0.09 KiB:** child-first hook ordering and
+  `keyed`, the http driver's timeout support, and the entry's driver provider.
+
+All pages within budget (LCP 828 / 808 / 804 ms).
 
 ## Addendum 2026-10-08: Gyral's Node adapter instead of `@hono/node-server`
 
