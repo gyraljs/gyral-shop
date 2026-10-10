@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "tsx src/server/dev.ts",
     "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm invariants && pnpm test && pnpm smoke:prod && node scripts/check-fixtures.mjs",
-    "typecheck": "tsc -p tsconfig.json",
+    "typecheck": "gyral-types && tsc -p tsconfig.json",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

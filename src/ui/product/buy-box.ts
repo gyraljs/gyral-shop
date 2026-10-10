@@ -223,9 +223,3 @@ export const BuyBox = define<BuyBoxState, BuyBoxMsg, BuyBoxProps>()('shop-buy-bo
   },
   styles: buyBoxCss,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-buy-box': InstanceType<typeof BuyBox>;
-  }
-}

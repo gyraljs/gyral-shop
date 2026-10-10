@@ -184,9 +184,3 @@ export const AdminProductEdit = define<ProductEditState, ProductEditMsg, Product
     view: (s, i) => productEditView(s, i),
   },
 );
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-admin-product': InstanceType<typeof AdminProductEdit>;
-  }
-}

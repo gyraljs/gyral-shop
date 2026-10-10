@@ -68,7 +68,6 @@ export const SiteHeader = define<Stateless, never, HeaderProps>()('shop-header',
     account: prop.value(AccountSummarySchema),
     personalize: prop.boolean(),
   },
-  intent: {},
   update: {
     // Static pages: ask the shared visitor store (one /api/me request per page, shop-7bj).
     Hydrated: (s, _m, { props }) =>
@@ -103,9 +102,3 @@ export const SiteHeader = define<Stateless, never, HeaderProps>()('shop-header',
     </header>
   `,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-header': InstanceType<typeof SiteHeader>;
-  }
-}

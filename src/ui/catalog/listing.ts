@@ -191,9 +191,3 @@ export const Listing = define<ListingModel, ListingMsg, ListingProps>()('shop-li
     `;
   },
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-listing': InstanceType<typeof Listing>;
-  }
-}

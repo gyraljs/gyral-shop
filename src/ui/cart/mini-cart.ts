@@ -42,7 +42,6 @@ const panel = (cart: CartClient) =>
  */
 export const MiniCart = define<Stateless>()('shop-mini-cart', {
   stores: [cartStore],
-  intent: {},
   update: {
     // Prerendered pages don't seed the cart (it differs per visitor): load it once hydrated.
     Hydrated: (s, _m, { read }) =>
@@ -170,9 +169,3 @@ export const MiniCart = define<Stateless>()('shop-mini-cart', {
     }
   `,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-mini-cart': InstanceType<typeof MiniCart>;
-  }
-}

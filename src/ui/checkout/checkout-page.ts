@@ -191,9 +191,3 @@ export const Checkout = define<CheckoutState, CheckoutMsg, CheckoutProps>()('sho
       </div>`;
   },
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-checkout': InstanceType<typeof Checkout>;
-  }
-}

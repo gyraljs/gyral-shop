@@ -23,6 +23,7 @@
     "vite.config.ts",
     "vitest.config.ts",
     "drizzle.config.ts",
-    "vite.deps.ts"
+    "vite.deps.ts",
+    ".gyral/elements.d.ts"
   ]
 }

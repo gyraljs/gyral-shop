@@ -49,7 +49,7 @@ export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>()('sho
     })),
     Remove: form(RemoveForm, (d) => ({ _tag: 'Remove', sku: d.sku })),
     ApplyPromo: form(PromoForm, (d) => ({ _tag: 'ApplyPromo', code: d.code })),
-    RemovePromo: () => ({ _tag: 'RemovePromo' }),
+    RemovePromo: true,
   },
   update: {
     SetQuantity: (s, m) => [s, [send(cartStore, m)]],
@@ -90,9 +90,3 @@ export const CartPage = define<CartPageState, CartPageMsg, CartPageProps>()('sho
   // Light DOM (ADR 0006 rule 5): styled by document CSS (src/ui/styles/cart.ts).
   shadow: false,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-cart-page': InstanceType<typeof CartPage>;
-  }
-}

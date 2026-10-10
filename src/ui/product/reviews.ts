@@ -163,9 +163,3 @@ export const Reviews = define<State, Msg, ReviewsProps>()('shop-reviews', {
       i,
     ),
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-reviews': InstanceType<typeof Reviews>;
-  }
-}

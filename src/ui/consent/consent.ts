@@ -140,9 +140,3 @@ export const ConsentBox = define<ConsentModel, ConsentMsg, ConsentProps>()('shop
     `;
   },
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-consent': InstanceType<typeof ConsentBox>;
-  }
-}

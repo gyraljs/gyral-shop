@@ -282,9 +282,3 @@ export const AdminTaxonomy = define<TaxonomyState, TaxonomyMsg>()('shop-admin-ta
     </section>`;
   },
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-admin-taxonomy': InstanceType<typeof AdminTaxonomy>;
-  }
-}

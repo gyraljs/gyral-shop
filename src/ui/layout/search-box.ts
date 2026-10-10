@@ -168,8 +168,8 @@ export const SearchBox = define<SearchModel, SearchMsg, SearchProps>()('shop-sea
       const index = Number(target.getAttribute('data-index'));
       return Number.isInteger(index) ? { _tag: 'Pick', index } : undefined;
     },
-    Submit: () => ({ _tag: 'Submit' }),
-    Blurred: () => ({ _tag: 'Blurred' }),
+    Submit: true,
+    Blurred: true,
   },
   update: {
     Typed: (s, m) => typed(s, m.query),
@@ -257,9 +257,3 @@ const suggestionList = (s: SearchModel): TemplateResult =>
       (o) => o.n === s.highlighted,
     )}
   </ul>`;
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-search': InstanceType<typeof SearchBox>;
-  }
-}

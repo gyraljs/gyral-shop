@@ -105,8 +105,6 @@ describe('headers', () => {
     const css = ':host { display: block; }';
     define<object>()('shop-late-probe', {
       init: () => ({}),
-      intent: {},
-      update: {},
       view: () => html`<p>late</p>`,
       styles: css,
     });

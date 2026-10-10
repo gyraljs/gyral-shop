@@ -242,9 +242,3 @@ export const AdminOrderDetail = define<OrderState, OrderMsg, OrderProps>()('shop
       }
     </section>`,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-admin-order': InstanceType<typeof AdminOrderDetail>;
-  }
-}

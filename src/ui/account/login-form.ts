@@ -53,9 +53,3 @@ export const LoginFormElement = define<AuthState, LoginMsg, AuthProps>()('shop-l
   // Light DOM (ADR 0006 rule 5): styled by document CSS (authCss).
   shadow: false,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-login': InstanceType<typeof LoginFormElement>;
-  }
-}

@@ -197,9 +197,3 @@ export const AdminReviews = define<ReviewsState, ReviewsMsg, ReviewsProps>()('sh
     </section>`;
   },
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-admin-reviews': InstanceType<typeof AdminReviews>;
-  }
-}

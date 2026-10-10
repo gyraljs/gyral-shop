@@ -236,9 +236,3 @@ export const AdminPromoEdit = define<PromoEditState, PromoEditMsg, PromoEditProp
     },
   },
 );
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-admin-promo': InstanceType<typeof AdminPromoEdit>;
-  }
-}

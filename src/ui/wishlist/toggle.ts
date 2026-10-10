@@ -26,7 +26,7 @@ export const WishToggle = define<Stateless, Msg, ToggleProps>()('shop-wish-toggl
     next: prop.string({ default: '' }),
   },
   stores: [wishlistStore],
-  intent: { Toggle: () => ({ _tag: 'Toggle' }) },
+  intent: { Toggle: true },
   update: {
     Toggle: (s, _m, { props }) => [s, [send(wishlistStore, { _tag: 'Toggle', slug: props.slug })]],
   },
@@ -60,9 +60,3 @@ export const WishToggle = define<Stateless, Msg, ToggleProps>()('shop-wish-toggl
     </form>`;
   },
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-wish-toggle': InstanceType<typeof WishToggle>;
-  }
-}

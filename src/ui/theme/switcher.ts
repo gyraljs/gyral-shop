@@ -148,9 +148,3 @@ export const ThemeSwitcher = define<ThemeSwitcherState, ThemeSwitcherMsg, ThemeS
     `,
   },
 );
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-theme-switcher': InstanceType<typeof ThemeSwitcher>;
-  }
-}

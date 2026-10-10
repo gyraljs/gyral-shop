@@ -10,5 +10,4 @@ export const locationDriver = defineDriver<string, undefined>({
   },
 });
 
-export const goTo = (url: string): Command<never> =>
-  command<string, undefined, unknown>(locationDriver, url, { onSuccess: () => undefined });
+export const goTo = (url: string): Command<never> => command(locationDriver, url);

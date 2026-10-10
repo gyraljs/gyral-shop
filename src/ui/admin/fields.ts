@@ -1,7 +1,7 @@
 // Labelled form controls for admin forms: errors linked with aria-describedby and mirrored to
 // native validity with Gyral's invalid() (ADR 0008). Ids are prefixed per form so several
 // forms can sit on one page (one per variant, for example).
-import { each, html, invalid, nothing, type ChildValue } from '@gyral/core';
+import { html, invalid, keyed, nothing, type ChildValue } from '@gyral/core';
 
 export type Errors = Readonly<Record<string, readonly string[]>>;
 
@@ -19,17 +19,12 @@ export const savedOnce = (saves: Saves, key: string | null): Saves =>
 /**
  * A form whose fields start empty again after each success (a stock adjustment, a new variant
  * or taxon). Gyral writes a control only when the model's value for it changes, and these
- * fields have no model value, so a success re-creates the form instead: a one-row keyed list
- * whose key counts the form's successes (Gyral view/02-bindings.md "Putting a control back").
+ * fields have no model value, so a success re-creates the form instead: Gyral's keyed(), keyed
+ * by the form's success count (Gyral view/03-lists.md "keyed").
  * Until then, what the admin typed stays, through rejections and failures alike.
  */
 export const freshAfterSave = (key: string, saves: Saves, form: () => ChildValue) =>
-  each(
-    [`${key}#${String(saves[key] ?? 0)}`],
-    (k) => k,
-    (_k, render: () => ChildValue) => render(),
-    () => form,
-  );
+  keyed(`${key}#${String(saves[key] ?? 0)}`, form());
 
 interface Common {
   readonly form: string;

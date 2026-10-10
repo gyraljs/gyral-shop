@@ -16,3 +16,6 @@ data/
 .beads-credential-key
 .beads/proxieddb/
 .ui-check/
+
+# Generated element typings (gyralVitePreset / gyral-types)
+.gyral/

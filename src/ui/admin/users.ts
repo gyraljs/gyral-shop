@@ -179,7 +179,7 @@ export const AdminUsers = define<UsersState, UsersMsg, UsersProps>()('shop-admin
   intent: {
     Search: form(ListFilterForm, (data) => ({ _tag: 'Search', q: data.q })),
     Ask: form(UserAskForm, (data) => ({ _tag: 'Ask', userId: data.userId, action: data.action })),
-    Cancel: () => ({ _tag: 'Cancel' }),
+    Cancel: true,
     UserAction: form(UserActionForm, (_data, raw) => ({ _tag: 'UserAction', form: raw })),
   },
   update: {
@@ -262,9 +262,3 @@ export const AdminUsers = define<UsersState, UsersMsg, UsersProps>()('shop-admin
       }
     </section>`,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-admin-users': InstanceType<typeof AdminUsers>;
-  }
-}

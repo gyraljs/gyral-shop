@@ -170,9 +170,3 @@ export const Gallery = define<GalleryState, GalleryMsg, GalleryProps>()('shop-ga
     }
   `,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-gallery': InstanceType<typeof Gallery>;
-  }
-}

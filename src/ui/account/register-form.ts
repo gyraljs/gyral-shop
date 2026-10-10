@@ -68,9 +68,3 @@ export const RegisterFormElement = define<AuthState, RegisterMsg, AuthProps>()('
   // Light DOM (ADR 0006 rule 5): styled by document CSS (authCss).
   shadow: false,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-register': InstanceType<typeof RegisterFormElement>;
-  }
-}

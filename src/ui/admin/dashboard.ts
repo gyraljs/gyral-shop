@@ -134,7 +134,6 @@ function body(d: Dashboard) {
 export const AdminDashboard = define<DashboardState, DashboardMsg>()('shop-admin-dashboard', {
   shadow: false,
   init: () => [{ data: null, error: null }, [loadDashboard()]],
-  intent: {},
   update: {
     Loaded: (_s, m) => ({ data: m.data, error: null }),
     Failed: (s, m) => ({ ...s, error: loadError(m.error) }),
@@ -157,9 +156,3 @@ export const AdminDashboard = define<DashboardState, DashboardMsg>()('shop-admin
       }
     </section>`,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-admin-dashboard': InstanceType<typeof AdminDashboard>;
-  }
-}

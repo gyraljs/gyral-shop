@@ -20,11 +20,4 @@ export const beaconDriver = defineDriver<PageView, boolean>({
 });
 
 export const pageViewBeacon = (path: string): Command<never> =>
-  command<PageView, boolean, unknown>(
-    beaconDriver,
-    { path },
-    {
-      onSuccess: () => undefined,
-      key: 'page-view',
-    },
-  );
+  command(beaconDriver, { path }, { key: 'page-view' });

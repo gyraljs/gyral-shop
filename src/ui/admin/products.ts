@@ -208,9 +208,3 @@ export const AdminProducts = define<ProductsState, ProductsMsg, ProductsProps>()
     },
   },
 );
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-admin-products': InstanceType<typeof AdminProducts>;
-  }
-}

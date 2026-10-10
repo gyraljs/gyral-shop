@@ -188,9 +188,3 @@ export const AdminOrders = define<OrdersState, OrdersMsg, OrdersProps>()('shop-a
     </section>`;
   },
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-admin-orders': InstanceType<typeof AdminOrders>;
-  }
-}

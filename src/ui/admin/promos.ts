@@ -71,7 +71,6 @@ function row(p: PromoRow) {
 export const AdminPromos = define<PromosState, PromosMsg>()('shop-admin-promos', {
   shadow: false,
   init: () => [{ list: null, error: null }, [load()]],
-  intent: {},
   update: {
     Loaded: (s, m) => ({ ...s, list: m.list, error: null }),
     Failed: (s, m) => ({ ...s, error: loadError(m.error) }),
@@ -123,9 +122,3 @@ export const AdminPromos = define<PromosState, PromosMsg>()('shop-admin-promos',
       }
     </section>`,
 });
-
-declare global {
-  interface HTMLElementTagNameMap {
-    'shop-admin-promos': InstanceType<typeof AdminPromos>;
-  }
-}
