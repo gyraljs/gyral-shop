@@ -1,3 +1,7 @@
+# Historical Gyral prerelease artifacts
+
+The shop now installs exact npm 0.3.1 packages without overrides. These unchanged next.9 archives and their provenance are retained for historical review; no dependency or deployment installs them.
+
 # vendor/: Gyral 0.3.1-next.9 tarballs
 
 The `@gyral/*` 0.3.1-next.9 packages the shop uses, directly or through each other: `core`,

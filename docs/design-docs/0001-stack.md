@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), 0.3.1-next.8 (see the Gyral 0.3 addendum). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), exact npm 0.3.1 (see the stable release addendum). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** for routes and middleware, SSR via `@gyral/ssr`, served on Node by Gyral's adapter
@@ -547,3 +547,7 @@ passes.
   server and tests keep the `Host` header.
 - Static files are unchanged: `productionServer` (`assetHandler`, prerendered pages) serves
   them as before.
+
+## Stable npm 0.3.1 (2026-10-11)
+
+All six packages now use exact registry 0.3.1 versions and one core, with no file overrides. The earlier tarballs remain historical artifacts; they are not part of the install or deployment. Frozen installs use registry integrity from the lockfile.
