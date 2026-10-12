@@ -4,7 +4,7 @@ import { html } from '@gyral/core';
 
 /**
  * Hidden form field name carrying the session's CSRF token. Gyral never echoes a field named like
- * `csrf` in rejected values (0.3.1-next.8), so form definitions need not list it as `secret`.
+ * `csrf` in rejected values (since 0.3.1), so form definitions need not list it as `secret`.
  */
 export const CSRF_FIELD = '_csrf';
 /** Request header carrying the token for fetch/http-driver requests. */

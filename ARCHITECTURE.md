@@ -42,7 +42,7 @@ reaches it as props (SSR) or over HTTP.
 
 `@gyral/*` exactly 0.3.1 from npm (ADR 0001). Gyral renders
 with its own view layer (Gyral ADR 0018): `html`, `css`, `each`, `raw`, the
-`invalid`/`labelledBy` hooks and the `prop.*` builders come from `@gyral/core`; there is no
+`invalid` hook and the `prop.*` builders come from `@gyral/core`; there is no
 Lit. `gyralVitePreset()` adds the template compiler to `vite build` (templates precompiled and
 checked against Gyral's template rules); `@gyral/core/eslint` reports the same rules in the
 editor. The server renders with `@gyral/core/server` (via `@gyral/ssr`'s `renderPage`), each

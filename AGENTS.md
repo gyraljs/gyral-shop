@@ -43,7 +43,7 @@ system of record.
 | Area                                   | Read                                                                         |
 | -------------------------------------- | ---------------------------------------------------------------------------- |
 | Anything                               | [core-beliefs.md](docs/design-docs/core-beliefs.md)                          |
-| Dependencies, Gyral link, no Effect    | [0001-stack.md](docs/design-docs/0001-stack.md)                              |
+| Dependencies, Gyral version, no Effect | [0001-stack.md](docs/design-docs/0001-stack.md)                              |
 | Auth, sessions, CSRF, roles, passwords | [0002-security.md](docs/design-docs/0002-security.md)                        |
 | Money, prices, tax, promos, inventory  | [0003-money-and-pricing.md](docs/design-docs/0003-money-and-pricing.md)      |
 | CI                                     | [0004-local-ci.md](docs/design-docs/0004-local-ci.md)                        |

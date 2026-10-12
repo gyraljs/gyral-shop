@@ -75,9 +75,7 @@ any more; read per element instead (see `test/browser/admin-manage.test.ts`).
 
 ## Addendum 2026-10-06: Gyral 0.3 (its own view layer)
 
-Migrated to Gyral 0.3 (Gyral ADR 0018, bead gyral-g1r.14 in the Gyral repo; branch `gyral-0.3`).
-During the migration `@gyral/*` came from prerelease tarballs (`0.3.0-next.1` … `next.6`) in
-`../gyral-tarballs`; since the 0.3.0 release they come from `vendor/` (see "0.3.0" below).
+Migrated to Gyral 0.3 (Gyral ADR 0018, bead gyral-g1r.14 in the Gyral repo).
 
 - `lit`, `@lit-labs/ssr`, `@lit-labs/ssr-client` and the `lit-html` 3.3.0 override are gone.
   `parse5` is a dev dependency: the template compiler uses it for an extra markup check.
@@ -89,457 +87,71 @@ During the migration `@gyral/*` came from prerelease tarballs (`0.3.0-next.1` �
   part tables, and hydration is its own 2.8 KiB chunk (preloaded by server-rendered pages).
 - Server rendering is 2.6–3.7× faster (median, production server, same machine and run
   conditions): category 12.1 → 3.3 ms, product 15.9 → 6.1 ms, home 24.8 → 7.9 ms.
+- Production pages preload the entry first, so other preloads never queue it behind them on
+  HTTP/1.1 (Gyral's `productionServer` does this itself).
 
-### 0.3.0-next.5 (2026-10-06)
+Until 2026-10-07 `startProduction()` (scripts/lib/prod-server.mjs) built with
+NODE_ENV=development, so `pnpm perf` and `pnpm smoke:prod` measured development bundles; since
+then they measure what `pnpm build` ships.
 
-Same tarball setup, now `0.3.0-next.5` (Gyral b2ae8e5). Production client build, gzip -9, both
-columns measured by one script on the same machine (its next.3 initial and all-chunks figures
-are 2.5–2.8 KiB above the counts in the bullets above, which used another method); per page =
-every script a cold load fetches:
+## Addendum 2026-10-11: Gyral 0.3.1
 
-| Measure               | next.3     | next.5     |
-| --------------------- | ---------- | ---------- |
-| Entry                 | 8.0 KiB    | 7.9 KiB    |
-| Initial (entry graph) | 31.8 KiB   | 31.6 KiB   |
-| All chunks (raw)      | 92.6 (273) | 91.0 (246) |
-| Home, department      | 36.7       | 36.5       |
-| Category, search      | 44.4       | 44.1       |
-| Product               | 46.2       | 45.8       |
-| Cart, checkout        | 38.9       | 38.6       |
-| Sign-in               | 37.8       | 37.5       |
-| About (prerendered)   | 34.9       | 34.7       |
+0.3.1 was Gyral's one breaking step after 0.3.0; the shop migrated to it as it was developed
+and runs on the npm release (see "Stable npm 0.3.1" below). What the shop took up:
 
-Compact templates and no template ids in production take 10% off the raw JS (273 → 246 KiB)
-but only 0.2–0.4 KiB gzip per page. Server rendering is unchanged within noise (median of 400
-sequential requests, alternating runs: category 3.0 → 3.15 ms, product 5.6 → 5.5 ms, home 7.6
-→ 7.7 ms). Pages now also preload their route chunks, the entry first (`route-chunks.ts`): the
-page's lazily loaded component is defined 80–310 ms sooner (product buy box 827 → 698 ms at
-10 Mbps, 1628 → 1321 ms at 1.6 Mbps; CPU 4x, 150 ms RTT). `scripts/perf-baseline.json`, which
-dated from 0.1 (75–83 KiB per page), is re-recorded.
-
-### 0.3.0-next.6 (2026-10-06)
-
-Now `0.3.0-next.6` (Gyral 2cc2704). Gyral itself puts the entry first in `modulepreload`
-whenever anything else is preloaded (`clientAssets`, `productionServer`'s `preload`), the fix
-for the queueing described above, so the shop's own `entryFirst` wrapper is gone; pages still
-preload their route chunks. First interaction is unchanged (median of 9 cold loads, 10 Mbps,
-150 ms RTT, CPU 4x): product buy box 705 ms (698 with `entryFirst`), category 776, login 695.
-
-### 0.3.0 (2026-10-07)
-
-Now the `0.3.0` release (Gyral tag `v0.3.0`, e79abd6). Its runtime is identical to next.6: the
-packages differ only in version numbers and changelogs (a Gyral build-script fix and the version
-bump). 0.3.0 is on GitHub but not yet on npm, so the tarballs the shop uses (`core`, `http`,
-`router`, `ssr`, `time`, `testing`) are vendored in `vendor/` and every `@gyral/*` dependency and
-`pnpm.overrides` entry is `file:./vendor/<tarball>` (the overrides because the packages depend
-on each other by version); the lockfile references nothing outside the repo. Once 0.3.0 is on
-npm, switch them all to `^0.3.0`, delete `vendor/` and run `pnpm install` (`vendor/README.md`).
-
-### 0.3.1-next.0 (2026-10-07)
-
-Now `0.3.1-next.0`, a prerelease packed from Gyral branch `next` (207e864). Neither 0.3.0 nor
-0.3.1 is on npm yet, so the same six tarballs are vendored the same way (`vendor/README.md`
-says how to switch to `^0.3.1` once it is published).
-
-- The search box takes `delay` and `debounce` from the new `@gyral/time/delay` entry, a
-  delay-only driver (still named `time`, so the tests' fake is unchanged).
-- `tsconfig.json` drops `useDefineForClassFields: false`, a leftover from Lit.
-- Not adopted: `clientOnly` (the shop server-renders), plain type guards for props (the
-  props use valibot schemas, which are Standard Schema; there are no adapters) and
-  `defineDisposableHook` (no hook needs teardown). The new `gyral/unused-intent` rule, the
-  stricter SVG template rules (no `svg` templates or inline `<svg>` in views) and the
-  function-in-property-binding warnings flag nothing. The stricter `settled()` needed no
-  test change: no test spins microtasks before it or observes an in-between loading state.
-- Production builds drop the check of `prop.value(Schema)` when it is a plain reference.
-  Most of the shop's are calls (`prop.value(v.array(Item))`), which keep it; naming them
-  saves nothing here, because Rolldown (Vite 8.3.2) keeps the valibot calls that build an
-  unused schema in a lazily loaded chunk once valibot sits in a chunk shared with the entry.
-
-These are production builds. Until 2026-10-07 `startProduction()` (scripts/lib/prod-server.mjs)
-built with NODE_ENV=development, so `pnpm perf`, `pnpm smoke:prod` and the tables above used
-development bundles. Both columns: production client build, gzip -9, same machine and
-script; per page = every script a cold load fetches (scrolled to the bottom, so islands load);
-cart and checkout with one item.
-
-| Measure               | 0.3.0      | 0.3.1-next.0 |
-| --------------------- | ---------- | ------------ |
-| Entry                 | 7.7 KiB    | 7.5 KiB      |
-| Initial (entry graph) | 28.9 KiB   | 28.0 KiB     |
-| All chunks (raw)      | 85.2 (234) | 84.5 (232)   |
-| Home, department      | 33.4       | 32.4         |
-| Category, search      | 40.6       | 39.9         |
-| Product               | 42.2       | 41.3         |
-| Cart                  | 35.3       | 34.4         |
-| Checkout              | 38.7       | 37.8         |
-| Sign-in               | 34.4       | 33.5         |
-| About (prerendered)   | 31.6       | 30.7         |
-
-Every page loads 0.7–1.0 KiB less, from 0.3.1's production trims: coded diagnostics instead of
-the full texts, no prop path for property sets and seeds, view-transition and frame-lane
-code left out (the shop names neither) and the delay-only time driver. (Development builds
-grow instead, initial 31.6 → 33.0 KiB: they carry the new messages and source locations.)
-Server rendering is unchanged (median of three alternating runs of 400 sequential requests
-each): category 3.04 → 2.96 ms, product 5.60 → 5.56 ms, home 7.54 → 7.50 ms.
-
-### 0.3.1-next.1 (2026-10-07)
-
-Now `0.3.1-next.1`, packed from Gyral branch `next` (bd2acc9); the same six tarballs, vendored
-the same way. Only the build-time compiler changed (`@gyral/core/vite`): the scan that decides
-which optional runtime features a build carries now reads only app code and packages that
-depend on `@gyral/*`, on parsed source instead of raw text. Under next.0 the text
-`states` in the import path `../../domain/us-states.js` turned on the custom-states feature
-for `settings-forms.ts`, so the account pages (profile, password, addresses) fetched the
-custom-states chunk although no settings form declares `states`. Now only the modules that
-do (`listing.ts`, the admin dashboard) pull it in, and Rolldown merges it with the router's
-link-handling chunk (38 → 37 chunks). Nothing in the shop needed changing; runtime code is
-identical, so server rendering is unaffected.
-
-Same script and method as the 0.3.1-next.0 table (production build, gzip -9):
-
-| Measure                    | 0.3.1-next.0 | 0.3.1-next.1 |
-| -------------------------- | ------------ | ------------ |
-| Entry                      | 7.50 KiB     | 7.48 KiB     |
-| Initial (entry graph)      | 27.97 KiB    | 27.95 KiB    |
-| All chunks (raw)           | 84.48 (232)  | 84.31 (232)  |
-| Home, department           | 32.43        | 32.41        |
-| Category, search           | 39.92        | 39.78        |
-| Product                    | 41.27        | 41.25        |
-| Cart                       | 34.35        | 34.33        |
-| Checkout                   | 37.79        | 37.77        |
-| Sign-in                    | 33.47        | 33.45        |
-| About (prerendered)        | 30.72        | 30.71        |
-| Profile, password, address | 37.08        | 36.83        |
-
-### 0.3.1-next.2 (2026-10-08)
-
-Now `0.3.1-next.2`, packed from Gyral branch `next` (751f76a); the same six tarballs, vendored
-the same way. Nothing in the shop needed changing; `pnpm check` (742 tests, `smoke:prod`) and
-`pnpm perf` pass as they were. What next.2 changes for the shop:
-
-- **Router:** after a navigation renders, the router scrolls to the `#fragment` or the top,
-  restores the position on back/forward and resets focus unless the app moved it, the same
-  with or without the Navigation API. The entry now carries `settled()` and the Navigation API
-  intercept options; the History API path became a lazily loaded chunk (0.76 KiB gzip) that
-  only browsers without the Navigation API fetch. `match()` also returns the canonical `path`.
-- **Core:** `style` attributes are written through the CSSOM, so they apply under a strict CSP
-  (the shop's policy has no `'unsafe-inline'`, but its views use no `style` attributes, per
-  `csp.ts`, so nothing changes; a client-rendered `style=` would now apply), and
-  `data-intent-on` takes a list of events.
-- **SSR:** `productionServer` serves assets more safely (400 on malformed URLs, `HEAD`,
-  `nosniff`, `no-store` misses, an in-memory cache); `preload(modules)` is unchanged, so
-  `route-chunks.ts` needs nothing. The shop keeps `@hono/node-server` rather than
-  `@gyral/ssr/node`'s `toNodeListener`: `security/request.ts` reads the client address with
-  `getConnInfo` for rate limiting, which a plain `Request` doesn't carry.
-
-Same script and method as the tables above (production build, gzip -9); 37 → 41 chunks:
-
-| Measure               | 0.3.1-next.1 | 0.3.1-next.2 |
-| --------------------- | ------------ | ------------ |
-| Entry                 | 7.48 KiB     | 7.56 KiB     |
-| Initial (entry graph) | 27.95 KiB    | 28.51 KiB    |
-| All chunks (raw)      | 84.31 (232)  | 86.57 (235)  |
-| Home, department      | 32.41        | 33.04        |
-| Category, search      | 39.78        | 41.00        |
-| Product               | 41.25        | 41.90        |
-| Cart                  | 34.33        | 34.96        |
-| Checkout              | 37.77        | 38.39        |
-| Sign-in               | 33.45        | 34.08        |
-| About (prerendered)   | 30.71        | 31.33        |
-
-Every page loads 0.6–0.7 KiB more (category 1.2 KiB). Correction (measured after next.3, see
-below): most of that was not the router's code. The router's lazily loaded History API
-fallback imported `settled()` statically, so the bundler split the scheduler out of the core
-chunk into extra chunks that every page loaded, including pages without the router; the real
-code growth was about 0.18 KiB on home and product, plus about 0.36 KiB of scroll and focus
-handling on the router pages. Server rendering was not re-measured.
-
-### 0.3.1-next.3 (2026-10-08)
-
-Now `0.3.1-next.3`, packed from Gyral branch `next` (3239f6b); the same six tarballs, vendored
-the same way. What next.3 changes for the shop:
-
-- **Router chunking (Gyral fix):** the History API fallback no longer imports anything at
-  runtime, so the scheduler stays in the core chunk; 41 → 38 chunks, and every page loads
-  0.3–0.5 KiB less than on next.2. A `replace` navigation no longer scrolls or resets focus
-  (the shop's filters and admin searches push, so nothing changes for it); if the History API
-  chunk fails to load, navigations become full page loads.
-- **SSR:** `toNodeListener` passes `{ incoming, remoteAddress }` and `productionServer` passes
-  it on to the app, so the shop serves with `@gyral/ssr/node` (addendum below). A handler that
-  doesn't read a request body no longer stalls keep-alive connections.
-- **Core:** templates parse through a Trusted Types policy named `gyral` (the shop's CSP has no
-  `trusted-types` directive, so nothing changes); a parser returning `undefined` passes the
-  event to the next intent outward (the shop has no nested intents for one event); equal prop
-  writes are skipped.
-
-Same script and method as the tables above (production build, gzip -9); 41 → 38 chunks:
-
-| Measure               | 0.3.1-next.2 | 0.3.1-next.3 |
-| --------------------- | ------------ | ------------ |
-| Entry                 | 7.56 KiB     | 7.48 KiB     |
-| Initial (entry graph) | 28.51 KiB    | 28.23 KiB    |
-| All chunks (raw)      | 86.57 (235)  | 85.98 (235)  |
-| Home, department      | 33.04        | 32.74        |
-| Category, search      | 41.00        | 40.52        |
-| Product               | 41.90        | 41.59        |
-| Cart                  | 34.96        | 34.66        |
-| Checkout              | 38.39        | 38.10        |
-| Sign-in               | 34.08        | 33.78        |
-| About (prerendered)   | 31.33        | 31.03        |
-
-Against next.1, every page is now 0.29–0.34 KiB larger (category and search 0.74 KiB, with the
-router's scroll and focus handling): next.2's and next.3's core additions and the router
-features, without the chunking overhead. Server rendering was not re-measured (the machine was
-heavily loaded).
-
-### 0.3.1-next.4 (2026-10-08)
-
-Now `0.3.1-next.4`, packed from Gyral branch `next` (f95ede8); the same six tarballs, vendored
-the same way. next.4 is Gyral's one-time breaking prerelease before 0.3.1, so the app migrated:
-
-- **Two-call `define`:** `define<S, M, P>()(tag, spec)` everywhere; intent names are the parser
-  keys. Rows that name intents through a module constant use `intentsOf<typeof C>()` and declare
-  `: TemplateResult`; view helpers type `IntentNames` with the names they use.
+- **Components:** the two-call `define<S, M, P>()(tag, spec)` everywhere, intent names from the
+  parser keys; rows that name intents through a module constant use `intentsOf<typeof C>()`.
+  `keyed()` replaces one-row `each()` remounts in the admin. The `define()`d tags get generated
+  typings (`.gyral/elements.d.ts`, from `gyral-types` and the preset; `.gyral/` is ignored by
+  ESLint and git). Components load automatically (addendum below).
+- **Drivers:** provided once with `provideDrivers`, not per component: the storefront's CSRF
+  http driver (`csrfHttp`, `src/ui/drivers/http.ts`) by the client entry, the admin's drivers
+  by `<shop-admin>`'s module. `delay` and `debounce` come from `@gyral/time`.
 - **Head model (Gyral ADR 0019):** the shell writes title, description, canonical, robots, Open
-  Graph/Twitter meta and JSON-LD as Gyral's managed head; the favicon, theme stylesheet and CSRF
-  meta stay in `extraHead`. Listing pages build their head with one pure function
+  Graph/Twitter meta and JSON-LD as Gyral's managed head; the favicon, theme stylesheet and
+  CSRF meta stay in `extraHead`. Listing pages build their head with one pure function
   (`listingHead`), used by the category and search routes and by `<shop-listing>` after
-  filtering or paging, so canonical, robots, description and breadcrumbs now follow client
-  updates (before, only the title did). The admin shares `adminHead` the same way.
-- **`@gyral/http`:** the CSRF token comes only from driver headers, so checkout and reviews
-  declare `csrfHttp` (`src/ui/drivers/http.ts`); retry options are gone (the shop used none).
-- **Style-attribute hashes** are not enabled: the shop's server markup has no style attributes.
+  filtering or paging, so canonical, robots, description and breadcrumbs follow client
+  updates. The admin shares `adminHead` the same way.
+- **Forms:** each form definition lists its secret fields (passwords are secret by name), so
+  rejected values never carry them, and Gyral never echoes a field named like `csrf`; the
+  hand-written redaction is gone. `formAction` answers rejections as the JSON 422 itself; a
+  middleware keeps `no-store` on the admin API.
+- **Server:** `productionServer`'s `onResponse` adds the security headers to responses the app
+  didn't make; `gyralDevServer` (`@gyral/ssr/node`) is the dev server; Gyral's Node adapter
+  serves production (addendum below).
+- **Errors:** every failure Gyral catches goes through one channel (`GyralError`, a bubbling
+  `error` event, then `reportError`). It costs about 0.8 KiB gzip per page; the Gyral owner
+  accepted that for 0.3.1. The shop defines no `error` view.
+- `tsconfig.json` drops `useDefineForClassFields: false`, a leftover from Lit.
 
-Same script and method as the tables above (production build, gzip -9); 38 → 40 chunks:
+Not taken up: `clientOnly` (the shop server-renders); plain type guards for props (the props
+use valibot schemas, which are Standard Schema); hook teardown (`defineHook({ dispose })`: no
+hook needs it); style-attribute hashes (the server markup has no style attributes); the http
+driver's `retry` wrapper and `timeoutMs`. The four admin `PropsChanged` reloads stay (one-shot
+fetches, not long-lived work).
 
-| Measure               | 0.3.1-next.3 | 0.3.1-next.4 |
-| --------------------- | ------------ | ------------ |
-| Entry                 | 7.48 KiB     | 7.52 KiB     |
-| Initial (entry graph) | 28.23 KiB    | 28.40 KiB    |
-| All chunks (raw)      | 85.98 (235)  | 87.41 (238)  |
-| Home, department      | 32.74        | 32.92        |
-| Category, search      | 40.52        | 41.79        |
-| Product               | 41.59        | 41.89        |
-| Cart                  | 34.66        | 34.83        |
-| Checkout              | 38.10        | 38.40        |
-| Sign-in               | 33.78        | 33.96        |
-| About (prerendered)   | 31.03        | 31.21        |
-
-Where the bytes went (per-chunk diff of the two builds):
-
-- **Every page, +0.17–0.18 KiB:** Gyral core's head module imports its JSON escaping from the
-  store-scope module, so that module (before, part of the shop's `store` chunk) becomes a shared
-  chunk of its own: +0.31 KiB of split overhead. Gyral's smaller http and command runner (retry
-  moved out of core) save 0.12 KiB in the shared core chunk; the two-call `define` adds a few
-  bytes to the entry. Reported to Gyral: moving that escaping helper into its own module would
-  keep store-scope in one chunk and take back about 0.3 KiB per page.
-- **Category and search, +1.1 KiB more:** the router's `setHead()` (+0.76 KiB in the router
-  chunk) and the listing's own head builder and breadcrumb trail (+0.33 KiB). The price buys
-  correct canonical, robots and structured data after every filter or page change.
-- **Product and checkout, +0.12 KiB more:** the `http` chunk with `csrfHttp`
-  (`makeHttpDriver` plus `csrfFromMeta`), which the default driver didn't need before.
-
-`pnpm perf` baseline (bytes, gzip): home 33,534 → 33,711, category 41,502 → 42,795, product
-42,594 → 42,902; LCP 800 / 800 / 808 ms. All pages within budget.
-
-### 0.3.1-next.5 (2026-10-09)
-
-Now `0.3.1-next.5`, packed from Gyral branch `next` (cc05cb6); the same six tarballs, vendored
-the same way. No app code changed: next.5 adds to next.4 without removing anything, and the
-shop has no exhaustive `switch` over `HttpError` (the new `HttpTimeoutError` case) and no test
-that asserts a command is aborted synchronously on removal (Gyral now stops commands one
-microtask later, so a moved component keeps them). The new `retry` options (`jitter`,
-`retryIf`), `timeoutMs` and `Connected` are not used.
-
-Same script and method as the tables above (production build, gzip -9; the script reproduces
-the next.4 column exactly); 40 → 39 chunks:
-
-| Measure               | 0.3.1-next.4 | 0.3.1-next.5 |
-| --------------------- | ------------ | ------------ |
-| Entry                 | 7.52 KiB     | 7.50 KiB     |
-| Initial (entry graph) | 28.40 KiB    | 28.26 KiB    |
-| All chunks (raw)      | 87.41 (238)  | 87.29 (238)  |
-| Home, department      | 32.92        | 32.77        |
-| Category, search      | 41.79        | 41.68        |
-| Product               | 41.89        | 41.74        |
-| Cart                  | 34.83        | 34.69        |
-| Checkout              | 38.40        | 38.25        |
-| Sign-in               | 33.96        | 33.81        |
-| About (prerendered)   | 31.21        | 31.06        |
-
-Where the bytes went (per-chunk diff of the two builds):
-
-- **Every page, −0.33 KiB:** Gyral moved the head model's JSON escaping into its own module (the
-  fix reported in the next.4 section), so store-scope is part of the shop's `store` chunk again
-  and its separate 0.78 KiB chunk is gone.
-- **Every page, +0.06 KiB:** Gyral core's deferred stop on disconnect and the small fixes.
-- **Every page, +0.13 KiB:** `makeHttpDriver`'s per-attempt timeout branch, in the `csrf` http
-  chunk that every measured page loads.
-- **Category and search, +0.04 KiB:** the router chunk.
-
-Net: −0.11 to −0.15 KiB per page.
-
-`pnpm perf` baseline (bytes, gzip): home 33,711 → 33,562, category 42,795 → 42,690, product
-42,902 → 42,751. All pages within budget (LCP 980 / 868 / 920 ms on a loaded machine, load
-average about 10; earlier runs measured 800–808 ms).
-
-### 0.3.1-next.6 (2026-10-09)
-
-Now `0.3.1-next.6`, packed from Gyral branch `next` (209304e); the same six tarballs, vendored
-the same way. No app code changed. next.6 routes every failure Gyral catches through one channel
-(a `GyralError`, a bubbling `error` event a parent can claim, the component's `error` view or
-`Errored` reducer, then `reportError`), lets parsers read state, adds
-`focus(selector, { wait: true })` and trims Gyral's public exports. The shop imports none of the
-removed exports (its `scriptSafeJson` is its own, in `src/server/security/json.ts`), has no
-message named `Errored`, and no test makes a component fail on purpose; the browser tests that
-spy on `console.error`/`console.warn` assert there are none, which still holds.
-
-Same script and method as the tables above (production build, gzip -9); 39 chunks:
-
-| Measure               | 0.3.1-next.5 | 0.3.1-next.6 |
-| --------------------- | ------------ | ------------ |
-| Entry                 | 7.50 KiB     | 7.49 KiB     |
-| Initial (entry graph) | 28.26 KiB    | 29.04 KiB    |
-| All chunks (raw)      | 87.29 (238)  | 88.25 (240)  |
-| Home, department      | 32.77        | 33.55        |
-| Category, search      | 41.68        | 42.62        |
-| Product               | 41.74        | 42.67        |
-| Cart                  | 34.69        | 35.47        |
-| Checkout              | 38.25        | 39.03        |
-| Sign-in               | 33.81        | 34.59        |
-| About (prerendered)   | 31.06        | 31.84        |
-
-Where the bytes went (per-chunk diff of the two builds):
-
-- **Every page, +0.78 KiB:** Gyral's error channel: core's shared chunk +0.63 KiB, the store
-  chunk +0.09 KiB, the render chunk +0.06 KiB. The Gyral owner accepted this cost for 0.3.1.
-- **Category, search and product, +0.16 KiB more:** the `focus` chunk (pending focus requests
-  for `wait: true`), which only pages whose components issue `focus()` load.
-
-`pnpm perf` baseline (bytes, gzip): home 33,562 → 34,354, category 42,690 → 43,652, product
-42,751 → 43,707. All pages within budget (LCP 796 / 796 / 808 ms, load average about 5).
-
-### 0.3.1-next.7 (2026-10-09)
-
-Now `0.3.1-next.7`, packed from Gyral branch `next` (0b96681), vendored the same way. next.7
-is Gyral's "essential surface" release, and the shop took up what applied:
-
-- **Drivers:** the spec `drivers` field is gone. The storefront's CSRF http driver is provided
-  once for the page by the client entry, the admin's drivers once by `<shop-admin>`'s module
-  (14 per-component declarations removed); the listing uses the default router.
-- **Form secrets:** each form definition lists its secret fields (passwords are secret by name),
-  so rejected values never carry them. Removed: `withoutSecrets` in two routes, the
-  password-reset blanking, the client refill filters in the auth and checkout forms, the member
-  form's `secret` option and both secret lists. The CSRF field is outside every schema and Gyral
-  types `secret` by schema field, so it is listed through one cast (`forms/csrf.ts`).
-- **formAction:** the 13 `invalid: asJson` and `asJson` go (formAction answers the JSON 422
-  itself); a middleware keeps `no-store` on the admin API.
-- **Server:** `productionServer`'s `onResponse` replaces the fetch wrapper; `gyralDevServer`
-  replaces the hand-written dev server.
-- **Templates and types:** `keyed()` replaces the admin's two one-row `each()` remounts; five
-  echo parsers became `Key: true`; seven empty tables went; two commands need no handlers; the
-  25 `define()`d tags come from generated typings.
-- **Not taken up:** automatic components. The shop's loader finds tags inside shadow roots and
-  43 browser tests rely on `await import(entry)` resolving once page components are defined;
-  Gyral's loader searches the light DOM only and offers no completion signal. The four admin
-  `PropsChanged` reloads stay (one-shot fetches, not long-lived work).
-
-App code: 374 lines deleted, 110 added (src and test).
-
-`pnpm perf` baseline (bytes, gzip -9 of every chunk the page loads):
-
-| Page     | 0.3.1-next.6 | 0.3.1-next.7 | Change |
-| -------- | -----------: | -----------: | -----: |
-| Home     |       34,354 |       35,059 |   +705 |
-| Category |       43,652 |       44,362 |   +710 |
-| Product  |       43,707 |       44,323 |   +616 |
-
-Where the bytes went (per-chunk diff of the two builds):
-
-- **The error view, +218 B:** Gyral registers `spec.error` when a module names `error`, and the
-  shop's state objects and HTTP results use that name, so the fallback view ships although no
-  component defines one.
-- **Form secrets, about +0.3 KiB:** core's form chunk grew (the secret lists and checks); the
-  account schemas and domain helpers were re-chunked around it (auth-form −0.5, schemas +0.4,
-  a new `accounts` chunk +0.3 KiB).
-- **Render +0.12, the shared chunk +0.11, entry +0.09 KiB:** child-first hook ordering and
-  `keyed`, the http driver's timeout support, and the entry's driver provider.
-
-All pages within budget (LCP 828 / 808 / 804 ms).
-
-### 0.3.1-next.8 (2026-10-10)
-
-Now `0.3.1-next.8`, packed from Gyral branch `next` (3df7769), vendored the same way. next.8
-fixes what this shop's next.7 migration reported to Gyral:
-
-- **The CSRF cast is gone.** Gyral never echoes a field named like `csrf`, and `secret` accepts
-  any posted field name, so `CSRF_SECRET` (`forms/csrf.ts`) and its fifteen uses in the form
-  definitions went; lists that only held it went too.
-- **The error view no longer ships.** Gyral registers it only for an `error` key in a `define()`
-  spec, so the shop's state fields named `error` don't pull it in (the next.7 +218 B above).
-- **Generated typings:** `.gyral/elements.d.ts` now starts with `/* eslint-disable */`; `.gyral/`
-  is in the ESLint ignores, because the unused-directive check flags that header.
-- **Still not taken up: automatic components.** next.8 added `componentsReady()` and loading
-  inside shadow roots, so the two earlier blockers are gone, but `componentsFromManifest` (and
-  `productionServer`, which uses it) throws for a component module that another chunk imports
-  statically: Vite's manifest has no entry for it. Here that is 12 of 35 tags (the shell's
-  components the entry imports, the wishlist toggle in product cards, and the admin screens
-  `<shop-admin>` imports). Reported to Gyral; `lazy.ts` and the route-chunk table stay until it
-  is fixed. Trying it also showed that the nine member forms (`defineMemberForm({ tag })`) are
-  invisible to Gyral's discovery, which reads `define<…>()('tag'` from the source; they need the
-  tag written in a `define()` call.
-
-App code: 26 lines deleted, 13 added (src).
-
-`pnpm perf` baseline (bytes, gzip -9 of every chunk the page loads):
-
-| Page     | 0.3.1-next.7 | 0.3.1-next.8 | Change |
-| -------- | -----------: | -----------: | -----: |
-| Home     |       35,059 |       34,824 |   −235 |
-| Category |       44,362 |       44,112 |   −250 |
-| Product  |       44,323 |       44,049 |   −274 |
-
-Most of the saving is the error view no longer bundled. All pages within budget (LCP 764 / 772 /
-800 ms).
-
-### 0.3.1-next.9 (2026-10-10)
-
-Now `0.3.1-next.9`, packed from Gyral branch `next` (78052c4), vendored the same way. next.9
-fixes the next.8 blocker: component modules folded into another chunk load and preload, and
-`gyralVitePreset({ components: { modules } })` lists wrapper-defined tags such as the member
-forms. No app code changed, and every page is byte-identical to next.8.
-
-**Automatic components were tried again and not taken up, for size.** With them (branch
-`components-attempt-next9`, commit 42458f5: `lazy.ts`, `route-chunks.ts` and their tests
-deleted, the member forms listed in `vite.components.ts`, browser tests on
-`componentsReady()`), `pnpm check` passed (742 tests), but every page grew by about 3.9 KiB
-gzip: home 34,824 → 38,729 B, category 44,112 → 48,158 B, product 44,049 → 47,916 B. Two
-causes, both reported to Gyral:
-
-- **The loader carries Vite's preload map.** Its dynamic imports go through Vite's preload
-  helper, which inlines the dependency list of every component (`components-*.js`, 2.31 KiB
-  gzip, plus `preload-helper`, 0.75 KiB), although `renderPage` already preloads what the page
-  rendered.
-- **Components imported by both the entry and the loader become their own chunks.** The
-  shell's header, search box, mini-cart, consent banner and theme switcher left the entry chunk,
-  so the home page loads 23 scripts instead of 13, and more, smaller chunks compress worse.
-
-`lazy.ts` and the route-chunk table stay until the loader doesn't cost more than they do.
+Size, against 0.3.0 (production build, gzip -9 of every script a cold load fetches): 0.3.1's
+production trims (coded diagnostics, no prop path for property sets and seeds, unused
+view-transition and frame code left out) took 0.7–1.0 KiB off every page; the error channel
+added about 0.8 KiB, form secrets about 0.3 KiB, and the head model 1.1 KiB on category and
+search (the price of correct canonical, robots and structured data after every filter or page
+change). With the shop's hand-written loader, 0.3.1 pages weighed home 34,824, category
+44,112 and product 44,049 B; automatic components took 0.4–0.5 KiB off each (addendum below).
 
 ## Addendum 2026-10-08: Gyral's Node adapter instead of `@hono/node-server`
 
 `pnpm start`, `pnpm dev` and the HTTP test helper (`test/support/server.ts`) serve through
 `createServer(toNodeListener(fetch, { origin }))` from `@gyral/ssr/node`; `@hono/node-server`
-is no longer a dependency. This needs Gyral 0.3.1-next.3: from it, `toNodeListener` calls the
-handler as `fetch(request, { incoming, remoteAddress })`, the env shape Hono's own adapter
-passes.
+is no longer a dependency. Since Gyral 0.3.1, `toNodeListener` calls the handler as
+`fetch(request, { incoming, remoteAddress })`, the env shape Hono's own adapter passes.
 
 - **Client address.** Rate limiting keys on `ip(c)` (ADR 0002). `security/request.ts` reads
   the env's `remoteAddress` rather than `getConnInfo` from `@hono/node-server/conninfo` (which
   would work with the same env, but keeps the package); `hono/conninfo` only has types.
   In-process requests (`app.request` in tests) have no env and share the key `unknown`.
-- **Through `productionServer`.** From next.3 its `fetch` passes the env on to the app
-  (`productionServer<NodeEnv>`), so `createProdApp` hands it straight through; a `WeakMap`
-  workaround for next.3's first pack is gone. `prod.test.ts` › "rate-limits by the client
+- **Through `productionServer`.** Its `fetch` passes the env on to the app
+  (`productionServer<NodeEnv>`), so `createProdApp` hands it straight through. `prod.test.ts` › "rate-limits by the client
   address the Node adapter passes" fails if the address stops arriving.
 - **Request URLs.** In production they are built on `SITE_ORIGIN` (the adapter's `origin`),
   no longer on the client's `Host` header, so a forged `Host` cannot change them, and over a
@@ -550,16 +162,19 @@ passes.
 
 ## Stable npm 0.3.1 (2026-10-11)
 
-All six packages now use exact registry 0.3.1 versions and one core, with no file overrides. The prerelease tarballs and `vendor/` are gone; the lockfile resolves every `@gyral/*` package from the npm registry, and frozen installs check its registry integrity.
+All six packages use exact registry 0.3.1 versions and one core, with no file overrides; the
+lockfile resolves every `@gyral/*` package from the npm registry, and frozen installs check its
+registry integrity.
 
 ## Automatic components (2026-10-12)
 
-The shop loads its components with Gyral 0.3.1's automatic components instead of its own
-loader: `gyralVitePreset({ components: { modules } })` in `vite.config.ts` and
-`vitest.config.ts`, `components` from `productionServer` / `gyralDevServer` passed to
-`renderPage`. `src/client/lazy.ts`, `src/server/route-chunks.ts` (the per-page `chunks` lists)
-and their tests are gone. The entry keeps the shell components and the page-wide http driver;
-browser tests load a page with `test/support/components.ts` and wait on `componentsReady()`.
+The shop loads its components with Gyral 0.3.1's automatic components instead of its own loader:
+`gyralVitePreset({ components: { modules } })` in `vite.config.ts` and `vitest.config.ts`,
+`components` from `productionServer` / `gyralDevServer` passed to `renderPage`. The shop's
+hand-written loader (a tag → module table in the client) and the per-page `chunks` lists that
+preloaded its modules, with their tests, are gone. The entry keeps the shell components and the
+page-wide http driver; browser tests load a page with `test/support/components.ts` and wait on
+`componentsReady()`.
 
 `vite.components.ts` overrides the scan twice: it lists the member forms (defined through
 `defineMemberForm({ tag })`, which the scan can't see), and it maps the ten admin sections to
@@ -593,7 +208,7 @@ chunks: every emitted `.js` file. Before is the hand-written loader on the same 
 | All JS chunks |      91,664 |     90,759 |   −905 |        80,565 |       79,771 |   −794 | 40 → 40 |
 
 The stylesheet (the theme, 488 B gzip) is the same before and after; the admin page links none.
-Every page is smaller. The entry lost `lazy.ts` and its top-level await (7,742 → 6,617 B), and
+Every page is smaller. The entry lost the hand-written loader and its top-level await (7,742 → 6,617 B), and
 Gyral's runtime ships as one chunk instead of two (15,877 → 15,542 B with the preload helper).
 The loader (`components-*.js`, 1,098 B) is fetched only by pages that render a component the
 entry doesn't import, so the prerendered About page, which renders only the shell, skips it.

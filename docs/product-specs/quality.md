@@ -39,8 +39,7 @@
   ADR 0001): JS gzip home 33.6 KiB, category 42.6 KiB, product 42.5 KiB
   (`scripts/perf-baseline.json`); LCP 788–816 ms; CLS 0. Automatic components took 0.4–0.5 KiB
   off each page compared with the shop's former hand-written loader (ADR 0001, "Automatic
-  components"). Earlier baselines, on Gyral prereleases and development bundles, are in the
-  history of this file and ADR 0001.
+  components"). Earlier baselines are in the history of this file and ADR 0001.
 
   First baseline (2026-10-05, Gyral 0.1, production build, after per-route code splitting and
   the Gyral fix for production-only hydration duplicates, gyral-czi.41), kept for history:
