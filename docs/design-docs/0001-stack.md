@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), exact npm 0.3.2 (see the stable release addenda). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), exact npm 0.3.3 (see the stable release addenda). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** for routes and middleware, SSR via `@gyral/ssr`, served on Node by Gyral's adapter
@@ -175,6 +175,15 @@ package paths in `manifest.json`, and the new `chunkModules` field in `gyral-com
 The sizes in "Automatic components" below still hold. 0.3.2 still links the loader's repeated
 preloads after the body (with `withoutHeadPreloads` removed, `prod.test.ts` finds the entry
 linked twice), so the workaround stays.
+
+## Stable npm 0.3.3 (2026-10-12)
+
+All six packages moved to exact registry 0.3.3, with one core and no file overrides. 0.3.3
+changes only `@gyral/mcp`, which the shop doesn't use; the six packages it installs ship the same
+runtime code, so the app code didn't change and every emitted asset keeps its name and content
+hash; only the `.vite` metadata differs. The repeated preloads after the body (Gyral bead
+gyral-9b0) are still there in 0.3.3 (with `withoutHeadPreloads` removed, `prod.test.ts` again
+finds the entry linked twice), so the workaround stays.
 
 ## Automatic components (2026-10-12)
 
