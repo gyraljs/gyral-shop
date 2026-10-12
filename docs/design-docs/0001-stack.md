@@ -550,4 +550,4 @@ passes.
 
 ## Stable npm 0.3.1 (2026-10-11)
 
-All six packages now use exact registry 0.3.1 versions and one core, with no file overrides. The earlier tarballs remain historical artifacts; they are not part of the install or deployment. Frozen installs use registry integrity from the lockfile.
+All six packages now use exact registry 0.3.1 versions and one core, with no file overrides. The prerelease tarballs and `vendor/` are gone; the lockfile resolves every `@gyral/*` package from the npm registry, and frozen installs check its registry integrity.
