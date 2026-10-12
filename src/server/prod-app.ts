@@ -51,10 +51,10 @@ export const productionApp = (options: Omit<ProdOptions, 'distDir'>, assets: Cli
   });
 
 /**
- * `components` without the modules the head already preloads. Gyral 0.3.1's loader imports the
- * entry, so its preload list repeats the entry's graph, and `renderPage` would link each of
- * those modules a second time after the body (the browser fetches each once either way). The
- * head's list stays first, the entry at its top.
+ * `components` without the modules the head already preloads. Gyral's loader (0.3.1, still in
+ * 0.3.2) imports the entry, so its preload list repeats the entry's graph, and `renderPage` would
+ * link each of those modules a second time after the body (the browser fetches each once either
+ * way). The head's list stays first, the entry at its top.
  */
 export function withoutHeadPreloads(
   components: ComponentAssets,
