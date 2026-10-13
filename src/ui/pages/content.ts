@@ -62,7 +62,7 @@ const FAQ: readonly { readonly q: string; readonly a: string }[] = [
   },
   {
     q: 'How do I reset my password?',
-    a: 'Choose "Forgot your password?" on the sign-in page. In this demo, the email lands in the development mailbox at /dev/mail.',
+    a: 'Choose "Forgot your password?" on the sign-in page. This demo sends no email: the reset message is kept in its outbox, which you can read at /dev/mail when you run the shop yourself. The public demo has no mailbox, and its data resets every night.',
   },
   {
     q: 'Can I return an order?',
