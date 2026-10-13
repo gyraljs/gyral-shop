@@ -80,14 +80,16 @@ describe('theme in pages', () => {
   it('links the visitor theme by hashed URL and renders the no-JS switcher in the footer', async () => {
     const test = await testApp();
     const html = await (await test.get(`${ORIGIN}/d/electronics`)).text();
-    expect(themeLinkOf(html)?.slice(1)).toEqual([themeHref(defaultTheme), 'default']);
+    expect(themeLinkOf(html)?.slice(1)).toEqual([themeHref(defaultTheme), DEFAULT_THEME]);
     expect(html).not.toContain(defaultTheme.css.trim().slice(0, 40)); // never inlined
     expect(html).toMatch(
       /<form[^>]*method="post"[^>]*action="\/theme"[^>]*data-region="theme-switcher"/,
     );
     expect(html).toMatch(/<legend>Theme<\/legend>/);
     expect(html).toMatch(
-      /<input[^>]*type="radio"[^>]*name="theme"[^>]*value="default"[^>]*checked/,
+      new RegExp(
+        `<input[^>]*type="radio"[^>]*name="theme"[^>]*value="${DEFAULT_THEME}"[^>]*checked`,
+      ),
     );
     expect(html).toMatch(/<input type="hidden" name="return" value="\/d\/electronics"/);
   });
@@ -97,7 +99,7 @@ describe('theme in pages', () => {
     const html = await (
       await test.get(`${ORIGIN}/`, { headers: { cookie: `${THEME_COOKIE}=../../etc` } })
     ).text();
-    expect(themeLinkOf(html)?.slice(1)).toEqual([themeHref(defaultTheme), 'default']);
+    expect(themeLinkOf(html)?.slice(1)).toEqual([themeHref(defaultTheme), DEFAULT_THEME]);
   });
 
   it('gives prerendered pages the cookie-driven stylesheet and a deferred switcher', async () => {

@@ -185,6 +185,11 @@ export const marketplaceThemeCss = `
   [data-region="listing"] > header h1 { font-size: var(--step-2); }
   [data-region="filters"] { font-size: var(--step--1); }
   [data-region="filters"] button[type="submit"] { background: var(--brand); color: var(--brand-ink); }
+  /* WCAG 2.2 target size (2.5.8): the dense type would leave stacked links and filter controls
+     under 24px apart, so each row keeps at least 1.5rem. */
+  [data-region="listing-nav"] li a,
+  [data-region="error"] li a { display: inline-block; min-block-size: 1.5rem; line-height: 1.5rem; }
+  [data-region="filters"] li label { display: flex; align-items: center; gap: var(--space-1); min-block-size: 1.5rem; }
   [data-component="pager"] a[aria-current] { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
 
   /* Product page: gallery, details and a boxed buy box in three columns on wide screens. */

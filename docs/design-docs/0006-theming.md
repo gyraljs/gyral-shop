@@ -204,3 +204,13 @@ scheme where needed. New tokens: `--search-button-bg`, `--search-button-ink`, `-
   per-theme test files.
 - `data-component="card-grid"` was added so themes can lay out product grids without
   targeting anonymous `div`s (Marketplace and Boutique did).
+
+## Addendum: Marketplace is the default (2026-10-13)
+
+The owner chose Marketplace as the theme a visitor without a theme cookie gets
+(`DEFAULT_THEME` in `src/ui/themes/registry.ts`); it is also what the demo at
+https://demo-shop.gyral.dev shows first. The house look stays selectable as "Gyral Goods"
+(theme name `default`), and the switcher order is unchanged. Becoming the default put
+Marketplace under the server-rendered axe check, which found WCAG 2.2 target-size (2.5.8)
+failures from its dense type: listing-nav and error-page links and the filter options now keep
+rows of at least 1.5rem.

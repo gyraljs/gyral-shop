@@ -15,6 +15,7 @@ import { createProdApp, type ProdApp } from '../../src/server/prod-app.js';
 import { SESSION_COOKIE } from '../../src/server/security/index.js';
 import { createSession } from '../../src/services/sessions.js';
 import { CSRF_FIELD } from '../../src/ui/forms/csrf.js';
+import { DEFAULT_THEME } from '../../src/ui/themes/registry.js';
 import { smallCatalog } from '../support/app.js';
 import { serveFetch } from '../support/server.js';
 
@@ -137,7 +138,7 @@ describe('production build', () => {
       account: null,
       consentDecided: false,
       analytics: false,
-      theme: 'default',
+      theme: DEFAULT_THEME,
     });
     expect(guest.headers.get('cache-control')).toBe('no-store');
     expect(guest.headers.getSetCookie()).toEqual([]);

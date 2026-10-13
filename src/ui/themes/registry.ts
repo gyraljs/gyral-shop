@@ -13,7 +13,8 @@ export const THEMES: readonly ThemeDefinition[] = [
   boutiqueTheme,
 ];
 
-export const DEFAULT_THEME = defaultTheme.name;
+/** The theme a visitor without a theme cookie gets, and prerendered pages' fallback. */
+export const DEFAULT_THEME = marketplaceTheme.name;
 
 export const findTheme = (name: string | undefined): ThemeDefinition | undefined =>
   THEMES.find((theme) => theme.name === name);

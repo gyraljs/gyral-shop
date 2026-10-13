@@ -2,6 +2,7 @@
 // request that renders them is signed in, so nothing personal can leak into the static files.
 import { writeFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { DEFAULT_THEME } from '../../src/ui/themes/registry.js';
 import { testApp, type TestApp } from '../support/app.js';
 import { createMember, loginAs, type TestSession } from '../support/auth.js';
 import { stableHtml } from '../support/fixtures.js';
@@ -56,7 +57,7 @@ describe('static (ssg) content pages', () => {
       account: { firstName: 'Grace', csrfToken: member.session.csrfToken },
       consentDecided: false,
       analytics: false,
-      theme: 'default',
+      theme: DEFAULT_THEME,
     });
   });
 });
