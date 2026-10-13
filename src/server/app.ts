@@ -26,6 +26,7 @@ import { wishlistRoutes } from './routes/wishlist.js';
 import { searchRoutes } from './routes/search.js';
 import { reviewRoutes } from './routes/reviews.js';
 import { meRoutes } from './routes/me.js';
+import { healthRoutes } from './routes/health.js';
 import { analyticsRoutes } from './routes/analytics.js';
 import { SITE_NAME, shell, type ShellOptions } from './document.js';
 import { installSecurity, type AppEnv, type SecurityOptions } from './security/index.js';
@@ -155,6 +156,7 @@ export function createApp({
       }),
   });
 
+  app.route('/', healthRoutes(db)); // before analytics: a probe is never a page view
   app.use('*', analyticsMiddleware(db)); // consented page views and add-to-cart only
   app.get(
     '/favicon.svg',

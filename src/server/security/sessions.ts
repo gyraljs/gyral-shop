@@ -18,8 +18,8 @@ import { now, runtime } from './runtime.js';
 
 export const SESSION_COOKIE = 'sid';
 
-/** Requests that never need a session (images and icons): no cookie lookup, no DB read. */
-const SKIP = [/^\/img\//, /^\/favicon\.svg$/];
+/** Requests that never need a session (images, icons, health checks): no cookie lookup. */
+const SKIP = [/^\/img\//, /^\/favicon\.svg$/, /^\/healthz$/];
 
 /**
  * Cookies this request must send, appended to the final response by the middleware.
