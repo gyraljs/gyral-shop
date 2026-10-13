@@ -9,7 +9,7 @@ import type { Db } from '../db/client.js';
 import type { CatalogChanges } from '../services/container.js';
 import { createApp } from './app.js';
 import { staticPolicy } from './csp.js';
-import type { ComponentAssets, ComponentModule } from '@gyral/ssr';
+import type { ComponentAssets } from '@gyral/ssr';
 import { securityHeaderValues } from './security/headers.js';
 
 export const CLIENT_ENTRY_SOURCE = 'src/client/entry.ts';
@@ -55,28 +55,6 @@ export const productionApp = (options: Omit<ProdOptions, 'distDir'>, assets: Cli
     },
   });
 
-/**
- * `components` without the modules the head already preloads. Gyral's loader (0.3.1, still in
- * 0.3.3) imports the entry, so its preload list repeats the entry's graph, and `renderPage` would
- * link each of those modules a second time after the body (the browser fetches each once either
- * way). The head's list stays first, the entry at its top.
- */
-export function withoutHeadPreloads(
-  components: ComponentAssets,
-  modulepreload: readonly string[],
-): ComponentAssets {
-  const inHead = new Set(modulepreload);
-  const rest = (hrefs: readonly string[]) => hrefs.filter((href) => !inHead.has(href));
-  const modules = new Map<string, ComponentModule>();
-  for (const [tag, module] of components.modules)
-    modules.set(tag, { ...module, preload: rest(module.preload) });
-  return {
-    ...components,
-    modules,
-    ...(components.preload === undefined ? {} : { preload: rest(components.preload) }),
-  };
-}
-
 /** The production handler; `env` is what `toNodeListener` passes (src/server/prod.ts). */
 export interface ProdApp {
   readonly fetch: (request: Request, env?: NodeEnv) => Response | Promise<Response>;
@@ -95,9 +73,9 @@ export async function createProdApp(options: ProdOptions): Promise<ProdApp> {
       productionApp(options, {
         clientEntry: clientEntry ?? '',
         modulepreload,
-        ...(components === undefined
-          ? {}
-          : { components: withoutHeadPreloads(components, modulepreload) }),
+        // renderPage links each module once: the head's preloads first, the entry at their top,
+        // then only the modules the head didn't preload (Gyral 0.3.4).
+        ...(components === undefined ? {} : { components }),
       }),
     onResponse: (response, request) => {
       if (response.headers.has('content-security-policy')) return response; // came from the app

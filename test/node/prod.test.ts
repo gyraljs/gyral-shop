@@ -100,7 +100,8 @@ describe('production build', () => {
     // The entry first, so component chunks never queue it behind them (Gyral 0.3.0).
     expect(productPage[0]).toBe(chunk('src/client/entry.ts'));
     expect(productPage.filter((href) => href === productPage[0])).toHaveLength(1);
-    // Nothing linked twice: the loader's preloads repeat the entry graph (prod-app.ts).
+    // Nothing linked twice: the loader's preloads repeat the entry graph, and renderPage links
+    // only what the head lacks (Gyral 0.3.4, ADR 0001).
     expect(new Set(productPage).size).toBe(productPage.length);
     // Automatic components (vite.components.ts): only what the page rendered.
     expect(productPage).toContain(chunk('src/ui/product/buy-box.ts'));

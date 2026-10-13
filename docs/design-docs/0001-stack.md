@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), exact npm 0.3.3 (see the stable release addenda). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), exact npm 0.3.4 (see the stable release addenda). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** for routes and middleware, SSR via `@gyral/ssr`, served on Node by Gyral's adapter
@@ -186,6 +186,15 @@ hash; only the `.vite` metadata differs. The repeated preloads after the body (G
 gyral-9b0) are still there in 0.3.3 (with `withoutHeadPreloads` removed, `prod.test.ts` again
 finds the entry linked twice), so the workaround stays.
 
+## Stable npm 0.3.4 (2026-10-13)
+
+All six packages moved to exact registry 0.3.4, with one core and no file overrides. 0.3.4's
+`renderPage` links after the body only the component modules the head doesn't already preload
+(Gyral PR #20, bead gyral-9b0), so the shop's `withoutHeadPreloads` workaround is gone and
+`createProdApp` passes `productionServer`'s `components` straight through. `prod.test.ts` still
+fails if a page links a module twice, and passes without the workaround. Every emitted client
+asset keeps its name and content hash; only the `.vite` metadata differs (the package paths).
+
 ## Automatic components (2026-10-12)
 
 The shop loads its components with Gyral 0.3.1's automatic components instead of its own loader:
@@ -202,10 +211,10 @@ page-wide http driver; browser tests load a page with `test/support/components.t
 section becomes its own lazily loaded chunk and the build grows by about 12 KiB gzip.
 
 The loader imports the entry, so the preload list `componentsFromManifest` gives it repeats the
-entry's graph, and `renderPage` linked those modules a second time after the body.
-`withoutHeadPreloads` (`src/server/prod-app.ts`) drops what the head already preloads;
-`prod.test.ts` fails if a page links a module twice. (Bytes are unaffected: the browser fetches
-each module once.)
+entry's graph, and `renderPage` linked those modules a second time after the body. Until Gyral
+0.3.4 fixed that (see "Stable npm 0.3.4"), `withoutHeadPreloads` (`src/server/prod-app.ts`)
+dropped what the head already preloads; `prod.test.ts` fails if a page links a module twice.
+(Bytes are unaffected: the browser fetches each module once.)
 
 Size, production build, cold load in Chromium after the loader is ready: every script and
 stylesheet the page fetched, each compressed on its own (gzip -9, brotli q11), in bytes. All JS

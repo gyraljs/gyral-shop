@@ -36,7 +36,7 @@
   `pnpm perf --update` after an intended change).
 
   Current baseline (2026-10-12, production build on Gyral 0.3.1 with automatic components;
-  0.3.2 and 0.3.3 build the same bytes; ADR 0001): JS gzip home 33.6 KiB, category 42.6 KiB, product 42.5 KiB
+  0.3.2, 0.3.3 and 0.3.4 build the same bytes; ADR 0001): JS gzip home 33.6 KiB, category 42.6 KiB, product 42.5 KiB
   (`scripts/perf-baseline.json`); LCP 788–816 ms; CLS 0. Automatic components took 0.4–0.5 KiB
   off each page compared with the shop's former hand-written loader (ADR 0001, "Automatic
   components"). Earlier baselines are in the history of this file and ADR 0001.
