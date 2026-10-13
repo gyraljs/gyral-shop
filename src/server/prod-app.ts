@@ -6,6 +6,7 @@ import type { NodeEnv } from '@gyral/ssr/node';
 import { productionServer } from '@gyral/ssr/static';
 import type { Config } from '../config/env.js';
 import type { Db } from '../db/client.js';
+import type { CatalogChanges } from '../services/container.js';
 import { createApp } from './app.js';
 import { staticPolicy } from './csp.js';
 import type { ComponentAssets, ComponentModule } from '@gyral/ssr';
@@ -19,6 +20,8 @@ export interface ProdOptions {
   readonly db: Db;
   readonly config: Pick<Config, 'PAYMENT_LATENCY_MS' | 'APP_SECRET' | 'SITE_ORIGIN'> &
     Partial<Pick<Config, 'STORE_TIME_ZONE' | 'TRUST_PROXY'>>;
+  /** Catalog change counter shared with the demo reset, so cached navigation reloads after it. */
+  readonly catalog?: CatalogChanges;
 }
 
 /** The built entry and the modules to preload with it (from the Vite manifest). */
@@ -44,6 +47,7 @@ export const productionApp = (options: Omit<ProdOptions, 'distDir'>, assets: Cli
     ...(options.config.SITE_ORIGIN === undefined ? {} : { siteOrigin: options.config.SITE_ORIGIN }),
     services: {
       paymentLatencyMs: options.config.PAYMENT_LATENCY_MS,
+      ...(options.catalog === undefined ? {} : { catalog: options.catalog }),
       ...(options.config.STORE_TIME_ZONE === undefined
         ? {}
         : { timeZone: options.config.STORE_TIME_ZONE }),

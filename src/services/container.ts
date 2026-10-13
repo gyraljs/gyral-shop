@@ -12,6 +12,17 @@ export interface CatalogChanges {
   readonly changed: () => void;
 }
 
+/** A fresh change counter (one per app; demo resets share it with the app: src/server/prod.ts). */
+export function catalogChanges(): CatalogChanges {
+  let version = 0;
+  return {
+    version: () => version,
+    changed: () => {
+      version += 1;
+    },
+  };
+}
+
 export interface Services {
   readonly db: Db;
   readonly catalog: CatalogChanges;
@@ -36,21 +47,17 @@ export interface ServiceOptions {
   readonly timeZone?: string;
   readonly mailer?: Mailer;
   readonly payments?: PaymentProvider;
+  /** Shared with code outside the app that changes the catalog (the nightly demo reset). */
+  readonly catalog?: CatalogChanges;
 }
 
 export function createServices(options: ServiceOptions): Services {
   const { db } = options;
   const now = options.now ?? (() => new Date());
-  let version = 0;
   return {
     db,
     now,
-    catalog: {
-      version: () => version,
-      changed: () => {
-        version += 1;
-      },
-    },
+    catalog: options.catalog ?? catalogChanges(),
     secret: options.secret ?? randomBytes(32).toString('hex'),
     timeZone: options.timeZone ?? 'America/New_York',
     mailer: options.mailer ?? createMailer(db),

@@ -9,12 +9,22 @@ function isBareOrigin(s: string): boolean {
   return http && u.pathname === '/' && u.search === '' && u.hash === '';
 }
 
+/** The seeded admin's password when SEED_ADMIN_PASSWORD is unset. Public: development only. */
+export const DEFAULT_ADMIN_PASSWORD = 'gyral-admin-2026';
+
 /** A boolean switch: 1/true/yes/on or 0/false/no/off (any case). */
 const flag = v.pipe(
   v.string(),
   v.toLowerCase(),
   v.picklist(['1', 'true', 'yes', 'on', '0', 'false', 'no', 'off']),
   v.transform((s) => ['1', 'true', 'yes', 'on'].includes(s)),
+);
+
+/** A local wall-clock time, 24-hour HH:MM, as minutes after midnight. */
+const clockTime = v.pipe(
+  v.string(),
+  v.regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'must be a 24-hour time such as 03:00'),
+  v.transform((s) => Number(s.slice(0, 2)) * 60 + Number(s.slice(3))),
 );
 
 /** Settings parsed once at startup (parse, don't validate: docs/design-docs/core-beliefs.md). */
@@ -54,6 +64,17 @@ const Env = v.object({
    * client could pick its own rate-limit key. Default off.
    */
   TRUST_PROXY: v.optional(flag, '0'),
+  /**
+   * Demo mode: every day at this local time (HH:MM in STORE_TIME_ZONE) the server puts the
+   * database back to the freshly seeded state, and it migrates and seeds an empty database at
+   * startup (src/services/demo.ts). Unset: no resets, no seeding at startup.
+   */
+  DEMO_RESET_AT: v.optional(clockTime),
+  /**
+   * The seeded admin's password (`pnpm db:seed`, demo seeding and resets). Defaults to the
+   * public DEFAULT_ADMIN_PASSWORD, which production refuses.
+   */
+  SEED_ADMIN_PASSWORD: v.optional(v.pipe(v.string(), v.minLength(12))),
 });
 
 export type Config = v.InferOutput<typeof Env>;
@@ -72,5 +93,25 @@ export function loadConfig(
   if (result.output.NODE_ENV === 'production' && result.output.SITE_ORIGIN === undefined) {
     throw new Error('Invalid environment: SITE_ORIGIN is required in production');
   }
+  if (result.output.NODE_ENV === 'production' && result.output.DEMO_RESET_AT !== undefined) {
+    seedAdminPassword(result.output); // demo mode seeds: refuse the public default up front
+  }
   return result.output;
+}
+
+/**
+ * The password to give the seeded admin. In production it must be set and must not be the
+ * public default, which anyone who reads the repository knows.
+ */
+export function seedAdminPassword(
+  config: Pick<Config, 'NODE_ENV' | 'SEED_ADMIN_PASSWORD'>,
+): string {
+  const password = config.SEED_ADMIN_PASSWORD ?? DEFAULT_ADMIN_PASSWORD;
+  if (config.NODE_ENV === 'production' && password === DEFAULT_ADMIN_PASSWORD) {
+    throw new Error(
+      'Invalid environment: set SEED_ADMIN_PASSWORD (12+ characters, not the public default) ' +
+        'to seed in production',
+    );
+  }
+  return password;
 }

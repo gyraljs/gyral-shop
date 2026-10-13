@@ -53,6 +53,18 @@ export function dayOfIn(instant: Date, zone: string): string {
   return `${pad(p.year, 4)}-${pad(p.month)}-${pad(p.day)}`;
 }
 
+/** The local calendar day (YYYY-MM-DD) and minutes after local midnight at `instant`. */
+export function wallClockIn(
+  instant: Date,
+  zone: string,
+): { readonly day: string; readonly minutes: number } {
+  const p = partsIn(instant, zone);
+  return {
+    day: `${pad(p.year, 4)}-${pad(p.month)}-${pad(p.day)}`,
+    minutes: p.hour * 60 + p.minute,
+  };
+}
+
 /** The instant a calendar day (YYYY-MM-DD) starts in `zone`: its local midnight. */
 export function dayStartIn(day: string, zone: string): Date {
   const [y = 0, m = 1, d = 1] = day.split('-').map(Number);

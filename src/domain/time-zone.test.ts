@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { salesWindows } from './admin.js';
-import { addDays, dayOfIn, dayStartIn, isTimeZone } from './time-zone.js';
+import { addDays, dayOfIn, dayStartIn, isTimeZone, wallClockIn } from './time-zone.js';
 
 const NY = 'America/New_York';
 const iso = (d: Date) => d.toISOString();
@@ -65,5 +65,24 @@ describe('dashboard sales windows in the store time zone', () => {
     expect(iso(salesWindows(new Date('2026-03-08T03:30:00Z')).today)).toBe(
       '2026-03-08T00:00:00.000Z',
     );
+  });
+});
+
+describe('wall clock in the store time zone', () => {
+  it('gives the local day and minutes after local midnight', () => {
+    // 07:30 UTC is 03:30 in New York in summer (EDT, UTC-4) and 02:30 in winter (EST, UTC-5).
+    expect(wallClockIn(new Date('2026-07-01T07:30:00Z'), NY)).toEqual({
+      day: '2026-07-01',
+      minutes: 210,
+    });
+    expect(wallClockIn(new Date('2026-01-01T07:30:00Z'), NY)).toEqual({
+      day: '2026-01-01',
+      minutes: 150,
+    });
+    // Just before local midnight, the UTC date is already the next day.
+    expect(wallClockIn(new Date('2026-07-02T03:59:00Z'), NY)).toEqual({
+      day: '2026-07-01',
+      minutes: 1439,
+    });
   });
 });
