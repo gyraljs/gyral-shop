@@ -19,7 +19,7 @@ Status: **accepted** (2026-10-04)
   route tests against an in-memory SQLite, `axe-core` for accessibility (page tests and
   `pnpm ui:check`).
 - **Deployment:** local only until 2026-10-13; since then one public demo at
-  https://shop.gyral.dev, a Docker image behind Traefik ([ADR 0007](0007-deployment.md)).
+  https://demo-shop.gyral.dev, a Docker image behind Traefik ([ADR 0007](0007-deployment.md)).
 
 ## Addendum: public origin (2026-10-04)
 

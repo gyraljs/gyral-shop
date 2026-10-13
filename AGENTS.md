@@ -37,8 +37,8 @@ system of record.
 | [docs/design-docs/](docs/design-docs/index.md)     | Decisions (ADRs)                                |
 | `src/domain` … `src/client`                        | The layers, in dependency order                 |
 | `test/node`, `test/browser`                        | Cross-layer tests (route + DB, full pages)      |
-| `Dockerfile`, `deploy/`                            | The shop.gyral.dev image and compose file       |
-| [docs/references/](docs/references/deploying.md)   | How-tos: deploying shop.gyral.dev               |
+| `Dockerfile`, `deploy/`                            | The demo-shop.gyral.dev image and compose file  |
+| [docs/references/](docs/references/deploying.md)   | How-tos: deploying demo-shop.gyral.dev          |
 
 ## Read before changing…
 

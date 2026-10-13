@@ -1,11 +1,11 @@
-# ADR 0007 — Deployment: the public demo at shop.gyral.dev
+# ADR 0007 — Deployment: the public demo at demo-shop.gyral.dev
 
 Status: **accepted** (2026-10-13). Supersedes the "Local only" line of
 [ADR 0001](0001-stack.md). Keeps [ADR 0004](0004-local-ci.md): nothing builds or deploys on push.
 
 ## Decision
 
-The shop has one deployment: **https://shop.gyral.dev**, a public demo. It runs as one Docker
+The shop has one deployment: **https://demo-shop.gyral.dev**, a public demo. It runs as one Docker
 container on the owner's VPS behind the Traefik that already serves `mcp.gyral.dev`, and
 [`deploy/compose.yaml`](../../deploy/compose.yaml) mirrors that service's compose file. Payments
 stay mocked and mail stays in the database outbox, so the demo takes no money and sends nothing.

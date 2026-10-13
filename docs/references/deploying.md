@@ -1,4 +1,4 @@
-# Deploying shop.gyral.dev
+# Deploying demo-shop.gyral.dev
 
 How the owner runs the public demo on the VPS, behind the Traefik that already serves
 `mcp.gyral.dev`. Why it works this way: [ADR 0007](../design-docs/0007-deployment.md).
@@ -12,7 +12,7 @@ before it listens, and every night at `DEMO_RESET_AT` it puts the store back to 
 | Variable              | Value on the VPS                    | Notes                                                                   |
 | --------------------- | ----------------------------------- | ----------------------------------------------------------------------- |
 | `GYRAL_SHOP_IMAGE`    | `registry…/gyral-shop@sha256:…`     | The digest printed by the push (below). Never a moving tag.             |
-| `SITE_ORIGIN`         | `https://shop.gyral.dev`            | Must equal the image's `SITE_ORIGIN` build argument.                    |
+| `SITE_ORIGIN`         | `https://demo-shop.gyral.dev`       | Must equal the image's `SITE_ORIGIN` build argument.                    |
 | `APP_SECRET`          | `openssl rand -hex 32`              | Signs order-access cookies and checkout keys. Required.                 |
 | `SEED_ADMIN_PASSWORD` | `openssl rand -base64 18`           | `admin@shop.test`'s password, applied at every reset. Never the default |
 | `DEMO_RESET_AT`       | `03:00`                             | Nightly reset, local time in `STORE_TIME_ZONE`.                         |
@@ -25,8 +25,8 @@ through Traefik, and Traefik replaces any `X-Forwarded-*` headers a client sends
 
 ## First deployment
 
-1. **DNS:** add an `A` record (and `AAAA`, if the VPS has IPv6) for `shop.gyral.dev` pointing
-   at the VPS, like `mcp.gyral.dev`. Wait until `dig +short shop.gyral.dev` answers with it:
+1. **DNS:** add an `A` record (and `AAAA`, if the VPS has IPv6) for `demo-shop.gyral.dev` pointing
+   at the VPS, like `mcp.gyral.dev`. Wait until `dig +short demo-shop.gyral.dev` answers with it:
    Let's Encrypt has to reach the name before Traefik can get the certificate.
 2. **Files:** on the VPS, make a directory with this repository's `deploy/compose.yaml` and
    `deploy/.env.example`, saved as `.env`:
@@ -55,8 +55,8 @@ through Traefik, and Traefik replaces any `X-Forwarded-*` headers a client sends
 ```sh
 docker compose ps                          # gyral-shop … (healthy), after up to ~30 s
 docker compose logs gyral-shop | head      # see below
-curl -s https://shop.gyral.dev/healthz     # {"status":"ok"}
-curl -sI https://shop.gyral.dev/about | grep -i -E '^(HTTP|cache-control|strict-transport)'
+curl -s https://demo-shop.gyral.dev/healthz     # {"status":"ok"}
+curl -sI https://demo-shop.gyral.dev/about | grep -i -E '^(HTTP|cache-control|strict-transport)'
 ```
 
 The first start logs:
@@ -122,7 +122,7 @@ pnpm install && pnpm check              # after moving @gyral/* to the new relea
 SHA=$(git rev-parse HEAD)
 IMAGE=registry.livepeer.tools/gyraljs/gyral-shop
 docker build \
-  --build-arg SITE_ORIGIN=https://shop.gyral.dev \
+  --build-arg SITE_ORIGIN=https://demo-shop.gyral.dev \
   --build-arg SOURCE_REVISION="$SHA" \
   -t "$IMAGE:sha-$SHA" -t "$IMAGE:latest" .
 docker push "$IMAGE:sha-$SHA" && docker push "$IMAGE:latest"

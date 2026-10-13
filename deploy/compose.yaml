@@ -1,4 +1,4 @@
-# https://shop.gyral.dev: gyral-shop behind the existing Traefik (the one serving mcp.gyral.dev).
+# https://demo-shop.gyral.dev: gyral-shop behind the existing Traefik (the one serving mcp.gyral.dev).
 # Traefik owns the public ports and TLS; this service only joins its network.
 # Steps, verification and rollback: docs/references/deploying.md.
 services:
@@ -21,7 +21,7 @@ services:
     labels:
       traefik.enable: 'true'
       traefik.docker.network: ${TRAEFIK_NETWORK:?Set the existing Traefik network name}
-      traefik.http.routers.gyral-shop.rule: Host(`shop.gyral.dev`)
+      traefik.http.routers.gyral-shop.rule: Host(`demo-shop.gyral.dev`)
       traefik.http.routers.gyral-shop.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
       traefik.http.routers.gyral-shop.tls: 'true'
       traefik.http.routers.gyral-shop.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:?Set the existing certificate resolver name}
@@ -44,7 +44,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 5200
-      SITE_ORIGIN: ${SITE_ORIGIN:-https://shop.gyral.dev}
+      SITE_ORIGIN: ${SITE_ORIGIN:-https://demo-shop.gyral.dev}
       APP_SECRET: ${APP_SECRET:?Set APP_SECRET (openssl rand -hex 32)}
       # Traefik replaces X-Forwarded-For/Proto/Host, and this container is reachable only
       # through it (no published ports), so the app may key rate limits on X-Forwarded-For.

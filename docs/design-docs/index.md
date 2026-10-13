@@ -12,4 +12,4 @@ listed below (`pnpm invariants` checks).
 | [0004-local-ci.md](0004-local-ci.md)                   | accepted | CI workflows that only run locally via `gh act`                                                                |
 | [0005-testing.md](0005-testing.md)                     | accepted | Unit, route (in-memory DB), page (SSR fixture + hydrate + axe) and no-JS end-to-end tests                      |
 | [0006-theming.md](0006-theming.md)                     | accepted | Zen Garden theme contract: semantic hooks, layers, tokens only, light-DOM pages, widget parts, theme switching |
-| [0007-deployment.md](0007-deployment.md)               | accepted | shop.gyral.dev: Docker behind Traefik, `TRUST_PROXY`, `/healthz`, the nightly in-process demo reset            |
+| [0007-deployment.md](0007-deployment.md)               | accepted | demo-shop.gyral.dev: Docker behind Traefik, `TRUST_PROXY`, `/healthz`, the nightly in-process demo reset       |

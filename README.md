@@ -30,7 +30,7 @@ pnpm build         # dist/client (hashed assets) + dist/static (about, FAQ, term
 NODE_ENV=production APP_SECRET=<32+ chars> SITE_ORIGIN=https://your.host pnpm start
 ```
 
-The public demo at https://shop.gyral.dev runs this server in Docker (`Dockerfile`,
+The public demo at https://demo-shop.gyral.dev runs this server in Docker (`Dockerfile`,
 `deploy/compose.yaml`) behind Traefik, with `TRUST_PROXY=1` and a nightly reset to the seed
 (`DEMO_RESET_AT`). Steps: [docs/references/deploying.md](docs/references/deploying.md); design:
 [ADR 0007](docs/design-docs/0007-deployment.md).

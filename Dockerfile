@@ -1,7 +1,7 @@
 # gyral-shop production image (docs/design-docs/0007-deployment.md, docs/references/deploying.md).
 # Built by hand, never by CI (ADR 0004):
 #
-#   docker build --build-arg SITE_ORIGIN=https://shop.gyral.dev \
+#   docker build --build-arg SITE_ORIGIN=https://demo-shop.gyral.dev \
 #     --build-arg SOURCE_REVISION=$(git rev-parse HEAD) -t gyral-shop .
 #
 # The base image is pinned by digest (the multi-arch index). To move to a newer Node 24 patch:
@@ -20,7 +20,7 @@ COPY package.json pnpm-lock.yaml ./
 FROM pnpm AS build
 RUN pnpm install --frozen-lockfile
 COPY . .
-ARG SITE_ORIGIN=https://shop.gyral.dev
+ARG SITE_ORIGIN=https://demo-shop.gyral.dev
 RUN export DATABASE_URL=file:/tmp/build/shop.db \
     && pnpm exec tsx src/db/migrate.ts \
     && pnpm exec tsx scripts/seed.ts > /dev/null \
@@ -33,7 +33,7 @@ FROM pnpm AS deps
 RUN pnpm install --frozen-lockfile --prod
 
 FROM ${NODE_IMAGE}
-ARG SITE_ORIGIN=https://shop.gyral.dev
+ARG SITE_ORIGIN=https://demo-shop.gyral.dev
 ARG SOURCE_REVISION=development
 LABEL org.opencontainers.image.source="https://github.com/gyraljs/gyral-shop" \
     org.opencontainers.image.description="gyral-shop, a department-store demo built with Gyral" \

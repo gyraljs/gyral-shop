@@ -46,7 +46,7 @@ come from `src/config/env.ts` (valibot): `APP_SECRET` and `SITE_ORIGIN` are requ
 proxy that overwrites them); `DEMO_RESET_AT` turns on demo mode (migrate and seed an empty
 database at startup, reset it to the seed nightly, `src/services/demo*.ts`), which needs a
 private `SEED_ADMIN_PASSWORD`. Beside the hourly purge, those are the only in-process jobs.
-`GET /healthz` reports whether the database answers. The deployment at https://shop.gyral.dev
+`GET /healthz` reports whether the database answers. The deployment at https://demo-shop.gyral.dev
 is a Docker image behind Traefik (`Dockerfile`, `deploy/`; ADR 0007).
 
 ## Gyral
