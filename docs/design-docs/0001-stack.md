@@ -18,7 +18,8 @@ Status: **accepted** (2026-10-04)
 - **Testing:** Vitest browser mode (Chromium) for UI, Node project for domain/db/services and
   route tests against an in-memory SQLite, `axe-core` for accessibility (page tests and
   `pnpm ui:check`).
-- **Local only** for now: no deployment target.
+- **Deployment:** local only until 2026-10-13; since then one public demo at
+  https://shop.gyral.dev, a Docker image behind Traefik ([ADR 0007](0007-deployment.md)).
 
 ## Addendum: public origin (2026-10-04)
 

@@ -18,7 +18,7 @@ system of record.
 | `pnpm check`                | **The gate**: typecheck, lint, format, invariants, tests, `smoke:prod`, fixture check                                                      |
 | `pnpm dev`                  | Dev server with SSR + HMR: http://localhost:5200                                                                                           |
 | `pnpm build`                | Production client build + prerender static pages (needs a seeded DB)                                                                       |
-| `pnpm start`                | Production server (`APP_SECRET` required; `SITE_ORIGIN` for static pages)                                                                  |
+| `pnpm start`                | Production server (`APP_SECRET` required; `SITE_ORIGIN` for static pages; `DEMO_RESET_AT` = demo mode, ADR 0007)                           |
 | `pnpm db:reset`             | Recreate `data/shop.db`, migrate, seed                                                                                                     |
 | `pnpm db:purge`             | Delete expired sessions and orphaned guest carts (servers also do it hourly)                                                               |
 | `pnpm db:generate`          | Generate a migration after editing `src/db/schema.ts`                                                                                      |
@@ -37,6 +37,8 @@ system of record.
 | [docs/design-docs/](docs/design-docs/index.md)     | Decisions (ADRs)                                |
 | `src/domain` … `src/client`                        | The layers, in dependency order                 |
 | `test/node`, `test/browser`                        | Cross-layer tests (route + DB, full pages)      |
+| `Dockerfile`, `deploy/`                            | The shop.gyral.dev image and compose file       |
+| [docs/references/](docs/references/deploying.md)   | How-tos: deploying shop.gyral.dev               |
 
 ## Read before changing…
 
@@ -49,6 +51,7 @@ system of record.
 | CI                                     | [0004-local-ci.md](docs/design-docs/0004-local-ci.md)                        |
 | **Any markup or CSS**                  | [0006-theming.md](docs/design-docs/0006-theming.md) (binding theme contract) |
 | Writing tests, fixtures                | [0005-testing.md](docs/design-docs/0005-testing.md)                          |
+| Docker, deployment, env, demo reset    | [0007-deployment.md](docs/design-docs/0007-deployment.md)                    |
 
 ## Skills to load
 

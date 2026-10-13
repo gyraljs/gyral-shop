@@ -38,6 +38,17 @@ reaches it as props (SSR) or over HTTP.
   else per request, adding the security headers to files served from disk.
 - **csr:** admin UI behind auth.
 
+## Production
+
+`pnpm start` (`src/server/prod.ts`) serves the build through Gyral's `productionServer`. Settings
+come from `src/config/env.ts` (valibot): `APP_SECRET` and `SITE_ORIGIN` are required;
+`TRUST_PROXY` makes rate limits and the CSRF origin check read `X-Forwarded-*` (only behind a
+proxy that overwrites them); `DEMO_RESET_AT` turns on demo mode (migrate and seed an empty
+database at startup, reset it to the seed nightly, `src/services/demo*.ts`), which needs a
+private `SEED_ADMIN_PASSWORD`. Beside the hourly purge, those are the only in-process jobs.
+`GET /healthz` reports whether the database answers. The deployment at https://shop.gyral.dev
+is a Docker image behind Traefik (`Dockerfile`, `deploy/`; ADR 0007).
+
 ## Gyral
 
 `@gyral/*` exactly 0.3.3 from npm (ADR 0001). Gyral renders

@@ -143,6 +143,12 @@ origin-verified consent POST accept an origin from `acceptedOrigins()`
 Without `SITE_ORIGIN` or `trustProxy`, a public origin that differs from the request URL is
 refused (no guessing). Tests: `test/node/proxy-origin.test.ts`.
 
+Since 2026-10-13 production sets `trustProxy` from the `TRUST_PROXY` setting (off by default;
+`src/config/env.ts`), for the deployment behind Traefik ([ADR 0007](0007-deployment.md)). With
+it, rate limits key on the first `X-Forwarded-For` address, so visitors don't share the proxy's
+budget. `prod.test.ts` › "with TRUST_PROXY, rate-limits each client by the X-Forwarded-For the
+proxy sets".
+
 ## Addendum: strict `style-src` with Gyral 0.3 (gyral-g1r.14, 2026-10-06)
 
 Gyral 0.3 hashes styles for us (`@gyral/ssr`), so `style-src` drops `'unsafe-inline'`.
