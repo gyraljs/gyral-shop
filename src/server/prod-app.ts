@@ -18,7 +18,7 @@ export interface ProdOptions {
   readonly distDir: string;
   readonly db: Db;
   readonly config: Pick<Config, 'PAYMENT_LATENCY_MS' | 'APP_SECRET' | 'SITE_ORIGIN'> &
-    Partial<Pick<Config, 'STORE_TIME_ZONE'>>;
+    Partial<Pick<Config, 'STORE_TIME_ZONE' | 'TRUST_PROXY'>>;
 }
 
 /** The built entry and the modules to preload with it (from the Vite manifest). */
@@ -39,7 +39,8 @@ export const productionApp = (options: Omit<ProdOptions, 'distDir'>, assets: Cli
     ...assets,
     db: options.db,
     mode: 'production',
-    security: { dev: false },
+    // TRUST_PROXY: the client address and forwarded origin come from X-Forwarded-* (env.ts).
+    security: { dev: false, trustProxy: options.config.TRUST_PROXY ?? false },
     ...(options.config.SITE_ORIGIN === undefined ? {} : { siteOrigin: options.config.SITE_ORIGIN }),
     services: {
       paymentLatencyMs: options.config.PAYMENT_LATENCY_MS,

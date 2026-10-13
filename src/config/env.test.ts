@@ -50,4 +50,15 @@ describe('config', () => {
     expect(loadConfig({ STORE_TIME_ZONE: 'Europe/Berlin' }).STORE_TIME_ZONE).toBe('Europe/Berlin');
     expect(() => loadConfig({ STORE_TIME_ZONE: 'Eastern' })).toThrow(/STORE_TIME_ZONE/);
   });
+
+  it('trusts proxy headers only when TRUST_PROXY is switched on', () => {
+    expect(loadConfig({}).TRUST_PROXY).toBe(false);
+    for (const on of ['1', 'true', 'TRUE', 'yes', 'on']) {
+      expect(loadConfig({ TRUST_PROXY: on }).TRUST_PROXY).toBe(true);
+    }
+    for (const off of ['0', 'false', 'no', 'off']) {
+      expect(loadConfig({ TRUST_PROXY: off }).TRUST_PROXY).toBe(false);
+    }
+    expect(() => loadConfig({ TRUST_PROXY: 'maybe' })).toThrow(/TRUST_PROXY/);
+  });
 });

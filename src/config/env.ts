@@ -9,6 +9,14 @@ function isBareOrigin(s: string): boolean {
   return http && u.pathname === '/' && u.search === '' && u.hash === '';
 }
 
+/** A boolean switch: 1/true/yes/on or 0/false/no/off (any case). */
+const flag = v.pipe(
+  v.string(),
+  v.toLowerCase(),
+  v.picklist(['1', 'true', 'yes', 'on', '0', 'false', 'no', 'off']),
+  v.transform((s) => ['1', 'true', 'yes', 'on'].includes(s)),
+);
+
 /** Settings parsed once at startup (parse, don't validate: docs/design-docs/core-beliefs.md). */
 const Env = v.object({
   DATABASE_URL: v.optional(v.pipe(v.string(), v.minLength(1)), 'file:data/shop.db'),
@@ -39,6 +47,13 @@ const Env = v.object({
   ),
   /** Signs values such as order-confirmation access cookies. Required in production. */
   APP_SECRET: v.optional(v.pipe(v.string(), v.minLength(32))),
+  /**
+   * Trust X-Forwarded-For/Proto/Host for the client address (rate limits) and the forwarded
+   * origin (CSRF). Set it only when the app is reachable solely through a proxy that overwrites
+   * those headers (e.g. Traefik, which by default replaces what the client sent); otherwise any
+   * client could pick its own rate-limit key. Default off.
+   */
+  TRUST_PROXY: v.optional(flag, '0'),
 });
 
 export type Config = v.InferOutput<typeof Env>;

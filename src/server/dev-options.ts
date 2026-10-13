@@ -17,7 +17,7 @@ export function devAppOptions(config: Config, db: Db): AppOptions {
     db,
     mode: config.NODE_ENV,
     ...(config.SITE_ORIGIN === undefined ? {} : { siteOrigin: config.SITE_ORIGIN }),
-    security: { dev: config.NODE_ENV === 'development' },
+    security: { dev: config.NODE_ENV === 'development', trustProxy: config.TRUST_PROXY },
     services: {
       paymentLatencyMs: config.PAYMENT_LATENCY_MS,
       timeZone: config.STORE_TIME_ZONE,

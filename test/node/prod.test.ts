@@ -169,4 +169,36 @@ describe('production build', () => {
     // In-process (no env, key 'unknown'): a different client, so its budget is untouched.
     expect((await register(req)).status).toBe(422);
   });
+
+  it('with TRUST_PROXY, rate-limits each client by the X-Forwarded-For the proxy sets', async () => {
+    const proxied = await createProdApp({
+      distDir: dist,
+      db,
+      config: { ...config, TRUST_PROXY: true },
+    });
+    const session = await createSession(db, { now: new Date() });
+    const served = await serveFetch(proxied.fetch);
+    const register = (client: string) =>
+      fetch(served.url('/account/register'), {
+        method: 'POST',
+        headers: {
+          cookie: `${SESSION_COOKIE}=${session.id}`,
+          'x-forwarded-for': client,
+          'x-forwarded-proto': 'https',
+          'x-forwarded-host': 'shop.example',
+          origin: 'https://shop.example',
+        },
+        body: new URLSearchParams({ name: 'X', email: 'x', [CSRF_FIELD]: session.csrfToken }),
+      }).then((r) => r.status);
+    try {
+      const statuses: number[] = [];
+      for (let n = 0; n < 6; n += 1) statuses.push(await register('203.0.113.9'));
+      expect(statuses).toEqual([422, 422, 422, 422, 422, 429]);
+      // Every connection comes from the proxy (loopback here), yet another client has its own
+      // budget: without TRUST_PROXY all visitors would share the proxy's.
+      expect(await register('198.51.100.4')).toBe(422);
+    } finally {
+      await served.close();
+    }
+  });
 });
