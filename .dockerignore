@@ -1,0 +1,23 @@
+# Only what `pnpm build` and the runtime need goes into the build context (Dockerfile).
+.git
+.github
+.beads
+.dolt
+.claude
+.gyral
+.ui-check
+.vitest
+.env
+.actrc
+node_modules
+dist
+data
+coverage
+deploy
+test
+ui-scenarios
+scripts/test
+**/*.test.ts
+**/__screenshots__
+*.db
+*.db-*

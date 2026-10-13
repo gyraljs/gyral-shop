@@ -1,0 +1,79 @@
+# https://shop.gyral.dev: gyral-shop behind the existing Traefik (the one serving mcp.gyral.dev).
+# Traefik owns the public ports and TLS; this service only joins its network.
+# Steps, verification and rollback: docs/references/deploying.md.
+services:
+  gyral-shop:
+    image: ${GYRAL_SHOP_IMAGE:?Set the published image digest in .env}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    # tsx keeps its compile cache in /tmp; everything else written lives in the volume.
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+    cpus: 1
+    pids_limit: 128
+    stop_grace_period: 10s
+    volumes:
+      - gyral-shop-data:/app/data
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: ${TRAEFIK_NETWORK:?Set the existing Traefik network name}
+      traefik.http.routers.gyral-shop.rule: Host(`shop.gyral.dev`)
+      traefik.http.routers.gyral-shop.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.gyral-shop.tls: 'true'
+      traefik.http.routers.gyral-shop.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:?Set the existing certificate resolver name}
+      traefik.http.routers.gyral-shop.service: gyral-shop
+      traefik.http.routers.gyral-shop.middlewares: gyral-shop-rate,gyral-shop-inflight,gyral-shop-body
+      traefik.http.services.gyral-shop.loadbalancer.server.port: '5200'
+      traefik.http.services.gyral-shop.loadbalancer.server.scheme: http
+      traefik.http.services.gyral-shop.loadbalancer.passhostheader: 'true'
+      # Per client address. A cold category page fetches ~20 scripts and 24 product images
+      # (hashed assets are cached for a year after that), so the burst is generous; the app
+      # keeps its own, much tighter limits on sign-in, registration, resets and contact.
+      traefik.http.middlewares.gyral-shop-rate.ratelimit.average: '30'
+      traefik.http.middlewares.gyral-shop-rate.ratelimit.period: 1s
+      traefik.http.middlewares.gyral-shop-rate.ratelimit.burst: '150'
+      traefik.http.middlewares.gyral-shop-rate.ratelimit.sourcecriterion.ipstrategy.depth: '0'
+      traefik.http.middlewares.gyral-shop-inflight.inflightreq.amount: '32'
+      traefik.http.middlewares.gyral-shop-inflight.inflightreq.sourcecriterion.ipstrategy.depth: '0'
+      # Forms and the admin's JSON only: the shop takes no file uploads.
+      traefik.http.middlewares.gyral-shop-body.buffering.maxrequestbodybytes: '262144'
+    environment:
+      NODE_ENV: production
+      PORT: 5200
+      SITE_ORIGIN: ${SITE_ORIGIN:-https://shop.gyral.dev}
+      APP_SECRET: ${APP_SECRET:?Set APP_SECRET (openssl rand -hex 32)}
+      # Traefik replaces X-Forwarded-For/Proto/Host, and this container is reachable only
+      # through it (no published ports), so the app may key rate limits on X-Forwarded-For.
+      TRUST_PROXY: '1'
+      DEMO_RESET_AT: ${DEMO_RESET_AT:-03:00}
+      STORE_TIME_ZONE: ${STORE_TIME_ZONE:-America/New_York}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:?Set a private admin password (12+ characters)}
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          const req = require('node:http').get({ host: '127.0.0.1', port: process.env.PORT,
+          path: '/healthz' }, r => process.exit(r.statusCode === 200 ? 0 : 1));
+          req.setTimeout(3000, () => req.destroy()); req.on('error', () => process.exit(1));
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      # The first start on an empty volume migrates and seeds before it listens (~5 s).
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+volumes:
+  gyral-shop-data:
+networks:
+  default:
+    external: true
+    name: ${TRAEFIK_NETWORK:?Set the existing Traefik network name}
