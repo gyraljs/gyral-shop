@@ -186,6 +186,12 @@ hash; only the `.vite` metadata differs. The repeated preloads after the body (G
 gyral-9b0) are still there in 0.3.3 (with `withoutHeadPreloads` removed, `prod.test.ts` again
 finds the entry linked twice), so the workaround stays.
 
+## Stable npm 0.3.5 (2026-10-14)
+
+All six packages moved to exact registry 0.3.5. 0.3.5 adds template rule 15 (a JSX-style
+component tag such as `<SignupForm>` is a template error); none of the shop's templates uses
+one, and all 40 emitted client assets are byte-identical to the 0.3.4 build.
+
 ## Stable npm 0.3.4 (2026-10-13)
 
 All six packages moved to exact registry 0.3.4, with one core and no file overrides. 0.3.4's
