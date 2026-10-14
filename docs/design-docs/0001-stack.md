@@ -186,6 +186,13 @@ hash; only the `.vite` metadata differs. The repeated preloads after the body (G
 gyral-9b0) are still there in 0.3.3 (with `withoutHeadPreloads` removed, `prod.test.ts` again
 finds the entry linked twice), so the workaround stays.
 
+## Stable npm 0.3.6 (2026-10-14)
+
+All six packages moved to exact registry 0.3.6. 0.3.6 adds a development warning (G0014) for
+custom-element tags that stay undefined after load, runs template rule 15 in the browser only in
+development, and removes the empty `@gyral/ssr/hydrate` entry, which the shop no longer imports;
+all 40 emitted client assets are byte-identical to the 0.3.5 build.
+
 ## Stable npm 0.3.5 (2026-10-14)
 
 All six packages moved to exact registry 0.3.5. 0.3.5 adds template rule 15 (a JSX-style
