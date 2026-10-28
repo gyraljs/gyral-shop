@@ -186,6 +186,27 @@ hash; only the `.vite` metadata differs. The repeated preloads after the body (G
 gyral-9b0) are still there in 0.3.3 (with `withoutHeadPreloads` removed, `prod.test.ts` again
 finds the entry linked twice), so the workaround stays.
 
+## Stable npm 0.3.7 (2026-10-28)
+
+All six packages moved to exact registry 0.3.7, with one core and no file overrides. The
+release's three behavior changes needed no app code (Gyral's
+`docs/references/migrating-0.3.6-to-0.3.7.md`). ESLint and `vite build` find no template rule 16
+error, so no template writes a capital in a custom element's attribute name. The storefront's
+light-DOM components render on the server and hydrate, which the new first-render rules leave
+alone (`smoke:prod` checks that every server node stays). The client-rendered `<shop-admin>`
+app, whose sections are light DOM too, gets no children from the page: its no-JavaScript message
+is already a `<noscript>` beside it. Its `init` command (the location `listen`) now starts after
+its first render, and the admin tests pass unchanged. `tsc` reports no reserved prop name, the
+tests and `smoke:prod` print no Gyral warning, and the browser tests ran with no mid-run
+re-optimization. All 40 client assets get new hashes because the runtime changed, but the client
+JS grows by only 16 bytes gzipped in total (91,306 to 91,322); the entry is 6,658 bytes.
+
+`gyralVitePreset` now pre-bundles every installed Gyral browser entry point itself, adding only
+entries the config doesn't already list. `optimizedDeps()` (`vite.deps.ts`) stays. Of the
+eight modules it finds, six are Gyral's, which the preset would add anyway. The other two are
+`valibot` and `axe-core`, and the walk will also catch any other package the browser graph
+comes to import, which the preset does not cover. The overlap costs nothing.
+
 ## Stable npm 0.3.6 (2026-10-14)
 
 All six packages moved to exact registry 0.3.6. 0.3.6 adds a development warning (G0014) for

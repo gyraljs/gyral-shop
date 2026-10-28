@@ -5,7 +5,8 @@
 // and reloads the page, and Vitest's browser suites fail with "Failed to fetch dynamically
 // imported module". Listing every bare import of the browser import graph in
 // `optimizeDeps.include` changes the config whenever a new import appears, so Vite re-optimizes
-// at startup instead.
+// at startup instead. Since Gyral 0.3.7 the preset adds Gyral's own browser entry points as well
+// (only the ones not listed here); this walk is what covers the other packages (ADR 0001).
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';

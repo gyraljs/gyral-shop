@@ -51,7 +51,7 @@ is a Docker image behind Traefik (`Dockerfile`, `deploy/`; ADR 0007).
 
 ## Gyral
 
-`@gyral/*` exactly 0.3.6 from npm (ADR 0001). Gyral renders
+`@gyral/*` exactly 0.3.7 from npm (ADR 0001). Gyral renders
 with its own view layer (Gyral ADR 0018): `html`, `css`, `each`, `raw`, the
 `invalid` hook and the `prop.*` builders come from `@gyral/core`; there is no
 Lit. `gyralVitePreset()` adds the template compiler to `vite build` (templates precompiled and
