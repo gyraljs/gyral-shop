@@ -286,3 +286,36 @@ gyraljs repository (Gyral's ADR 0032, bead gyral-337.7). `minimumReleaseAge: 201
 as long. A Gyral release the owner verified comes in early through an exact-version
 `minimumReleaseAgeExclude` entry, removed once it is two weeks old. Vite moved to 8.3.4 for
 GHSA-587h-7wmj-h5pm and five other advisories fixed in 8.3.3 (gyral-337.8).
+
+## Addendum: dependency update for Gyral 0.3.8 (2026-10-29)
+
+Every dependency moved to its newest version that is two weeks old (Gyral epic gyral-337), with
+the transitive tree resolved afresh, except TypeScript, which stays on 6.0.3 because
+typescript-eslint supports only `<6.1` (7.0 is out), and `@gyral/*`, which stays on 0.3.7 until
+0.3.8 is published. Playwright is 1.64.1, Vitest and `@vitest/browser-playwright` 5.0.5,
+axe-core and `@axe-core/playwright` 4.14.0, drizzle-orm 0.45.4, typescript-eslint 8.71.2 and
+prettier 3.9.10. The majors are `@types/node` 26 (the shop runs on Node 24; the types follow 26,
+as in gyral.dev, and `tsc` finds nothing to change) and pixelmatch 8, which `pnpm ui:check
+--compare` uses. Its OKLab colour metric keeps the API and the `threshold` scale: on 31 saved
+screenshot pairs, 7.2.0 and 8.0.0 reach the same pass or fail at ui:check's defaults.
+
+pnpm moved from 10.33.2 to 12.14.0, with its settings in `pnpm-workspace.yaml`. pnpm 12 checks
+the lockfile against the age gate on every install, so the verified Gyral 0.3.7 comes in through
+exact `minimumReleaseAgeExclude` entries (until 2026-11-11 or 0.3.8). It also fails on build
+scripts nobody decided on, so `allowBuilds` lists esbuild as not run (pnpm 10 skipped its
+postinstall too). The lockfile gains a first document that pins pnpm itself. The `Dockerfile`
+copies `pnpm-workspace.yaml` into its install stage, so the image's frozen installs apply the
+same settings. The CI workflow pins its actions by commit (checkout v7.0.1 without persisted
+credentials, pnpm/action-setup v6.1.0, setup-node v7.1.0) and Node to 24.22.0.
+
+The image moved from Debian 12 (bookworm) to 13 (trixie): `node:24.22.1-trixie-slim`, pinned by
+its index digest (owner's decision to take every major). 24.22.1 keeps its security exception,
+which ends on 2026-11-03. The image built locally, and a read-only run (a `tmpfs` on `/tmp`, a
+scratch data directory) answered `/healthz` and served the pages.
+
+Held back as too young: eslint 10.13.0 (until 2026-10-30), typescript-eslint 8.72 (11-02), vite
+8.3.5 and pnpm 12.15 (11-04), hono 4.13.14 (11-08), Node 24.22.2 (11-10) and `@types/node` 26.6.6
+(11-11). `pnpm audit` reports one moderate advisory, GHSA-67mh-4wv8-2f99 (esbuild's development
+server answers cross-origin requests), in esbuild 0.18.20 under drizzle-kit's `@esbuild-kit`
+loader. drizzle-kit 0.31.11 is its newest release, and nothing here starts esbuild's server, so
+it isn't reachable.
