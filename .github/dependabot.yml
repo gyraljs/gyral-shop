@@ -1,0 +1,32 @@
+# Dependabot opens update PRs; it adds no workflow triggers. Run `pnpm check` locally on a
+# Dependabot branch before merging. Every ecosystem waits until a version is two weeks old
+# (Gyral's ADR 0032).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 14
+    open-pull-requests-limit: 5
+    # Gyral moves as one release. Other groups take minor and patch bumps only: a major arrives
+    # as its own PR, so one breaking bump can't hold back the safe ones.
+    groups:
+      gyral:
+        patterns: ['@gyral/*']
+      dev-dependencies:
+        dependency-type: development
+        update-types: [minor, patch]
+      runtime-dependencies:
+        dependency-type: production
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 14
+    groups:
+      actions:
+        patterns: ['*']

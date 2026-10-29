@@ -4,9 +4,12 @@
 #   docker build --build-arg SITE_ORIGIN=https://demo-shop.gyral.dev \
 #     --build-arg SOURCE_REVISION=$(git rev-parse HEAD) -t gyral-shop .
 #
-# The base image is pinned by digest (the multi-arch index). To move to a newer Node 24 patch:
-# `docker buildx imagetools inspect node:24-bookworm-slim`, then update the default below.
-ARG NODE_IMAGE=node:24-bookworm-slim@sha256:d6aa754f16b3197301076f047b5def2f02ea1dbbc2ca920407d46d7ec7f87b20
+# The base image is pinned by digest (the multi-arch index) and moves only to a Node 24 patch that
+# is two weeks old (Gyral's ADR 0032): `docker buildx imagetools inspect node:24.x.y-bookworm-slim`,
+# then update the default below. Security exception (gyral-337.8): 24.22.1, released 2026-10-20,
+# fixes CVE-2026-111497 (Brotli decoder overflow) and HTTP agent and TLS flaws, and this image
+# serves HTTP, so it came in early. The exception ends on 2026-11-03.
+ARG NODE_IMAGE=node:24.22.1-bookworm-slim@sha256:be8204d4bd327363357f532187b752ff62759c31bedf98e9e18fc08c9cbd605c
 
 # pnpm at the version package.json's packageManager names, through Node 24's corepack.
 FROM ${NODE_IMAGE} AS pnpm

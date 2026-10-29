@@ -140,5 +140,6 @@ sleep 10 && curl -s localhost:5200/healthz
 docker rm -f shop-try && docker volume rm shop-try
 ```
 
-To bump the base image, run `docker buildx imagetools inspect node:24-bookworm-slim` and put
-the new index digest in the `Dockerfile`'s `NODE_IMAGE` default.
+To bump the base image, pick a Node 24 patch released at least two weeks ago (Gyral's ADR 0032),
+run `docker buildx imagetools inspect node:24.x.y-bookworm-slim` and put the tag and its index
+digest in the `Dockerfile`'s `NODE_IMAGE` default.

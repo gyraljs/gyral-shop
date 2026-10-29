@@ -277,3 +277,12 @@ The loader (`components-*.js`, 1,098 B) is fetched only by pages that render a c
 entry doesn't import, so the prerendered About page, which renders only the shell, skips it.
 Script counts move by one at most: the loader is added, the separate render chunk is gone. `pnpm perf` re-recorded
 `scripts/perf-baseline.json`: home 33.6, category 42.6, product 42.5 KiB; LCP 788–816 ms.
+
+## Addendum: two-week release age (2026-10-29)
+
+A dependency version is adopted only once it has been published for two weeks, as in every
+gyraljs repository (Gyral's ADR 0032, bead gyral-337.7). `minimumReleaseAge: 20160` in
+`pnpm-workspace.yaml` makes pnpm refuse younger versions, and `.github/dependabot.yml` waits
+as long. A Gyral release the owner verified comes in early through an exact-version
+`minimumReleaseAgeExclude` entry, removed once it is two weeks old. Vite moved to 8.3.4 for
+GHSA-587h-7wmj-h5pm and five other advisories fixed in 8.3.3 (gyral-337.8).
