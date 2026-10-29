@@ -13,8 +13,8 @@ The steps are in [deploying.md](../references/deploying.md).
 
 ## The image (`Dockerfile`)
 
-- **Multi-stage, pinned.** `node:24-bookworm-slim`, pinned by the digest of its multi-arch index
-  through the `NODE_IMAGE` build argument. pnpm comes from Node 24's corepack, at the version
+- **Multi-stage, pinned.** `node:24.x.y-bookworm-slim`, a Node 24 patch at least two weeks old,
+  pinned by the digest of its multi-arch index through the `NODE_IMAGE` build argument. pnpm comes from Node 24's corepack, at the version
   `package.json`'s `packageManager` names; installs use `--frozen-lockfile`.
 - **Build stage:** `pnpm build` against a throwaway seeded database (prerendering reads the
   departments), with `SITE_ORIGIN` as a build argument because the prerendered content pages
