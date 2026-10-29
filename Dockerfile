@@ -4,19 +4,22 @@
 #   docker build --build-arg SITE_ORIGIN=https://demo-shop.gyral.dev \
 #     --build-arg SOURCE_REVISION=$(git rev-parse HEAD) -t gyral-shop .
 #
-# The base image is pinned by digest (the multi-arch index) and moves only to a Node 24 patch that
-# is two weeks old (Gyral's ADR 0032): `docker buildx imagetools inspect node:24.x.y-bookworm-slim`,
-# then update the default below. Security exception (gyral-337.8): 24.22.1, released 2026-10-20,
-# fixes CVE-2026-111497 (Brotli decoder overflow) and HTTP agent and TLS flaws, and this image
-# serves HTTP, so it came in early. The exception ends on 2026-11-03.
-ARG NODE_IMAGE=node:24.22.1-bookworm-slim@sha256:be8204d4bd327363357f532187b752ff62759c31bedf98e9e18fc08c9cbd605c
+# The base image (Debian 13 trixie since 2026-10-29) is pinned by digest (the multi-arch index) and
+# moves only to a Node 24 patch that is two weeks old (Gyral's ADR 0032):
+# `docker buildx imagetools inspect node:24.x.y-trixie-slim`, then update the default below.
+# Security exception (gyral-337.8): 24.22.1, released 2026-10-20, fixes CVE-2026-111497 (Brotli
+# decoder overflow) and HTTP agent and TLS flaws, and this image serves HTTP, so it came in early.
+# The exception ends on 2026-11-03.
+ARG NODE_IMAGE=node:24.22.1-trixie-slim@sha256:89c5244bc22a9bc3287d89ebc7e49b9cb5bb84cd40e6175ac3421d5a9f68b95a
 
 # pnpm at the version package.json's packageManager names, through Node 24's corepack.
+# pnpm-workspace.yaml carries the install settings: the release-age gate and its exclusions,
+# which pnpm 12 checks against the lockfile, and allowBuilds.
 FROM ${NODE_IMAGE} AS pnpm
 ENV CI=true COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 WORKDIR /app
 RUN corepack enable
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Client build and prerendered pages. Prerendering reads the departments from a seeded
 # database (a throwaway one here) and bakes SITE_ORIGIN into canonical links and JSON-LD.
