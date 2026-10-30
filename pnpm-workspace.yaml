@@ -2,17 +2,16 @@
 # https://github.com/gyraljs/gyral/blob/main/docs/design-docs/0032-dependency-updates.md).
 minimumReleaseAge: 20160
 
-# Gyral 0.3.7 (published 2026-10-28) is the owner-approved, verified release the shop runs on,
+# Gyral 0.3.8 (published 2026-10-29) is the owner-approved, verified release the shop runs on,
 # so it comes in early (ADR 0032's exception for a Gyral release). pnpm 12 checks the lockfile
-# against the age gate too. Remove these once 0.3.7 is two weeks old (2026-11-11) or the shop
-# moves to 0.3.8.
+# against the age gate too. Remove these once 0.3.8 is two weeks old (2026-11-12).
 minimumReleaseAgeExclude:
-  - '@gyral/core@0.3.7'
-  - '@gyral/http@0.3.7'
-  - '@gyral/router@0.3.7'
-  - '@gyral/ssr@0.3.7'
-  - '@gyral/testing@0.3.7'
-  - '@gyral/time@0.3.7'
+  - '@gyral/core@0.3.8'
+  - '@gyral/http@0.3.8'
+  - '@gyral/router@0.3.8'
+  - '@gyral/ssr@0.3.8'
+  - '@gyral/testing@0.3.8'
+  - '@gyral/time@0.3.8'
 
 # pnpm 12 fails an install whose dependencies have build scripts it was not told about
 # (strictDepBuilds). esbuild (under tsx and drizzle-kit) installs its binary through an

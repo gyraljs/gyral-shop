@@ -1,6 +1,7 @@
-// Automatic components (Gyral `gyralVitePreset({ components })`, ADR 0016): the preset finds
-// every `define<…>()('tag')` under src/ and each page loads exactly the components it rendered.
+// Automatic components (Gyral `gyral({ components })`, ADR 0016): the plugin finds every
+// `define<…>()('tag')` under src/ and each page loads exactly the components it rendered.
 // `modules` (tag → module, relative to the project root) overrides or adds to that scan.
+import type { Plugin } from 'vite';
 
 /**
  * The member forms are defined through `defineMemberForm({ tag })`, which the scan can't see.
@@ -40,3 +41,24 @@ export const componentModules: Readonly<Record<string, string>> = {
   ...memberForms,
   ...adminSections,
 };
+
+/**
+ * Startup scan entries that Gyral 0.3.8's `optimize: 'auto'` leaves out (Gyral bead gyral-5zi;
+ * drop this once 0.3.9 fixes it; ADR 0001, "Stable npm 0.3.8"): the client entry, which Vite
+ * scans by default (`build.rollupOptions.input`) until 'auto' names entries of its own, and the
+ * modules above, which the component scan can't see. With them, a package that only the entry
+ * or a member form imports is pre-bundled at startup, not found mid-run (a page reload, and
+ * "Vite unexpectedly reloaded a test" in Vitest). List it after `gyral()`: its scan is off when
+ * entries are already set.
+ */
+export function scanEntries(): Plugin {
+  return {
+    name: 'shop:scan-entries',
+    apply: 'serve',
+    config: () => ({
+      optimizeDeps: {
+        entries: ['src/client/entry.ts', ...new Set(Object.values(componentModules))],
+      },
+    }),
+  };
+}

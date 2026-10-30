@@ -1,20 +1,22 @@
 import { defineConfig } from 'vitest/config';
 import { playwright } from '@vitest/browser-playwright';
 
-import { gyralVitePreset } from '@gyral/core/vite';
-import { componentModules } from './vite.components.js';
-import { optimizedDeps } from './vite.deps.js';
+import { gyral } from '@gyral/core/vite';
+import { componentModules, scanEntries } from './vite.components.js';
 
 export default defineConfig({
   test: {
     projects: [
       {
-        // Every browser import, derived from the shop's source (vite.deps.ts), plus axe:
-        // a new import changes this list, so Vite re-optimizes at startup instead of mid-run.
-        ...gyralVitePreset({
-          optimize: [...optimizedDeps(), 'axe-core'],
-          components: { modules: componentModules },
-        }),
+        // `optimize: 'auto'`: Vite's startup scan starts at the component modules, the entries
+        // scanEntries() adds and this project's tests, so every browser import (axe-core
+        // included) is pre-bundled before the first test and Vite never re-optimizes mid-run
+        // (ADR 0001). Vitest isn't a custom server, so 'auto' is named here; gyralDevServer gets
+        // it by default.
+        plugins: [
+          gyral({ optimize: 'auto', components: { modules: componentModules } }),
+          scanEntries(),
+        ],
         test: {
           name: 'browser',
           include: ['src/ui/**/*.test.ts', 'test/browser/**/*.test.ts'],

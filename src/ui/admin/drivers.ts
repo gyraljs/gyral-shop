@@ -1,7 +1,7 @@
 // Drivers shared by every admin component (docs/product-specs/admin.md: the admin is a
 // client-rendered app under /admin). One router instance, so navigation from any component
 // reaches the root's listen(); one http driver that adds the CSRF header to every request.
-import type { DriverOverrides } from '@gyral/core';
+import type { DriverList } from '@gyral/core';
 import { csrfFromMeta, makeHttpDriver } from '@gyral/http';
 import { makeRouter } from '@gyral/router';
 import { locationDriver } from '../drivers/location.js';
@@ -13,11 +13,8 @@ export const adminRouter = makeRouter({ captureLinks: true });
 export const adminHttp = makeHttpDriver({ headers: csrfFromMeta(CSRF_META) });
 
 /**
- * The drivers every admin component uses, provided once on the admin page (./app.ts). Tests
- * provide fakes on a nearer element (provideDrivers), which wins over these.
+ * The drivers every admin component uses, provided once on the admin page (./app.ts), each under
+ * its own name (`http`, `router`, `location`). Tests provide fakes on a nearer element
+ * (provideDrivers), which wins over these.
  */
-export const adminDrivers: DriverOverrides = Object.freeze({
-  http: adminHttp,
-  router: adminRouter,
-  location: locationDriver,
-});
+export const adminDrivers: DriverList = Object.freeze([adminHttp, adminRouter, locationDriver]);

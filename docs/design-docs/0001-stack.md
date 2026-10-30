@@ -5,7 +5,7 @@ Status: **accepted** (2026-10-04)
 - **TypeScript, strict, no Effect in app code.** Gyral 0.1 used Effect internally (0.2 dropped it); either way that is its
   business. App code uses plain TypeScript: tagged unions for results and errors, Promises
   for async. ESLint rejects `effect` imports.
-- **Gyral** (core, http, router, time, ssr, testing), exact npm 0.3.4 (see the stable release addenda). Gyral
+- **Gyral** (core, http, router, time, ssr, testing), exact npm 0.3.8 (see the stable release addenda). Gyral
   has its own view layer since 0.3; the app imports `html`, `css`, `each`, `raw`, hooks and
   `prop` from `@gyral/core` and has no Lit dependency.
 - **Hono** for routes and middleware, SSR via `@gyral/ssr`, served on Node by Gyral's adapter
@@ -185,6 +185,64 @@ runtime code, so the app code didn't change and every emitted asset keeps its na
 hash; only the `.vite` metadata differs. The repeated preloads after the body (Gyral bead
 gyral-9b0) are still there in 0.3.3 (with `withoutHeadPreloads` removed, `prod.test.ts` again
 finds the entry linked twice), so the workaround stays.
+
+## Stable npm 0.3.8 (2026-10-29)
+
+All six packages moved to exact registry 0.3.8, with one core and no file overrides. 0.3.8's
+packages take core as a peer at their own version, which the exact pins already meet. The
+release-age exclusions moved from 0.3.7 to 0.3.8, until 2026-11-12.
+
+`npx @gyral/codemod 0.3.8` moved `vite.config.ts` and the Vitest browser project to
+`plugins: [gyral(…)]`. Drivers are now supplied as lists, each under its own name: the client
+entry's `[csrfHttp]` (the codemod left that record, since `csrfHttp` is imported) and the
+admin's `adminDrivers`. `gyral/prefer-built-in` doesn't see the admin's frozen record through
+its variable. Tests keep records for their fakes, as Gyral's docs advise. The listing's and the
+reviews' link parsers use `on('click', { modifiers: 'none' }, …)` instead of their hand-written
+`MouseEvent` and modifier checks. ESLint reports no Gyral rule warning.
+
+**The dependency walker is gone.** `vite.deps.ts` listed every bare import of the browser graph
+in `optimizeDeps.include`, so Vite never found a dependency mid-run, which means a reload in the
+dev server and "Failed to fetch dynamically imported module" in Vitest. `optimize: 'auto'` (the
+default under `gyralDevServer`, and named in the Vitest browser project) starts Vite's startup
+scan at every module that defines a component, and `gyral()` pre-bundles Gyral's own packages.
+From a clean cache, with Vite's dependency log on, neither the dev server (31 pages as a guest, a
+customer and the admin) nor the browser tests found a dependency mid-run.
+
+A trial import of a package nothing else imports showed what each setup covers. In a component
+module, 'auto' pre-bundled it at startup; without the scan, Vite found it mid-run and reloaded
+the page. 'auto' misses two kinds of module (Gyral bead gyral-5zi). The first is those in
+`components.modules`, which the scan can't see: the member forms. The second is the client
+entry, which Vite scans by default (`build.rollupOptions.input`) until a config names entries
+of its own. Here the HTML test fixtures happen to load the entry, so only the member forms were
+exposed. A trial import in `contact.ts` was found mid-run in the dev server, and Vitest reported
+"Vite unexpectedly reloaded a test". `scanEntries()` (`vite.components.ts`) adds both kinds to
+the scan, and with it the same trial was pre-bundled at startup in both. Drop it once Gyral 0.3.9
+fixes gyral-5zi.
+
+**Render skipping.** A component now renders only when its state, a declared prop or a declared
+store's value changes. Every view reads only those; the admin's dates go through fixed-zone
+`Intl` formatters of state values. Gyral 0.3.8's development checks are off in Vite dev and
+Vitest for apps that install core from npm (Gyral gyral-3pv, fixed in 0.3.9). So the check ran
+with a temporary development-condition config and a setup file that failed every test that
+logged a warning. G0017 named `<shop-admin>`, for its `keyed(key, section(view))`, and
+`<shop-search>`, for its suggestions mapped to `{ option, n }` items. Both views read only state:
+the check compares `each` items by identity, and both build theirs on every render (Gyral
+gyral-nyy, fixed together with gyral-3pv). Nothing else warned, in the tests or in the dev
+server.
+
+**Dev server.** `gyralDevServer` builds the app once per server-module version, not on every
+request. An edit to a server module still shows on the next request, and the app is rebuilt
+then, so `devAppOptions` still builds the secret once per process. `dev-server.test.ts` keeps
+the per-request case, the strictest one. In alternating runs on a busy machine (load average 26
+to 32 on 12 cores), the first request took 2.4 to 5.3 s on 0.3.8 and 3.0 to 4.3 s on 0.3.7, and
+later ones a median of 67 to 100 ms against 90 to 120 ms: the same within the noise.
+
+**Size.** The client JS goes from 248,946 to 250,749 bytes raw, and from 90,866 to 91,749 gzip -9
+(+883), in 40 files both times. The runtime adds 263 bytes and `on()` 600, in the chunk the
+listing and the reviews share; no other file moves by more than 30. `pnpm perf` passes: JS
+gzip per page goes from 33.7 to 33.9 KiB (home), 42.7 to 43.6 (category) and 42.6 to 43.4
+(product), within the baseline's 10%, and the baseline stays.
+`.gyral/elements.d.ts` names `gyral()` in its header, and its 25 elements are unchanged.
 
 ## Stable npm 0.3.7 (2026-10-28)
 

@@ -1,6 +1,7 @@
 // Dev server (Gyral's gyralDevServer): Vite serves browser modules (with HMR); every other
-// request is server-rendered by the Hono app, re-loaded per request so SSR follows source edits,
-// and streamed. A render error answers with Vite's error overlay.
+// request is server-rendered by the Hono app and streamed. Since Gyral 0.3.8 the app is built
+// once per server-module version: an edit rebuilds it, so SSR follows source edits on the next
+// request. A render error answers with Vite's error overlay.
 import { gyralDevServer } from '@gyral/ssr/node';
 import { loadConfig } from '../config/env.js';
 import { openDb } from '../db/client.js';
@@ -12,8 +13,8 @@ const config = loadConfig();
 const db = await openDb(config.DATABASE_URL);
 startPurgeSchedule(db); // expired sessions and orphaned guest carts, hourly
 
-// Built once: per-request apps must share the secret (see dev-options.ts). The adapter passes
-// the client address that rate limiting reads (security/request.ts) through to the app.
+// Built once: every app built after an edit must share the secret (see dev-options.ts). The
+// adapter passes the client address that rate limiting reads (security/request.ts) to the app.
 const options = devAppOptions(config, db);
 
 const server = await gyralDevServer({

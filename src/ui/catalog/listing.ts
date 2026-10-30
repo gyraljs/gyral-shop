@@ -3,7 +3,7 @@
 // document styles (filters.ts, listing.ts, catalog.ts) apply directly. Server-rendered from a ListingView; in the browser it changes listing state without a
 // reload. The URL is the source of truth: intents navigate (pushing history), and every URL
 // change (including Back/Forward) streams in through router listen() and fetches that state.
-import { define, focus, html, nothing, prop, type Next } from '@gyral/core';
+import { define, focus, html, nothing, on, prop, type Next } from '@gyral/core';
 import { get, type HttpError } from '@gyral/http';
 import { listen, navigate, setHead, type RouteLocation } from '@gyral/router';
 import { isRefined, parseListing, sameListing, type ListingState } from '../../domain/listing.js';
@@ -48,11 +48,6 @@ const formParams = (data: FormData): URLSearchParams => {
   for (const [key, value] of data) if (typeof value === 'string') params.append(key, value);
   return params;
 };
-
-/** Plain clicks only: modified or middle clicks open new tabs the browser's way. */
-const plainClick = (event: Event): boolean =>
-  !(event instanceof MouseEvent) ||
-  (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey);
 
 /** Go to a listing state: push it to the URL; the Routed message that follows loads it. */
 function go(s: ListingModel, state: ListingState, focus: boolean): Next<ListingModel, ListingMsg> {
@@ -124,12 +119,14 @@ export const Listing = define<ListingModel, ListingMsg, ListingProps>()('shop-li
         ? undefined
         : { _tag: 'Refine', state: { ...stateOf(formParams(data)), page: 1 } };
     },
-    Go: ({ event, target }) => {
+    // Plain clicks only: on() declines modified clicks, and a middle click is no `click`, so
+    // both open new tabs the browser's way.
+    Go: on('click', { modifiers: 'none' }, ({ event, target }) => {
       const href = target.getAttribute('href');
-      if (href === null || !plainClick(event)) return undefined;
+      if (href === null || event.button !== 0) return undefined;
       event.preventDefault();
       return { _tag: 'Go', state: stateOf(new URL(href, document.baseURI).searchParams) };
-    },
+    }),
     FiltersToggled: ({ target }) =>
       target instanceof HTMLDetailsElement
         ? { _tag: 'FiltersToggled', open: target.open }

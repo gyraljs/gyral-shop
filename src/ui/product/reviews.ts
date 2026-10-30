@@ -2,7 +2,7 @@
 // below the fold, so its code wakes only when scrolled near. Until then (and without JS) it is
 // server HTML whose sort/page links and vote forms work on their own. Once hydrated, sorting
 // and paging load in place from the JSON endpoint, and helpful votes post without a reload.
-import { define, focus, prop, type Next } from '@gyral/core';
+import { define, focus, on, prop, type Next } from '@gyral/core';
 import { request } from '@gyral/http';
 import { isReviewSort, parseReviewPage } from '../../domain/reviews.js';
 import {
@@ -46,13 +46,9 @@ type Msg =
 const LOAD_FAILED: Notice = { kind: 'error', message: "We couldn't load more reviews. Try again." };
 const VOTE_FAILED = "We couldn't record your vote. Try again.";
 
-/** A plain, same-page click on a sort or page link (modified clicks keep their default). */
-function linkTarget(event: Event, target: Element): URL | undefined {
-  if (!(event instanceof MouseEvent) || event.button !== 0) return undefined;
-  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return undefined;
-  if (!(target instanceof HTMLAnchorElement)) return undefined;
-  return new URL(target.href);
-}
+/** The URL of a sort or page link. */
+const linkUrl = (target: Element): URL | undefined =>
+  target instanceof HTMLAnchorElement ? new URL(target.href) : undefined;
 
 const voteError = (body: unknown): string => {
   const parsed = v.safeParse(VoteErrorSchema, body);
@@ -95,15 +91,17 @@ export const Reviews = define<State, Msg, ReviewsProps>()('shop-reviews', {
   },
   init: (props) => ({ view: props.view, loading: false, notice: props.notice, voting: [] }),
   intent: {
-    Load: ({ event, target }) => {
-      const url = linkTarget(event, target);
+    // A plain, same-page click on a sort or page link: on() declines modified clicks, which
+    // keep their default (a new tab or window).
+    Load: on('click', { modifiers: 'none' }, ({ event, target }) => {
+      const url = event.button === 0 ? linkUrl(target) : undefined;
       if (url === undefined) return undefined;
       const sort = url.searchParams.get('sort') ?? 'helpful';
       const page = parseReviewPage(url.searchParams.get('page') ?? undefined);
       if (!isReviewSort(sort) || page === undefined) return undefined;
       event.preventDefault(); // load in place instead of navigating
       return { _tag: 'Load', sort, page };
-    },
+    }),
     Vote: ({ formData }) => {
       const id = Number(formData?.get('reviewId'));
       return Number.isInteger(id) && id > 0 ? { _tag: 'Vote', reviewId: id } : undefined;
