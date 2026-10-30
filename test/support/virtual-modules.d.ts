@@ -1,2 +1,2 @@
-// Gyral's automatic-components loader (gyralVitePreset({ components })): a side-effect module.
+// Gyral's automatic-components loader (gyral({ components })): a side-effect module.
 declare module 'virtual:gyral/components' {}

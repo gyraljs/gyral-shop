@@ -1,14 +1,16 @@
 import { defineConfig } from 'vite';
-import { gyralVitePreset } from '@gyral/core/vite';
-import { componentModules } from './vite.components.js';
-import { optimizedDeps } from './vite.deps.js';
+import { gyral } from '@gyral/core/vite';
+import { componentModules, scanEntries } from './vite.components.js';
 
-// gyralVitePreset(): the template compiler for `vite build` (templates precompiled and checked
-// against Gyral's template rules; the runtime preparer leaves the bundle), and automatic
-// components: each page loads the components it rendered (vite.components.ts). optimizeDeps
-// lists every browser import up front so Vite never re-optimizes mid-run.
+// gyral(): the template compiler for `vite build` (templates precompiled and checked against
+// Gyral's template rules; the runtime preparer leaves the bundle), and automatic components:
+// each page loads the components it rendered (vite.components.ts). In dev it pre-bundles
+// Gyral's packages, and `optimize: 'auto'` (the default under gyralDevServer, a custom server)
+// starts Vite's dependency scan at every module that defines a component, plus the entries
+// scanEntries() adds, so every browser import is pre-bundled at startup and Vite never
+// re-optimizes mid-run (ADR 0001).
 export default defineConfig({
-  ...gyralVitePreset({ optimize: optimizedDeps(), components: { modules: componentModules } }),
+  plugins: [gyral({ components: { modules: componentModules } }), scanEntries()],
   server: { port: 5200 },
   // Production client build (`pnpm build`, Gyral ADR 0016): the browser entry (shell components
   // and the page-wide http driver) plus the components loader and each component's chunk; the

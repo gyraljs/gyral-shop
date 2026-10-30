@@ -1,6 +1,7 @@
-// The dev server creates a fresh app per request (src/server/dev.ts). State that must hold
-// across requests — the secret signing place-order keys and the guest orders cookie — has to
-// come from options built once per process (src/server/dev-options.ts).
+// The dev server creates a fresh app after every server-module edit (src/server/dev.ts; per
+// request before Gyral 0.3.8). State that must outlive a rebuild — the secret signing
+// place-order keys and the guest orders cookie — has to come from options built once per process
+// (src/server/dev-options.ts). These tests rebuild per request, the strictest case.
 import { describe, expect, it } from 'vitest';
 import { loadConfig } from '../../src/config/env.js';
 import { createTestDb } from '../../src/db/client.js';

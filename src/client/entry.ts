@@ -12,4 +12,5 @@ import { csrfHttp } from '../ui/drivers/http.js';
 
 // Writes from the storefront (checkout steps, review votes) carry the session's CSRF token: one
 // http driver for the whole page (the admin app provides its own, nearer, src/ui/admin/app.ts).
-provideDrivers(document.documentElement, { http: csrfHttp });
+// A list: each driver is provided under its own name (`csrfHttp` is named `http`).
+provideDrivers(document.documentElement, [csrfHttp]);
