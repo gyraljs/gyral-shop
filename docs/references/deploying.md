@@ -3,7 +3,7 @@
 How the owner runs the public demo on the VPS, behind the Traefik that already serves
 `mcp.gyral.dev`. Why it works this way: [ADR 0007](../design-docs/0007-deployment.md).
 
-What runs: one container from `registry.livepeer.tools/gyraljs/gyral-shop`, pinned by digest,
+What runs: one container from `docker-push.xode.app/gyraljs/gyral-shop`, pinned by digest,
 with a named volume for the SQLite database. On an empty volume it migrates and seeds itself
 before it listens, and every night at `DEMO_RESET_AT` it puts the store back to the seed.
 
@@ -120,11 +120,12 @@ with Docker (the VPS is `linux/amd64`; pass `--platform linux/amd64` when buildi
 ```sh
 pnpm install && pnpm check              # after moving @gyral/* to the new release
 SHA=$(git rev-parse HEAD)
-IMAGE=registry.livepeer.tools/gyraljs/gyral-shop
+IMAGE=docker-push.xode.app/gyraljs/gyral-shop
 docker build \
   --build-arg SITE_ORIGIN=https://demo-shop.gyral.dev \
   --build-arg SOURCE_REVISION="$SHA" \
   -t "$IMAGE:sha-$SHA" -t "$IMAGE:latest" .
+docker login docker-push.xode.app        # once: pushes need it; pulls are anonymous
 docker push "$IMAGE:sha-$SHA" && docker push "$IMAGE:latest"
 docker buildx imagetools inspect "$IMAGE:sha-$SHA" | grep -m1 Digest   # → GYRAL_SHOP_IMAGE
 ```

@@ -35,7 +35,7 @@ The steps are in [deploying.md](../references/deploying.md).
   the image's non-root `node` user, `cap_drop: ALL`, `no-new-privileges`, memory, CPU and PID
   limits, `init`, a health check on `GET /healthz`, and log rotation. The only writable path is
   the named volume on `/app/data` (the SQLite database and its WAL files).
-- **Built by hand.** The owner builds and pushes `registry.livepeer.tools/gyraljs/gyral-shop`
+- **Built by hand.** The owner builds and pushes `docker-push.xode.app/gyraljs/gyral-shop`
   with tags `sha-<commit>` and `latest`. The server runs it by digest (`GYRAL_SHOP_IMAGE` in
   `deploy/.env`), so a deploy changes only when the owner changes that digest.
 
